@@ -31,12 +31,15 @@ public class SubcontractorController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getSubcontractor(@PathVariable int id) {
-		Optional<Subcontractor> optionalSubcontractor = Optional.of(subcontractorService.getSubcontractorWithStatus(id));
-		if (optionalSubcontractor.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<>(optionalSubcontractor, HttpStatus.OK);
+	    Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(id);
+	    
+	    if (subcontractor == null) {
+	        return new ResponseEntity<>("Subcontractor not found",HttpStatus.NOT_FOUND);
+	    }
+	    
+	    return new ResponseEntity<>(subcontractor, HttpStatus.OK);
 	}
+
 
 	@PostMapping("/add")
 	public ResponseEntity<?> addOrUpdateSubcontractor(@RequestBody SubcontractorDto subcontractorDto) {
