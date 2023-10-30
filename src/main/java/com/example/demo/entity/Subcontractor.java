@@ -12,6 +12,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Subcontractor {
+	
+	@JsonProperty("sId")
 	private int sId;
 
 	@JsonProperty("sName")

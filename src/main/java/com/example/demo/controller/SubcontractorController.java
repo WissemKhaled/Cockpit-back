@@ -1,6 +1,9 @@
 package com.example.demo.controller;
 
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,14 +29,17 @@ public class SubcontractorController {
 	private final SubcontractorService subcontractorService;
 	private final SubcontractorDtoMapper dtoMapper;
 
-	@GetMapping("/subcontractor/{id}")
-	public Subcontractor getSubcontractor(@PathVariable int id) {
-		return subcontractorService.getSubcontractorWithStatus(id);
+	@GetMapping("/{id}")
+	public ResponseEntity<?> getSubcontractor(@PathVariable int id) {
+		Optional<Subcontractor> optionalSubcontractor = Optional.of(subcontractorService.getSubcontractorWithStatus(id));
+		if (optionalSubcontractor.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(optionalSubcontractor, HttpStatus.OK);
 	}
 
 	@PostMapping("/add")
-	public ResponseEntity<?> addOrUpdateSubcontractor(@RequestBody SubcontractorDto subcontractorDto,
-			@RequestParam int setMethod) {
+	public ResponseEntity<?> addOrUpdateSubcontractor(@RequestBody SubcontractorDto subcontractorDto) {
 		try {
 			int savedSubcontractorId = subcontractorService
 					.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
@@ -42,7 +48,7 @@ public class SubcontractorController {
 			subcontractorService.saveSubcontractor(savedSubcontractor);
 			return ResponseEntity.ok(savedSubcontractorDto);
 		} catch (RuntimeException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.I_AM_A_TEAPOT);
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 
 	}
@@ -53,7 +59,7 @@ public class SubcontractorController {
 		try {
 			Subcontractor existingSubcontractor = subcontractorService.getSubcontractorById(id);
 			if (existingSubcontractor == null) {
-				return ResponseEntity.notFound().build();
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 			updatedSubcontractorDto.setSId(existingSubcontractor.getSId());
 			Subcontractor updatedSubcontractor = dtoMapper.dtoToSubcontractor(updatedSubcontractorDto);
@@ -65,7 +71,7 @@ public class SubcontractorController {
 			return ResponseEntity.ok(modifedSubcontractorDto);
 
 		} catch (RuntimeException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.I_AM_A_TEAPOT);
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 
 	}
