@@ -1,5 +1,8 @@
 package com.example.demo.controller;
 
+import java.net.http.HttpRequest;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,14 +27,14 @@ public class SubcontractorController {
 	private SubcontractorDtoMapper dtoMapper;
 
 	@PostMapping("/add")
-	public ResponseEntity<SubcontractorDto> addSubcontractor(@RequestBody SubcontractorDto subcontractorDto) {
+	public ResponseEntity<?> addSubcontractor(@RequestBody SubcontractorDto subcontractorDto) {
 		try {
 			int savedSubcontractorId = subcontractorService.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
 			Subcontractor savedSubcontractor = subcontractorService.getSubcontractorById(savedSubcontractorId);
 			SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
 			return ResponseEntity.ok(savedSubcontractorDto);
-		} catch (Exception e) {
-			throw new RuntimeException("An error occurred while adding subcontractor");
+		} catch (RuntimeException e) {
+			return new ResponseEntity<>(e.getMessage(),HttpStatus.I_AM_A_TEAPOT);
 		}
 
 	}

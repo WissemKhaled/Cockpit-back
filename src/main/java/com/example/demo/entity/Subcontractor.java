@@ -13,10 +13,10 @@ public class Subcontractor {
 	private int sId;
 	private String sName;
 	private String sEmail;
-	private Status sFkStatusId; // à modifier
+	private int sFkStatusId; // à modifier
 													//s_fk_status_id
 													//SFkStatusId
-	public Subcontractor(String sName, String sEmail, Status sFkStatusId) {
+	public Subcontractor(String sName, String sEmail, int sFkStatusId) {
 		this.sName = sName;
 		this.sEmail = sEmail;
 		this.sFkStatusId = sFkStatusId;
