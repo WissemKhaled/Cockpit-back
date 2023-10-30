@@ -1,5 +1,8 @@
 package com.example.demo.dto;
 
+import com.example.demo.entity.Status;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,8 +11,15 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class SubcontractorDto {
+    @JsonProperty("sId")
 	private int sId;
+    
+    @JsonProperty("sName")
 	private String sName;
+    
+    @JsonProperty("sEmail")
 	private String sEmail;
-	private int sFkStatusId;
+    
+    @JsonProperty("status")
+	private Status status;
 }

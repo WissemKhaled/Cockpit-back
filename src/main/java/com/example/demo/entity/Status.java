@@ -11,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Status {
 	private int stId;
-	private EStatus stName;
+	private String stName;
 	private String stDescription;
 }

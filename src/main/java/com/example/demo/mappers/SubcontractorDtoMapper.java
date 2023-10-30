@@ -8,11 +8,11 @@ import com.example.demo.entity.Subcontractor;
 @Component
 public class SubcontractorDtoMapper {
 	public SubcontractorDto subcontractorToDto(Subcontractor subcontractor) {
-		return new SubcontractorDto(subcontractor.getSId(),subcontractor.getSName(), subcontractor.getSEmail(), subcontractor.getSFkStatusId());
+		return new SubcontractorDto(subcontractor.getSId(),subcontractor.getSName(), subcontractor.getSEmail(), subcontractor.getStatus());
 	}
 	
 	public Subcontractor dtoToSubcontractor(SubcontractorDto subcontractorDto) {
-		return new Subcontractor(subcontractorDto.getSId(),subcontractorDto.getSName(),subcontractorDto.getSEmail(),subcontractorDto.getSFkStatusId());
+		return new Subcontractor(subcontractorDto.getSId(),subcontractorDto.getSName(),subcontractorDto.getSEmail(),subcontractorDto.getStatus());
 	}
 }
  

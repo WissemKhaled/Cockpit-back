@@ -11,23 +11,36 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SubcontractorServiceImpl implements SubcontractorService {
 
-	private SubcontractorMapper subcontractorMapper;
+    private final SubcontractorMapper subcontractorMapper;
 
-	@Override
-	public int saveSubcontractor(Subcontractor subcontractor) {
-		subcontractorMapper.insertSubcontractor(subcontractor);
-		return subcontractor.getSId();
-	}
+//	private SubcontractorMapper subcontractorMapper;
+//
+//	@Override
+//	public int saveSubcontractor(Subcontractor subcontractor) {
+//		subcontractorMapper.insertSubcontractor(subcontractor);
+//		return subcontractor.getSId();
+//	}
+//
+//	@Override
+//	public void updateSubcontractor(Subcontractor subcontractor) {
+//		subcontractorMapper.updateSubcontractor(subcontractor);
+//	}
+//
+//	@Override
+//	public Subcontractor getSubcontractorById(int Id) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
-	@Override
-	public void updateSubcontractor(Subcontractor subcontractor) {
-		subcontractorMapper.updateSubcontractor(subcontractor);
-	}
-
-	@Override
-	public Subcontractor getSubcontractorById(int Id) {
-		return subcontractorMapper.findSubcontractorById(Id);
-
-	}
+//	@Override
+//	public Subcontractor getSubcontractorById(int Id) {
+//		return subcontractorMapper.findSubcontractorById(Id);
+//
+//	}
+	
+    @Override
+    public Subcontractor getSubcontractorWithStatus(int sId) {
+        return subcontractorMapper.getSubcontractorWithStatus(sId);
+    }
 
 }
