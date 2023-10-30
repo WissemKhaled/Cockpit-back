@@ -5,9 +5,11 @@ import com.example.demo.entity.Subcontractor;
 public interface SubcontractorService {
 
 	Subcontractor getSubcontractorWithStatus(int id);
-//	int saveSubcontractor(Subcontractor subcontractor);
+
+	int saveSubcontractor(Subcontractor subcontractor);
+
 //
 //	void updateSubcontractor(Subcontractor subcontractor);
 //	
-//	Subcontractor getSubcontractorById(int Id);
+	Subcontractor getSubcontractorById(int Id);
 }

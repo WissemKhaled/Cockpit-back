@@ -24,17 +24,17 @@ public class PersistenceConfig {
 		return dataSource;
 	}
 
-	@Bean
-	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-		populator.addScript(new ClassPathResource("schema.sql"));
-		populator.addScript(new ClassPathResource("data.sql"));
-
-		DataSourceInitializer initializer = new DataSourceInitializer();
-		initializer.setDataSource(dataSource);
-		initializer.setDatabasePopulator(populator);
-
-		return initializer;
-	}
+//	@Bean
+//	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//		populator.addScript(new ClassPathResource("schema.sql"));
+//		populator.addScript(new ClassPathResource("data.sql"));
+//
+//		DataSourceInitializer initializer = new DataSourceInitializer();
+//		initializer.setDataSource(dataSource);
+//		initializer.setDatabasePopulator(populator);
+//
+//		return initializer;
+//	}
 
 }

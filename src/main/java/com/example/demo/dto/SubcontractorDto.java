@@ -11,15 +11,21 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class SubcontractorDto {
-    @JsonProperty("sId")
+	@JsonProperty("sId")
 	private int sId;
-    
-    @JsonProperty("sName")
+
+	@JsonProperty("sName")
 	private String sName;
-    
-    @JsonProperty("sEmail")
+
+	@JsonProperty("sEmail")
 	private String sEmail;
-    
-    @JsonProperty("status")
+
+	@JsonProperty("status")
 	private Status status;
+
+	@Override
+	public String toString() {
+		return "SubcontractorDto [sId=" + sId + ", sName=" + sName + ", sEmail=" + sEmail + ", status=" + status + "]";
+	}
+
 }
