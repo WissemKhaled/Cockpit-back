@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Status {
-	private int StId;
-	private String StName;
+	private int stId;
+	private EStatus stName;
+	private String stDescription;
 }
