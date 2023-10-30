@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-import java.net.http.HttpRequest;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.SubcontractorDto;
@@ -23,56 +22,51 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/subcontractor")
 @AllArgsConstructor
 public class SubcontractorController {
-	
-    private final SubcontractorService subcontractorService;
+
+	private final SubcontractorService subcontractorService;
 	private final SubcontractorDtoMapper dtoMapper;
 
-
-    @GetMapping("/subcontractor/{id}")
-    public Subcontractor getSubcontractor(@PathVariable int id) {
-        return subcontractorService.getSubcontractorWithStatus(id);
-    }
+	@GetMapping("/subcontractor/{id}")
+	public Subcontractor getSubcontractor(@PathVariable int id) {
+		return subcontractorService.getSubcontractorWithStatus(id);
+	}
 
 	@PostMapping("/add")
-	public ResponseEntity<?> addSubcontractor(@RequestBody SubcontractorDto subcontractorDto) {
-		try {			
-			System.err.println("I'm here1");
-			System.err.println(subcontractorDto.getStatus().getStId());
-			System.err.println(dtoMapper.dtoToSubcontractor(subcontractorDto));
-			int savedSubcontractorId = subcontractorService.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
-			System.err.println("I'm here2");
+	public ResponseEntity<?> addOrUpdateSubcontractor(@RequestBody SubcontractorDto subcontractorDto,
+			@RequestParam int setMethod) {
+		try {
+			int savedSubcontractorId = subcontractorService
+					.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
 			Subcontractor savedSubcontractor = subcontractorService.getSubcontractorById(savedSubcontractorId);
-			System.err.println("I'm here3");
 			SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
-			System.err.println("I'm here4");
 			subcontractorService.saveSubcontractor(savedSubcontractor);
-			System.err.println("I'm here5");
 			return ResponseEntity.ok(savedSubcontractorDto);
 		} catch (RuntimeException e) {
-			return new ResponseEntity<>(e.getMessage(),HttpStatus.I_AM_A_TEAPOT);
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.I_AM_A_TEAPOT);
 		}
 
 	}
 
-//	@PutMapping("/update/{id}")
-//	public ResponseEntity<SubcontractorDto> updateSubcontractor(@PathVariable int id,
-//			@RequestBody SubcontractorDto updatedSubcontractorDto) {
-//		try {
-////            updatedSubcontractor.setId(id); // Assure que l'ID est bien défini
-//			Subcontractor existingSubcontractor = subcontractorService.getSubcontractorById(id);
-//			if (existingSubcontractor == null) {
-//				return ResponseEntity.notFound().build();
-//			}
-//			Subcontractor updatedSubcontractor = dtoMapper.dtoToSubcontractor(updatedSubcontractorDto);
-//			subcontractorService.updateSubcontractor(updatedSubcontractor);
-//			SubcontractorDto modifedSubcontractorDto = dtoMapper
-//					.subcontractorToDto(subcontractorService.getSubcontractorById(updatedSubcontractor.getSId()));
-//
-//			return ResponseEntity.ok(modifedSubcontractorDto);
-//
-//		} catch (Exception e) {
-//			throw new RuntimeException("Error accured");
-//		}
-//
-//	}
+	@PutMapping("/update/{id}")
+	public ResponseEntity<?> updateSubcontractor(@PathVariable int id,
+			@RequestBody SubcontractorDto updatedSubcontractorDto) {
+		try {
+			Subcontractor existingSubcontractor = subcontractorService.getSubcontractorById(id);
+			if (existingSubcontractor == null) {
+				return ResponseEntity.notFound().build();
+			}
+			updatedSubcontractorDto.setSId(existingSubcontractor.getSId());
+			Subcontractor updatedSubcontractor = dtoMapper.dtoToSubcontractor(updatedSubcontractorDto);
+			subcontractorService.updateSubcontractor(updatedSubcontractor);
+			System.err.println(updatedSubcontractor.getSId());
+			SubcontractorDto modifedSubcontractorDto = dtoMapper
+					.subcontractorToDto(subcontractorService.getSubcontractorById(updatedSubcontractor.getSId()));
+
+			return ResponseEntity.ok(modifedSubcontractorDto);
+
+		} catch (RuntimeException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.I_AM_A_TEAPOT);
+		}
+
+	}
 }

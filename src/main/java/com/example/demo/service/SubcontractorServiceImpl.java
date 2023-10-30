@@ -25,20 +25,13 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	}
 
-//	@Override
-//	public void updateSubcontractor(Subcontractor subcontractor) {
-//		subcontractorMapper.updateSubcontractor(subcontractor);
-//	}
-//
-//	@Override
-//	public Subcontractor getSubcontractorById(int Id) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
 	@Override
 	public Subcontractor getSubcontractorWithStatus(int sId) {
 		return subcontractorMapper.getSubcontractorWithStatus(sId);
 	}
 
+	@Override
+	public void updateSubcontractor(Subcontractor subcontractor) {
+		subcontractorMapper.updateSubcontractor(subcontractor);
+	}
 }

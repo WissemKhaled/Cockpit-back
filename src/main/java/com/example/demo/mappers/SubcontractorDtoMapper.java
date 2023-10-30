@@ -22,8 +22,6 @@ public class SubcontractorDtoMapper {
 	}
 
 	public Subcontractor dtoToSubcontractor(SubcontractorDto subcontractorDto) {
-		System.err.println(subcontractorDto.getStatus().toString());
-		System.err.println(statusService.getStatusById(subcontractorDto.getStatus().getStId()));
 		return new Subcontractor(subcontractorDto.getSId(), subcontractorDto.getSName(), subcontractorDto.getSEmail(),
 				statusService.getStatusById(subcontractorDto.getStatus().getStId()));
 	}
