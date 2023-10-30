@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS status (
     st_id SERIAL PRIMARY KEY,
     st_name VARCHAR(50) NOT NULL,
-    st_description VARCHAR(255) NOT NULL
+    st_description VARCHAR(255) DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS subcontractor (
