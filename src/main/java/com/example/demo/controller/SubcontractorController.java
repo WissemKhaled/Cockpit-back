@@ -48,7 +48,7 @@ public class SubcontractorController {
 			Subcontractor updatedSubcontractor = dtoMapper.dtoToSubcontractor(updatedSubcontractorDto);
 			subcontractorService.updateSubcontractor(updatedSubcontractor);
 			SubcontractorDto modifedSubcontractorDto = dtoMapper
-					.subcontractorToDto(subcontractorService.getSubcontractorById(updatedSubcontractor.getId()));
+					.subcontractorToDto(subcontractorService.getSubcontractorById(updatedSubcontractor.getSId()));
 
 			return ResponseEntity.ok(modifedSubcontractorDto);
 

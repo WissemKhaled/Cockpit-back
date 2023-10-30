@@ -16,7 +16,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	@Override
 	public int saveSubcontractor(Subcontractor subcontractor) {
 		subcontractorMapper.insertSubcontractor(subcontractor);
-		return subcontractor.getId();
+		return subcontractor.getSId();
 	}
 
 	@Override

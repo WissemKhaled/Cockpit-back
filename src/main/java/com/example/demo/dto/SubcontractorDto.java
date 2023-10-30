@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import com.example.demo.entity.SubcontractorStatus;
+import com.example.demo.entity.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,8 +10,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class SubcontractorDto {
-	private int Id;
-	private String name;
-	private String email;
-	private SubcontractorStatus subcontractorStatus;
+	private int SId;
+	private String SName;
+	private String SEmail;
+	private Status SFkStatusId;
 }

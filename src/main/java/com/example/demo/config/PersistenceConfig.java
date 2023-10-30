@@ -2,8 +2,6 @@ package com.example.demo.config;
 
 import javax.sql.DataSource;
 
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,9 +9,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-
-import com.example.demo.entity.SubcontractorStatus;
-import com.example.demo.mappers.SubcontractorStatusTypeHandler;
 
 @Configuration
 @MapperScan("com.example.demo.mappers")
@@ -43,17 +38,17 @@ public class PersistenceConfig {
 	}
 
 	// handle the enum
-	@Bean
-	public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
-		SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
-		factoryBean.setDataSource(dataSource);
-
-		org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
-		configuration.getTypeHandlerRegistry().register(SubcontractorStatus.class,
-				SubcontractorStatusTypeHandler.class);
-		factoryBean.setConfiguration(configuration);
-
-		return factoryBean.getObject();
-	}
+//	@Bean
+//	public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+//		SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+//		factoryBean.setDataSource(dataSource);
+//
+//		org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+//		configuration.getTypeHandlerRegistry().register(SubcontractorStatus.class,
+//				SubcontractorStatusTypeHandler.class);
+//		factoryBean.setConfiguration(configuration);
+//
+//		return factoryBean.getObject();
+//	}
 
 }

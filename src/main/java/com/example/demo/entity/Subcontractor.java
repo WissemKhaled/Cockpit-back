@@ -10,15 +10,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Subcontractor {
-	private int Id;
-	private String name;
-	private String email;
-	private SubcontractorStatus subcontractorStatus;
-
-	public Subcontractor(String name, String email, SubcontractorStatus subcontractorStatus) {
-		this.name = name;
-		this.email = email;
-		this.subcontractorStatus = subcontractorStatus;
+	private int SId;
+	private String SName;
+	private String SEmail;
+	private Status SFkStatusId; // à modifier
+													//s_fk_status_id
+													//SFkStatusId
+	public Subcontractor(String name, String email, Status SFkStatusId) {
+		this.SName = name;
+		this.SEmail = email;
+		this.SFkStatusId = SFkStatusId;
 	}
 
 }

@@ -19,7 +19,7 @@ public interface SubcontractorMapper {
 //	@Select("SELECT * FROM subcontractor")
 //	List<Subcontractor> getAllSubcontractors();
 
-	@Insert("INSERT INTO subcontractor (name, email, subcontractorStatus) VALUES (#{name}, #{email}, #{subcontractorStatus})")
+	@Insert("INSERT INTO subcontractor (name, email, status) VALUES (#{name}, #{email}, #{status})")
 	@Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
 	void insertSubcontractor(Subcontractor subcontractor);
 	
@@ -28,7 +28,7 @@ public interface SubcontractorMapper {
 //	void insertSubcontractor(Subcontractor subcontractor);
 
 	
-    @Update("UPDATE subcontractor SET name = #{name}, email = #{email}, subcontractorStatus = #{subcontractorStatus} WHERE id = #{id}")
+    @Update("UPDATE subcontractor SET name = #{name}, email = #{email}, status = #{status} WHERE id = #{id}")
 	void updateSubcontractor(Subcontractor subcontractor);
     
     @Select("SELECT * FROM subcontractor WHERE id = #{id}")
