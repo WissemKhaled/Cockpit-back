@@ -38,22 +38,16 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	}
 
-	//methode qui retourne tous les sousTraitants en DTO
+	//debut hamza : methode qui retourne tous les sousTraitants en DTO et qui prend en parametre 
+	//pour le tri le nom de la colonne et le type de tri
+	//et pour la pagination le nombre déelement a aficcher et la page en question 
 	@Override
-	public List<SubcontractorDto> getAllSubcontractor(int page , int pageSize) {
+	public List<SubcontractorDto> getAllSubcontractor(String nameColonne , String sorting ,int page , int pageSize) {
 		
-		int totalItems = subcontractorMapper.countTotalItems();
-	    int nbPages  = (int) Math.ceil((double) totalItems / pageSize);
-		
-	    System.out.println(nbPages);
-	    
 		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
 		int offset = (page - 1) * pageSize ;
-		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractors( offset , pageSize);
+		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset , pageSize);
 		
-		for (Subcontractor subcontractor : subContarcList) {
-		}
-
 		if (!subContarcList.isEmpty()) {
 			
 			for(Subcontractor subcontractor : subContarcList) {
@@ -67,7 +61,10 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		else throw new RuntimeException("Il n'y a pas de sousTraitans");
 				
 	}
+	//fin
 	
+	
+	//debut hamza : ce code permet de retoruner le nombre max de page qu'il y a  
 	public int getNumbersOfPages(int pageSize) {
 		System.err.println(pageSize);
 		int totalItems = subcontractorMapper.countTotalItems();
@@ -75,5 +72,6 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		
 	    return nbPages ;
 	}
+	//fin
 
 }
