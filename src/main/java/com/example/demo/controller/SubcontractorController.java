@@ -1,14 +1,22 @@
 package com.example.demo.controller;
 
+
 import java.net.http.HttpRequest;
+
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.SubcontractorDto;
@@ -23,9 +31,35 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SubcontractorController {
 
+	@Autowired
 	private SubcontractorService subcontractorService;
+	@Autowired
 	private SubcontractorDtoMapper dtoMapper;
+	
+	
+	@GetMapping("/getAll")
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(@RequestParam("pageSize") int page , @RequestParam("page") int pageSize){
+		
+		try {
+			return new ResponseEntity<>(subcontractorService.getAllSubcontractor(page, pageSize), HttpStatus.OK);
+			
+		} catch (RuntimeException e){
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+		
+	}
 
+	@GetMapping("/getAllPages")
+	public ResponseEntity<Integer> getAllPages(@RequestParam("pageSize") int pageSize){
+		System.out.println(pageSize);
+		try {
+			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(pageSize), HttpStatus.OK);
+			
+		} catch (RuntimeException e){
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+		
+	}
 	@PostMapping("/add")
 	public ResponseEntity<?> addSubcontractor(@RequestBody SubcontractorDto subcontractorDto) {
 		try {
