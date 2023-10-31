@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.controller.exception.SubcontractorNotFoundException;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.mappers.SubcontractorDtoMapper;
@@ -24,18 +25,33 @@ public class SubcontractorController {
 	private final SubcontractorService subcontractorService;
 	private final SubcontractorDtoMapper dtoMapper;
 
+	//méthode pour récupérer un sous-traitant
+//	@GetMapping("/{id}")
+//	public ResponseEntity<?> getSubcontractor(@PathVariable int id) {
+//		Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(id);
+//		System.err.println(subcontractor);
+//		if (subcontractor == null) {
+//			return new ResponseEntity<>("Subcontractor not found", HttpStatus.NOT_FOUND);
+//		}
+//
+//		return new ResponseEntity<>(subcontractor, HttpStatus.OK);
+//	}
+	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getSubcontractor(@PathVariable int id) {
-		Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(id);
+    public ResponseEntity<?> getSubcontractor(@PathVariable String id) {
+        try {
+            int parsedId = Integer.parseInt(id);
+            Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(parsedId);
+            return new ResponseEntity<>(subcontractor, HttpStatus.OK);
+        } catch (NumberFormatException e) {
+            return new ResponseEntity<>("Invalid ID format. Please provide a valid integer ID.", HttpStatus.BAD_REQUEST);
+        } catch (SubcontractorNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
-		if (subcontractor == null) {
-			return new ResponseEntity<>("Subcontractor not found", HttpStatus.NOT_FOUND);
-		}
-
-		return new ResponseEntity<>(subcontractor, HttpStatus.OK);
-	}
-
-	@PostMapping("/add")
+	//méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on le modifier
+	@PostMapping("/save")
 	public ResponseEntity<?> saveSubcontractor(@RequestBody SubcontractorDto subcontractorDto) {
 		try {
 			if (subcontractorDto.getSId() > 0
@@ -43,13 +59,13 @@ public class SubcontractorController {
 				Subcontractor subcontractorToUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
 				subcontractorService.updateSubcontractor(subcontractorToUpdate);
 				Subcontractor updatedSubcontractor = subcontractorService
-						.getSubcontractorById(subcontractorToUpdate.getSId());
+						.getSubcontractorWithStatus(subcontractorToUpdate.getSId());
 				SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
 				return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
 			} else {
 				int savedSubcontractorId = subcontractorService
 						.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
-				Subcontractor savedSubcontractor = subcontractorService.getSubcontractorById(savedSubcontractorId);
+				Subcontractor savedSubcontractor = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
 				SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
 				return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
 			}
