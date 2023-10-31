@@ -25,7 +25,7 @@ public class PersistenceConfig {
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
 		dataSource.setUsername("postgres");
-		dataSource.setPassword("1234");
+		dataSource.setPassword("postgres");
 		return dataSource;
 	}
 
@@ -41,8 +41,8 @@ public class PersistenceConfig {
 //
 //		return initializer;
 //	}
-
-	// handle the enum EStatus
+//
+//	// handle the enum EStatus
 	@Bean
 	public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
 		SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
