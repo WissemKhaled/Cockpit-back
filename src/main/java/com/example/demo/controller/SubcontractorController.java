@@ -42,7 +42,7 @@ public class SubcontractorController {
         try {
             int parsedId = Integer.parseInt(id);
             Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(parsedId);
-            return new ResponseEntity<>(subcontractor, HttpStatus.OK);
+            return new ResponseEntity<>(subcontractor, HttpStatus.FOUND);
         } catch (NumberFormatException e) {
             return new ResponseEntity<>("Invalid ID format. Please provide a valid integer ID.", HttpStatus.BAD_REQUEST);
         } catch (SubcontractorNotFoundException e) {
@@ -53,25 +53,28 @@ public class SubcontractorController {
 	//méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on le modifier
 	@PostMapping("/save")
 	public ResponseEntity<?> saveSubcontractor(@RequestBody SubcontractorDto subcontractorDto) {
-		try {
-			if (subcontractorDto.getSId() > 0
-					&& subcontractorService.getSubcontractorWithStatus(subcontractorDto.getSId()) != null) {
-				Subcontractor subcontractorToUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
-				subcontractorService.updateSubcontractor(subcontractorToUpdate);
-				Subcontractor updatedSubcontractor = subcontractorService
-						.getSubcontractorWithStatus(subcontractorToUpdate.getSId());
-				SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
-				return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
-			} else {
-				int savedSubcontractorId = subcontractorService
-						.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
-				Subcontractor savedSubcontractor = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
-				SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
-				return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
-			}
-		} catch (RuntimeException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
+	    try {
+	        if (subcontractorDto.getSId() > 0) {
+	            Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(subcontractorDto.getSId());
+
+	            // If the subcontractor exists, update
+	            Subcontractor subcontractorToUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
+	            subcontractorService.updateSubcontractor(subcontractorToUpdate);
+	            Subcontractor updatedSubcontractor = subcontractorService.getSubcontractorWithStatus(subcontractorToUpdate.getSId());
+	            SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
+	            return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
+	        } else {
+		        return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
+	        }
+	    } catch (SubcontractorNotFoundException e) {
+            int savedSubcontractorId = subcontractorService.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
+            Subcontractor savedSubcontractor = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
+            SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
+            return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
+	    } catch (Exception e) {
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	    }
 	}
+
 
 }

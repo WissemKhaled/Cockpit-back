@@ -8,6 +8,6 @@ public interface SubcontractorService {
 
 	int saveSubcontractor(Subcontractor subcontractor);
 
-	void updateSubcontractor(Subcontractor subcontractor);
+	int updateSubcontractor(Subcontractor subcontractor);
 
 }
