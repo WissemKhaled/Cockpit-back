@@ -11,9 +11,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.demo.controller.exception.SubcontractorNotFoundException;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
+import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorMapper;
 
 @ExtendWith(MockitoExtension.class)

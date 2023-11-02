@@ -50,4 +50,9 @@ public interface SubcontractorMapper {
 	@Result(property = "status.stId", column = "s_fk_status_id")
 	int updateSubcontractor(Subcontractor subcontractor);
 
+	@Update("Update subcontractor SET s_fk_status_id = 4 WHERE s_id = #{sId}")
+	@Result(property = "sId", column = "s_id")
+	@Result(property = "status.stId", column = "s_fk_status_id")
+	void archive(Subcontractor subcontractortoArchive);
+
 }
