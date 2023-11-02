@@ -43,8 +43,8 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 
 	@Override
-	public void archiveSubcontractor(Subcontractor subcontractortoArchive) {
-		subcontractorMapper.archive(subcontractortoArchive);
+	public int archiveSubcontractor(Subcontractor subcontractortoArchive) {
+		return subcontractorMapper.archive(subcontractortoArchive);
 	}
 
 }

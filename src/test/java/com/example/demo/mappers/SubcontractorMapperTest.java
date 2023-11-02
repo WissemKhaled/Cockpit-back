@@ -33,17 +33,15 @@ public class SubcontractorMapperTest {
 	void archiveTest_ArchivingASubcontractor_ShouldReturnOne() {
 		Subcontractor existingSubcontractor = new Subcontractor(2, "ArchiveTest", "ArchiveTest@email.fr",
 				new Status(1, "EN_COURS", "AAAA"));
-		int archive = subcontractorMapper.archive(existingSubcontractor);
-		log.info(archive + "");
-		assertEquals(archive, 1);
+		int isArchived = subcontractorMapper.archive(existingSubcontractor);
+		assertEquals(isArchived, 1);
 	}
 
 	@Test
 	void archiveTest_ArchivingASubcontractorFailed_ShouldReturnZero() {
 		Subcontractor nonExistingSubcontractor = new Subcontractor(Integer.MAX_VALUE, "ArchiveTest",
 				"ArchiveTest@email.fr", new Status(1, "EN_COURS", "AAAA"));
-		int archive = subcontractorMapper.archive(nonExistingSubcontractor);
-		log.info(archive + "");
-		assertEquals(archive, 0);
+		int isNotArchived = subcontractorMapper.archive(nonExistingSubcontractor);
+		assertEquals(isNotArchived, 0);
 	}
 }
