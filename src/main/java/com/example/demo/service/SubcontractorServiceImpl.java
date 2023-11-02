@@ -1,11 +1,11 @@
 package com.example.demo.service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.controller.exception.SubcontractorNotFoundException;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.mappers.SubcontractorDtoMapper;
@@ -17,62 +17,79 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SubcontractorServiceImpl implements SubcontractorService {
 
-	private SubcontractorMapper subcontractorMapper;
-	
-	private SubcontractorDtoMapper dtoMapper;
+	private final SubcontractorDtoMapper dtoMapper;
+	private final SubcontractorMapper subcontractorMapper;
 
 	@Override
 	public int saveSubcontractor(Subcontractor subcontractor) {
-		subcontractorMapper.insertSubcontractor(subcontractor);
+		int isSubcontractorInserted = subcontractorMapper.insertSubcontractor(subcontractor);
+		if (isSubcontractorInserted == 0) {
+			return isSubcontractorInserted;
+		}
+		// remarque qu'on persiste le sous-traitant, on génere l'id
+		// automatiquement et comme ça on peut retourner le correct sans
+		// prendre en cpnsidération l'id saisi par l'utilisateur
+		// (subcontractDto)
 		return subcontractor.getSId();
 	}
 
 	@Override
-	public void updateSubcontractor(Subcontractor subcontractor) {
-		subcontractorMapper.updateSubcontractor(subcontractor);
+	public Subcontractor getSubcontractorWithStatus(int sId) {
+		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusById(sId);
+		if (subcontractor == null) {
+			throw new SubcontractorNotFoundException("le sous-traitant avec l'id: " + sId + " n'existe pas!!");
+		}
+		return subcontractor;
 	}
 
 	@Override
-	public Subcontractor getSubcontractorById(int Id) {
-		return subcontractorMapper.findSubcontractorById(Id);
-
+	public int updateSubcontractor(Subcontractor subcontractor) {
+		int isSubcontractorUpdated = subcontractorMapper.updateSubcontractor(subcontractor);
+		return isSubcontractorUpdated;
 	}
 
-	//debut hamza : methode qui retourne tous les sousTraitants en DTO et qui prend en parametre 
-	//pour le tri le nom de la colonne et le type de tri
-	//et pour la pagination le nombre déelement a aficcher et la page en question 
+	// debut hamza : methode qui retourne tous les sousTraitants en DTO et qui prend
+	// en parametre
+	// pour le tri le nom de la colonne et le type de tri
+	// et pour la pagination le nombre déelement a aficcher et la page en question
 	@Override
-	public List<SubcontractorDto> getAllSubcontractor(String nameColonne , String sorting ,int page , int pageSize) {
-		
+	public List<SubcontractorDto> getAllSubcontractor(String nameColonne, String sorting, int page, int pageSize) {
+
 		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
-		int offset = (page - 1) * pageSize ;
-		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset , pageSize);
-	
-		
-		if (!subContarcList.isEmpty()) {
-			
-			for(Subcontractor subcontractor : subContarcList) {
-				
-				subcontractorDtosList.add(dtoMapper.subcontractorToDto(subcontractor));
-			}
-			
-			return subcontractorDtosList;
+		int offset = (page - 1) * pageSize;
+		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset,
+				pageSize);
+
+		System.err.println("here");
+		System.err.println(subContarcList.size());
+		for (Subcontractor subcontractor : subContarcList) {
+			System.err.println(subcontractor.toString());
 			
 		}
-		else throw new RuntimeException("Il n'y a pas de sousTraitans");
-				
+		
+		if (!subContarcList.isEmpty()) {
+
+			for (Subcontractor subcontractor : subContarcList) {
+
+				subcontractorDtosList.add(dtoMapper.subcontractorToDto(subcontractor));
+			}
+
+			return subcontractorDtosList;
+
+		} else
+			throw new RuntimeException("Il n'y a pas de sousTraitans");
+
 	}
-	//fin
-	
-	
-	//debut hamza : ce code permet de retoruner le nombre max de page qu'il y a  
+	// fin
+
+	// debut hamza : ce code permet de retoruner le nombre max de page qu'il y a
 	public int getNumbersOfPages(int pageSize) {
 		System.err.println(pageSize);
 		int totalItems = subcontractorMapper.countTotalItems();
-	    int nbPages  = (int) Math.ceil((double) totalItems / pageSize);
-		
-	    return nbPages ;
+		int nbPages = (int) Math.ceil((double) totalItems / pageSize);
+
+		return nbPages;
 	}
-	//fin
+	// fin
 
 }
