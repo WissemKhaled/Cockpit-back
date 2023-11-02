@@ -47,6 +47,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
 		int offset = (page - 1) * pageSize ;
 		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset , pageSize);
+	
 		
 		if (!subContarcList.isEmpty()) {
 			

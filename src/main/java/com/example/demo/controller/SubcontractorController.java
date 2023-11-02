@@ -1,13 +1,8 @@
 package com.example.demo.controller;
 
-
-import java.net.http.HttpRequest;
-
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,64 +20,65 @@ import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.service.SubcontractorService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
 
 @RestController
 @RequestMapping("/subcontractor")
 @AllArgsConstructor
+@Log
 public class SubcontractorController {
 
 	@Autowired
 	private SubcontractorService subcontractorService;
 	@Autowired
 	private SubcontractorDtoMapper dtoMapper;
-	
-	//debut hamza : ce code permet de renvoyer la liste des soustraitan 
-	//la methode getAllSubcontractor prend en paramettre 
-	//pour le tri le nom de la colonne et le type de tri
-	//et pour la pagination le nombre déelement a aficcher et la page en question 
+
+	// debut hamza : ce code permet de renvoyer la liste des soustraitan
+	// la methode getAllSubcontractor prend en paramettre
+	// pour le tri le nom de la colonne et le type de tri
+	// et pour la pagination le nombre déelement a aficcher et la page en question
 	@GetMapping("/getAll")
-	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor( @RequestParam("nameColonne") String nameColonne,
-	                                                                   @RequestParam("sorting") String sorting,         
-			                                                           @RequestParam("pageSize") int page ,
-			                                                           @RequestParam("page") int pageSize){
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(@RequestParam("nameColonne") String nameColonne,
+			@RequestParam("sorting") String sorting, @RequestParam("pageSize") int page,
+			@RequestParam("page") int pageSize) {
 		System.err.println(nameColonne);
 		try {
-			return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize), HttpStatus.OK);
+			log.info("Affiche tous les sous-traitans");
+			return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize),HttpStatus.OK);
 			
-			
-		} catch (RuntimeException e){
-			System.err.println("ddddd" + e);
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-		
+
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+
 	}
-	
-	
-    //debut hamza : ce code perùer de renvoyer le nombre max de page en fonction de l'affichage 
+
+	// debut hamza : ce code perùer de renvoyer le nombre max de page en fonction de
+	// l'affichage
 	@GetMapping("/getAllPages")
-	public ResponseEntity<Integer> getAllPages(@RequestParam("pageSize") int pageSize){
+	public ResponseEntity<Integer> getAllPages(@RequestParam("pageSize") int pageSize) {
 		System.out.println(pageSize);
 		try {
 			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(pageSize), HttpStatus.OK);
-			
-		} catch (RuntimeException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-		
+
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+
 	}
-	
-	//fin
-	
-	
+
+	// fin
+
 	@PostMapping("/add")
 	public ResponseEntity<?> addSubcontractor(@RequestBody SubcontractorDto subcontractorDto) {
 		try {
-			int savedSubcontractorId = subcontractorService.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
+			int savedSubcontractorId = subcontractorService
+					.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
 			Subcontractor savedSubcontractor = subcontractorService.getSubcontractorById(savedSubcontractorId);
 			SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
 			return ResponseEntity.ok(savedSubcontractorDto);
 		} catch (RuntimeException e) {
-			return new ResponseEntity<>(e.getMessage(),HttpStatus.I_AM_A_TEAPOT);
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.I_AM_A_TEAPOT);
 		}
 
 	}
