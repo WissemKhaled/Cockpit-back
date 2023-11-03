@@ -1,20 +1,37 @@
 package com.example.demo.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
+<<<<<<< HEAD
 import org.junit.jupiter.api.BeforeAll;
+=======
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+>>>>>>> aa29239931531869ee526df8e42fe7caf7bf386e
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+<<<<<<< HEAD
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.SubcontractorNotFoundException;
+=======
+import com.example.demo.controller.exception.SubcontractorNotFoundException;
+import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.entity.Status;
+import com.example.demo.entity.Subcontractor;
+import com.example.demo.mappers.SubcontractorDtoMapper;
+>>>>>>> aa29239931531869ee526df8e42fe7caf7bf386e
 import com.example.demo.mappers.SubcontractorMapper;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,13 +43,52 @@ public class SubcontractorServiceTest {
 	@InjectMocks
 	private SubcontractorServiceImpl subcontractorService;
 	
-//	@BeforeAll //pour le test d'archivage
-//	void init() {
-//		Subcontractor SubcontractorToSave = new Subcontractor(2, "ArchiveTest", "ArchiveTest@email.fr",
-//				new Status(1, "EN_COURS", "AAAA"));
-//		subcontractorMapper.insertSubcontractor(SubcontractorToSave);
-//	}
+	@Mock
+	private SubcontractorDtoMapper dtoMapper;
+	
+	@Test
+	public void testGetAllSubcontractorWithData() {
+		// Mock data
+		String nameColonne = "s_id";
+		String sorting = "asc";
+		int page = 2;
+		int pageSize = 2;
 
+		List<Subcontractor> mockSubcontractors = new ArrayList<>();
+		mockSubcontractors.add(new Subcontractor(1, "roger", "hh@outlook.fr", new Status(1,"EN_COURS","AAAA")));
+	
+		List<SubcontractorDto> mockDtos = new ArrayList<>();
+		mockDtos.add(new SubcontractorDto(1, "roger", "hh@outlook.fr", new Status(1,"EN_COURS","AAAA")));
+
+		// Mock the behavior of subcontractorMapper
+		when(subcontractorMapper.getAllSubcontractors(nameColonne, sorting, page, pageSize)).thenReturn(mockSubcontractors);
+		
+		// Mock the behavior of dtoMapper
+		when(dtoMapper.subcontractorToDto(any(Subcontractor.class))).thenReturn(mockDtos.get(0));
+	
+		List<SubcontractorDto> result = subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize);
+		
+		assertEquals(1, result.size());
+	}
+	
+    @Test
+    public void testGetAllSubcontractorWithNoData() {
+       
+        String nameColonne = "s_id";
+        String sorting = "asc";
+        int page = 1;
+        int pageSize = 10;
+
+        // Configurez le mock subcontractorMapper pour renvoyer une liste vide
+        when(subcontractorMapper.getAllSubcontractors(nameColonne, sorting, 0, pageSize))
+            .thenReturn(Collections.emptyList());
+
+        // Appelez la méthode que vous testez et vérifiez qu'elle génère une RuntimeException
+        assertThrows(RuntimeException.class, () -> {
+            subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize);
+        });
+    }
+    
 	@Test
 	public void testGetSubcontractorWithStatus_ExistingId_ShouldReturnDummySubcontractor() {
 		// on Mock le comportement de la classe SubcontractorMapper pour qu'elle
