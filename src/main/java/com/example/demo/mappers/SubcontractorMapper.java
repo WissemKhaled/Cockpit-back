@@ -24,8 +24,8 @@ public interface SubcontractorMapper {
 	// debut hamza : ce code permet de re,voyer une liste de soutraitans avec la
 	// pagination est le tri grave a la requette SQL
 	@Select("SELECT s.s_id, s.s_name, s.s_email, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
-			+ "FROM subcontractor s " + "INNER JOIN status st ON s.s_fk_status_id = st.st_id ")
-			//+ " ORDER BY ${nameColonne} ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} ")
+			+ "FROM subcontractor s " + "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
+			+ " ORDER BY ${nameColonne} ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} ")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "sName", column = "s_name")
 	@Result(property = "sEmail", column = "s_email")

@@ -37,8 +37,10 @@ public class SubcontractorController {
 	// et pour la pagination le nombre déelement a aficcher et la page en question
 	@GetMapping("/getAll")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(@RequestParam("nameColonne") String nameColonne,
-			@RequestParam("sorting") String sorting, @RequestParam("pageSize") int page,
-			@RequestParam("page") int pageSize) {
+																	  @RequestParam("sorting") String sorting, 
+																	  @RequestParam("pageSize") int page,
+																	  @RequestParam("page") int pageSize)
+	{
 		
 		try {
 			log.info("Affiche tous les sous-traitans");
