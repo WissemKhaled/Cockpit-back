@@ -10,8 +10,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class SubcontractorDto {
 	@JsonProperty("sId")
 	private int sId;

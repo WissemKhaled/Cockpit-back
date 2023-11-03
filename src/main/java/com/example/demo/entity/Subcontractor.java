@@ -6,13 +6,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Subcontractor {
-	
+
 	@JsonProperty("sId")
 	private int sId;
 
@@ -28,11 +30,6 @@ public class Subcontractor {
 	public Subcontractor(String sName, String sEmail) {
 		this.sName = sName;
 		this.sEmail = sEmail;
-	}
-
-	@Override
-	public String toString() {
-		return "Subcontractor [sId=" + sId + ", sName=" + sName + ", sEmail=" + sEmail + ", status=" + status + "]";
 	}
 
 }

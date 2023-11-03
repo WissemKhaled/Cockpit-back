@@ -8,14 +8,12 @@ import com.example.demo.service.StatusService;
 
 import lombok.AllArgsConstructor;
 
-
-
 @Component
 @AllArgsConstructor
 public class SubcontractorDtoMapper {
-	
+
 	private final StatusService statusService;
-	
+
 	public SubcontractorDto subcontractorToDto(Subcontractor subcontractor) {
 		return new SubcontractorDto(subcontractor.getSId(), subcontractor.getSName(), subcontractor.getSEmail(),
 				subcontractor.getStatus());

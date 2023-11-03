@@ -2,8 +2,6 @@ package com.example.demo.config;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -11,11 +9,13 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
+import lombok.extern.java.Log;
+
 @Configuration
+@Log
 public class PersistenceConfig {
 
-	Logger logger = LoggerFactory.getLogger(PersistenceConfig.class);
-	private String dBType = "H2";
+	private String dBType = "postgres"; //{H2,postgres}
 
 	// configuration de la BDD embarquée H2
 	@Bean
@@ -33,34 +33,33 @@ public class PersistenceConfig {
 			dataSource.setDriverClassName("org.postgresql.Driver");
 			dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
 			dataSource.setUsername("postgres");
-			dataSource.setPassword("1234");
+			dataSource.setPassword("root");
 		}
 		return dataSource;
-
 	}
 
 	// Initialisation de postgres BDD
-	@Bean
-	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-
-		if (dBType.equals("H2")) {
-			logger.info("Executing data-test.sql");
-			populator.addScript(new ClassPathResource("data-test.sql"));
-		} else if (dBType.equals("postgres")) {
-			logger.info("Executing schema-dev.sql");
-			populator.addScript(new ClassPathResource("schema-dev.sql"));
-
-			logger.info("Executing data-dev.sql");
-			populator.addScript(new ClassPathResource("data-dev.sql"));
-		}
-
-		DataSourceInitializer initializer = new DataSourceInitializer();
-		initializer.setDataSource(dataSource);
-		initializer.setDatabasePopulator(populator);
-
-		return initializer;
-	}
+//	@Bean
+//	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//
+//		if (dBType.equals("H2")) {
+//			log.info("Executing data-test.sql");
+//			populator.addScript(new ClassPathResource("data-test.sql"));
+//		} else if (dBType.equals("postgres")) {
+//			log.info("Executing schema-dev.sql");
+//			populator.addScript(new ClassPathResource("schema-dev.sql"));
+//
+//			log.info("Executing data-dev.sql");
+//			populator.addScript(new ClassPathResource("data-dev.sql"));
+//		}
+//
+//		DataSourceInitializer initializer = new DataSourceInitializer();
+//		initializer.setDataSource(dataSource);
+//		initializer.setDatabasePopulator(populator);
+//
+//		return initializer;
+//	}
 
 	// commented code for Spring profiles
 //  Configuration for PostgreSQL
@@ -98,5 +97,4 @@ public class PersistenceConfig {
 //		initializer.setDatabasePopulator(populator);
 //		return initializer;
 //	}
-
 }
