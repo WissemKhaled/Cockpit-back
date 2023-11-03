@@ -5,15 +5,16 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.demo.controller.exception.SubcontractorNotFoundException;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
+import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorMapper;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,6 +25,13 @@ public class SubcontractorServiceTest {
 
 	@InjectMocks
 	private SubcontractorServiceImpl subcontractorService;
+	
+//	@BeforeAll //pour le test d'archivage
+//	void init() {
+//		Subcontractor SubcontractorToSave = new Subcontractor(2, "ArchiveTest", "ArchiveTest@email.fr",
+//				new Status(1, "EN_COURS", "AAAA"));
+//		subcontractorMapper.insertSubcontractor(SubcontractorToSave);
+//	}
 
 	@Test
 	public void testGetSubcontractorWithStatus_ExistingId_ShouldReturnDummySubcontractor() {
@@ -113,6 +121,24 @@ public class SubcontractorServiceTest {
 
 		int isSubcontractorUpdated = subcontractorService.updateSubcontractor(savedSubcontractor);
 		assertEquals(0, isSubcontractorUpdated);
+	}
+	
+	@Test
+	void archiveSubcontractorTest_ArchivingASubcontractor_ShouldReturnOne() {
+		Subcontractor existingSubcontractor = new Subcontractor(2, "ArchiveTest", "ArchiveTest@email.fr",
+				new Status(1, "EN_COURS", "AAAA"));
+		given(subcontractorMapper.archive(existingSubcontractor)).willReturn(1);
+		int isSubcontractorArchived = subcontractorService.archiveSubcontractor(existingSubcontractor);
+		assertEquals(isSubcontractorArchived, 1);
+	}
+	
+	@Test
+	void archiveSubcontractorTest_ArchivingASubcontractorFailed_ShouldReturnZero() {
+		Subcontractor existingSubcontractor = new Subcontractor(2, "ArchiveTest", "ArchiveTest@email.fr",
+				new Status(1, "EN_COURS", "AAAA"));
+		given(subcontractorMapper.archive(existingSubcontractor)).willReturn(0);
+		int isSubcontractorArchived = subcontractorService.archiveSubcontractor(existingSubcontractor);
+		assertEquals(isSubcontractorArchived, 0);
 	}
 
 }

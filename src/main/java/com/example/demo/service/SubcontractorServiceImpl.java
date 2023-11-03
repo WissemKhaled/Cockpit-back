@@ -2,8 +2,8 @@ package com.example.demo.service;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.controller.exception.SubcontractorNotFoundException;
 import com.example.demo.entity.Subcontractor;
+import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorMapper;
 
 import lombok.AllArgsConstructor;
@@ -40,6 +40,11 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	public int updateSubcontractor(Subcontractor subcontractor) {
 		int isSubcontractorUpdated = subcontractorMapper.updateSubcontractor(subcontractor);
 		return isSubcontractorUpdated;
+	}
+
+	@Override
+	public int archiveSubcontractor(Subcontractor subcontractortoArchive) {
+		return subcontractorMapper.archive(subcontractortoArchive);
 	}
 
 }

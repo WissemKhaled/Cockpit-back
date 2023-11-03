@@ -10,4 +10,6 @@ public interface SubcontractorService {
 
 	int updateSubcontractor(Subcontractor subcontractor);
 
+	int archiveSubcontractor(Subcontractor subcontractortoArchive);
+
 }

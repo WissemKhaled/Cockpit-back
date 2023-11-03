@@ -15,7 +15,7 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 public class PersistenceConfig {
 
 	Logger logger = LoggerFactory.getLogger(PersistenceConfig.class);
-	private String dBType = "H2";
+	private String dBType = "H2"; // {H2,postgres}
 
 	// configuration de la BDD embarquée H2
 	@Bean
@@ -40,27 +40,27 @@ public class PersistenceConfig {
 	}
 
 	// Initialisation de postgres BDD
-	@Bean
-	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-
-		if (dBType.equals("H2")) {
-			logger.info("Executing data-test.sql");
-			populator.addScript(new ClassPathResource("data-test.sql"));
-		} else if (dBType.equals("postgres")) {
-			logger.info("Executing schema-dev.sql");
-			populator.addScript(new ClassPathResource("schema-dev.sql"));
-
-			logger.info("Executing data-dev.sql");
-			populator.addScript(new ClassPathResource("data-dev.sql"));
-		}
-
-		DataSourceInitializer initializer = new DataSourceInitializer();
-		initializer.setDataSource(dataSource);
-		initializer.setDatabasePopulator(populator);
-
-		return initializer;
-	}
+//	@Bean
+//	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//
+//		if (dBType.equals("H2")) {
+//			logger.info("Executing data-test.sql");
+//			populator.addScript(new ClassPathResource("data-test.sql"));
+//		} else if (dBType.equals("postgres")) {
+//			logger.info("Executing schema-dev.sql");
+//			populator.addScript(new ClassPathResource("schema-dev.sql"));
+//
+//			logger.info("Executing data-dev.sql");
+//			populator.addScript(new ClassPathResource("data-dev.sql"));
+//		}
+//
+//		DataSourceInitializer initializer = new DataSourceInitializer();
+//		initializer.setDataSource(dataSource);
+//		initializer.setDatabasePopulator(populator);
+//
+//		return initializer;
+//	}
 
 	// commented code for Spring profiles
 //  Configuration for PostgreSQL

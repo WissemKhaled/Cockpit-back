@@ -101,6 +101,8 @@ public class SubcontractorControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(MockMvcResultMatchers.jsonPath("$.sName").value("test_updating_Sb_1"));
 	}
+	
+	
 
 	// method pour convertir un objet Java en sa représentation JSON sous forme de
 	// chaîne de caractères.
