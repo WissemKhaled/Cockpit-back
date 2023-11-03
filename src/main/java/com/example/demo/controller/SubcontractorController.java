@@ -30,7 +30,6 @@ import lombok.extern.java.Log;
 public class SubcontractorController {
 
 	private final SubcontractorService subcontractorService;
-
 	private final SubcontractorDtoMapper dtoMapper;
 
 	// debut hamza : ce code permet de renvoyer la liste des soustraitan
@@ -67,31 +66,31 @@ public class SubcontractorController {
 
 	}
 
+// méthode pour récuperer un sous-traitant s'il existe, sinon elle retourn un error 404
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getSubcontractor(@PathVariable String id) {
 		try {
 			int parsedId = Integer.parseInt(id);
-			Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(parsedId);
-			return new ResponseEntity<>(subcontractor, HttpStatus.FOUND);
+			if (parsedId > 0) {
+				Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(parsedId);
+				return new ResponseEntity<>(subcontractor, HttpStatus.FOUND);
+			} else {
+				throw new NumberFormatException();
+			}
 		} catch (NumberFormatException e) {
-			return new ResponseEntity<>("Invalid ID format. Please provide a valid integer ID.",
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Id non valide", HttpStatus.BAD_REQUEST);
 		} catch (SubcontractorNotFoundException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
 	}
 
-	// méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on
-	// le modifier
+// méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on le modifie
 	@PostMapping("/save")
 	public ResponseEntity<?> saveSubcontractor(@RequestBody SubcontractorDto subcontractorDto) {
 		try {
 			if (subcontractorDto.getSId() > 0) {
 
-				Subcontractor subcontractor = subcontractorService
-						.getSubcontractorWithStatus(subcontractorDto.getSId());
-
-				// If the subcontractor exists, update
+				// si le sous-traitant existe, update
 				Subcontractor subcontractorToUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
 				subcontractorService.updateSubcontractor(subcontractorToUpdate);
 				Subcontractor updatedSubcontractor = subcontractorService
@@ -102,6 +101,7 @@ public class SubcontractorController {
 				return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
 			}
 		} catch (SubcontractorNotFoundException e) {
+			// si le sous-traitant n'existe pas, save
 			int savedSubcontractorId = subcontractorService
 					.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
 			Subcontractor savedSubcontractor = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
@@ -112,6 +112,7 @@ public class SubcontractorController {
 		}
 	}
 
+	// methode pour archiver le sous-traitant
 	@PutMapping("/archive/{id}")
 	public ResponseEntity<?> archiveSubcontractor(@PathVariable String id) {
 		try {
@@ -123,12 +124,14 @@ public class SubcontractorController {
 							String.format("le sout-traitant avec l'id: %d est déjà archivé", parsedId));
 				}
 				subcontractorService.archiveSubcontractor(subcontractortoArchive);
-				return new ResponseEntity<>("le sout-traitant est archivé avec succés", HttpStatus.OK);
+				return new ResponseEntity<>(subcontractorService.getSubcontractorWithStatus(parsedId), HttpStatus.OK);
 			} else {
 				throw new NumberFormatException();
 			}
+		} catch (AlreadyArchivedSubcontractor e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
-			return new ResponseEntity<>("format de l'id est invalide.", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("format de l'id est invalide.", HttpStatus.NOT_ACCEPTABLE);
 		} catch (SubcontractorNotFoundException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
