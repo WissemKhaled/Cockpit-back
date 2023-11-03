@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -11,77 +12,87 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.CreateUserDTO;
+import com.example.demo.dto.CreateUserMapperEntityDTO;
 import com.example.demo.dto.UUserDTO;
 import com.example.demo.dto.UUserMapperEntityDTO;
 import com.example.demo.entity.UUser;
 import com.example.demo.mappers.UUserMapper;
 
 @Service
-public class UserInfoService  implements UserDetailsService {
+public class UserInfoService implements UserDetailsService {
 	@Autowired
-	private PasswordEncoder encoder; 
-	
+	private PasswordEncoder encoder;
+
 	private static final Logger LOG = LoggerFactory.getLogger(UserInfoService.class);
-	
+
 	@Autowired
-	private UUserMapper userMapper; // maybatis mapper (to make sql request)
-	
+	private UUserMapper userMapper;
+
 	@Autowired
 	private UUserMapperEntityDTO uUserMapperEntityDTO;
+	
+	@Autowired
+	private CreateUserMapperEntityDTO createUserMapperEntityDTO;
 
+	
+	/*
+	 * Méthode de sprig security qui sert à lier l'urtilisateur à ses infos
+	 * */
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		LOG.info("loadByUsername function");
+		Optional<UUser> userDetail = userMapper.findByEmail(email);
 
-		LOG.info("email = " + email);
-		
-		Optional<UUser> userDetail = userMapper.findByEmail(email); 
-		
-		LOG.info("userDetail = " + userDetail);
-
-		// Converting userDetail to UserInfoDetails 
+		// Conversion de userDetail vers UserInfoDetails
 		return userDetail.map(UserInfoDetails::new)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found " + email)); 
+				.orElseThrow(() -> new UsernameNotFoundException("User not found " + email));
 	}
 	
+	/*
+	 * Méthode qui retourne les informations de l'utilisateur en fonction de son email
+	 * */
 	public UUserDTO findUserByEmail(String email) {
-	    try {
-	        if (email != null && !email.isBlank()) {
-	            Optional<UUser> foundUser = userMapper.findByEmail(email);
-	            
-	            UUser userInfo = foundUser.orElseThrow(() -> new UsernameNotFoundException("User not found " + email));
+		try {
+			if (email != null && !email.isBlank()) {
+				Optional<UUser> foundUser = userMapper.findByEmail(email);
+				UUser userInfo = foundUser.orElseThrow(() -> new UsernameNotFoundException("User not found " + email));
+				UUserDTO userInfoDTO = uUserMapperEntityDTO.toDto(userInfo);
 
-	            // Use UserInfoMapper to convert UUser to UserInfoDTO
-	            UUserDTO userInfoDTO = uUserMapperEntityDTO.toDto(userInfo);
-
-	            return userInfoDTO;
-	        } else {
-	            throw new IllegalArgumentException("Invalid username");
-	        }
-	    } catch (UsernameNotFoundException e) {
-	        LOG.error("User not found: {}", e.getMessage(), e);
-	        e.printStackTrace();
-	        return null;
-	    }
+				return userInfoDTO;
+			} else {
+				throw new IllegalArgumentException("Invalid username");
+			}
+		} catch (UsernameNotFoundException e) {
+			LOG.error("User not found: {}", e.getMessage(), e);
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
+	/*
+	 * Méthode qui retourne les informations de l'utilisateur en fonction de son id
+	 * */
 	public UserDetails findById(int id) throws UsernameNotFoundException {
-		LOG.info("findById function");
+		Optional<UUser> userDetail = userMapper.findById(id);
 
-		LOG.info("id = " + id);
-		
-		Optional<UUser> userDetail = userMapper.findById(id); 
-		
-		LOG.info("userDetail = " + userDetail);
-
-		// Converting userDetail to UserInfoDetails 
+		// Converting userDetail to UserInfoDetails
 		return userDetail.map(UserInfoDetails::new)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found " + id)); 
+				.orElseThrow(() -> new UsernameNotFoundException("User not found " + id));
 	}
-	
-	public String addUser(UUser userInfo) {
-	    userInfo.setUPassword(encoder.encode(userInfo.getUPassword()));
-	    userMapper.insert(userInfo);
-	    return "User Added Successfully";
-	}
+
+	public String addUser(CreateUserDTO userDTO) {
+        UUser user = createUserMapperEntityDTO.toUser(userDTO);
+        user.setUPassword(encoder.encode(user.getUPassword()));
+        user.setUInsertionDate(LocalDate.now());
+        
+        try {
+        	 userMapper.insert(user);
+        	 LOG.info("User Added Successfully");
+             return "User Added Successfully";
+        } catch(Exception  ex) {
+        	// Log the exception for debugging
+            LOG.error("Error adding user: " + ex.getMessage(), ex);
+            throw new RuntimeException("Error adding user. Please try again later");
+        }
+    }
 }

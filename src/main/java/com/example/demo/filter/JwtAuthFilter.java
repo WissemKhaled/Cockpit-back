@@ -19,7 +19,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-//This class helps us to validate the generated jwt token 
+// Cette classe sert à valider le jwt généré
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 

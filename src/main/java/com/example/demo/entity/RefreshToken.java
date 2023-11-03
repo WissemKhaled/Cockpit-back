@@ -28,9 +28,6 @@ public class RefreshToken {
 	@JsonProperty("rtExpiryDate")
 	private Instant rtExpiryDate;
 
-//	@JsonProperty("rtFkUserId")
-//	private int rtFkUserId;
-
 	@JsonProperty("uUser")
 	private UUser uUser;
 

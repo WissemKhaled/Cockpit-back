@@ -29,7 +29,6 @@ public class RefreshTokenService {
     private static final Logger LOG = LoggerFactory.getLogger(RefreshTokenService.class);
 
     public RefreshToken createRefreshToken(String email) {
-        LOG.info("email: " + email);
         
         RefreshToken refreshToken = RefreshToken.builder()
             .uUser(uUserMapper.findByEmail(email).get())
@@ -37,20 +36,15 @@ public class RefreshTokenService {
             .rtExpiryDate(Instant.now().plusSeconds(refreshTokenExpirationDuration))
             .build();
         
-        // Insert the RefreshToken and retrieve the generated key (rtId)
+        // Insère le refresh token en base de donnée et récupère la clé générée (rtId)
         int rowsAffected = refreshTokenMapper.insert(refreshToken);
         
         if (rowsAffected > 0) {
-            // The insert was successful, we can access the generated key from the RefreshToken
             int generatedRtId = refreshToken.getRtId();
             LOG.info("RefreshToken inserted with rtId: " + generatedRtId);
-            
-            // You can return the RefreshToken with the generated rtId
             return refreshToken;
         } else {
-            // Handle the case where the insert failed
             LOG.error("RefreshToken insert failed.");
-            // Return null or throw an exception to indicate the failure
             return null;
         }
     }

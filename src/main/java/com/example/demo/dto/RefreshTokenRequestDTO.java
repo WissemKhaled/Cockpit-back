@@ -1,9 +1,5 @@
 package com.example.demo.dto;
 
-import java.time.Instant;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;

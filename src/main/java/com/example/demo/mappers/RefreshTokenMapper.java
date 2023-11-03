@@ -11,11 +11,10 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 
 import com.example.demo.entity.RefreshToken;
-import com.example.demo.entity.UUser;
 
 public interface RefreshTokenMapper {
 	/*
-	 * Find refreshToken by token (token id)
+	 * Trouve le refresh token par son id
 	 */
 	@Select("SELECT rt.rt_id, rt.rt_token, rt.rt_expiry_date, u.u_id as uId, u.u_email, u.u_password, u.u_first_name, u.u_last_name, u.u_status, u.u_insertion_date, u.u_last_update "
 			+ "FROM refresh_token rt " 
@@ -60,17 +59,15 @@ public interface RefreshTokenMapper {
 	        "VALUES (#{rtToken}, TO_TIMESTAMP(#{rtExpiryDate}, 'YYYY-MM-DD HH24:MI:SS'), #{uUser.uId})")
 	@Options(useGeneratedKeys = true, keyProperty = "rtId", keyColumn = "rt_id")
 	int insert(RefreshToken refreshToken);
-
-
 	
 	/*
-	 * Delete refreshToken by userId
+	 * Supprime le refresh token par le userId
 	 */
 	@Delete("DELETE FROM refresh_token WHERE rt_fk_user_id = #{userId}")
 	void deleteByUserId(@Param("userId") int userId);
 
 	/*
-	 * Delete refreshToken by token
+	 * Supprime le refresh token par le token (token key)
 	 */
 	@Delete("DELETE FROM refresh_token WHERE rt_token = #{token}")
 	void delete(@Param("token") RefreshToken token);
