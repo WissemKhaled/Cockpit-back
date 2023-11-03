@@ -12,11 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 
-import lombok.extern.java.Log;
-
 @SpringBootTest
-@Log
-@TestInstance(Lifecycle.PER_CLASS) // on utilise un @BeforeAll (@AfterAll) non-statique et la methodes qui lui corresponde, donc on a besoin de changer test instance lifecycle vers per_class.
+@TestInstance(Lifecycle.PER_CLASS) // on utilise un @BeforeAll (@AfterAll) non-statique et la methodes qui lui
+									// corresponde, donc on a besoin de changer test instance lifecycle vers
+									// per_class.
 public class SubcontractorMapperTest {
 
 	@Autowired
@@ -34,7 +33,7 @@ public class SubcontractorMapperTest {
 		Subcontractor existingSubcontractor = new Subcontractor(2, "ArchiveTest", "ArchiveTest@email.fr",
 				new Status(1, "EN_COURS", "AAAA"));
 		int isArchived = subcontractorMapper.archive(existingSubcontractor);
-		assertEquals(isArchived, 1);
+		assertEquals(1, isArchived);
 	}
 
 	@Test
@@ -42,6 +41,6 @@ public class SubcontractorMapperTest {
 		Subcontractor nonExistingSubcontractor = new Subcontractor(Integer.MAX_VALUE, "ArchiveTest",
 				"ArchiveTest@email.fr", new Status(1, "EN_COURS", "AAAA"));
 		int isNotArchived = subcontractorMapper.archive(nonExistingSubcontractor);
-		assertEquals(isNotArchived, 0);
+		assertEquals(0, isNotArchived);
 	}
 }
