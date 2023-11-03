@@ -19,7 +19,14 @@ CREATE TABLE IF NOT EXISTS u_user (
     u_first_name VARCHAR(45) DEFAULT NULL,
     u_last_name VARCHAR(45) DEFAULT NULL,
     u_status BOOLEAN DEFAULT FALSE,
-    u_roles VARCHAR(45) DEFAULT 'ROLE_USER',
     u_insertion_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     u_last_update TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS refresh_token (
+    rt_id SERIAL PRIMARY KEY,
+    rt_token VARCHAR(255) NOT NULL,
+    rt_expiry_date TIMESTAMP NOT NULL,
+    rt_fk_user_id SMALLINT NOT NULL,
+    FOREIGN KEY (rt_fk_user_id) REFERENCES u_user(u_id)
 );

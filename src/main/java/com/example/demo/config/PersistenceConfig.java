@@ -12,8 +12,9 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
-import com.example.demo.entity.Status;
 import com.example.demo.mappers.EStatusTypeHandler;
+
+import ch.qos.logback.core.status.Status;
 
 @Configuration
 @MapperScan("com.example.demo.mappers")
@@ -25,7 +26,7 @@ public class PersistenceConfig {
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
 		dataSource.setUsername("postgres");
-		dataSource.setPassword("postgres");
+		dataSource.setPassword("0622178800-Yb");
 		return dataSource;
 	}
 
@@ -55,5 +56,18 @@ public class PersistenceConfig {
 
 		return factoryBean.getObject();
 	}
-
+	
+	// handle the refreshtoken datatype issue with mybatis
+//	@Bean
+//	public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+//		SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+//		factoryBean.setDataSource(dataSource);
+// 
+//		org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+//		configuration.getTypeHandlerRegistry().register(RefreshToken.class,
+//				RefreshTokenTypeHandler.class);
+//		factoryBean.setConfiguration(configuration);
+// 
+//		return factoryBean.getObject();
+//	}
 }

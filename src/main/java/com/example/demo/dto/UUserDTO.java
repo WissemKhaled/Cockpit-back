@@ -27,21 +27,9 @@ public class UUserDTO {
 	@JsonProperty("uStatus")
 	private boolean uStatus;
 	
-	@JsonProperty("uRoles")
-	private String uRoles;
-	
 	@JsonProperty("insertionDate")
 	private LocalDate insertionDate;
 	
 	@JsonProperty("lastUpdate")
 	private LocalDate lastUpdate;
-	
-	public UUserDTO(int uId, String uEmail, String uFirstName, String uLastName, boolean uStatus, String uRoles) {
-		this.uId = uId;
-		this.uEmail = uEmail;
-		this.uFirstName = uFirstName;
-		this.uLastName = uLastName;
-		this.uStatus = uStatus;
-		this.uRoles = uRoles;
-	}
 }

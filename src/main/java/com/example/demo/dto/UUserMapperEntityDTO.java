@@ -8,11 +8,11 @@ import com.example.demo.entity.UUser;
 public class UUserMapperEntityDTO {
 	public UUserDTO toDto(UUser userInfo) {
 		return new UUserDTO(userInfo.getUId(), userInfo.getUEmail(), userInfo.getUFirstName(), userInfo.getULastName(),
-				userInfo.isUStatus(), userInfo.getURoles());
+				userInfo.isUStatus(), userInfo.getUInsertionDate(), userInfo.getULastUpdate());
 	}
 
 	public UUser toUser(UUserDTO userInfoDto) {
 		return new UUser(userInfoDto.getUId(), userInfoDto.getUEmail(), userInfoDto.getUFirstName(), userInfoDto.getULastName(), userInfoDto.isUStatus(),
-				userInfoDto.getInsertionDate(), userInfoDto.getLastUpdate(), userInfoDto.getURoles());
+				userInfoDto.getInsertionDate(), userInfoDto.getLastUpdate());
 	}
 }

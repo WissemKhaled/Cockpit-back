@@ -65,9 +65,22 @@ public class UserInfoService  implements UserDetailsService {
 	    }
 	}
 	
+	public UserDetails findById(int id) throws UsernameNotFoundException {
+		LOG.info("findById function");
+
+		LOG.info("id = " + id);
+		
+		Optional<UUser> userDetail = userMapper.findById(id); 
+		
+		LOG.info("userDetail = " + userDetail);
+
+		// Converting userDetail to UserInfoDetails 
+		return userDetail.map(UserInfoDetails::new)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found " + id)); 
+	}
+	
 	public String addUser(UUser userInfo) {
 	    userInfo.setUPassword(encoder.encode(userInfo.getUPassword()));
-	    userInfo.setURoles("ROLE_USER");
 	    userMapper.insert(userInfo);
 	    return "User Added Successfully";
 	}
