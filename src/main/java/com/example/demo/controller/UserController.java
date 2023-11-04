@@ -90,11 +90,6 @@ public class UserController {
 	    }
 	}
 	
-	@GetMapping("/user/test")
-	public Optional<RefreshToken> findRefreshTokenWithUserByUserId(@RequestParam int uId) {
-		return refreshTokenMapper.findRefreshTokenWithUserByUserId(uId);
-	}
-	
 	/*
 	 * Méthode de création d'un user avec validation du pattern de mot de passe et email
 	 * */
