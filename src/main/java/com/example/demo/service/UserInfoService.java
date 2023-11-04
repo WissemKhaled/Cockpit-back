@@ -1,11 +1,8 @@
 package com.example.demo.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,12 +17,13 @@ import com.example.demo.dto.UUserMapperEntityDTO;
 import com.example.demo.entity.UUser;
 import com.example.demo.mappers.UUserMapper;
 
+import lombok.extern.java.Log;
+
+@Log
 @Service
 public class UserInfoService implements UserDetailsService {
 	@Autowired
 	private PasswordEncoder encoder;
-
-	private static final Logger LOG = LoggerFactory.getLogger(UserInfoService.class);
 
 	@Autowired
 	private UUserMapper userMapper;
@@ -46,7 +44,7 @@ public class UserInfoService implements UserDetailsService {
 
 		// Conversion de userDetail vers UserInfoDetails
 		return userDetail.map(UserInfoDetails::new)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found " + email));
+				.orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé " + email));
 	}
 	
 	/*
@@ -56,15 +54,18 @@ public class UserInfoService implements UserDetailsService {
 		try {
 			if (email != null && !email.isBlank()) {
 				Optional<UUser> foundUser = userMapper.findByEmail(email);
-				UUser userInfo = foundUser.orElseThrow(() -> new UsernameNotFoundException("User not found " + email));
+				UUser userInfo = foundUser.orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé " + email));
 				UUserDTO userInfoDTO = uUserMapperEntityDTO.toDto(userInfo);
-
+				
+				log.info("Récupération des informations utilisateur par e-mail : " + userInfoDTO.getUEmail());
+				
 				return userInfoDTO;
 			} else {
-				throw new IllegalArgumentException("Invalid username");
+				log.severe(String.format("Email invalide %s" + email));
+				throw new IllegalArgumentException("Email invalide");
 			}
 		} catch (UsernameNotFoundException e) {
-			LOG.error("User not found: {}", e.getMessage(), e);
+			log.severe(String.format("Utilisateur non trouvé : {}", e.getMessage(), e));
 			e.printStackTrace();
 			return null;
 		}
@@ -78,7 +79,7 @@ public class UserInfoService implements UserDetailsService {
 
 		// Converting userDetail to UserInfoDetails
 		return userDetail.map(UserInfoDetails::new)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found " + id));
+				.orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé avec l'id : " + id));
 	}
 
 	public String addUser(CreateUserDTO userDTO) {
@@ -88,12 +89,12 @@ public class UserInfoService implements UserDetailsService {
         
         try {
         	 userMapper.insert(user);
-        	 LOG.info("User Added Successfully");
-             return "User Added Successfully";
+        	 log.info("Utilisateur ajouté avec succès");
+             return "Utilisateur ajouté avec succès";
         } catch(Exception  ex) {
         	// Log the exception for debugging
-            LOG.error("Error adding user: " + ex.getMessage(), ex);
-            throw new RuntimeException("Error adding user. Please try again later");
+            log.severe("Error d'ajout d'utilisateur: " + ex.getMessage());
+            throw new RuntimeException("Error d'ajout d'utilisateur. Veuillez réessayer plus tard");
         }
     }
 }

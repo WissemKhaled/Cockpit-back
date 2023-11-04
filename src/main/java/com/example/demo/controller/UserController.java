@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +38,9 @@ import com.example.demo.service.UserInfoService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.extern.java.Log;
 
+@Log
 @RestController
 @CrossOrigin("http://localhost:4200")
 @RequestMapping("/auth") 
@@ -59,8 +59,6 @@ public class UserController {
 	
 	@Autowired
 	private RefreshTokenMapper refreshTokenMapper;
-
-	private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
 	
 	/*
 	 * Méthode qui retourne les infos du user authentifié
@@ -81,18 +79,16 @@ public class UserController {
 	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 	        }
 	    } catch (UsernameNotFoundException e) {
-	        LOG.error("User not found: {}", e.getMessage(), e);
+	        log.severe(String.format("Utilisateur non trouvé: {}", e.getMessage()));
 	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	    } catch (IllegalArgumentException e) {
-	        LOG.error("Invalid username: {}", e.getMessage(), e);
+	    	log.severe(String.format("Email invalide: {}", e.getMessage()));
 	        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	    } catch (Exception e) {
-	        LOG.error("An unexpected error occurred: {}", e.getMessage(), e);
+	    	log.severe(String.format("Une erreur innatendue est survenue: {}", e.getMessage()));
 	        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	    }
 	}
-
-
 	
 	@GetMapping("/user/test")
 	public Optional<RefreshToken> findRefreshTokenWithUserByUserId(@RequestParam int uId) {
@@ -104,12 +100,12 @@ public class UserController {
 	 * */
 	@PostMapping("/addNewUser") 
 	public ResponseEntity<String> addNewUser(@Valid @RequestBody CreateUserDTO userInfo) {
-	    LOG.info("User created with email : " + userInfo.getUEmail());
+	    log.info("Utilisateur crée avec l'email : " + userInfo.getUEmail());
 	    try {
 	        String result = service.addUser(userInfo);
 	        return new ResponseEntity<>(result, HttpStatus.CREATED);
 	    } catch (Exception ex) {
-	        LOG.error("Error creating user: " + ex.getMessage(), ex);
+	        log.severe(String.format("Erreur de création de l'utilisateur: " + ex.getMessage()));
 	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	    }
 	}
@@ -125,14 +121,14 @@ public class UserController {
 	        UUserDTO user = service.findUserByEmail(authRequest.getEmail());
 	        
 	        if (authentication.isAuthenticated() && user.isUStatus()) {
-	        	LOG.info("user authenticated");
+	        	log.info("Utilisateur authentifié");
 	            RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getEmail());
 	            return JwtResponseDTO.builder()
 	                    .accessToken(jwtService.generateToken(authRequest.getEmail()))
 	                    .token(refreshToken.getRtToken()).build();
 	        } else {
-	        	LOG.error("invalid user request !");
-	            throw new UsernameNotFoundException("invalid user request or inactive user!");
+	        	log.severe("Requête utilisateur invalide !");
+	            throw new UsernameNotFoundException("Requête utilisateur invalide ou utilisateur innactif!");
 	        }
 	    }
 	 
@@ -141,7 +137,7 @@ public class UserController {
 	  * */
 	 @PostMapping("/refreshToken")
 	 public JwtResponseDTO refreshToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequest) {
-		 LOG.info("rtToken: " + refreshTokenRequest.getToken());
+		 log.info("rtToken: " + refreshTokenRequest.getToken());
 	     return refreshTokenService.findByToken(refreshTokenRequest.getToken())
 	         .map(refreshTokenService::verifyExpiration)
 	         .map(RefreshToken::getUUser)
