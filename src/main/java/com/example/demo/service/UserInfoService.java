@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -83,7 +84,7 @@ public class UserInfoService implements UserDetailsService {
 	public String addUser(CreateUserDTO userDTO) {
         UUser user = createUserMapperEntityDTO.toUser(userDTO);
         user.setUPassword(encoder.encode(user.getUPassword()));
-        user.setUInsertionDate(LocalDate.now());
+        user.setUInsertionDate(LocalDateTime.now());
         
         try {
         	 userMapper.insert(user);

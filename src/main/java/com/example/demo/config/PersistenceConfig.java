@@ -12,6 +12,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
+import com.example.demo.entity.RefreshToken;
 import com.example.demo.mappers.EStatusTypeHandler;
 
 import ch.qos.logback.core.status.Status;

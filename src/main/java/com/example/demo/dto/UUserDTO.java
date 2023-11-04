@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -28,8 +28,8 @@ public class UUserDTO {
 	private boolean uStatus;
 	
 	@JsonProperty("insertionDate")
-	private LocalDate insertionDate;
+	private LocalDateTime insertionDate;
 	
 	@JsonProperty("lastUpdate")
-	private LocalDate lastUpdate;
+	private LocalDateTime lastUpdate;
 }

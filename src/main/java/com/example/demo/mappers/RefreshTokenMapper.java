@@ -55,6 +55,11 @@ public interface RefreshTokenMapper {
 	Optional<RefreshToken> findRefreshTokenWithUserByUserId(@Param("rtId") int rtId);
 
 	
+//	@Insert("INSERT INTO refresh_token(rt_token, rt_expiry_date, rt_fk_user_id) " +
+//	        "VALUES (#{rtToken}, #{rtExpiryDate}, #{uUser.uId})")
+//	@Options(useGeneratedKeys = true, keyProperty = "rtId", keyColumn = "rt_id")
+//	int insert(RefreshToken refreshToken);
+	
 	@Insert("INSERT INTO refresh_token(rt_token, rt_expiry_date, rt_fk_user_id) " +
 	        "VALUES (#{rtToken}, TO_TIMESTAMP(#{rtExpiryDate}, 'YYYY-MM-DD HH24:MI:SS'), #{uUser.uId})")
 	@Options(useGeneratedKeys = true, keyProperty = "rtId", keyColumn = "rt_id")
@@ -70,5 +75,6 @@ public interface RefreshTokenMapper {
 	 * Supprime le refresh token par le token (token key)
 	 */
 	@Delete("DELETE FROM refresh_token WHERE rt_token = #{token}")
-	void delete(@Param("token") RefreshToken token);
+	void delete(@Param("token") String token);
+
 }

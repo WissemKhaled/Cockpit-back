@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -27,11 +28,11 @@ public class UUser {
 	@JsonProperty("uStatus")
 	private boolean uStatus;
 	@JsonProperty("uInsertionDate")
-	private LocalDate uInsertionDate;
+	private LocalDateTime uInsertionDate;
 	@JsonProperty("uLastUpdate")
-	private LocalDate uLastUpdate;
+	private LocalDateTime uLastUpdate;
 	
-	public UUser(int uId, String uEmail, String uFirstName, String uLastName, boolean uStatus, LocalDate uInsertionDate, LocalDate uLastUpdate) {
+	public UUser(int uId, String uEmail, String uFirstName, String uLastName, boolean uStatus, LocalDateTime uInsertionDate, LocalDateTime uLastUpdate) {
 		this.uId = uId;
 		this.uEmail = uEmail;
 		this.uFirstName = uFirstName;

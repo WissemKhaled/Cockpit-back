@@ -56,9 +56,10 @@ public class RefreshTokenService {
     
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getRtExpiryDate().compareTo(Instant.now()) < 0) {
-        	refreshTokenMapper.delete(token);
+            refreshTokenMapper.delete(token.getRtToken());
             throw new RuntimeException(token.getRtToken() + " Refresh token was expired. Please make a new signin request");
         }
         return token;
     }
+
 }
