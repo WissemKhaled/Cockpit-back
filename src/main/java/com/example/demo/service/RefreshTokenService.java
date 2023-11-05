@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.RefreshToken;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.RefreshTokenMapper;
 import com.example.demo.mappers.UUserMapper;
 
@@ -52,16 +53,23 @@ public class RefreshTokenService {
     /*
      * Méthode renvoyant le refreshtoken en fonction de la clé token passé en paramètre
      * */
-    public Optional<RefreshToken> findByToken(String token) {
-    	log.info("Récupération du token avec la clé : " + token);
-        return refreshTokenMapper.findByToken(token);
+    public Optional<RefreshToken> findByToken(String token) throws GeneralException {
+        log.info("Récupération du token avec la clé : " + token);
+
+        Optional<RefreshToken> refreshToken = refreshTokenMapper.findByToken(token);
+
+        if (!refreshToken.isPresent()) {
+            log.warning("Le refresh token avec la clé '" + token + "' n'a pas été trouvé dans la base de données.");
+        }
+
+        return Optional.ofNullable(refreshToken.orElseThrow(() -> new GeneralException("Le refresh token avec la clé '" + token + "' n'a pas été trouvé dans la base de données.")));
     }
+
+
     
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getRtExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokenMapper.delete(token.getRtToken());
-            log.info(token.getRtToken() + " Refresh token expiré. Suppression de la base de donnée");
-            throw new RuntimeException(token.getRtToken() + " Refresh token expiré. Veuillez vous reconnecter");
         }
         return token;
     }

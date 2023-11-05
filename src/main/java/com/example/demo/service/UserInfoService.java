@@ -89,8 +89,8 @@ public class UserInfoService implements UserDetailsService {
         
         try {
         	 userMapper.insert(user);
-        	 log.info("Utilisateur ajouté avec succès");
-             return "Utilisateur ajouté avec succès";
+        	 log.info("Utilisateur '" + user.getUEmail() + "' ajouté avec succès");
+             return "Utilisateur '" + user.getUEmail() + "' ajouté avec succès";
         } catch(Exception  ex) {
         	// Log the exception for debugging
             log.severe("Error d'ajout d'utilisateur: " + ex.getMessage());

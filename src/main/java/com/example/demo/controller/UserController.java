@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +30,8 @@ import com.example.demo.dto.RefreshTokenRequestDTO;
 import com.example.demo.dto.UUserDTO;
 import com.example.demo.entity.AuthRequest;
 import com.example.demo.entity.RefreshToken;
-import com.example.demo.mappers.RefreshTokenMapper;
+import com.example.demo.entity.UUser;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.RefreshTokenService;
 import com.example.demo.service.UserInfoService;
@@ -57,14 +57,11 @@ public class UserController {
 	@Autowired
 	private RefreshTokenService refreshTokenService;
 	
-	@Autowired
-	private RefreshTokenMapper refreshTokenMapper;
-	
 	/*
 	 * Méthode qui retourne les infos du user authentifié
 	 * */
 	@GetMapping("/user/userdetails")
-	public ResponseEntity<?> findByUsername(HttpServletRequest request) {
+	public ResponseEntity<?> findUserByEmail(HttpServletRequest request) {
 	    String authorizationHeader = request.getHeader("Authorization");
 	    
 	    try {
@@ -108,44 +105,55 @@ public class UserController {
 	/*
 	 * Méthode qui vérifie l'authentification du User et génère un token avec un tokenId servant à le refresh si l'authentification réussie
 	 * */
-	 @PostMapping("/generateToken")
-	    public JwtResponseDTO authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
-	        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
-	        
-	        // On vérifie si l'utilisateur a un statut actif, si c'est le cas, on lui génère un token
-	        UUserDTO user = service.findUserByEmail(authRequest.getEmail());
-	        
-	        if (authentication.isAuthenticated() && user.isUStatus()) {
-	        	log.info("Utilisateur authentifié");
-	            RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getEmail());
-	            return JwtResponseDTO.builder()
-	                    .accessToken(jwtService.generateToken(authRequest.getEmail()))
-	                    .token(refreshToken.getRtToken()).build();
-	        } else {
-	        	log.severe("Requête utilisateur invalide !");
-	            throw new UsernameNotFoundException("Requête utilisateur invalide ou utilisateur innactif!");
-	        }
+	@PostMapping("/generateToken")
+	public ResponseEntity<JwtResponseDTO> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+	    Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
+
+	    // Verify if the user has an active status; if yes, generate a token
+	    UUserDTO user = service.findUserByEmail(authRequest.getEmail());
+
+	    if (authentication.isAuthenticated() && user.isUStatus()) {
+	        log.info("Utilisateur authentifié");
+	        RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getEmail());
+	        JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
+	                .accessToken(jwtService.generateToken(authRequest.getEmail()))
+	                .token(refreshToken.getRtToken())
+	                .build();
+	        return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
+	    } else {
+	        log.severe("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
+	        throw new UsernameNotFoundException("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
 	    }
+	}
 	 
 	 /*
 	  * Méthode qui génère un refreshToken à partir de l'id du token en cours
 	  * */
 	 @PostMapping("/refreshToken")
-	 public JwtResponseDTO refreshToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequest) {
-		 log.info("rtToken: " + refreshTokenRequest.getToken());
-	     return refreshTokenService.findByToken(refreshTokenRequest.getToken())
-	         .map(refreshTokenService::verifyExpiration)
-	         .map(RefreshToken::getUUser)
-	         .map(userInfo -> {
-	        	    String accessToken = jwtService.generateToken(userInfo.getUEmail());
+	 public ResponseEntity<JwtResponseDTO> refreshToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequest) throws GeneralException {
+	     try {
+	         Optional<RefreshToken> optionalToken = refreshTokenService.findByToken(refreshTokenRequest.getToken());
 
-	        	    return JwtResponseDTO.builder()
-	        	        .accessToken(accessToken)
-	        	        .token(refreshTokenRequest.getToken())
-	        	        .build();
-	        	})
-	         .orElseThrow(() -> new RuntimeException("Refresh token is not in the database!"));
+	         if (optionalToken.isPresent()) {
+	             RefreshToken token = optionalToken.get();
+	             refreshTokenService.verifyExpiration(token);
+	             UUser userInfo = token.getUUser();
+
+	             String accessToken = jwtService.generateToken(userInfo.getUEmail());
+	             JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
+	                     .accessToken(accessToken)
+	                     .token(refreshTokenRequest.getToken())
+	                     .build();
+	             return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
+	         } else {
+	             throw new GeneralException("Refresh token invalide");
+	         }
+	     } catch (GeneralException e) {
+	         throw e;
+	     }
 	 }
+
+
     
 	/*
 	 * Méthode qui gère les exceptions d'authentification
@@ -155,8 +163,14 @@ public class UserController {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
     
+    // Méthode qui intercèpte les exceptions du type GeneralException
+ 	@ExceptionHandler(GeneralException.class)
+ 	public ResponseEntity<String> handleGeneralException(GeneralException ex) {
+ 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+ 	}
+    
     /*
-     * Méthode qui gère les exceptions de validation (pattern du mdp et de l'email)
+     * Méthode qui intercèpte les exceptions de validation (pattern du mdp et de l'email...)
      * */
  	@ResponseStatus(HttpStatus.BAD_REQUEST)
  	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -168,7 +182,7 @@ public class UserController {
 
  			errors.put(fieldName, errorMessage);
  		});
-
+ 		log.severe(errors.toString());
  		return errors;
  	}
 }
