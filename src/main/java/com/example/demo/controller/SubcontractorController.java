@@ -20,6 +20,7 @@ import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.service.SubcontractorService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 
@@ -86,7 +87,7 @@ public class SubcontractorController {
 
 // méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on le modifie
 	@PostMapping("/save")
-	public ResponseEntity<?> saveSubcontractor(@RequestBody SubcontractorDto subcontractorDto) {
+	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
 		try {
 			if (subcontractorDto.getSId() > 0) {
 

@@ -3,31 +3,38 @@ package com.example.demo.dto;
 import com.example.demo.entity.Status;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class SubcontractorDto {
 	@JsonProperty("sId")
 	private int sId;
 
+	@NotEmpty(message = "le nom est nécessaire")
+	@Size(min = 3, max = 250, message = "la longueur du nom doit etre entre 2 et 25O caractères")
 	@JsonProperty("sName")
 	private String sName;
 
+	@NotEmpty(message = "l'email est nécessaire")
+	@Pattern(regexp = "^[a-zA-Z](?:[a-zA-Z\\d]*[._-]?[a-zA-Z\\d]+)*@[a-zA-Z\\d._-]+[a-zA-Z\\d]+\\.[a-zA-Z]{2,3}$", message = "Le format de l'email est invalide")
 	@JsonProperty("sEmail")
 	private String sEmail;
 
+	@Valid
 	@JsonProperty("status")
 	private Status status;
-
-	@Override
-	public String toString() {
-		return "SubcontractorDto [sId=" + sId + ", sName=" + sName + ", sEmail=" + sEmail + ", status=" + status + "]";
-	}
 
 }
