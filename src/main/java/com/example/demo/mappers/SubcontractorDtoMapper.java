@@ -15,4 +15,3 @@ public class SubcontractorDtoMapper {
 		return new Subcontractor(subcontractorDto.getSId(),subcontractorDto.getSName(),subcontractorDto.getSEmail(),subcontractorDto.getSFkStatusId());
 	}
 }
- 

@@ -57,9 +57,9 @@ public class UserController {
 	@Autowired
 	private RefreshTokenService refreshTokenService;
 	
-	/*
+	/**
 	 * Méthode qui retourne les infos du user authentifié
-	 * */
+	*/
 	@GetMapping("/user/userdetails")
 	public ResponseEntity<?> findUserByEmail(HttpServletRequest request) {
 	    String authorizationHeader = request.getHeader("Authorization");
@@ -87,9 +87,9 @@ public class UserController {
 	    }
 	}
 	
-	/*
+	/**
 	 * Méthode de création d'un user avec validation du pattern de mot de passe et email
-	 * */
+	*/
 	@PostMapping("/addNewUser") 
 	public ResponseEntity<String> addNewUser(@Valid @RequestBody CreateUserDTO userInfo) {
 	    log.info("Utilisateur crée avec l'email : " + userInfo.getUEmail());
@@ -102,9 +102,9 @@ public class UserController {
 	    }
 	}
 	
-	/*
+	/**
 	 * Méthode qui vérifie l'authentification du User et génère un token avec un tokenId servant à le refresh si l'authentification réussie
-	 * */
+	*/
 	@PostMapping("/generateToken")
 	public ResponseEntity<JwtResponseDTO> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
 	    Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
@@ -126,9 +126,9 @@ public class UserController {
 	    }
 	}
 	 
-	 /*
+	 /**
 	  * Méthode qui génère un refreshToken à partir de l'id du token en cours
-	  * */
+	 */
 	 @PostMapping("/refreshToken")
 	 public ResponseEntity<JwtResponseDTO> refreshToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequest) throws GeneralException {
 	     try {
@@ -155,23 +155,25 @@ public class UserController {
 
 
     
-	/*
+	/**
 	 * Méthode qui gère les exceptions d'authentification
-	 * */
+	*/
     @ExceptionHandler({AuthenticationException.class})
     public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
     
-    // Méthode qui intercèpte les exceptions du type GeneralException
+    /** 
+     * Méthode qui intercèpte les exceptions du type GeneralException
+    */
  	@ExceptionHandler(GeneralException.class)
  	public ResponseEntity<String> handleGeneralException(GeneralException ex) {
  		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
  	}
     
-    /*
+    /**
      * Méthode qui intercèpte les exceptions de validation (pattern du mdp et de l'email...)
-     * */
+    */
  	@ResponseStatus(HttpStatus.BAD_REQUEST)
  	@ExceptionHandler(MethodArgumentNotValidException.class)
  	public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {

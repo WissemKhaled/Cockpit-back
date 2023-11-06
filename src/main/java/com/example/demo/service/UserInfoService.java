@@ -35,9 +35,9 @@ public class UserInfoService implements UserDetailsService {
 	private CreateUserMapperEntityDTO createUserMapperEntityDTO;
 
 	
-	/*
+	/**
 	 * Méthode de sprig security qui sert à lier l'urtilisateur à ses infos
-	 * */
+	*/
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		Optional<UUser> userDetail = userMapper.findByEmail(email);
@@ -47,9 +47,9 @@ public class UserInfoService implements UserDetailsService {
 				.orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé " + email));
 	}
 	
-	/*
+	/**
 	 * Méthode qui retourne les informations de l'utilisateur en fonction de son email
-	 * */
+	*/
 	public UUserDTO findUserByEmail(String email) {
 		try {
 			if (email != null && !email.isBlank()) {
@@ -71,9 +71,9 @@ public class UserInfoService implements UserDetailsService {
 		}
 	}
 	
-	/*
+	/**
 	 * Méthode qui retourne les informations de l'utilisateur en fonction de son id
-	 * */
+	*/
 	public UserDetails findById(int id) throws UsernameNotFoundException {
 		Optional<UUser> userDetail = userMapper.findById(id);
 
@@ -81,7 +81,10 @@ public class UserInfoService implements UserDetailsService {
 		return userDetail.map(UserInfoDetails::new)
 				.orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé avec l'id : " + id));
 	}
-
+	
+	/**
+	 * Méthode de crétion d'un utilisateur
+	*/
 	public String addUser(CreateUserDTO userDTO) {
         UUser user = createUserMapperEntityDTO.toUser(userDTO);
         user.setUPassword(encoder.encode(user.getUPassword()));

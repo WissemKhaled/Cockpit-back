@@ -12,7 +12,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
-import com.example.demo.entity.RefreshToken;
 import com.example.demo.mappers.EStatusTypeHandler;
 
 import ch.qos.logback.core.status.Status;
@@ -27,15 +26,15 @@ public class PersistenceConfig {
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
 		dataSource.setUsername("postgres");
-		dataSource.setPassword("0622178800-Yb");
+		dataSource.setPassword("postgres");
 		return dataSource;
 	}
 
 //	@Bean
 //	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
 //		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//		populator.addScript(new ClassPathResource("schema.sql"));
-//		populator.addScript(new ClassPathResource("data.sql"));
+//		populator.addScript(new ClassPathResource("schema-dev.sql"));
+//		populator.addScript(new ClassPathResource("data-dev.sql"));
 //
 //		DataSourceInitializer initializer = new DataSourceInitializer();
 //		initializer.setDataSource(dataSource);
@@ -43,6 +42,7 @@ public class PersistenceConfig {
 //
 //		return initializer;
 //	}
+
 //
 //	// handle the enum EStatus
 	@Bean
@@ -51,8 +51,7 @@ public class PersistenceConfig {
 		factoryBean.setDataSource(dataSource);
 
 		org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
-		configuration.getTypeHandlerRegistry().register(Status.class,
-				EStatusTypeHandler.class);
+		configuration.getTypeHandlerRegistry().register(Status.class, EStatusTypeHandler.class);
 		factoryBean.setConfiguration(configuration);
 
 		return factoryBean.getObject();

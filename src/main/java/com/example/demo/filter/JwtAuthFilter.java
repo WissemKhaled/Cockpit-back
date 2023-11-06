@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.example.demo.service.JwtService;
 import com.example.demo.service.UserInfoService;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,15 +54,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 	                    SecurityContextHolder.getContext().setAuthentication(authToken);
 	                }
 	            }
-	        } catch (Exception ex) {
-	            // Handle the exception:
-	            // - Log the exception
-	            // - Optionally, modify the response
-	            // - Optionally, return an error response
-
+	        } catch (ExpiredJwtException  ex) {
 	            log.severe("An error occurred in JwtAuthFilter: " + ex.getMessage());
 
-	            // throw new ServletException(ex);
+//	            throw ex;
 	            
 	        }
 	        filterChain.doFilter(request, response);
