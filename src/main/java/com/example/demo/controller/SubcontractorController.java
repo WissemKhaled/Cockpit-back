@@ -43,7 +43,6 @@ public class SubcontractorController {
 			@RequestParam("page") int pageSize) {
 
 		try {
-			log.info("Affiche tous les sous-traitans");
 			return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize),
 					HttpStatus.OK);
 
@@ -57,7 +56,6 @@ public class SubcontractorController {
 	// l'affichage
 	@GetMapping("/getAllPages")
 	public ResponseEntity<Integer> getAllPages(@RequestParam("pageSize") int pageSize) {
-		System.out.println(pageSize);
 		try {
 			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(pageSize), HttpStatus.OK);
 
