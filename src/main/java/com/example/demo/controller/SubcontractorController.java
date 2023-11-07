@@ -72,7 +72,7 @@ public class SubcontractorController {
 			int parsedId = Integer.parseInt(id);
 			if (parsedId > 0) {
 				Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(parsedId);
-				return new ResponseEntity<>(subcontractor, HttpStatus.FOUND);
+				return new ResponseEntity<>(subcontractor, HttpStatus.OK);
 			} else {
 				throw new NumberFormatException();
 			}

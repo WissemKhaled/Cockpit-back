@@ -73,7 +73,7 @@ public class SubcontractorControllerTest {
 	}
 
 	@Test
-	public void testGetSubcontractor_SubcontractorFound() throws Exception {
+	public void testGetSubcontractor_SubcontractorOk() throws Exception {
 		String expectedName = "Orange";
 		String expectedEmail = "Orange@email.fr";
 		int expectedStatusId = 1;
@@ -86,7 +86,7 @@ public class SubcontractorControllerTest {
 		int savedSubcontractorId = subcontractorService.saveSubcontractor(savedSubcontractorForTesting);
 
 		mvc.perform(MockMvcRequestBuilders.get(baseUrl + savedSubcontractorId).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isFound()).andExpect(jsonPath("$.sId").value(savedSubcontractorId))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.sId").value(savedSubcontractorId))
 				.andExpect(jsonPath("$.sName").value(expectedName)).andExpect(jsonPath("$.sEmail").value(expectedEmail))
 				.andExpect(jsonPath("$.status.stId").value(expectedStatusId))
 				.andExpect(jsonPath("$.status.stName").value(expectedStatusName))
