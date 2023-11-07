@@ -109,7 +109,7 @@ public class UserController {
 	public ResponseEntity<JwtResponseDTO> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
 	    Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 
-	    // Verify if the user has an active status; if yes, generate a token
+	    // on vérifie que l'utilisateur a un status actif. Si c'est le cas, on génère un token
 	    UUserDTO user = service.findUserByEmail(authRequest.getEmail());
 
 	    if (authentication.isAuthenticated() && user.isUStatus()) {

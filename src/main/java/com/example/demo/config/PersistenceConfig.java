@@ -15,20 +15,73 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import com.example.demo.mappers.EStatusTypeHandler;
 
 import ch.qos.logback.core.status.Status;
+import lombok.extern.java.Log;
 
+@Log
 @Configuration
 @MapperScan("com.example.demo.mappers")
 public class PersistenceConfig {
+	private String dBType = "H2";
+	
+	// configuration de la BDD embarquée H2
+		@Bean
+		public DataSource dataSource() {
+			DriverManagerDataSource dataSource = new DriverManagerDataSource();
+			System.out.println("initialisation base");
+			if (dBType.equals("H2")) {
+//				// Configuration for H2 DB
+//				return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
+				dataSource.setDriverClassName("org.h2.Driver");
+				dataSource.setUrl("jdbc:h2:mem:db;DB_CLOSE_DELAY=-1");
+				dataSource.setUsername("sa");
+				dataSource.setPassword("");
+				System.out.println("base H2");
+			} else if (dBType.equals("postgres")) {
+//				// Configuration for PostgreSQL
+				dataSource.setDriverClassName("org.postgresql.Driver");
+				dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
+				dataSource.setUsername("postgres");
+				dataSource.setPassword("postgres");
+				System.out.println("initialisation postgres");
+			}
+			return dataSource;
 
-	@Bean
-	public DataSource dataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
-		dataSource.setUsername("postgres");
-		dataSource.setPassword("postgres");
-		return dataSource;
-	}
+		}
+
+		// Initialisation de postgres BDD
+		@Bean
+		public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+			ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+			System.out.println("initialisation base");
+			if (dBType.equals("H2")) {
+				System.out.println("generate h2");
+				log.info("Executing data-test.sql");
+				populator.addScript(new ClassPathResource("data-test.sql"));
+			} else if (dBType.equals("postgres")) {
+				System.out.println("generate postgres");
+				log.info("Executing schema-dev.sql");
+				populator.addScript(new ClassPathResource("schema-dev.sql"));
+
+				log.info("Executing data-dev.sql");
+				populator.addScript(new ClassPathResource("data-dev.sql"));
+			}
+
+			DataSourceInitializer initializer = new DataSourceInitializer();
+			initializer.setDataSource(dataSource);
+			initializer.setDatabasePopulator(populator);
+
+			return initializer;
+		}
+	
+//	@Bean
+//	public DataSource dataSource() {
+//		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//		dataSource.setDriverClassName("org.postgresql.Driver");
+//		dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
+//		dataSource.setUsername("postgres");
+//		dataSource.setPassword("postgres");
+//		return dataSource;
+//	}
 
 //	@Bean
 //	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
