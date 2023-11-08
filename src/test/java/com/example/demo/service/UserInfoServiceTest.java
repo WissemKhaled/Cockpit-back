@@ -44,7 +44,7 @@ public class UserInfoServiceTest {
 	
 	/**
 	 * test pour la méthode loadUserByUsername de spring security
-     * Test le cas de figure ou un utilisateur a bien été trouvé avec l'email renseigné
+     * Test le cas de figure où un utilisateur a bien été trouvé avec l'email renseigné
     */
 	@Test
     void shouldReturnUserDetailsWhenUserIsFound() {
@@ -64,7 +64,7 @@ public class UserInfoServiceTest {
 	
 	/**
 	 * test pour la méthode loadUserByUsername de spring security
-     * Test le cas de figure ou un utilisateur n'a pas été trouvé avec l'email renseigné
+     * Test le cas de figure où un utilisateur n'a pas été trouvé avec l'email renseigné
      * Lance une exception UsernameNotFoundException
     */
     @Test
@@ -81,7 +81,7 @@ public class UserInfoServiceTest {
     
     /**
 	 * test pour la méthode findUserByEmail
-     * Test le cas de figure ou un utilisateur a bien été trouvé avec l'email renseigné
+     * Test le cas de figure où un utilisateur a bien été trouvé avec l'email renseigné
      * 
     */
 	@Test
@@ -108,7 +108,7 @@ public class UserInfoServiceTest {
 	
 	/**
 	 * test pour la méthode findUserByEmail
-     * Test le cas de figure ou un utilisateur n'a pas été trouvé avec un email invalide renseigné 
+     * Test le cas de figure où un utilisateur n'a pas été trouvé avec un email invalide renseigné 
      * Lance une exception IllegalArgumentException
     */
     @Test
@@ -122,7 +122,7 @@ public class UserInfoServiceTest {
     
     /**
 	 * test pour la méthode findUserByEmail
-     * Test le cas de figure ou un utilisateur n'a pas été trouvé avec l'email renseigné
+     * Test le cas de figure où un utilisateur n'a pas été trouvé avec l'email renseigné
      * Lance une exception UsernameNotFoundException
     */
     @Test
@@ -138,7 +138,7 @@ public class UserInfoServiceTest {
     }
     
     /**
-     * Test le cas de figure ou un utilisateur a bien été trouvé avec l'id renseigné
+     * Test le cas de figure où un utilisateur a bien été trouvé avec l'id renseigné
     */
     @Test
     public void testFindUserById_UserFound() {
@@ -153,7 +153,7 @@ public class UserInfoServiceTest {
     }
     
     /**
-     * Test le cas de figure ou un utilisateur n'a pas été trouvé avec l'id renseigné
+     * Test le cas de figure où un utilisateur n'a pas été trouvé avec l'id renseigné
      * Vérifie si l'exception UsernameNotFoundException a bien été lancée
     */
     @Test
@@ -167,7 +167,7 @@ public class UserInfoServiceTest {
     }
     
     /**
-     * Test le cas de figure ou un utilisateur a bien été créé
+     * Test le cas de figure où un utilisateur a bien été créé
     */
     @Test
     void shouldAddUserSuccessfully() {
@@ -198,7 +198,7 @@ public class UserInfoServiceTest {
     }
     
     /**
-     * Test le cas de figure ou un utilisateur n'a pas pu être créé
+     * Test le cas de figure où un utilisateur n'a pas pu être créé
      * Envoie une exception RuntimeException
     */
     @Test

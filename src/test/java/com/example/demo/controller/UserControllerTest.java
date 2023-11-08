@@ -41,7 +41,11 @@ public class UserControllerTest {
     @MockBean
     private RefreshTokenService refreshTokenService;
 
-    
+    /**
+	 * test la création d'un User
+     * Test le cas de figure où un utilisateur est correctement inséré en bdd
+     * 
+    */
     @Test
     public void testAddNewUser_WithValidData_ShouldReturnCreated() throws Exception {
         CreateUserDTO userDTO = new CreateUserDTO(0, "newuser@example.com", "Password1!", "John", "Doe", true, null, null);
@@ -52,6 +56,11 @@ public class UserControllerTest {
                 .andExpect(status().isCreated());
     }
     
+    /**
+	 * test la création d'un User
+     * Test le cas de figure où l'insertion du User en bdd échoue à cause d'un email null
+     * 
+    */
     @Test
     public void testAddNewUser_WithInvalidData_ShouldReturnBadRequest() throws Exception {
         // Create a user with missing email
