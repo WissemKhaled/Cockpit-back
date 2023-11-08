@@ -21,7 +21,9 @@ public class CreateUserDTO {
 	private int uId;
 	
 	@NotEmpty(message = "L'email ne doit pas être vide")
-	@Email(message = "Format d'email invalide")
+	@Pattern(regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9-]+\\.[A-Za-z]{2,}$",
+			message = "Format d'email invalide"
+			)
 	@JsonProperty("uEmail")
 	private String uEmail;
 	
