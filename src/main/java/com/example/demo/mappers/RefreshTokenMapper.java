@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
@@ -12,6 +13,7 @@ import org.apache.ibatis.annotations.Select;
 
 import com.example.demo.entity.RefreshToken;
 
+@Mapper
 public interface RefreshTokenMapper {
 	/*
 	 * Trouve le refresh token par sa clé de token

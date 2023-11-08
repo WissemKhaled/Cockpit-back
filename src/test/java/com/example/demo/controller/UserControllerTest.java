@@ -1,10 +1,7 @@
 package com.example.demo.controller;
 
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.demo.dto.CreateUserDTO;
-import com.example.demo.dto.UUserDTO;
-import com.example.demo.entity.AuthRequest;
 import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.RefreshTokenService;
 import com.example.demo.service.UserInfoService;
