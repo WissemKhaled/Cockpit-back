@@ -37,19 +37,22 @@ public class SubcontractorController {
 	// la methode getAllSubcontractor prend en paramettre
 	// pour le tri le nom de la colonne et le type de tri
 	// et pour la pagination le nombre déelement a aficcher et la page en question
+	
 	@GetMapping("/getAll")
-	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(@RequestParam("nameColonne") String nameColonne,
-			@RequestParam("sorting") String sorting, @RequestParam("pageSize") int page,
-			@RequestParam("page") int pageSize) {
-
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(@RequestParam(name="nameColonne" , defaultValue = "s_id", required = false) String nameColonne,
+																	  @RequestParam(name="sorting",  defaultValue = "desc", required = false) String sorting,
+																	  @RequestParam(name="page", defaultValue = "1", required = false) int page,
+																	  @RequestParam(name="pageSize", defaultValue = "10", required = false) int pageSize)
+	{
+		
 		try {
 			return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize),
 					HttpStatus.OK);
-
+ 
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
-
+ 
 	}
 
 	// debut hamza : ce code perùer de renvoyer le nombre max de page en fonction de
