@@ -27,7 +27,7 @@ public class PersistenceConfig {
 	 * pour la dépendance postgre : scope compile (bdd utilisée pour la compilation)
 	*/
 	
-	private String dBType = "H2";
+	private String dBType = "postgres";
 	
 	// configuration de la BDD embarquée H2
 	@Bean
@@ -54,56 +54,33 @@ public class PersistenceConfig {
 
 	}
 
-		// Initialisation de postgres BDD
-		@Bean
-		public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-			ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-			System.out.println("initialisation base");
-			if (dBType.equals("H2")) {
-				System.out.println("generate h2");
-				log.info("Executing data-test.sql");
-				populator.addScript(new ClassPathResource("data-test.sql"));
-			} else if (dBType.equals("postgres")) {
-				System.out.println("generate postgres");
-				log.info("Executing schema-dev.sql");
-				populator.addScript(new ClassPathResource("schema-dev.sql"));
+	// Initialisation de postgres BDD
+	@Bean
+	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		System.out.println("initialisation base");
+		if (dBType.equals("H2")) {
+			System.out.println("generate h2");
+			log.info("Executing data-test.sql");
+			populator.addScript(new ClassPathResource("data-test.sql"));
+		} else if (dBType.equals("postgres")) {
+			System.out.println("generate postgres");
+			log.info("Executing schema-dev.sql");
+			populator.addScript(new ClassPathResource("schema-dev.sql"));
 
-				log.info("Executing data-dev.sql");
-				populator.addScript(new ClassPathResource("data-dev.sql"));
-			}
-
-			DataSourceInitializer initializer = new DataSourceInitializer();
-			initializer.setDataSource(dataSource);
-			initializer.setDatabasePopulator(populator);
-
-			return initializer;
+			log.info("Executing data-dev.sql");
+			populator.addScript(new ClassPathResource("data-dev.sql"));
 		}
-	
-//	@Bean
-//	public DataSource dataSource() {
-//		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-//		dataSource.setDriverClassName("org.postgresql.Driver");
-//		dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
-//		dataSource.setUsername("postgres");
-//		dataSource.setPassword("postgres");
-//		return dataSource;
-//	}
 
-//	@Bean
-//	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//		populator.addScript(new ClassPathResource("schema-dev.sql"));
-//		populator.addScript(new ClassPathResource("data-dev.sql"));
-//
-//		DataSourceInitializer initializer = new DataSourceInitializer();
-//		initializer.setDataSource(dataSource);
-//		initializer.setDatabasePopulator(populator);
-//
-//		return initializer;
-//	}
+		DataSourceInitializer initializer = new DataSourceInitializer();
+		initializer.setDataSource(dataSource);
+		initializer.setDatabasePopulator(populator);
 
-//
-//	// handle the enum EStatus
+		return initializer;
+	}
+
+
+	// handle the enum EStatus
 	@Bean
 	public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
 		SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
