@@ -13,9 +13,6 @@ import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.RefreshTokenMapper;
 import com.example.demo.mappers.UUserMapper;
 
-import lombok.extern.java.Log;
-
-@Log
 @Service
 public class RefreshTokenService {
 
@@ -35,17 +32,13 @@ public class RefreshTokenService {
             .rtExpiryDate(Instant.now().plusSeconds(refreshTokenExpirationDuration))
             .build();
         
-        log.info("refreshToken suivant créé : " + refreshToken);
-        
         // Insère le refresh token en base de donnée et récupère la clé générée (rtId)
         int rowsAffected = refreshTokenMapper.insert(refreshToken);
         
         if (rowsAffected > 0) {
             int generatedRtId = refreshToken.getRtId();
-            log.info("RefreshToken inséré en base de donnée avec le rtId: " + generatedRtId);
             return refreshToken;
         } else {
-            log.severe("échec de l'insertion du RefreshToken.");
             return null;
         }
     }
@@ -54,14 +47,7 @@ public class RefreshTokenService {
      * Méthode renvoyant le refreshtoken en fonction de la clé token passé en paramètre
      * */
     public Optional<RefreshToken> findByToken(String token) throws GeneralException {
-        log.info("Récupération du token avec la clé : " + token);
-
         Optional<RefreshToken> refreshToken = refreshTokenMapper.findByToken(token);
-
-        if (!refreshToken.isPresent()) {
-            log.warning("Le refresh token avec la clé '" + token + "' n'a pas été trouvé dans la base de données.");
-        }
-
         return Optional.ofNullable(refreshToken.orElseThrow(() -> new GeneralException("Le refresh token avec la clé '" + token + "' n'a pas été trouvé dans la base de données.")));
     }
 

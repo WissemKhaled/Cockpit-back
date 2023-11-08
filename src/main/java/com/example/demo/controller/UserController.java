@@ -38,9 +38,7 @@ import com.example.demo.service.UserInfoService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.extern.java.Log;
 
-@Log
 @RestController
 @CrossOrigin("http://localhost:4200")
 @RequestMapping("/auth") 
@@ -76,13 +74,10 @@ public class UserController {
 	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 	        }
 	    } catch (UsernameNotFoundException e) {
-	        log.severe(String.format("Utilisateur non trouvé: {}", e.getMessage()));
 	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	    } catch (IllegalArgumentException e) {
-	    	log.severe(String.format("Email invalide: {}", e.getMessage()));
 	        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	    } catch (Exception e) {
-	    	log.severe(String.format("Une erreur innatendue est survenue: {}", e.getMessage()));
 	        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	    }
 	}
@@ -92,12 +87,10 @@ public class UserController {
 	*/
 	@PostMapping("/addNewUser") 
 	public ResponseEntity<String> addNewUser(@Valid @RequestBody CreateUserDTO userInfo) {
-	    log.info("Utilisateur crée avec l'email : " + userInfo.getUEmail());
 	    try {
 	        String result = service.addUser(userInfo);
 	        return new ResponseEntity<>(result, HttpStatus.CREATED);
 	    } catch (Exception ex) {
-	        log.severe(String.format("Erreur de création de l'utilisateur: " + ex.getMessage()));
 	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	    }
 	}
@@ -113,7 +106,6 @@ public class UserController {
 	    UUserDTO user = service.findUserByEmail(authRequest.getEmail());
 
 	    if (authentication.isAuthenticated() && user.isUStatus()) {
-	        log.info("Utilisateur authentifié");
 	        RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getEmail());
 	        JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
 	                .accessToken(jwtService.generateToken(authRequest.getEmail()))
@@ -121,7 +113,6 @@ public class UserController {
 	                .build();
 	        return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
 	    } else {
-	        log.severe("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
 	        throw new UsernameNotFoundException("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
 	    }
 	}
@@ -184,7 +175,6 @@ public class UserController {
 
  			errors.put(fieldName, errorMessage);
  		});
- 		log.severe(errors.toString());
  		return errors;
  	}
 }

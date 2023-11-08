@@ -9,10 +9,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
-import lombok.extern.java.Log;
-
 @Configuration
-@Log
 public class PersistenceConfig {
 	/**
 	 * Afin de faire fonctionner la configuration de 2 base de données (une h2 de
@@ -49,13 +46,9 @@ public class PersistenceConfig {
 	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
 		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 		if (dBType.equals("H2")) {
-			log.info("Executing data-test.sql");
 			populator.addScript(new ClassPathResource("data-test.sql"));
 		} else if (dBType.equals("postgres")) {
-			log.info("Executing schema-dev.sql");
 			populator.addScript(new ClassPathResource("schema-dev.sql"));
-
-			log.info("Executing data-dev.sql");
 			populator.addScript(new ClassPathResource("data-dev.sql"));
 		}
 
