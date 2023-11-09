@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.controller.exception.SubcontractorNotFoundException;
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.service.SubcontractorService;
@@ -25,6 +27,7 @@ import lombok.extern.java.Log;
 @RequestMapping("/subcontractor")
 @AllArgsConstructor
 @Log
+@CrossOrigin(origins = "http://localhost:4200")
 public class SubcontractorController {
 
 	private final SubcontractorService subcontractorService;
@@ -36,13 +39,50 @@ public class SubcontractorController {
 	// pour le tri le nom de la colonne et le type de tri
 	// et pour la pagination le nombre déelement a aficcher et la page en question
 	@GetMapping("/getAll")
-	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(@RequestParam("nameColonne") String nameColonne,
-			@RequestParam("sorting") String sorting, @RequestParam("pageSize") int page,
-			@RequestParam("page") int pageSize) {
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(@RequestParam(name= "nameColonne",defaultValue = "s_id", required = false) String nameColonne,
+																	  @RequestParam(name= "sorting", defaultValue = "asc", required = false) String sorting, 
+																      @RequestParam(name= "page", defaultValue = "1", required = false) int page,
+																	  @RequestParam(name= "pageSize" , defaultValue = "10", required = false) int pageSize) {
 		
 		try {
 			log.info("Affiche tous les sous-traitans");
 			return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize),
+					HttpStatus.OK);
+
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+
+	}
+	
+	
+	
+	@GetMapping("/getAllWhitStatus")
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWhitStatus(
+							@RequestParam(name= "nameColonne",defaultValue = "s_id", required = false) String nameColonne,
+							@RequestParam(name= "sorting", defaultValue = "asc", required = false) String sorting, 
+							@RequestParam(name= "page", defaultValue = "1", required = false) int page,
+							@RequestParam(name= "pageSize" , defaultValue = "10", required = false) int pageSize,
+							@RequestParam(name= "statusId" , required = false) int statusId) {
+		
+		try {
+			log.info("Affiche tous les sous-traitans");
+			return new ResponseEntity<>(subcontractorService.getAllSubcontractorWhitStatus(nameColonne, sorting, pageSize, page, statusId),
+					HttpStatus.OK);
+
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+
+	}
+	
+	
+	
+	@GetMapping("/getAllStatus")
+	public ResponseEntity<List<Status>> getAllSubcontractor() {
+		
+		try {
+			return new ResponseEntity<>(subcontractorService.getAllStatus(),
 					HttpStatus.OK);
 
 		} catch (RuntimeException e) {

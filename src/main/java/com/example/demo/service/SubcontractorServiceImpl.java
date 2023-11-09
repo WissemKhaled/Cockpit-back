@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.controller.exception.SubcontractorNotFoundException;
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.mappers.SubcontractorMapper;
@@ -60,8 +61,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset,
 				pageSize);
 
-		System.err.println("here");
-		System.err.println(subContarcList.size());
+		
 		for (Subcontractor subcontractor : subContarcList) {
 			System.err.println(subcontractor.toString());
 			
@@ -89,6 +89,40 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		int nbPages = (int) Math.ceil((double) totalItems / pageSize);
 
 		return nbPages;
+	}
+
+	@Override
+	public List<Status> getAllStatus() {
+		
+		List<Status> listStatus = subcontractorMapper.getAllStatus();
+		return listStatus;
+	}
+	
+
+	@Override
+	public List<SubcontractorDto> getAllSubcontractorWhitStatus(String nameColonne, String sorting, int pageSize, int page, int statusId) {
+		
+		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
+		int offset = (page - 1) * pageSize;
+		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractorsWhitStatus(nameColonne, sorting, offset ,pageSize, statusId);
+
+		
+		for (Subcontractor subcontractor : subContarcList) {
+			System.err.println(subcontractor.toString());
+			
+		}
+		
+		if (!subContarcList.isEmpty()) {
+
+			for (Subcontractor subcontractor : subContarcList) {
+
+				subcontractorDtosList.add(dtoMapper.subcontractorToDto(subcontractor));
+			}
+
+			return subcontractorDtosList;
+
+		} else
+			throw new RuntimeException("Il n'y a pas de sousTraitans");
 	}
 	// fin
 
