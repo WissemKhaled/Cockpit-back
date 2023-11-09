@@ -82,6 +82,7 @@ public class UserInfoService implements UserDetailsService {
         UUser user = createUserMapperEntityDTO.toUser(userDTO);
         user.setUPassword(encoder.encode(user.getUPassword()));
         user.setUInsertionDate(LocalDateTime.now());
+        user.setUStatus(true);
         
         try {
         	 userMapper.insert(user);

@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.RefreshToken;
 import com.example.demo.exception.GeneralException;
@@ -58,6 +59,15 @@ public class RefreshTokenService {
             refreshTokenMapper.delete(token.getRtToken());
         }
         return token;
+    }
+    
+    @Transactional
+    public void deleteTokenByUserId(int userId) {
+    	Optional<RefreshToken> refreshToken = refreshTokenMapper.findByUserId(userId);
+
+        if (refreshToken.isPresent()) {
+        	refreshTokenMapper.deleteRtById(userId);
+        }
     }
 
 }

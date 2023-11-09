@@ -36,26 +36,26 @@ public class PersistenceConfig {
 			dataSource.setDriverClassName("org.postgresql.Driver");
 			dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
 			dataSource.setUsername("postgres");
-			dataSource.setPassword("postgres");
+			dataSource.setPassword("0622178800-Yb");
 		}
 		return dataSource;
 	}
 
 	// Initialisation de postgres BDD
-	@Bean
-	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-		if (dBType.equals("H2")) {
-			populator.addScript(new ClassPathResource("data-test.sql"));
-		} else if (dBType.equals("postgres")) {
-			populator.addScript(new ClassPathResource("schema-dev.sql"));
-			populator.addScript(new ClassPathResource("data-dev.sql"));
-		}
-
-		DataSourceInitializer initializer = new DataSourceInitializer();
-		initializer.setDataSource(dataSource);
-		initializer.setDatabasePopulator(populator);
-
-		return initializer;
-	}
+//	@Bean
+//	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//		if (dBType.equals("H2")) {
+//			populator.addScript(new ClassPathResource("data-test.sql"));
+//		} else if (dBType.equals("postgres")) {
+//			populator.addScript(new ClassPathResource("schema-dev.sql"));
+//			populator.addScript(new ClassPathResource("data-dev.sql"));
+//		}
+//
+//		DataSourceInitializer initializer = new DataSourceInitializer();
+//		initializer.setDataSource(dataSource);
+//		initializer.setDatabasePopulator(populator);
+//
+//		return initializer;
+//	}
 }

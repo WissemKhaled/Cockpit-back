@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -97,24 +99,38 @@ public class UserController {
 	
 	/**
 	 * Méthode qui vérifie l'authentification du User et génère un token avec un tokenId servant à le refresh si l'authentification réussie
+	 * @throws GeneralException 
 	*/
 	@PostMapping("/generateToken")
 	public ResponseEntity<JwtResponseDTO> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
-	    Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
+	    try {
+	    	// décoder le mdp venant du front et encodé en base64
+	    	byte[] decodedBytes = Base64.getDecoder().decode(authRequest.getPassword());
+	    	String decodedPwd = new String(decodedBytes);
+	    	Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), decodedPwd));
 
-	    // on vérifie que l'utilisateur a un status actif. Si c'est le cas, on génère un token
-	    UUserDTO user = service.findUserByEmail(authRequest.getEmail());
+		    // on vérifie que l'utilisateur a un status actif. Si c'est le cas, on génère un token
+		    UUserDTO user = service.findUserByEmail(authRequest.getEmail());
 
-	    if (authentication.isAuthenticated() && user.isUStatus()) {
-	        RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getEmail());
-	        JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
-	                .accessToken(jwtService.generateToken(authRequest.getEmail()))
-	                .token(refreshToken.getRtToken())
-	                .build();
-	        return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
-	    } else {
-	        throw new UsernameNotFoundException("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
-	    }
+		    if (authentication.isAuthenticated() && user.isUStatus()) {
+		    	int userId = service.findUserByEmail(authRequest.getEmail()).getUId();
+	           	 // on supprime la clé de refresh token associée à l'utilisateur s'il y en a déjà une en bdd avant d'en créer une
+	           	 refreshTokenService.deleteTokenByUserId(userId);
+	           	 
+		        RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getEmail());
+		        JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
+		                .accessToken(jwtService.generateToken(authRequest.getEmail()))
+		                .token(refreshToken.getRtToken())
+		                .build();
+		        return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
+		    } else {
+		        throw new UsernameNotFoundException("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
+		    }
+
+	    }  catch (AuthenticationException e) {
+            // Handle the case where authentication failed.
+            throw new BadCredentialsException("Identifiants invalides"); // or a custom exception
+        }
 	}
 	 
 	 /**
