@@ -61,12 +61,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset,
 				pageSize);
 
-		
-		for (Subcontractor subcontractor : subContarcList) {
-			System.err.println(subcontractor.toString());
-			
-		}
-		
+
 		if (!subContarcList.isEmpty()) {
 
 			for (Subcontractor subcontractor : subContarcList) {
@@ -84,7 +79,6 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	// debut hamza : ce code permet de retoruner le nombre max de page qu'il y a
 	public int getNumbersOfPages(int pageSize) {
-		System.err.println(pageSize);
 		int totalItems = subcontractorMapper.countTotalItems();
 		int nbPages = (int) Math.ceil((double) totalItems / pageSize);
 
