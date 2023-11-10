@@ -36,7 +36,7 @@ public class SubcontractorController {
 	// debut hamza : ce code permet de renvoyer la liste des soustraitan
 	// la methode getAllSubcontractor prend en paramettre
 	// pour le tri le nom de la colonne et le type de tri
-	// et pour la pagination le nombre déelement a aficcher et la page en question
+	// et pour la pagination le nombre d'élement a aficcher et la page en question
 	
 	@GetMapping("/getAll")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(@RequestParam(name="nameColonne" , defaultValue = "s_id", required = false) String nameColonne,

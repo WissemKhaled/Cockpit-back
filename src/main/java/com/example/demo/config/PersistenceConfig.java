@@ -39,62 +39,25 @@ public class PersistenceConfig {
 	}
 
 	// Initialisation de postgres BDD
-//	@Bean
-//	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//
-//		if (dBType.equals("H2")) {
-//			log.info("Executing data-test.sql");
-//			populator.addScript(new ClassPathResource("data-test.sql"));
-//		} else if (dBType.equals("postgres")) {
-//			log.info("Executing schema-dev.sql");
-//			populator.addScript(new ClassPathResource("schema-dev.sql"));
-//
-//			log.info("Executing data-dev.sql");
-//			populator.addScript(new ClassPathResource("data-dev.sql"));
-//		}
-//
-//		DataSourceInitializer initializer = new DataSourceInitializer();
-//		initializer.setDataSource(dataSource);
-//		initializer.setDatabasePopulator(populator);
-//
-//		return initializer;
-//	}
+	@Bean
+	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 
-	// commented code for Spring profiles
-//  Configuration for PostgreSQL
-//	@Profile("dev")
-//	@Bean
-//	public DataSourceInitializer postresDataSourceInitializer() {
-//		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-//		dataSource.setDriverClassName("org.postgresql.Driver");
-//		dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
-//		dataSource.setUsername("postgres");
-//		dataSource.setPassword("1234");
-//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//		System.err.println("Executing schema.sql and data.sql");
-//		populator.addScript(new ClassPathResource("schema.sql"));
-//		populator.addScript(new ClassPathResource("data.sql"));
-//		DataSourceInitializer initializer = new DataSourceInitializer();
-//		initializer.setDataSource(dataSource);
-//		initializer.setDatabasePopulator(populator);
-//		return initializer;
-//	}
+		if (dBType.equals("H2")) {
+			log.info("Executing data-test.sql");
+			populator.addScript(new ClassPathResource("data-test.sql"));
+		} else if (dBType.equals("postgres")) {
+			log.info("Executing schema-dev.sql");
+			populator.addScript(new ClassPathResource("schema-dev.sql"));
 
-//	@Profile("test")
-//	@Bean
-//	public DataSourceInitializer dataSourceInitializer() {
-//		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-//		dataSource.setDriverClassName("org.h2.Driver");
-//		dataSource.setUrl("jdbc:h2:mem:db;DB_CLOSE_DELAY=-1");
-//		dataSource.setUsername("sa");
-//		dataSource.setPassword("");
-//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//		System.err.println("Executing data-test.sql");
-//		populator.addScript(new ClassPathResource("data-test.sql"));
-//		DataSourceInitializer initializer = new DataSourceInitializer();
-//		initializer.setDataSource(dataSource);
-//		initializer.setDatabasePopulator(populator);
-//		return initializer;
-//	}
+			log.info("Executing data-dev.sql");
+			populator.addScript(new ClassPathResource("data-dev.sql"));
+		}
+
+		DataSourceInitializer initializer = new DataSourceInitializer();
+		initializer.setDataSource(dataSource);
+		initializer.setDatabasePopulator(populator);
+
+		return initializer;
+	}
 }
