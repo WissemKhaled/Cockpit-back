@@ -123,7 +123,7 @@ public class SubcontractorController {
 				Subcontractor subcontractortoArchive = subcontractorService.getSubcontractorWithStatus(parsedId);
 				if (subcontractortoArchive.getStatus().getStName().equals("ARCHIVE")) {
 					throw new AlreadyArchivedSubcontractor(
-							String.format("le sout-traitant avec l'id: %d est déjà archivé", parsedId));
+							String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
 				}
 				subcontractorService.archiveSubcontractor(subcontractortoArchive);
 				return new ResponseEntity<>(subcontractorService.getSubcontractorWithStatus(parsedId), HttpStatus.OK);

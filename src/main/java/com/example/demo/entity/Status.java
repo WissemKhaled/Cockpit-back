@@ -24,11 +24,9 @@ public class Status {
 	@JsonProperty("stId")
 	private int stId;
 
-//	@NotEmpty(message = "Le nom du statut est nécessaire")
 	@JsonProperty("stName")
 	private String stName;
 
-//	@NotEmpty(message = "Le nom du statut est nécessaire")
 	@JsonProperty("stDescription")
 	private String stDescription;
 
