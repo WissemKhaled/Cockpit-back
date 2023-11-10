@@ -23,7 +23,6 @@ public class PersistenceConfig {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		if (dBType.equals("H2")) {
 //			// Configuration for H2 DB
-//			return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
 			dataSource.setDriverClassName("org.h2.Driver");
 			dataSource.setUrl("jdbc:h2:mem:db;DB_CLOSE_DELAY=-1");
 			dataSource.setUsername("sa");
@@ -39,25 +38,21 @@ public class PersistenceConfig {
 	}
 
 	// Initialisation de postgres BDD
-//	@Bean
-//	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//
-//		if (dBType.equals("H2")) {
-//			log.info("Executing data-test.sql");
-//			populator.addScript(new ClassPathResource("data-test.sql"));
-//		} else if (dBType.equals("postgres")) {
-//			log.info("Executing schema-dev.sql");
-//			populator.addScript(new ClassPathResource("schema-dev.sql"));
-//
-//			log.info("Executing data-dev.sql");
-//			populator.addScript(new ClassPathResource("data-dev.sql"));
-//		}
-//
-//		DataSourceInitializer initializer = new DataSourceInitializer();
-//		initializer.setDataSource(dataSource);
-//		initializer.setDatabasePopulator(populator);
-//
-//		return initializer;
-//	}
+	@Bean
+	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+
+		if (dBType.equals("H2")) {
+			populator.addScript(new ClassPathResource("data-test.sql"));
+		} else if (dBType.equals("postgres")) {
+			populator.addScript(new ClassPathResource("schema-dev.sql"));
+			populator.addScript(new ClassPathResource("data-dev.sql"));
+		}
+
+		DataSourceInitializer initializer = new DataSourceInitializer();
+		initializer.setDataSource(dataSource);
+		initializer.setDatabasePopulator(populator);
+
+		return initializer;
+	}
 }
