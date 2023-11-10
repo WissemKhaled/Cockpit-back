@@ -29,7 +29,7 @@ public class SubcontractorDto {
 	private String sName;
 
 	@NotEmpty(message = "l'email est nécessaire")
-	@Pattern(regexp = "^[a-zA-Z](?:[a-zA-Z\\d]*[._-]?[a-zA-Z\\d]+)*@[a-zA-Z\\d._-]+[a-zA-Z\\d]+\\.[a-zA-Z]{2,3}$", message = "Le format de l'email est invalide")
+	@Pattern(regexp = "^[a-zA-Z](?:[a-zA-Z\\d]*[-._]?[a-zA-Z\\d]+)@[a-zA-Z\\d]+[-._]?[a-zA-Z\\d]+\\.[a-zA-Z]{2,3}$", message = "Le format de l'email est invalide")
 	@JsonProperty("sEmail")
 	private String sEmail;
 
