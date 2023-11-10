@@ -44,7 +44,6 @@ public class SubcontractorController {
 																	  @RequestParam(name="page", defaultValue = "1", required = false) int page,
 																	  @RequestParam(name="pageSize", defaultValue = "10", required = false) int pageSize)
 	{
-		
 		try {
 			return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize),
 					HttpStatus.OK);
@@ -52,10 +51,9 @@ public class SubcontractorController {
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
- 
 	}
 
-	// debut hamza : ce code perùer de renvoyer le nombre max de page en fonction de
+	// ce code perùer de renvoyer le nombre max de page en fonction de
 	// l'affichage
 	@GetMapping("/getAllPages")
 	public ResponseEntity<Integer> getAllPages(@RequestParam("pageSize") int pageSize) {
