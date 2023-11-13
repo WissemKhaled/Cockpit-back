@@ -39,7 +39,7 @@ public class SubcontractorController {
 	// pour le tri le nom de la colonne et le type de tri
 	// et pour la pagination le nombre déelement a aficcher et la page en question
 	@GetMapping("/getAll")
-	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(@RequestParam(name= "nameColonne",defaultValue = "s_id", required = false) String nameColonne,
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(@RequestParam(name= "nameColonne",defaultValue = "s_fk_status_id", required = false) String nameColonne,
 																	  @RequestParam(name= "sorting", defaultValue = "asc", required = false) String sorting, 
 																      @RequestParam(name= "page", defaultValue = "1", required = false) int page,
 																	  @RequestParam(name= "pageSize" , defaultValue = "10", required = false) int pageSize) {
@@ -94,15 +94,16 @@ public class SubcontractorController {
 	// debut hamza : ce code perùer de renvoyer le nombre max de page en fonction de
 	// l'affichage
 	@GetMapping("/getAllPages")
-	public ResponseEntity<Integer> getAllPages(@RequestParam("pageSize") int pageSize) {
+	public ResponseEntity<Integer> getAllPages() {
 		try {
-			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(pageSize), HttpStatus.OK);
+			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(), HttpStatus.OK);
 
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 
 	}
+	
 
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getSubcontractor(@PathVariable String id) {
