@@ -25,7 +25,7 @@ public class SubcontractorDto {
 	private int sId;
 
 	@NotEmpty(message = "le nom est nécessaire")
-	@Size(min = 3, max = 250, message = "la longueur du nom doit etre entre 2 et 25O caractères")
+	@Size(min = 2, max = 250, message = "la longueur du nom doit etre entre 2 et 25O caractères")
 	@JsonProperty("sName")
 	private String sName;
 
