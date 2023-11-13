@@ -86,7 +86,7 @@ public class SubcontractorControllerTest {
 				.andExpect(jsonPath("$.sName").value("Subcontractor 1"))
 				.andExpect(jsonPath("$.sEmail").value("subcontractor1@example.com"))
 				.andExpect(jsonPath("$.sCreationDate").value(expectedSCreationDate.format(responseFormatter)))
-				.andExpect(jsonPath("$.sLastUpdate").isEmpty())
+				.andExpect(jsonPath("$.sLastUpdateDate").isEmpty())
 				.andExpect(jsonPath("$.status.stId").value(1))
 				.andExpect(jsonPath("$.status.stName").value("En cours"))
 				.andExpect(jsonPath("$.status.stDescription").value("AAAA"));

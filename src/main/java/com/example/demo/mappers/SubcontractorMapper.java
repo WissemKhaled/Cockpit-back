@@ -52,7 +52,7 @@ public interface SubcontractorMapper {
 	Subcontractor findSubcontractorWithStatusById(int sId);
 	
 	@Insert("INSERT INTO subcontractor (s_name, s_email, s_creation_date, s_lastUpdate_date, s_fk_status_id) "
-			+ "VALUES (#{sName}, #{sEmail}, #{sCreationDate},#{sLastUpdate}, #{status.stId})")
+			+ "VALUES (#{sName}, #{sEmail}, #{sCreationDate},#{sLastUpdateDate}, #{status.stId})")
 	@Options(useGeneratedKeys = true, keyProperty = "sId", keyColumn = "s_id")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "sName", column = "s_name")
