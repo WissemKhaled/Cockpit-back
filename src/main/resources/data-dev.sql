@@ -13,21 +13,21 @@ VALUES (4, 'Archivé', NULL);
 
 -- Subcontractor 1
 INSERT INTO subcontractor (s_name, s_email, s_fk_status_id)
-VALUES ('Subcontractor 1', 'subcontractor1@example.com', 1);
+VALUES ('Orange', 'Orange@email.fr', 1);
 
 -- Subcontractor 2
 INSERT INTO subcontractor (s_name, s_email, s_fk_status_id)
-VALUES ('Subcontractor 2', 'subcontractor2@example.com', 2);
+VALUES ('BPCE', 'BPCE@email.com', 2);
 
 -- Subcontractor 3
 INSERT INTO subcontractor (s_name, s_email, s_creation_date, s_fk_status_id)
-VALUES ('Subcontractor 3', 'subcontractor3@example.com', '2023-01-01 12:00:00', 1);
+VALUES ('EDF', 'EDF@email.fr', '2023-01-01 12:00:00', 1);
 
 -- Subcontractor 4
 INSERT INTO subcontractor (s_name, s_email, s_creation_date, s_lastUpdate_date, s_fk_status_id)
-VALUES ('Subcontractor 4', 'subcontractor4@example.com', '2023-01-01 12:00:00', NULL, 3);
+VALUES ('ENEDIS', 'ENDIS@email.fr', '2023-01-01 12:00:00', NULL, 3);
 
 -- Subcontractor 5
 INSERT INTO subcontractor (s_name, s_email, s_fk_status_id)
-VALUES ('Subcontractor 5', 'subcontractor5@example.com', 2);
+VALUES ('LYON', 'LYON@email.fr', 2);
 
