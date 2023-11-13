@@ -81,6 +81,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	public int getNumbersOfPages() {
 		int totalItems = subcontractorMapper.countTotalItems();
 
+
 		return totalItems;
 	}
 
