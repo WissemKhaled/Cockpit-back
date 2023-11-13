@@ -23,12 +23,14 @@ public interface SubcontractorMapper {
 
 	// debut hamza : ce code permet de re,voyer une liste de soutraitans avec la
 	// pagination est le tri grave a la requette SQL
-	@Select("SELECT s.s_id, s.s_name, s.s_email, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
+	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_last_update, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
 			+ "FROM subcontractor s " + "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
 			+ " ORDER BY ${nameColonne} ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} ")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "sName", column = "s_name")
 	@Result(property = "sEmail", column = "s_email")
+	@Result(property = "sCreationDate", column = "s_creation_date")
+	@Result(property = "sLastUpdate", column = "s_last_update")
 	@Result(property = "status.stId", column = "status_stId")
 	@Result(property = "status.stName", column = "status_stName")
 	@Result(property = "status.stDescription", column = "status_stDescription")
@@ -36,41 +38,37 @@ public interface SubcontractorMapper {
 			@Param("pageSize") int offset, @Param("offset") int pageSize);
 	// fin
 
-	@Insert("INSERT INTO subcontractor (s_name, s_email, s_fk_status_id) "
-			+ "VALUES (#{sName}, #{sEmail}, #{status.stId})")
-	@Options(useGeneratedKeys = true, keyProperty = "sId", keyColumn = "s_id")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
-	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "status.stId", column = "s_fk_status_id")
-	int insertSubcontractor(Subcontractor subcontractor);
-
-	@Select("SELECT s.s_id, s.s_name, s.s_email, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
+	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_last_update, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
 			+ "FROM subcontractor s " + "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
 			+ "WHERE s.s_id = #{sId}")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "sName", column = "s_name")
 	@Result(property = "sEmail", column = "s_email")
+	@Result(property = "sCreationDate", column = "s_creation_date")
+	@Result(property = "sLastUpdate", column = "s_last_update")
 	@Result(property = "status.stId", column = "status_stId")
 	@Result(property = "status.stName", column = "status_stName")
 	@Result(property = "status.stDescription", column = "status_stDescription")
 	Subcontractor findSubcontractorWithStatusById(int sId);
-
-	@Select("SELECT s.s_id, s.s_name, s.s_email, st.st_id AS status_stId, st.st_name AS status_stName, st.st_description AS status_stDescription "
-			+ "FROM subcontractor s " + "JOIN status st ON s.s_fk_status_id = st.st_id " + "WHERE s.s_id = #{sId}")
+	
+	@Insert("INSERT INTO subcontractor (s_name, s_email, s_creation_date, s_last_update, s_fk_status_id) "
+			+ "VALUES (#{sName}, #{sEmail}, #{sCreationDate},#{sLastUpdate}, #{status.stId})")
+	@Options(useGeneratedKeys = true, keyProperty = "sId", keyColumn = "s_id")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "sName", column = "s_name")
 	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
-	@Result(property = "status.stDescription", column = "status_stDescription")
-	Subcontractor findSubcontractorById(int sId);
+	@Result(property = "sCreationDate", column = "s_CreationDate")
+	@Result(property = "sLastUpdate", column = "s_last_update")
+	@Result(property = "status.stId", column = "s_fk_status_id")
+	int insertSubcontractor(Subcontractor subcontractor);
 
-	@Update("UPDATE subcontractor " + "SET s_name = #{sName}, s_email = #{sEmail}, s_fk_status_id = #{status.stId} "
+	@Update("UPDATE subcontractor "
+			+ "SET s_name = #{sName}, s_email = #{sEmail}, s_last_update=#{sLastUpdate}, s_fk_status_id = #{status.stId} "
 			+ "WHERE s_id = #{sId}")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "sName", column = "s_name")
 	@Result(property = "sEmail", column = "s_email")
+	@Result(property = "sLastUpdate", column = "s_last_update")
 	@Result(property = "status.stId", column = "s_fk_status_id")
 	int updateSubcontractor(Subcontractor subcontractor);
 

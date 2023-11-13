@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS subcontractor (
     s_id SERIAL PRIMARY KEY,
     s_name VARCHAR(250) NOT NULL,
     s_email VARCHAR(45) NOT NULL,
+    s_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    s_last_update TIMESTAMP,
     s_fk_status_id SMALLINT NOT NULL, 
     FOREIGN KEY (s_fk_status_id) REFERENCES status(st_id)
 );
@@ -24,6 +26,10 @@ VALUES (3, 'Validé', 'CCCC');
 INSERT INTO status (st_id, st_name, st_description)
 VALUES (4, 'Archivé', 'DDDD');
 
-INSERT INTO subcontractor (s_name, s_email, s_fk_status_id )
-VALUES ('Test', 'Test@email.com', 1);
+-- Subcontractor for testing the get methode
+INSERT INTO subcontractor (s_name, s_email, s_creation_date, s_last_update, s_fk_status_id)
+VALUES ('Subcontractor 1', 'subcontractor1@example.com', '2023-01-01 12:00:00', NULL, 1);
 
+-- Subcontractor for testing the archive methode (Already archived behaviour)
+INSERT INTO subcontractor (s_name, s_email, s_creation_date, s_last_update, s_fk_status_id)
+VALUES ('ArchivedSubcontractor', 'ArchivedSubcontractor@example.com', '2023-01-01 12:00:00', NULL, 4);

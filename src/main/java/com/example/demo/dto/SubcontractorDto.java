@@ -1,10 +1,11 @@
 package com.example.demo.dto;
 
+import java.time.LocalDateTime;
+
 import com.example.demo.entity.Status;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -33,6 +34,12 @@ public class SubcontractorDto {
 	@JsonProperty("sEmail")
 	private String sEmail;
 
+	@JsonProperty("sCreationDate")
+	private LocalDateTime sCreationDate;
+
+	@JsonProperty("sLastUpdate")
+	private LocalDateTime sLastUpdate;
+	
 	@Valid
 	@JsonProperty("status")
 	private Status status;

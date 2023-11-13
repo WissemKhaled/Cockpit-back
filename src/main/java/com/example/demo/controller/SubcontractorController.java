@@ -89,7 +89,6 @@ public class SubcontractorController {
 	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
 		try {
 			if (subcontractorDto.getSId() > 0) {
-
 				// si le sous-traitant existe, update
 				Subcontractor subcontractorToUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
 				subcontractorService.updateSubcontractor(subcontractorToUpdate);
@@ -119,7 +118,7 @@ public class SubcontractorController {
 			int parsedId = Integer.parseInt(id);
 			if (parsedId > 0) {
 				Subcontractor subcontractortoArchive = subcontractorService.getSubcontractorWithStatus(parsedId);
-				if (subcontractortoArchive.getStatus().getStName().equals("ARCHIVE")) {
+				if (subcontractortoArchive.getStatus().getStName().equals("Archivé")) {
 					throw new AlreadyArchivedSubcontractor(
 							String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
 				}

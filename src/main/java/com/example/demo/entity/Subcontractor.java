@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -23,7 +25,13 @@ public class Subcontractor {
 
 	@JsonProperty("sEmail")
 	private String sEmail;
-
+	
+	@JsonProperty("sCreationDate")
+	private LocalDateTime sCreationDate;
+	
+	@JsonProperty("sLastUpdate")
+	private LocalDateTime sLastUpdate;
+	
 	@JsonProperty("status")
 	private Status status;
 
