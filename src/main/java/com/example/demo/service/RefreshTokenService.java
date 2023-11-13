@@ -54,10 +54,16 @@ public class RefreshTokenService {
 
 
     
-    public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.getRtExpiryDate().compareTo(Instant.now()) < 0) {
-            refreshTokenMapper.delete(token.getRtToken());
-        }
+    public RefreshToken verifyExpiration(RefreshToken token) throws GeneralException {
+    	try {
+    		if (token.getRtExpiryDate().compareTo(Instant.now()) < 0) {
+                refreshTokenMapper.delete(token.getRtToken());
+                throw new GeneralException("Refresh token expired");
+            }
+    	} catch (GeneralException e) {
+    		throw e;
+    	}
+        
         return token;
     }
     
