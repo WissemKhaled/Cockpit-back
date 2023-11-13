@@ -15,7 +15,7 @@ import lombok.extern.java.Log;
 public class PersistenceConfig {
 
 	private String[] dBTypes = {"H2","postgres"};
-	private String chosenDBType = dBTypes[0];
+	private String chosenDBType = dBTypes[1];
 
 	// configuration de la BDD embarquée H2
 	@Bean

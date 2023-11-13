@@ -29,8 +29,8 @@ public class Subcontractor {
 	@JsonProperty("sCreationDate")
 	private LocalDateTime sCreationDate;
 	
-	@JsonProperty("sLastUpdate")
-	private LocalDateTime sLastUpdate;
+	@JsonProperty("sLastUpdateDate")
+	private LocalDateTime sLastUpdateDate;
 	
 	@JsonProperty("status")
 	private Status status;

@@ -22,12 +22,10 @@ import com.example.demo.service.SubcontractorService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
 
 @RestController
 @RequestMapping("/subcontractor")
 @AllArgsConstructor
-@Log
 public class SubcontractorController {
 
 	private final SubcontractorService subcontractorService;

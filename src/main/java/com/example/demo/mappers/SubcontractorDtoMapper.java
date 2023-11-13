@@ -16,13 +16,13 @@ public class SubcontractorDtoMapper {
 
 	public SubcontractorDto subcontractorToDto(Subcontractor subcontractor) {
 		return new SubcontractorDto(subcontractor.getSId(), subcontractor.getSName(), subcontractor.getSEmail(),
-				subcontractor.getSCreationDate(), subcontractor.getSLastUpdate(), subcontractor.getStatus());
+				subcontractor.getSCreationDate(), subcontractor.getSLastUpdateDate(), subcontractor.getStatus());
 	}
 
 	public Subcontractor dtoToSubcontractor(SubcontractorDto subcontractorDto) {
 
 		return new Subcontractor(subcontractorDto.getSId(), subcontractorDto.getSName(), subcontractorDto.getSEmail(),
-				subcontractorDto.getSCreationDate(), subcontractorDto.getSLastUpdate(),
+				subcontractorDto.getSCreationDate(), subcontractorDto.getSLastUpdateDate(),
 				statusService.getStatusById(subcontractorDto.getStatus().getStId()));
 	}
 }

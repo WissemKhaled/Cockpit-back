@@ -45,7 +45,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	@Override
 	public int updateSubcontractor(Subcontractor subcontractor) {
-		subcontractor.setSLastUpdate(LocalDateTime.now());
+		subcontractor.setSLastUpdateDate(LocalDateTime.now());
 		return subcontractorMapper.updateSubcontractor(subcontractor);
 	}
 	
