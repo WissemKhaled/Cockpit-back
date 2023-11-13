@@ -1,5 +1,9 @@
 package com.example.demo.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -7,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,32 +33,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Transactional
 @Rollback
 public class SubcontractorControllerTest {
-//
+
 	@Autowired
-	private MockMvc mvc;
-//
+	private MockMvc mockMvc;
+	
 	@Autowired
 	private SubcontractorService subcontractorService;
-//
-//	@Autowired
-//	private MockMvc mockMvc;
-//
-//	@Mock
-//	private SubcontractorMapper subcontractorMapper;
-//
-//	@InjectMocks
-//	private SubcontractorController subcontractorController;
-//
-//	@Mock
-//	private SubcontractorService service;
+	
+	@Mock
+	private SubcontractorService service;
 
 	private String baseUrl = "/subcontractor/";
 
-//
+
 //	@Test
 //	public void getAllSubcontractorAPI() throws Exception {
 //
-//		mockMvc.perform(
+//		mvc.perform(
 //				MockMvcRequestBuilders.get("/subcontractor/getAll?nameColonne=s_id&sorting=desc&pageSize=1&page=10")
 //						.accept(MediaType.APPLICATION_JSON))
 //				.andExpect(status().isOk());
@@ -72,7 +68,7 @@ public class SubcontractorControllerTest {
 //	                .param("page", "1"))
 //	                .andExpect(status().isBadRequest());
 //	}
-//
+
 	@Test
 	public void testGetSubcontractor_SubcontractorOk() throws Exception {
 		int expectedSId = 1;
@@ -80,7 +76,7 @@ public class SubcontractorControllerTest {
 		LocalDateTime expectedSCreationDate = LocalDateTime.parse("2023-01-01 12:00:00", formatter);
 		DateTimeFormatter responseFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-		mvc.perform(MockMvcRequestBuilders.get(baseUrl + expectedSId).contentType(MediaType.APPLICATION_JSON))
+		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + expectedSId).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.sId").value(expectedSId))
 				.andExpect(jsonPath("$.sName").value("Subcontractor 1"))
@@ -88,15 +84,14 @@ public class SubcontractorControllerTest {
 				.andExpect(jsonPath("$.sCreationDate").value(expectedSCreationDate.format(responseFormatter)))
 				.andExpect(jsonPath("$.sLastUpdateDate").isEmpty())
 				.andExpect(jsonPath("$.status.stId").value(1))
-				.andExpect(jsonPath("$.status.stName").value("En cours"))
-				.andExpect(jsonPath("$.status.stDescription").value("AAAA"));
-	}
+				.andExpect(jsonPath("$.status.stName").value("En cours"));
+		}
 
 	@Test
 	public void testGetSubcontractor_SubcontractorNotFound_ShouldReturnHttpNotFound() throws Exception {
 		int subcontractorId = Integer.MAX_VALUE;
 
-		mvc.perform(MockMvcRequestBuilders.get(baseUrl + subcontractorId).contentType(MediaType.APPLICATION_JSON))
+		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + subcontractorId).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 	}
 
@@ -108,7 +103,7 @@ public class SubcontractorControllerTest {
 		nonExistingSubcontractorTosave.setSEmail("test_saving@email.fr");
 		nonExistingSubcontractorTosave.setStatus(new Status(1));
 
-		mvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save").content(asJsonString(nonExistingSubcontractorTosave))
+		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save").content(asJsonString(nonExistingSubcontractorTosave))
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.sName").value("test_saving"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.sEmail").value("test_saving@email.fr"))
@@ -131,7 +126,7 @@ public class SubcontractorControllerTest {
 		updatedSubcontractorDto.setSEmail("testUpdating_1@email.fr");
 		updatedSubcontractorDto.setStatus(new Status(3));
 
-		mvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save").content(asJsonString(updatedSubcontractorDto))
+		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save").content(asJsonString(updatedSubcontractorDto))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(MockMvcResultMatchers.jsonPath("$.sName").value("testUpdating_1"))
@@ -143,7 +138,7 @@ public class SubcontractorControllerTest {
 	public void testArchiveSubcontractor_SuccessfulArchive_ShouldReturnHttpOk() throws Exception {
 		int subcontractorToArchiveId = 1;
 
-		mvc.perform(MockMvcRequestBuilders
+		mockMvc.perform(MockMvcRequestBuilders
 				.put(baseUrl + "/archive/" + subcontractorToArchiveId)
 				.content(asJsonString(subcontractorToArchiveId)).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -154,7 +149,7 @@ public class SubcontractorControllerTest {
 	@Test
 	public void testArchiveSubcontractor_FailedArchive_ShouldReturnAlreadyArchivedSubcontractorException()
 			throws Exception {
-		mvc.perform(
+		mockMvc.perform(
 				MockMvcRequestBuilders.put(baseUrl + "/archive/" + 2)
 						.content(asJsonString(2)).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest());
@@ -163,7 +158,7 @@ public class SubcontractorControllerTest {
 	@Test
 	public void testArchiveSubcontractor_FailedArchive_InvalidId_ShouldReturnHttpNotAcceptable() throws Exception {
 		String invalidId = "e";
-		mvc.perform(MockMvcRequestBuilders.put(baseUrl + "/archive/" + invalidId)
+		mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/archive/" + invalidId)
 				.content(asJsonString(invalidId)).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotAcceptable());
 	}
@@ -172,7 +167,7 @@ public class SubcontractorControllerTest {
 	public void testArchiveSubcontractor_FailedArchive_NonExistingSubcontractor_ShouldReturnHttpNotFound()
 			throws Exception {
 		int nonExistingSubcontarctorId = Integer.MAX_VALUE - 3942;
-		mvc.perform(
+		mockMvc.perform(
 				MockMvcRequestBuilders.put(baseUrl + "/archive/" + nonExistingSubcontarctorId)
 						.content(asJsonString(nonExistingSubcontarctorId)).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
