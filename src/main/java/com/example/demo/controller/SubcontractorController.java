@@ -124,6 +124,14 @@ public class SubcontractorController {
 				if (isSubcontractorExist) {
 					// si le sous-traitant existe, update
 					Subcontractor subcontractorToUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
+					boolean isSubcontractorExistBysName = subcontractorService.checkIfSubcontractorExistBySName(subcontractorToUpdate.getSName());
+					if (isSubcontractorExistBysName) {
+						throw new  SubcontractorForInsertionFoundException("le nom existe déjà");
+					}
+					boolean isSubcontractorExistBysEmail = subcontractorService.checkIfSubcontractorExistBySEmail(subcontractorToUpdate.getSEmail());
+					if (isSubcontractorExistBysEmail) {
+						throw new  SubcontractorForInsertionFoundException("l'émail existe déjà");
+					}
 					subcontractorService.updateSubcontractor(subcontractorToUpdate);
 					Subcontractor updatedSubcontractor = subcontractorService.getSubcontractorWithStatus(subcontractorToUpdate.getSId());
 					SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
