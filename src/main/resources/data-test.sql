@@ -13,16 +13,16 @@ CREATE TABLE IF NOT EXISTS subcontractor (
 );
 
 INSERT INTO status (st_id, st_name, st_description)
-VALUES (1, 'EN_COURS', 'AAAA');
+VALUES (1, 'En cours', 'AAAA');
 
 INSERT INTO status (st_id, st_name, st_description)
-VALUES (2, 'EN_VALIDATION', 'BBBB');
+VALUES (2, 'En validation', 'BBBB');
 
 INSERT INTO status (st_id, st_name, st_description)
-VALUES (3, 'VALIDE', 'CCCC');
+VALUES (3, 'Validé', 'CCCC');
 
 INSERT INTO status (st_id, st_name, st_description)
-VALUES (4, 'ARCHIVE', 'DDDD');
+VALUES (4, 'Archivé', 'DDDD');
 
 INSERT INTO subcontractor (s_name, s_email, s_fk_status_id )
 VALUES ('Test', 'Test@email.com', 1);

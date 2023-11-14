@@ -1,4 +1,4 @@
-package com.example.demo.controller.exception;
+package com.example.demo.exception;
 
 public class SubcontractorNotFoundException extends RuntimeException {
 	public SubcontractorNotFoundException(String message) {

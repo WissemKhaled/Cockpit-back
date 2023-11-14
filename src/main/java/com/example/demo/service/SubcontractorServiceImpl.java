@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.controller.exception.SubcontractorNotFoundException;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
+import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.mappers.SubcontractorMapper;
 
@@ -45,8 +45,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	@Override
 	public int updateSubcontractor(Subcontractor subcontractor) {
-		int isSubcontractorUpdated = subcontractorMapper.updateSubcontractor(subcontractor);
-		return isSubcontractorUpdated;
+		return subcontractorMapper.updateSubcontractor(subcontractor);
 	}
 
 	// debut hamza : methode qui retourne tous les sousTraitants en DTO et qui prend
@@ -120,4 +119,8 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 	// fin
 
+	@Override
+	public int archiveSubcontractor(Subcontractor subcontractortoArchive) {
+		return subcontractorMapper.archive(subcontractortoArchive);
+	}
 }
