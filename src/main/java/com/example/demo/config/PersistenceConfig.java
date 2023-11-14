@@ -26,13 +26,13 @@ public class PersistenceConfig {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
 		if (dBType.equals("H2")) {
-//			return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
+			// Configuration bdd H2
 			dataSource.setDriverClassName("org.h2.Driver");
 			dataSource.setUrl("jdbc:h2:mem:db;DB_CLOSE_DELAY=-1");
 			dataSource.setUsername("sa");
 			dataSource.setPassword("");
 		} else if (dBType.equals("postgres")) {
-//				// Configuration for PostgreSQL
+			// Configuration bdd PostgreSQL
 			dataSource.setDriverClassName("org.postgresql.Driver");
 			dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
 			dataSource.setUsername("postgres");

@@ -10,33 +10,35 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.controller.exception.SubcontractorNotFoundException;
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
+import com.example.demo.exception.AlreadyArchivedSubcontractor;
+import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.service.SubcontractorService;
 
+
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
 
 @RestController
-@CrossOrigin("http://localhost:4200")
 @RequestMapping("/subcontractor")
 @AllArgsConstructor
-@Log
+@CrossOrigin(origins = "http://localhost:4200")
 public class SubcontractorController {
 
 	private final SubcontractorService subcontractorService;
-
 	private final SubcontractorDtoMapper dtoMapper;
 
-	// debut hamza : ce code permet de renvoyer la liste des soustraitan
+	// ce code permet de renvoyer la liste des soustraitan
 	// la methode getAllSubcontractor prend en paramettre
 	// pour le tri le nom de la colonne et le type de tri
 	// et pour la pagination le nombre déelement a aficcher et la page en question
@@ -83,12 +85,28 @@ public class SubcontractorController {
 //
 //	}
 
-	// debut hamza : ce code perùer de renvoyer le nombre max de page en fonction de
-	// l'affichage
-	@GetMapping("/getAllPages")
-	public ResponseEntity<Integer> getAllPages(@RequestParam("pageSize") int pageSize) {
+	@GetMapping("/getAllWhitStatus")
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWhitStatus(
+			@RequestParam(name = "nameColonne", defaultValue = "s_id", required = false) String nameColonne,
+			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
+			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
+			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
+			@RequestParam(name = "statusId", required = false) int statusId) {
 		try {
-			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(pageSize), HttpStatus.OK);
+			return new ResponseEntity<>(
+					subcontractorService.getAllSubcontractorWhitStatus(nameColonne, sorting, pageSize, page, statusId),
+					HttpStatus.OK);
+
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@GetMapping("/getAllStatus")
+	public ResponseEntity<List<Status>> getAllSubcontractor() {
+
+		try {
+			return new ResponseEntity<>(subcontractorService.getAllStatus(), HttpStatus.OK);
 
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -96,30 +114,46 @@ public class SubcontractorController {
 
 	}
 
+	// ce code perùer de renvoyer le nombre max de page en fonction de
+	// l'affichage
+	@GetMapping("/getAllPages")
+	public ResponseEntity<Integer> getAllPages() {
+		try {
+			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(), HttpStatus.OK);
+
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+
+	}
+
+	// méthode pour récuperer un sous-traitant s'il existe, sinon elle retourn un
+	// error 404
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getSubcontractor(@PathVariable String id) {
 		try {
 			int parsedId = Integer.parseInt(id);
-			Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(parsedId);
-			return new ResponseEntity<>(subcontractor, HttpStatus.FOUND);
+			if (parsedId > 0) {
+				Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(parsedId);
+				return new ResponseEntity<>(subcontractor, HttpStatus.OK);
+			} else {
+				throw new NumberFormatException();
+			}
 		} catch (NumberFormatException e) {
-			return new ResponseEntity<>("Invalid ID format. Please provide a valid integer ID.",
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Id non valide", HttpStatus.BAD_REQUEST);
 		} catch (SubcontractorNotFoundException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
 	}
 
 	// méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on
-	// le modifier
+	// le modifie
 	@PostMapping("/save")
-	public ResponseEntity<?> saveSubcontractor(@RequestBody SubcontractorDto subcontractorDto) {
+	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
 		try {
 			if (subcontractorDto.getSId() > 0) {
-				Subcontractor subcontractor = subcontractorService
-						.getSubcontractorWithStatus(subcontractorDto.getSId());
 
-				// If the subcontractor exists, update
+				// si le sous-traitant existe, update
 				Subcontractor subcontractorToUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
 				subcontractorService.updateSubcontractor(subcontractorToUpdate);
 				Subcontractor updatedSubcontractor = subcontractorService
@@ -130,6 +164,7 @@ public class SubcontractorController {
 				return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
 			}
 		} catch (SubcontractorNotFoundException e) {
+			// si le sous-traitant n'existe pas, save
 			int savedSubcontractorId = subcontractorService
 					.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
 			Subcontractor savedSubcontractor = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
@@ -137,6 +172,33 @@ public class SubcontractorController {
 			return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	// methode pour archiver le sous-traitant
+	@PutMapping("/archive/{id}")
+	public ResponseEntity<?> archiveSubcontractor(@PathVariable String id) {
+		try {
+			int parsedId = Integer.parseInt(id);
+			if (parsedId > 0) {
+				Subcontractor subcontractortoArchive = subcontractorService.getSubcontractorWithStatus(parsedId);
+				if (subcontractortoArchive.getStatus().getStName().equals("ARCHIVE")) {
+					throw new AlreadyArchivedSubcontractor(
+							String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
+				}
+				subcontractorService.archiveSubcontractor(subcontractortoArchive);
+				return new ResponseEntity<>(subcontractorService.getSubcontractorWithStatus(parsedId), HttpStatus.OK);
+			} else {
+				throw new NumberFormatException();
+			}
+		} catch (AlreadyArchivedSubcontractor e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (NumberFormatException e) {
+			return new ResponseEntity<>("format de l'id est invalide.", HttpStatus.NOT_ACCEPTABLE);
+		} catch (SubcontractorNotFoundException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

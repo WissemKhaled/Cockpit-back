@@ -5,9 +5,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.controller.exception.SubcontractorNotFoundException;
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
+import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.mappers.SubcontractorMapper;
 
@@ -44,8 +45,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	@Override
 	public int updateSubcontractor(Subcontractor subcontractor) {
-		int isSubcontractorUpdated = subcontractorMapper.updateSubcontractor(subcontractor);
-		return isSubcontractorUpdated;
+		return subcontractorMapper.updateSubcontractor(subcontractor);
 	}
 
 	// debut hamza : methode qui retourne tous les sousTraitants en DTO et qui prend
@@ -59,6 +59,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		int offset = (page - 1) * pageSize;
 		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset,
 				pageSize);
+
 
 		if (!subContarcList.isEmpty()) {
 
@@ -76,12 +77,50 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	// fin
 
 	// debut hamza : ce code permet de retoruner le nombre max de page qu'il y a
-	public int getNumbersOfPages(int pageSize) {
+	public int getNumbersOfPages() {
 		int totalItems = subcontractorMapper.countTotalItems();
-		int nbPages = (int) Math.ceil((double) totalItems / pageSize);
 
-		return nbPages;
+
+		return totalItems;
+	}
+
+	@Override
+	public List<Status> getAllStatus() {
+		
+		List<Status> listStatus = subcontractorMapper.getAllStatus();
+		return listStatus;
+	}
+	
+
+	@Override
+	public List<SubcontractorDto> getAllSubcontractorWhitStatus(String nameColonne, String sorting, int pageSize, int page, int statusId) {
+		
+		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
+		int offset = (page - 1) * pageSize;
+		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractorsWhitStatus(nameColonne, sorting, offset ,pageSize, statusId);
+
+		
+		for (Subcontractor subcontractor : subContarcList) {
+			System.err.println(subcontractor.toString());
+			
+		}
+		
+		if (!subContarcList.isEmpty()) {
+
+			for (Subcontractor subcontractor : subContarcList) {
+
+				subcontractorDtosList.add(dtoMapper.subcontractorToDto(subcontractor));
+			}
+
+			return subcontractorDtosList;
+
+		} else
+			throw new RuntimeException("Il n'y a pas de sousTraitans");
 	}
 	// fin
 
+	@Override
+	public int archiveSubcontractor(Subcontractor subcontractortoArchive) {
+		return subcontractorMapper.archive(subcontractortoArchive);
+	}
 }
