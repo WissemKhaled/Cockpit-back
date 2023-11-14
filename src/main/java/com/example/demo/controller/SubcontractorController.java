@@ -38,13 +38,13 @@ public class SubcontractorController {
 	// la methode getAllSubcontractor prend en paramettre
 	// pour le tri le nom de la colonne et le type de tri
 	// et pour la pagination le nombre déelement a aficcher et la page en question
-
 	@GetMapping("/getAll")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(
 			@RequestParam(name = "nameColonne", defaultValue = "s_fk_status_id", required = false) String nameColonne,
 			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
 			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
+
 		try {
 			return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize),
 					HttpStatus.OK);
@@ -97,7 +97,8 @@ public class SubcontractorController {
 
 	}
 
-	// méthode pour récuperer un sous-traitant s'il existe, sinon elle retourn un error 404
+	// méthode pour récuperer un sous-traitant s'il existe, sinon elle retourn un
+	// error 404
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getSubcontractor(@PathVariable String id) {
 		try {
@@ -115,7 +116,8 @@ public class SubcontractorController {
 		}
 	}
 
-	// méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on le modifie
+	// méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on
+	// le modifie
 	@PostMapping("/save")
 	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
 		try {
@@ -152,7 +154,7 @@ public class SubcontractorController {
 				Subcontractor subcontractortoArchive = subcontractorService.getSubcontractorWithStatus(parsedId);
 				if (subcontractortoArchive.getStatus().getStName().equals("ARCHIVE")) {
 					throw new AlreadyArchivedSubcontractor(
-							String.format("le sout-traitant avec l'id: %d est déjà archivé", parsedId));
+							String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
 				}
 				subcontractorService.archiveSubcontractor(subcontractortoArchive);
 				return new ResponseEntity<>(subcontractorService.getSubcontractorWithStatus(parsedId), HttpStatus.OK);

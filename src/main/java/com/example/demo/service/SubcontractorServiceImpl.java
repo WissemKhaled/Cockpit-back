@@ -45,8 +45,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	@Override
 	public int updateSubcontractor(Subcontractor subcontractor) {
-		int isSubcontractorUpdated = subcontractorMapper.updateSubcontractor(subcontractor);
-		return isSubcontractorUpdated;
+		return subcontractorMapper.updateSubcontractor(subcontractor);
 	}
 
 	// debut hamza : methode qui retourne tous les sousTraitants en DTO et qui prend

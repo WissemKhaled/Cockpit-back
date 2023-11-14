@@ -21,9 +21,9 @@ public class CockpitAppApplication implements WebMvcConfigurer {
 
 	@Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // Allow all paths
-                .allowedOrigins("http://localhost:4200") // Allow requests only from http://localhost:4200
-                .allowedMethods("GET", "POST", "PUT", "DELETE") // Specify the allowed HTTP methods
-                .allowedHeaders("*"); // Allow all headers
+        registry.addMapping("/**") 
+                .allowedOrigins("http://localhost:4200") 
+                .allowedMethods("GET", "POST", "PUT", "DELETE") 
+                .allowedHeaders("*");
     }
 }
