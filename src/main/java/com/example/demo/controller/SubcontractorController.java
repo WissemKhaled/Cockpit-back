@@ -17,7 +17,7 @@ import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.AlreadyArchivedSubcontractor;
-import com.example.demo.exception.SubcontractorForInsertionFoundException;
+import com.example.demo.exception.SubcontractorDuplicateDataException;
 import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.service.SubcontractorService;
@@ -118,21 +118,18 @@ public class SubcontractorController {
 	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
 		try {
 			if (subcontractorDto.getSId() > 0) {
-				
 				boolean isSubcontractorExist = subcontractorService.checkIfSubcontractorExist(subcontractorDto.getSId());
-				
+				this.subcontractorService.handleSubcontractorSaveAndUpdate(subcontractorDto);
+				Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
 				if (isSubcontractorExist) {
 					// si le sous-traitant existe, update
-					this.subcontractorService.handleSubcontractorSaveAndUpdate(subcontractorDto);
-					Subcontractor subcontractorToUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
-					subcontractorService.updateSubcontractor(subcontractorToUpdate);
-					Subcontractor updatedSubcontractor = subcontractorService.getSubcontractorWithStatus(subcontractorToUpdate.getSId());
+					subcontractorService.updateSubcontractor(subcontractorToSaveOrUpdate);
+					Subcontractor updatedSubcontractor = subcontractorService.getSubcontractorWithStatus(subcontractorToSaveOrUpdate.getSId());
 					SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
 					return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
 				} else {
 					// si le sous-traitant n'existe pas, save
-					this.subcontractorService.handleSubcontractorSaveAndUpdate(subcontractorDto);
-					int savedSubcontractorId = subcontractorService.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
+					int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorToSaveOrUpdate);
 					Subcontractor savedSubcontractor = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
 					SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
 					return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
@@ -140,10 +137,10 @@ public class SubcontractorController {
 			} else {
 				return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
 			}
-		} catch (SubcontractorForInsertionFoundException e) {
+		} catch (SubcontractorDuplicateDataException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
 		} catch (Exception e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.I_AM_A_TEAPOT);
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
