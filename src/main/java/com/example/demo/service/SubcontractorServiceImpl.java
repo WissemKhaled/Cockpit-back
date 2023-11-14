@@ -100,4 +100,30 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 			throw new RuntimeException("Il n'y a pas de sous-traitans");
 	}
 
+	@Override
+	public boolean checkIfSubcontractorExist(int sId) {
+		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusById(sId);
+		if (subcontractor == null) {
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean checkIfSubcontractorExistBySName(String sName) {
+		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusBySName(sName);
+		if (subcontractor == null) {
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean checkIfSubcontractorExistBySEmail(String sEmail) {
+		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusBySEmail(sEmail);
+		if (subcontractor == null) {
+			return false;
+		}
+		return true;
+	}
 }

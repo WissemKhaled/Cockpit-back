@@ -24,5 +24,11 @@ public interface SubcontractorService {
 	int updateSubcontractor(Subcontractor subcontractor);
 
 	int archiveSubcontractor(Subcontractor subcontractortoArchive);
+	
+	boolean checkIfSubcontractorExist(int sId); 
+	
+	boolean checkIfSubcontractorExistBySName(String sName);
+	
+	boolean checkIfSubcontractorExistBySEmail (String sEmail);
 
 }
