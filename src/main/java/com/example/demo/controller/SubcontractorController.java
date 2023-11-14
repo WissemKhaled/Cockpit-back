@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +24,8 @@ import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.service.SubcontractorService;
 
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -40,20 +44,46 @@ public class SubcontractorController {
 	// et pour la pagination le nombre déelement a aficcher et la page en question
 	@GetMapping("/getAll")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(
-			@RequestParam(name = "nameColonne", defaultValue = "s_fk_status_id", required = false) String nameColonne,
-			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
-			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
-			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
-
+		@RequestParam(name= "nameColonne",defaultValue = "s_id", required = false) String nameColonne,
+		@RequestParam(name= "sorting", defaultValue = "asc", required = false) String sorting,
+		@RequestParam(name= "page", defaultValue = "1", required = false) int page,
+		@RequestParam(name= "pageSize" , defaultValue = "10", required = false) int pageSize,
+		HttpServletRequest request
+	)
+	{
+		String authorizationHeader = request.getHeader("Authorization");
 		try {
-			return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize),
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+				String token = authorizationHeader.substring(7);
+	            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//	            String email = authentication.getName();
+	            return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize),
 					HttpStatus.OK);
-
+			} else {
+	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	        }
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 
 	}
+	
+//	@GetMapping("/getAll")
+//	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(
+//		@RequestParam(name= "nameColonne",defaultValue = "s_id", required = false) String nameColonne,
+//		@RequestParam(name= "sorting", defaultValue = "asc", required = false) String sorting,
+//		@RequestParam(name= "page", defaultValue = "1", required = false) int page,
+//		@RequestParam(name= "pageSize" , defaultValue = "10", required = false) int pageSize
+//	)
+//	{
+//		try {
+//            return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize),
+//				HttpStatus.OK);
+//		} catch (RuntimeException e) {
+//			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+//		}
+//
+//	}
 
 	@GetMapping("/getAllWhitStatus")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWhitStatus(

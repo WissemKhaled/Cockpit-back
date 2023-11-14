@@ -9,11 +9,14 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
-import lombok.extern.java.Log;
-
 @Configuration
-@Log
 public class PersistenceConfig {
+	/**
+	 * Afin de faire fonctionner la configuration de 2 base de données (une h2 de
+	 * test et une postgre de dev), modification du scope dans le pom.xlm : pour la
+	 * dépendance h2 : scope test (bdd utilisée seulement pour les tests pour la
+	 * dépendance postgre : scope compile (bdd utilisée pour la compilation)
+	 */
 
 	private String dBType = "postgres"; // {H2,postgres}
 
@@ -21,18 +24,19 @@ public class PersistenceConfig {
 	@Bean
 	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+
 		if (dBType.equals("H2")) {
-//			// Configuration for H2 DB
+			// Configuration bdd H2
 			dataSource.setDriverClassName("org.h2.Driver");
 			dataSource.setUrl("jdbc:h2:mem:db;DB_CLOSE_DELAY=-1");
 			dataSource.setUsername("sa");
 			dataSource.setPassword("");
 		} else if (dBType.equals("postgres")) {
-//			// Configuration for PostgreSQL
+			// Configuration bdd PostgreSQL
 			dataSource.setDriverClassName("org.postgresql.Driver");
 			dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
 			dataSource.setUsername("postgres");
-			dataSource.setPassword("1234");
+			dataSource.setPassword("postgres");
 		}
 		return dataSource;
 	}
@@ -41,7 +45,6 @@ public class PersistenceConfig {
 //	@Bean
 //	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
 //		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//
 //		if (dBType.equals("H2")) {
 //			populator.addScript(new ClassPathResource("data-test.sql"));
 //		} else if (dBType.equals("postgres")) {

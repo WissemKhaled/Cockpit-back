@@ -1,4 +1,3 @@
-
 INSERT INTO status (st_id, st_name, st_description)
 VALUES (1, 'En cours', 'AAAA');
 
