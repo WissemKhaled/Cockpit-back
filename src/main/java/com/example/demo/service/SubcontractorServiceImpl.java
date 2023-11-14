@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorDtoMapper;
@@ -60,6 +61,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset,
 				pageSize);
 
+
 		if (!subContarcList.isEmpty()) {
 
 			for (Subcontractor subcontractor : subContarcList) {
@@ -76,11 +78,45 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	// fin
 
 	// debut hamza : ce code permet de retoruner le nombre max de page qu'il y a
-	public int getNumbersOfPages(int pageSize) {
+	public int getNumbersOfPages() {
 		int totalItems = subcontractorMapper.countTotalItems();
-		int nbPages = (int) Math.ceil((double) totalItems / pageSize);
 
-		return nbPages;
+
+		return totalItems;
+	}
+
+	@Override
+	public List<Status> getAllStatus() {
+		
+		List<Status> listStatus = subcontractorMapper.getAllStatus();
+		return listStatus;
+	}
+	
+
+	@Override
+	public List<SubcontractorDto> getAllSubcontractorWhitStatus(String nameColonne, String sorting, int pageSize, int page, int statusId) {
+		
+		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
+		int offset = (page - 1) * pageSize;
+		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractorsWhitStatus(nameColonne, sorting, offset ,pageSize, statusId);
+
+		
+		for (Subcontractor subcontractor : subContarcList) {
+			System.err.println(subcontractor.toString());
+			
+		}
+		
+		if (!subContarcList.isEmpty()) {
+
+			for (Subcontractor subcontractor : subContarcList) {
+
+				subcontractorDtosList.add(dtoMapper.subcontractorToDto(subcontractor));
+			}
+
+			return subcontractorDtosList;
+
+		} else
+			throw new RuntimeException("Il n'y a pas de sousTraitans");
 	}
 	// fin
 

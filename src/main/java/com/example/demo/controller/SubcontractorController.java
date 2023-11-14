@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.AlreadyArchivedSubcontractor;
 import com.example.demo.exception.SubcontractorNotFoundException;
@@ -22,45 +24,72 @@ import com.example.demo.service.SubcontractorService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
 
 @RestController
 @RequestMapping("/subcontractor")
 @AllArgsConstructor
-@Log
+@CrossOrigin(origins = "http://localhost:4200")
 public class SubcontractorController {
 
 	private final SubcontractorService subcontractorService;
 	private final SubcontractorDtoMapper dtoMapper;
 
-	// debut hamza : ce code permet de renvoyer la liste des soustraitan
+	// ce code permet de renvoyer la liste des soustraitan
 	// la methode getAllSubcontractor prend en paramettre
 	// pour le tri le nom de la colonne et le type de tri
 	// et pour la pagination le nombre déelement a aficcher et la page en question
-	
+
 	@GetMapping("/getAll")
-	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(@RequestParam(name="nameColonne" , defaultValue = "s_id", required = false) String nameColonne,
-																	  @RequestParam(name="sorting",  defaultValue = "desc", required = false) String sorting,
-																	  @RequestParam(name="page", defaultValue = "1", required = false) int page,
-																	  @RequestParam(name="pageSize", defaultValue = "10", required = false) int pageSize)
-	{
-		
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(
+			@RequestParam(name = "nameColonne", defaultValue = "s_fk_status_id", required = false) String nameColonne,
+			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
+			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
+			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
 		try {
 			return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize),
 					HttpStatus.OK);
- 
+
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
- 
+
 	}
 
-	// debut hamza : ce code perùer de renvoyer le nombre max de page en fonction de
+	@GetMapping("/getAllWhitStatus")
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWhitStatus(
+			@RequestParam(name = "nameColonne", defaultValue = "s_id", required = false) String nameColonne,
+			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
+			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
+			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
+			@RequestParam(name = "statusId", required = false) int statusId) {
+		try {
+			return new ResponseEntity<>(
+					subcontractorService.getAllSubcontractorWhitStatus(nameColonne, sorting, pageSize, page, statusId),
+					HttpStatus.OK);
+
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@GetMapping("/getAllStatus")
+	public ResponseEntity<List<Status>> getAllSubcontractor() {
+
+		try {
+			return new ResponseEntity<>(subcontractorService.getAllStatus(), HttpStatus.OK);
+
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+
+	}
+
+	// ce code perùer de renvoyer le nombre max de page en fonction de
 	// l'affichage
 	@GetMapping("/getAllPages")
-	public ResponseEntity<Integer> getAllPages(@RequestParam("pageSize") int pageSize) {
+	public ResponseEntity<Integer> getAllPages() {
 		try {
-			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(pageSize), HttpStatus.OK);
+			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(), HttpStatus.OK);
 
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -68,7 +97,7 @@ public class SubcontractorController {
 
 	}
 
-// méthode pour récuperer un sous-traitant s'il existe, sinon elle retourn un error 404
+	// méthode pour récuperer un sous-traitant s'il existe, sinon elle retourn un error 404
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getSubcontractor(@PathVariable String id) {
 		try {
@@ -86,7 +115,7 @@ public class SubcontractorController {
 		}
 	}
 
-// méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on le modifie
+	// méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on le modifie
 	@PostMapping("/save")
 	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
 		try {
