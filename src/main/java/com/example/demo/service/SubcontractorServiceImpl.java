@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorDtoMapper;
@@ -29,7 +30,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		}
 		return subcontractor;
 	}
-	
+
 	@Override
 	public int saveSubcontractor(Subcontractor subcontractor) {
 		subcontractor.setSCreationDate(LocalDateTime.now());
@@ -37,9 +38,9 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		if (isSubcontractorInserted == 0) {
 			return isSubcontractorInserted;
 		}
-		// remarque qu'on persiste le sous-traitant, on génere l'id
-		// automatiquement et comme ça on peut retourner le correct sans
-		// prendre en cpnsidération l'id saisi par l'utilisateur (subcontractDto)
+		// remarque qu'on persiste le sous-traitant, on génere l'id automatiquement et
+		// comme ça on peut retourner le correct sans prendre en cpnsidération l'id
+		// saisi par l'utilisateur (subcontractDto)
 		return subcontractor.getSId();
 	}
 
@@ -48,7 +49,6 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		subcontractor.setSLastUpdateDate(LocalDateTime.now());
 		return subcontractorMapper.updateSubcontractor(subcontractor);
 	}
-	
 
 	@Override
 	public int archiveSubcontractor(Subcontractor subcontractortoArchive) {
@@ -72,12 +72,32 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		} else
 			throw new RuntimeException("Il n'y a pas de sous-traitans");
 	}
-	
-	// ce code permet de retoruner le nombre max de page qu'il y a
-	public int getNumbersOfPages(int pageSize) {
-		int totalItems = subcontractorMapper.countTotalItems();
-		int nbPages = (int) Math.ceil((double) totalItems / pageSize);
 
-		return nbPages;
+	// ce code permet de retoruner le nombre max de page qu'il y a
+	public int getNumbersOfPages() {
+		return subcontractorMapper.countTotalItems();
 	}
+
+	@Override
+	public List<Status> getAllStatus() {
+		return subcontractorMapper.getAllStatus();
+	}
+
+	@Override
+	public List<SubcontractorDto> getAllSubcontractorWhitStatus(String nameColonne, String sorting, int pageSize,
+			int page, int statusId) {
+		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
+		int offset = (page - 1) * pageSize;
+		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractorsWhitStatus(nameColonne, sorting,
+				offset, pageSize, statusId);
+
+		if (!subContarcList.isEmpty()) {
+			for (Subcontractor subcontractor : subContarcList) {
+				subcontractorDtosList.add(dtoMapper.subcontractorToDto(subcontractor));
+			}
+			return subcontractorDtosList;
+		} else
+			throw new RuntimeException("Il n'y a pas de sous-traitans");
+	}
+
 }
