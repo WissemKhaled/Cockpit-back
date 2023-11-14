@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -46,7 +49,12 @@ import jakarta.validation.Valid;
 @RequestMapping("/auth") 
 public class UserController {
 	@Autowired
+	@Qualifier("userInfoService")
 	private UserInfoService service; 
+	
+	@Autowired
+	@Qualifier("userDetailsService")
+	private UserDetailsService userDetailsService;
 
 	@Autowired
 	private JwtServiceImplementation jwtService;
@@ -65,16 +73,26 @@ public class UserController {
 	    String authorizationHeader = request.getHeader("Authorization");
 	    
 	    try {
-	        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	    	if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 	            String token = authorizationHeader.substring(7);
-	            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	            String email = authentication.getName();
-
-	            UUserDTO foundUser = service.findUserByEmail(email);
-	            return new ResponseEntity<>(foundUser, HttpStatus.OK);
-	        } else {
+	            // Récupère les infos de l'utilisateur à partir du token
+	            String email = jwtService.extractUsername(token);
+	            // Charge les détails du user en se basant sur l'email
+	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);            
+	            // Validation du token
+	            if (jwtService.validateToken(token, userDetails)) {
+	            	if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	    	            UUserDTO foundUser = service.findUserByEmail(email);
+	    	            return new ResponseEntity<>(foundUser, HttpStatus.OK);
+	    	        } else {
+	    	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	    	        }
+	            } else {
+		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		        }
+			} else {
 	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-	        }
+	        }        
 	    } catch (UsernameNotFoundException e) {
 	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	    } catch (IllegalArgumentException e) {
