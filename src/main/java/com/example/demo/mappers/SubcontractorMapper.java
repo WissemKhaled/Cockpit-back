@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 
 @Mapper
@@ -21,20 +22,51 @@ public interface SubcontractorMapper {
 	int countTotalItems();
 	// fin
 
-	// debut hamza : ce code permet de re,voyer une liste de soutraitans avec la
-	// pagination est le tri grave a la requette SQL
+
+	// debut cette method recupere tous les status
+	@Select("SELECT * FROM status")
+	@Result(property = "stId", column = "st_id")
+	@Result(property = "stName", column = "st_name")
+	@Result(property = "stDescription", column = "st_description")
+	List<Status> getAllStatus();
+
+	
+	// debut  : ce code permet de re,voyer une liste de soutraitans avec la
+		// pagination est le tri grave a la requette SQL
 	@Select("SELECT s.s_id, s.s_name, s.s_email, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
-			+ "FROM subcontractor s " + "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
-			+ " ORDER BY ${nameColonne} ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} ")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
-	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
-	@Result(property = "status.stDescription", column = "status_stDescription")
-	List<Subcontractor> getAllSubcontractors(@Param("nameColonne") String nameColonne, @Param("sorting") String sorting,
-			@Param("pageSize") int offset, @Param("offset") int pageSize);
-	// fin
+			+ "FROM subcontractor s " 
+			+ "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
+			+ " ORDER BY ${nameColonne}, s_name ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} "
+			)
+		@Result(property = "sId", column = "s_id")
+		@Result(property = "sName", column = "s_name")
+		@Result(property = "sEmail", column = "s_email")
+		@Result(property = "status.stId", column = "status_stId")
+		@Result(property = "status.stName", column = "status_stName")
+		@Result(property = "status.stDescription", column = "status_stDescription")
+		List<Subcontractor> getAllSubcontractors(@Param("nameColonne") String nameColonne, @Param("sorting") String sorting,
+				@Param("pageSize") int offset, @Param("offset") int pageSize);
+		// fin
+	
+	   //debut  : ce code permet de re,voyer une liste de soutraitans avec la
+			// pagination est le tri grave a la requette SQL
+		@Select("SELECT s.s_id, s.s_name, s.s_email, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
+				+ "FROM subcontractor s " 
+				+ "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
+				+ "WHERE st.st_id= ${statusId} "
+				+ "ORDER BY ${nameColonne} ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} ")
+			@Result(property = "sId", column = "s_id")
+			@Result(property = "sName", column = "s_name")
+			@Result(property = "sEmail", column = "s_email")
+			@Result(property = "status.stId", column = "status_stId")
+			@Result(property = "status.stName", column = "status_stName")
+			@Result(property = "status.stDescription", column = "status_stDescription")
+			List<Subcontractor> getAllSubcontractorsWhitStatus(@Param("nameColonne") String nameColonne, 
+					                                           @Param("sorting") String sorting,
+					                                           @Param("pageSize") int offset,
+					                                           @Param("offset") int pageSize,
+					                                           @Param("statusId") int statusId);
+			
 
 	@Insert("INSERT INTO subcontractor (s_name, s_email, s_fk_status_id) "
 			+ "VALUES (#{sName}, #{sEmail}, #{status.stId})")
