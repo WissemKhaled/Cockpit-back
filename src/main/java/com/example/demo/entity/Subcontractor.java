@@ -16,7 +16,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Subcontractor {
-
 	@JsonProperty("sId")
 	private int sId;
 

@@ -15,13 +15,13 @@ import com.example.demo.entity.Subcontractor;
 @Mapper
 public interface SubcontractorMapper {
 
-	// debut hamza : ce code permet de re,voyer le nombre total de colonne de la
+	// ce code permet de re,voyer le nombre total de colonne de la
 	// table subcontractor
 	@Select("SELECT COUNT(*) FROM subcontractor")
 	int countTotalItems();
 	// fin
 
-	// debut hamza : ce code permet de re,voyer une liste de soutraitans avec la
+	// ce code permet de re,voyer une liste de soutraitans avec la
 	// pagination est le tri grave a la requette SQL
 	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
 			+ "FROM subcontractor s " + "INNER JOIN status st ON s.s_fk_status_id = st.st_id "

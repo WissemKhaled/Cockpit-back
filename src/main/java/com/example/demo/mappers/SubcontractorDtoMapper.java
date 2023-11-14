@@ -20,7 +20,6 @@ public class SubcontractorDtoMapper {
 	}
 
 	public Subcontractor dtoToSubcontractor(SubcontractorDto subcontractorDto) {
-
 		return new Subcontractor(subcontractorDto.getSId(), subcontractorDto.getSName(), subcontractorDto.getSEmail(),
 				subcontractorDto.getSCreationDate(), subcontractorDto.getSLastUpdateDate(),
 				statusService.getStatusById(subcontractorDto.getStatus().getStId()));
