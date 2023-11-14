@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
+import com.example.demo.exception.SubcontractorForInsertionFoundException;
 import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.mappers.SubcontractorMapper;
@@ -125,5 +126,17 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public void handleSubcontractorSaveAndUpdate(SubcontractorDto subcontractorDto) {
+		boolean isSubcontractorExistBysName = checkIfSubcontractorExistBySName(subcontractorDto.getSName());
+		if (isSubcontractorExistBysName) {
+			throw new  SubcontractorForInsertionFoundException("le nom existe déjà");
+		}
+		boolean isSubcontractorExistBysEmail = checkIfSubcontractorExistBySEmail(subcontractorDto.getSEmail());
+		if (isSubcontractorExistBysEmail) {
+			throw new  SubcontractorForInsertionFoundException("l'émail existe déjà");
+		}
 	}
 }

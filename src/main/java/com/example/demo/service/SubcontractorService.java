@@ -31,4 +31,5 @@ public interface SubcontractorService {
 	
 	boolean checkIfSubcontractorExistBySEmail (String sEmail);
 
+	void handleSubcontractorSaveAndUpdate(SubcontractorDto subcontractorDto);
 }

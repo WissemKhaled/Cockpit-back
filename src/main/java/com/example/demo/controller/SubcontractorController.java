@@ -123,29 +123,15 @@ public class SubcontractorController {
 				
 				if (isSubcontractorExist) {
 					// si le sous-traitant existe, update
+					this.subcontractorService.handleSubcontractorSaveAndUpdate(subcontractorDto);
 					Subcontractor subcontractorToUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
-					boolean isSubcontractorExistBysName = subcontractorService.checkIfSubcontractorExistBySName(subcontractorToUpdate.getSName());
-					if (isSubcontractorExistBysName) {
-						throw new  SubcontractorForInsertionFoundException("le nom existe déjà");
-					}
-					boolean isSubcontractorExistBysEmail = subcontractorService.checkIfSubcontractorExistBySEmail(subcontractorToUpdate.getSEmail());
-					if (isSubcontractorExistBysEmail) {
-						throw new  SubcontractorForInsertionFoundException("l'émail existe déjà");
-					}
 					subcontractorService.updateSubcontractor(subcontractorToUpdate);
 					Subcontractor updatedSubcontractor = subcontractorService.getSubcontractorWithStatus(subcontractorToUpdate.getSId());
 					SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
 					return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
 				} else {
 					// si le sous-traitant n'existe pas, save
-					boolean isSubcontractorExistBysName = subcontractorService.checkIfSubcontractorExistBySName(subcontractorDto.getSName());
-					if (isSubcontractorExistBysName) {
-						throw new  SubcontractorForInsertionFoundException("le nom existe déjà");
-					}
-					boolean isSubcontractorExistBysEmail = subcontractorService.checkIfSubcontractorExistBySEmail(subcontractorDto.getSEmail());
-					if (isSubcontractorExistBysEmail) {
-						throw new  SubcontractorForInsertionFoundException("l'émail existe déjà");
-					}
+					this.subcontractorService.handleSubcontractorSaveAndUpdate(subcontractorDto);
 					int savedSubcontractorId = subcontractorService.saveSubcontractor(dtoMapper.dtoToSubcontractor(subcontractorDto));
 					Subcontractor savedSubcontractor = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
 					SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
