@@ -59,7 +59,8 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	// pour le tri le nom de la colonne et le type de tri et pour la pagination le
 	// nombre déelement a aficcher et la page en question
 	@Override
-	public List<SubcontractorDto> getAllSubcontractor(String nameColonne, String sorting, int page, int pageSize) {
+	public List<SubcontractorDto> getAllSubcontractor(String nameColonne, String sorting, int page, int pageSize  ) {
+		
 		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
 		int offset = (page - 1) * pageSize;
 		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset,
@@ -74,9 +75,15 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 
 	// ce code permet de retoruner le nombre max de page qu'il y a
-	public int getNumbersOfPages() {
+	public Integer getNumbersOfPages() {
 		return subcontractorMapper.countTotalItems();
 	}
+	
+	// ce code permet de retoruner le nombre max de page qu'il y a
+		public Integer countTotalItemsWhitStatus( Integer idStatus) {
+			System.err.println(idStatus);
+			return subcontractorMapper.countTotalItemsWhitStatus(idStatus);
+		}
 
 	@Override
 	public List<Status> getAllStatus() {

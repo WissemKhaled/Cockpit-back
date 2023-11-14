@@ -18,10 +18,14 @@ public interface SubcontractorMapper {
 
 	// ce code permet de re,voyer le nombre total de colonne de la
 	// table subcontractor
-	@Select("SELECT COUNT(*) FROM subcontractor")
-	int countTotalItems();
+	@Select("SELECT COUNT(*) FROM subcontractor WHERE s_fk_status_id != 4")
+	Integer countTotalItems();
 	// fin
 
+	@Select("SELECT COUNT(*) FROM subcontractor"+
+			" WHERE s_fk_status_id = ${idStatus}")
+	Integer countTotalItemsWhitStatus(@Param("idStatus") Integer idStatus);
+	
 	// debut cette method recupere tous les status
 	@Select("SELECT * FROM status")
 	@Result(property = "stId", column = "st_id")

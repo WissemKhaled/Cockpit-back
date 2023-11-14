@@ -60,6 +60,7 @@ public class SubcontractorController {
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
 			@RequestParam(name = "statusId", required = false) int statusId) {
 		try {
+			int total = 12;
 			return new ResponseEntity<>(
 					subcontractorService.getAllSubcontractorWhitStatus(nameColonne, sorting, pageSize, page, statusId),
 					HttpStatus.OK);
@@ -83,10 +84,21 @@ public class SubcontractorController {
 
 
 	// ce code perùer de renvoyer le nombre max de page en fonction de l'affichage
-	@GetMapping("/getAllPages")
+	@GetMapping("/getCountAll")
 	public ResponseEntity<Integer> getAllPages() {
 		try {
 			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(), HttpStatus.OK);
+
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+
+	}
+	
+	@GetMapping("/getCountByStatus")
+	public ResponseEntity<Integer> getCountByStatus(@RequestParam(name="statusId" , required = true) Integer statusId) {
+		try {
+			return new ResponseEntity<>(subcontractorService.countTotalItemsWhitStatus(statusId), HttpStatus.OK);
 
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
