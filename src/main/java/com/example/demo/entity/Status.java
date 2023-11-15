@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,5 +28,9 @@ public class Status {
 
 	@JsonProperty("stDescription")
 	private String stDescription;
+
+	public Status(int stId) {
+		this.stId = stId;
+	}
 
 }

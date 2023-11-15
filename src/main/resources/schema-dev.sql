@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS subcontractor (
     s_id SERIAL PRIMARY KEY,
     s_name VARCHAR(250) NOT NULL,
     s_email VARCHAR(45) NOT NULL,
+    s_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    s_lastUpdate_date TIMESTAMP,
     s_fk_status_id SMALLINT NOT NULL, 
     FOREIGN KEY (s_fk_status_id) REFERENCES status(st_id)
 );
