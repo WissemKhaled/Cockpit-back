@@ -37,10 +37,10 @@ public class SubcontractorController {
 	private final SubcontractorService subcontractorService;
 	private final SubcontractorDtoMapper dtoMapper;
 
-	// ce code permet de renvoyer la liste des soustraitan
-	// la methode getAllSubcontractor prend en paramettre
+	// ce code permet de renvoyer la liste des sous-traitans
+	// la methode getAllSubcontractor prend en paramètre
 	// pour le tri le nom de la colonne et le type de tri
-	// et pour la pagination le nombre déelement a aficcher et la page en question
+	// et pour la pagination le nombre d'éléments à afficher et la page en question
 	@GetMapping("/getAll")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractor(
 			@RequestParam(name = "nameColonne", defaultValue = "s_fk_status_id", required = false) String nameColonne,
@@ -53,7 +53,6 @@ public class SubcontractorController {
 			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 				String token = authorizationHeader.substring(7);
 				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//	            String email = authentication.getName();
 				return new ResponseEntity<>(
 						subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize), HttpStatus.OK);
 			} else {
@@ -94,9 +93,8 @@ public class SubcontractorController {
 
 	}
 
-	// ce code perùer de renvoyer le nombre max de page en fonction de
-	// l'affichage
-	@GetMapping("/getAllPages")
+	// ce code permet de renvoyer le nombre max de sous-traitans
+	@GetMapping("/getNbOfSt")
 	public ResponseEntity<Integer> getAllPages() {
 		try {
 			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(), HttpStatus.OK);

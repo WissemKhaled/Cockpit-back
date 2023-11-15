@@ -16,21 +16,21 @@ import com.example.demo.entity.Subcontractor;
 @Mapper
 public interface SubcontractorMapper {
 
-	// debut hamza : ce code permet de re,voyer le nombre total de colonne de la
+	//  ce code permet de renvoyer le nombre total de colonne de la
 	// table subcontractor
 	@Select("SELECT COUNT(*) FROM subcontractor")
 	int countTotalItems();
 	// fin
 
-	// debut cette method recupere tous les status
+	
 	@Select("SELECT * FROM status")
 	@Result(property = "stId", column = "st_id")
 	@Result(property = "stName", column = "st_name")
 	@Result(property = "stDescription", column = "st_description")
 	List<Status> getAllStatus();
 
-	// debut : ce code permet de re,voyer une liste de soutraitans avec la
-	// pagination est le tri grave a la requette SQL
+	// ce code permet de renvoyer une liste de sous-traitans avec la
+	// pagination est le tri grave à la requette SQL
 	@Select("SELECT s.s_id, s.s_name, s.s_email, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
 			+ "FROM subcontractor s " + "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
 			+ " ORDER BY ${nameColonne}, s_name ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} ")
@@ -44,8 +44,7 @@ public interface SubcontractorMapper {
 			@Param("pageSize") int offset, @Param("offset") int pageSize);
 	// fin
 
-	// debut : ce code permet de re,voyer une liste de soutraitans avec la
-	// pagination est le tri grave a la requette SQL
+	
 	@Select("SELECT s.s_id, s.s_name, s.s_email, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
 			+ "FROM subcontractor s " + "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
 			+ "WHERE st.st_id= ${statusId} "
