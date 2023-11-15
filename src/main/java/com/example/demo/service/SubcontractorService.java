@@ -14,7 +14,9 @@ public interface SubcontractorService {
 	
 	List<Status> getAllStatus();
 
-	int getNumbersOfPages();
+	Integer getNumbersOfSubContractor();
+	
+	Integer countTotalItemWhitStatus(Integer statusId);
 
 	Subcontractor getSubcontractorWithStatus(int id);
 

@@ -77,13 +77,17 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	// fin
 
 	// debut hamza : ce code permet de retoruner le nombre max de page qu'il y a
-	public int getNumbersOfPages() {
-		int totalItems = subcontractorMapper.countTotalItems();
-
+	public Integer getNumbersOfSubContractor() {
+		Integer totalItems = subcontractorMapper.countTotalItems();
 
 		return totalItems;
 	}
+	@Override
+	public Integer countTotalItemWhitStatus(Integer statusId) {
 
+		return subcontractorMapper.countTotalItemsWithStatus(statusId);
+		
+	}
 	@Override
 	public List<Status> getAllStatus() {
 		
@@ -123,4 +127,5 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	public int archiveSubcontractor(Subcontractor subcontractortoArchive) {
 		return subcontractorMapper.archive(subcontractortoArchive);
 	}
+
 }

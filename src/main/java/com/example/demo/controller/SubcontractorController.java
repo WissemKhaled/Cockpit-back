@@ -94,10 +94,20 @@ public class SubcontractorController {
 	}
 
 	// ce code permet de renvoyer le nombre max de sous-traitans
-	@GetMapping("/getNbOfSt")
-	public ResponseEntity<Integer> getAllPages() {
+	@GetMapping("/getCountAll")
+	public ResponseEntity<Integer> getCountAll() {
 		try {
-			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(), HttpStatus.OK);
+			return new ResponseEntity<>(subcontractorService.getNumbersOfSubContractor(), HttpStatus.OK);
+
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+
+	}
+	@GetMapping("/getCountByStatus")
+	public ResponseEntity<Integer> getCountAllByStatus(@RequestParam(name = "statusId", required = true) Integer statusId) {
+		try {
+			return new ResponseEntity<>(subcontractorService.countTotalItemWhitStatus(statusId), HttpStatus.OK);
 
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
