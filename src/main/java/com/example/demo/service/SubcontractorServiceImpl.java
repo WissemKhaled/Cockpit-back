@@ -50,10 +50,22 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		subcontractor.setSLastUpdateDate(LocalDateTime.now());
 		return subcontractorMapper.updateSubcontractor(subcontractor);
 	}
-
+	
 	@Override
 	public int archiveSubcontractor(Subcontractor subcontractortoArchive) {
 		return subcontractorMapper.archive(subcontractortoArchive);
+	}
+
+	// debut hamza : ce code permet de retoruner le nombre max de page qu'il y a
+	public Integer getNumbersOfSubContractor() {
+		return subcontractorMapper.countTotalItems();
+	}
+
+	@Override
+	public Integer countTotalItemWhitStatus(Integer statusId) {
+
+		return subcontractorMapper.countTotalItemsWithStatus(statusId);
+
 	}
 
 	// methode qui retourne tous les sousTraitants en DTO et qui prend en parametre
@@ -109,7 +121,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public int checkIfSubcontractorExistBySName(String sName) {
 		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusBySName(sName);
@@ -118,7 +130,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		}
 		return subcontractor.getSId();
 	}
-	
+
 	@Override
 	public int checkIfSubcontractorExistBySEmail(String sEmail) {
 		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusBySEmail(sEmail);
@@ -127,28 +139,29 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		}
 		return subcontractor.getSId();
 	}
-	
+
 	@Override
 	public void handleSubcontractorSave(SubcontractorDto subcontractorDto) {
 		int isSubcontractorExistBysName = checkIfSubcontractorExistBySName(subcontractorDto.getSName());
-		if (isSubcontractorExistBysName !=0) {
-			throw new  SubcontractorDuplicateDataException("le nom saisi existe déjà");
+		if (isSubcontractorExistBysName != 0) {
+			throw new SubcontractorDuplicateDataException("le nom saisi existe déjà");
 		}
 		int isSubcontractorExistBysEmail = checkIfSubcontractorExistBySEmail(subcontractorDto.getSEmail());
-		if (isSubcontractorExistBysEmail !=0) {
-			throw new  SubcontractorDuplicateDataException("l'émail saisi existe déjà");
+		if (isSubcontractorExistBysEmail != 0) {
+			throw new SubcontractorDuplicateDataException("l'émail saisi existe déjà");
 		}
 	}
-	
+
 	@Override
 	public void handleSubcontractorUpdate(SubcontractorDto subcontractorDto) {
 		int isSubcontractorExistBysName = checkIfSubcontractorExistBySName(subcontractorDto.getSName());
-		if (isSubcontractorExistBysName !=0 && subcontractorDto.getSId() != isSubcontractorExistBysName) {
-			throw new  SubcontractorDuplicateDataException("le nom saisi existe déjà");
+		if (isSubcontractorExistBysName != 0 && subcontractorDto.getSId() != isSubcontractorExistBysName) {
+			throw new SubcontractorDuplicateDataException("le nom saisi existe déjà");
 		}
 		int isSubcontractorExistBysEmail = checkIfSubcontractorExistBySEmail(subcontractorDto.getSEmail());
-		if (isSubcontractorExistBysEmail !=0 && subcontractorDto.getSId() != isSubcontractorExistBysEmail) {
-			throw new  SubcontractorDuplicateDataException("l'émail saisi existe déjà");
+		if (isSubcontractorExistBysEmail != 0 && subcontractorDto.getSId() != isSubcontractorExistBysEmail) {
+			throw new SubcontractorDuplicateDataException("l'émail saisi existe déjà");
 		}
 	}
+
 }

@@ -17,21 +17,25 @@ public interface SubcontractorService {
 
 	int getNumbersOfPages();
 
-	Subcontractor getSubcontractorWithStatus(int id);
+	Integer getNumbersOfSubContractor();
+
+	Integer countTotalItemWhitStatus(Integer statusId);
+	
+	Subcontractor getSubcontractorWithStatus(int sId);
 
 	int saveSubcontractor(Subcontractor subcontractor);
 
 	int updateSubcontractor(Subcontractor subcontractor);
 
 	int archiveSubcontractor(Subcontractor subcontractortoArchive);
-	
-	boolean checkIfSubcontractorExist(int sId); 
-	
+
+	boolean checkIfSubcontractorExist(int sId);
+
 	int checkIfSubcontractorExistBySName(String sName);
-	
-	int checkIfSubcontractorExistBySEmail (String sEmail);
+
+	int checkIfSubcontractorExistBySEmail(String sEmail);
 
 	void handleSubcontractorSave(SubcontractorDto subcontractorDto);
-	
+
 	void handleSubcontractorUpdate(SubcontractorDto subcontractorDto);
 }
