@@ -9,16 +9,19 @@ import com.example.demo.entity.Subcontractor;
 public interface SubcontractorService {
 
 	List<SubcontractorDto> getAllSubcontractor(String nameColonne, String sorting, int pageSize, int page);
-	
-	List<SubcontractorDto> getAllSubcontractorWhitStatus(String nameColonne, String sorting, int pageSize, int page, int statusId);
-	
+
+	List<SubcontractorDto> getAllSubcontractorWhitStatus(String nameColonne, String sorting, int pageSize, int page,
+			int statusId);
+
 	List<Status> getAllStatus();
 
-	Integer getNumbersOfSubContractor();
-	
-	Integer countTotalItemWhitStatus(Integer statusId);
+	int getNumbersOfPages();
 
-	Subcontractor getSubcontractorWithStatus(int id);
+	Integer getNumbersOfSubContractor();
+
+	Integer countTotalItemWhitStatus(Integer statusId);
+	
+	Subcontractor getSubcontractorWithStatus(int sId);
 
 	int saveSubcontractor(Subcontractor subcontractor);
 
@@ -26,4 +29,13 @@ public interface SubcontractorService {
 
 	int archiveSubcontractor(Subcontractor subcontractortoArchive);
 
+	boolean checkIfSubcontractorExist(int sId);
+
+	int checkIfSubcontractorExistBySName(String sName);
+
+	int checkIfSubcontractorExistBySEmail(String sEmail);
+
+	void handleSubcontractorSave(SubcontractorDto subcontractorDto);
+
+	void handleSubcontractorUpdate(SubcontractorDto subcontractorDto);
 }
