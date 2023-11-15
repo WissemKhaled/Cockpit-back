@@ -45,14 +45,14 @@ public class SubcontractorController {
 			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
 		try {
-				return new ResponseEntity<>(
-						subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize), HttpStatus.OK);
+			return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize),
+					HttpStatus.OK);
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 
 	}
-	
+
 	@GetMapping("/getAllWhitStatus")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWhitStatus(
 			@RequestParam(name = "nameColonne", defaultValue = "s_id", required = false) String nameColonne,
@@ -81,7 +81,6 @@ public class SubcontractorController {
 		}
 
 	}
-
 
 	// ce code perùer de renvoyer le nombre max de page en fonction de l'affichage
 	@GetMapping("/getAllPages")
@@ -115,20 +114,23 @@ public class SubcontractorController {
 
 // méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on le modifie
 	@PostMapping("/save")
+
 	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
 		try {
 			if (subcontractorDto.getSId() > 0) {
 				boolean isSubcontractorExist = subcontractorService.checkIfSubcontractorExist(subcontractorDto.getSId());
-				this.subcontractorService.handleSubcontractorSaveAndUpdate(subcontractorDto);
-				Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
 				if (isSubcontractorExist) {
 					// si le sous-traitant existe, update
+					this.subcontractorService.handleSubcontractorUpdate(subcontractorDto);
+					Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
 					subcontractorService.updateSubcontractor(subcontractorToSaveOrUpdate);
 					Subcontractor updatedSubcontractor = subcontractorService.getSubcontractorWithStatus(subcontractorToSaveOrUpdate.getSId());
 					SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
 					return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
 				} else {
 					// si le sous-traitant n'existe pas, save
+					this.subcontractorService.handleSubcontractorSave(subcontractorDto);
+					Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
 					int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorToSaveOrUpdate);
 					Subcontractor savedSubcontractor = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
 					SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);

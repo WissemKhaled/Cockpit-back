@@ -27,9 +27,11 @@ public interface SubcontractorService {
 	
 	boolean checkIfSubcontractorExist(int sId); 
 	
-	boolean checkIfSubcontractorExistBySName(String sName);
+	int checkIfSubcontractorExistBySName(String sName);
 	
-	boolean checkIfSubcontractorExistBySEmail (String sEmail);
+	int checkIfSubcontractorExistBySEmail (String sEmail);
 
-	void handleSubcontractorSaveAndUpdate(SubcontractorDto subcontractorDto);
+	void handleSubcontractorSave(SubcontractorDto subcontractorDto);
+	
+	void handleSubcontractorUpdate(SubcontractorDto subcontractorDto);
 }
