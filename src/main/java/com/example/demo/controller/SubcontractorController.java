@@ -2,11 +2,14 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +27,7 @@ import com.example.demo.exception.AlreadyArchivedSubcontractor;
 import com.example.demo.exception.SubcontractorDuplicateDataException;
 import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.SubcontractorDtoMapper;
+import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.SubcontractorService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +42,13 @@ public class SubcontractorController {
 
 	private final SubcontractorService subcontractorService;
 	private final SubcontractorDtoMapper dtoMapper;
+	
+	@Autowired
+	@Qualifier("userDetailsService")
+	private UserDetailsService userDetailsService;
+
+	@Autowired
+	private JwtServiceImplementation jwtService;
 
 	// ce code permet de renvoyer la liste des sous-traitants la methode
 	// getAllSubcontractor prend en paramettre pour le tri le nom de la colonne et
@@ -52,15 +63,20 @@ public class SubcontractorController {
 			HttpServletRequest request) {
 		String authorizationHeader = request.getHeader("Authorization");
 		try {
-			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-				String token = authorizationHeader.substring(7);
-				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-				return new ResponseEntity<>(
-						subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize), HttpStatus.OK);
-			} else {
-				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-			}
-		} catch (RuntimeException e) {
+			 if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+		            String token = authorizationHeader.substring(7);
+		            String email = jwtService.extractUsername(token);
+		            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+		            if (jwtService.validateToken(token, userDetails)) {
+		            	return new ResponseEntity<>(
+		            			subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize), HttpStatus.OK);
+		            } else {
+		                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		            }
+		        } else {
+		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		        }
+			} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 
@@ -72,21 +88,45 @@ public class SubcontractorController {
 			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
 			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
-			@RequestParam(name = "statusId", required = false) int statusId) {
+			@RequestParam(name = "statusId", required = false) int statusId,
+			HttpServletRequest request) {
+			String authorizationHeader = request.getHeader("Authorization");
 		try {
-			return new ResponseEntity<>(
-					subcontractorService.getAllSubcontractorWhitStatus(nameColonne, sorting, pageSize, page, statusId),
-					HttpStatus.OK);
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	            String token = authorizationHeader.substring(7);
+	            String email = jwtService.extractUsername(token);
+	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+	            if (jwtService.validateToken(token, userDetails)) {
+					return new ResponseEntity<>(
+							subcontractorService.getAllSubcontractorWhitStatus(nameColonne, sorting, pageSize, page, statusId),
+							HttpStatus.OK);
+	            } else {
+		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		        }
+			} else {
+	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	        }
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@GetMapping("/getAllStatus")
-	public ResponseEntity<List<Status>> getAllSubcontractor() {
-
+	public ResponseEntity<List<Status>> getAllSubcontractor(HttpServletRequest request) {
+		String authorizationHeader = request.getHeader("Authorization");
 		try {
-			return new ResponseEntity<>(subcontractorService.getAllStatus(), HttpStatus.OK);
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	            String token = authorizationHeader.substring(7);
+	            String email = jwtService.extractUsername(token);
+	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+	            if (jwtService.validateToken(token, userDetails)) {
+	            	return new ResponseEntity<>(subcontractorService.getAllStatus(), HttpStatus.OK);
+	            } else {
+		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		        }
+			} else {
+	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	        }
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -95,9 +135,21 @@ public class SubcontractorController {
 
 	// ce code perùer de renvoyer le nombre max de page en fonction de l'affichage
 	@GetMapping("/getAllPages")
-	public ResponseEntity<Integer> getAllPages() {
+	public ResponseEntity<Integer> getAllPages(HttpServletRequest request) {
+		String authorizationHeader = request.getHeader("Authorization");
 		try {
-			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(), HttpStatus.OK);
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	            String token = authorizationHeader.substring(7);
+	            String email = jwtService.extractUsername(token);
+	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+	            if (jwtService.validateToken(token, userDetails)) {
+	            	return new ResponseEntity<>(subcontractorService.getNumbersOfPages(), HttpStatus.OK);
+	            } else {
+		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		        }
+			} else {
+	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	        }
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -105,7 +157,7 @@ public class SubcontractorController {
 
 	// ce code permet de renvoyer le nombre max de sous-traitans
 	@GetMapping("/getCountAll")
-	public ResponseEntity<Integer> getCountAll() {
+	public ResponseEntity<Integer> getCountAll(HttpServletRequest request) {
 		try {
 			return new ResponseEntity<>(subcontractorService.getNumbersOfSubContractor(), HttpStatus.OK);
 
@@ -130,15 +182,27 @@ public class SubcontractorController {
 	// méthode pour récuperer un sous-traitant s'il existe, sinon elle retourn un
 	// error 404
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getSubcontractor(@PathVariable String id) {
+	public ResponseEntity<?> getSubcontractor(@PathVariable String id, HttpServletRequest request) {
+		String authorizationHeader = request.getHeader("Authorization");
 		try {
-			int parsedId = Integer.parseInt(id);
-			if (parsedId > 0) {
-				Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(parsedId);
-				return new ResponseEntity<>(subcontractor, HttpStatus.OK);
-			} else {
-				throw new NumberFormatException();
-			}
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	            String token = authorizationHeader.substring(7);
+	            String email = jwtService.extractUsername(token);
+	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+	            if (jwtService.validateToken(token, userDetails)) {
+	            	int parsedId = Integer.parseInt(id);
+	    			if (parsedId > 0) {
+	    				Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(parsedId);
+	    				return new ResponseEntity<>(subcontractor, HttpStatus.OK);
+	    			} else {
+	    				throw new NumberFormatException();
+	    			}
+	            } else {
+		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		        }
+			} else { 
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	        }
 		} catch (NumberFormatException e) {
 			return new ResponseEntity<>("Id non valide", HttpStatus.BAD_REQUEST);
 		} catch (SubcontractorNotFoundException e) {
@@ -149,34 +213,46 @@ public class SubcontractorController {
 	// méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on
 	// le modifie
 	@PostMapping("/save")
-
-	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
+	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto, HttpServletRequest request) {
+		String authorizationHeader = request.getHeader("Authorization");
 		try {
-			if (subcontractorDto.getSId() > 0) {
-				boolean isSubcontractorExist = subcontractorService
-						.checkIfSubcontractorExist(subcontractorDto.getSId());
-				if (isSubcontractorExist) {
-					// si le sous-traitant existe, update
-					this.subcontractorService.handleSubcontractorUpdate(subcontractorDto);
-					Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
-					subcontractorService.updateSubcontractor(subcontractorToSaveOrUpdate);
-					Subcontractor updatedSubcontractor = subcontractorService
-							.getSubcontractorWithStatus(subcontractorToSaveOrUpdate.getSId());
-					SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
-					return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
-				} else {
-					// si le sous-traitant n'existe pas, save
-					this.subcontractorService.handleSubcontractorSave(subcontractorDto);
-					Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
-					int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorToSaveOrUpdate);
-					Subcontractor savedSubcontractor = subcontractorService
-							.getSubcontractorWithStatus(savedSubcontractorId);
-					SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
-					return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
-				}
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	            String token = authorizationHeader.substring(7);
+	            String email = jwtService.extractUsername(token);
+	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+	            if (jwtService.validateToken(token, userDetails)) {
+					if (subcontractorDto.getSId() > 0) {
+						boolean isSubcontractorExist = subcontractorService
+								.checkIfSubcontractorExist(subcontractorDto.getSId());
+						if (isSubcontractorExist) {
+							// si le sous-traitant existe, update
+							this.subcontractorService.handleSubcontractorUpdate(subcontractorDto);
+							Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
+							subcontractorService.updateSubcontractor(subcontractorToSaveOrUpdate);
+							Subcontractor updatedSubcontractor = subcontractorService
+									.getSubcontractorWithStatus(subcontractorToSaveOrUpdate.getSId());
+							SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
+							return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
+						} else {
+							// si le sous-traitant n'existe pas, save
+							this.subcontractorService.handleSubcontractorSave(subcontractorDto);
+							Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
+							int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorToSaveOrUpdate);
+							Subcontractor savedSubcontractor = subcontractorService
+									.getSubcontractorWithStatus(savedSubcontractorId);
+							SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
+							return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
+						}
+					} else {
+						return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
+					}
+		        } else {
+		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		        }
 			} else {
-				return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 			}
+	            
 		} catch (SubcontractorDuplicateDataException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
 		} catch (Exception e) {
@@ -186,20 +262,33 @@ public class SubcontractorController {
 
 	// methode pour archiver le sous-traitant
 	@PutMapping("/archive/{id}")
-	public ResponseEntity<?> archiveSubcontractor(@PathVariable String id) {
+	public ResponseEntity<?> archiveSubcontractor(@PathVariable String id, HttpServletRequest request) {
+		String authorizationHeader = request.getHeader("Authorization");
 		try {
-			int parsedId = Integer.parseInt(id);
-			if (parsedId > 0) {
-				Subcontractor subcontractortoArchive = subcontractorService.getSubcontractorWithStatus(parsedId);
-				if (subcontractortoArchive.getStatus().getStName().equals("Archivé")) {
-					throw new AlreadyArchivedSubcontractor(
-							String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
-				}
-				subcontractorService.archiveSubcontractor(subcontractortoArchive);
-				return new ResponseEntity<>(subcontractorService.getSubcontractorWithStatus(parsedId), HttpStatus.OK);
-			} else {
-				throw new NumberFormatException();
-			}
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	            String token = authorizationHeader.substring(7);
+	            String email = jwtService.extractUsername(token);
+	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+	            if (jwtService.validateToken(token, userDetails)) {
+			
+			        int parsedId = Integer.parseInt(id);
+					if (parsedId > 0) {
+						Subcontractor subcontractortoArchive = subcontractorService.getSubcontractorWithStatus(parsedId);
+						if (subcontractortoArchive.getStatus().getStName().equals("Archivé")) {
+							throw new AlreadyArchivedSubcontractor(
+									String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
+						}
+						subcontractorService.archiveSubcontractor(subcontractortoArchive);
+						return new ResponseEntity<>(subcontractorService.getSubcontractorWithStatus(parsedId), HttpStatus.OK);
+					} else {
+						throw new NumberFormatException();
+					}
+	            } else {
+		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		        }
+		} else {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
 		} catch (AlreadyArchivedSubcontractor e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
