@@ -17,7 +17,7 @@ import com.example.demo.entity.Subcontractor;
 public interface SubcontractorMapper {
 	// ce code permet de renvoyer le nombre total de colonne de la
 	// table subcontractor
-	@Select("SELECT COUNT(*) FROM subcontractor")
+	@Select("SELECT COUNT(*) FROM subcontractor WHERE s_fk_status_id != 4")
 	Integer countTotalItems();
 
 	// fin

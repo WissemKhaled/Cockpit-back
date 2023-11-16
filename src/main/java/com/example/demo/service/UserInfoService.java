@@ -17,6 +17,9 @@ import com.example.demo.dto.UUserMapperEntityDTO;
 import com.example.demo.entity.UUser;
 import com.example.demo.mappers.UUserMapper;
 
+import lombok.extern.java.Log;
+
+@Log
 @Service
 public class UserInfoService implements UserDetailsService {
 	@Autowired
@@ -56,9 +59,11 @@ public class UserInfoService implements UserDetailsService {
 				
 				return userInfoDTO;
 			} else {
+				log.severe(String.format("Email invalide %s" + email));
 				throw new IllegalArgumentException("Email invalide");
 			}
 		} catch (UsernameNotFoundException e) {
+			log.severe(String.format("Utilisateur non trouvé : {}", e.getMessage(), e));
 			e.printStackTrace();
 			return null;
 		}
@@ -86,10 +91,11 @@ public class UserInfoService implements UserDetailsService {
         
         try {
         	 userMapper.insert(user);
+        	 log.info("Utilisateur '" + user.getUEmail() + "' ajouté avec succès");
              return "Utilisateur '" + user.getUEmail() + "' ajouté avec succès";
         } catch(Exception  ex) {
-        	// Log the exception for debugging
-            throw new RuntimeException("Error d'ajout d'utilisateur. Veuillez réessayer plus tard");
+        	log.severe("Error d'ajout d'utilisateur: " + ex.getMessage());
+            throw new RuntimeException("Erreur d'ajout d'utilisateur. Veuillez réessayer plus tard");
         }
     }
 }

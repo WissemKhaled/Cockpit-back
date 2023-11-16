@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -40,13 +43,20 @@ import com.example.demo.service.UserInfoService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.extern.java.Log;
 
+@Log
 @RestController
 @CrossOrigin("http://localhost:4200")
 @RequestMapping("/auth") 
 public class UserController {
 	@Autowired
+	@Qualifier("userInfoService")
 	private UserInfoService service; 
+	
+	@Autowired
+	@Qualifier("userDetailsService")
+	private UserDetailsService userDetailsService;
 
 	@Autowired
 	private JwtServiceImplementation jwtService;
@@ -65,16 +75,26 @@ public class UserController {
 	    String authorizationHeader = request.getHeader("Authorization");
 	    
 	    try {
-	        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	    	if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 	            String token = authorizationHeader.substring(7);
-	            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	            String email = authentication.getName();
-
-	            UUserDTO foundUser = service.findUserByEmail(email);
-	            return new ResponseEntity<>(foundUser, HttpStatus.OK);
-	        } else {
+	            // Récupère les infos de l'utilisateur à partir du token
+	            String email = jwtService.extractUsername(token);
+	            // Charge les détails du user en se basant sur l'email
+	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);            
+	            // Validation du token
+	            if (jwtService.validateToken(token, userDetails)) {
+	            	if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+	    	            UUserDTO foundUser = service.findUserByEmail(email);
+	    	            return new ResponseEntity<>(foundUser, HttpStatus.OK);
+	    	        } else {
+	    	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+	    	        }
+	            } else {
+		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		        }
+			} else {
 	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-	        }
+	        }        
 	    } catch (UsernameNotFoundException e) {
 	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	    } catch (IllegalArgumentException e) {
@@ -99,7 +119,6 @@ public class UserController {
 	
 	/**
 	 * Méthode qui vérifie l'authentification du User et génère un token avec un tokenId servant à le refresh si l'authentification réussie
-	 * @throws GeneralException 
 	*/
 	@PostMapping("/generateToken")
 	public ResponseEntity<JwtResponseDTO> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
@@ -113,6 +132,7 @@ public class UserController {
 		    UUserDTO user = service.findUserByEmail(authRequest.getEmail());
 
 		    if (authentication.isAuthenticated() && user.isUStatus()) {
+		    	log.info("Utilisateur authentifié avec un compte actif");
 		    	int userId = service.findUserByEmail(authRequest.getEmail()).getUId();
 	           	 // on supprime la clé de refresh token associée à l'utilisateur s'il y en a déjà une en bdd avant d'en créer une
 	           	 refreshTokenService.deleteTokenByUserId(userId);
@@ -124,11 +144,12 @@ public class UserController {
 		                .build();
 		        return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
 		    } else {
+		    	log.severe("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
 		        throw new UsernameNotFoundException("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
 		    }
 
 	    }  catch (AuthenticationException e) {
-            // Handle the case where authentication failed.
+	    	log.severe("Requête utilisateur invalide pour l'identifiant '" + authRequest.getEmail());
             throw new BadCredentialsException("Identifiants invalides"); // or a custom exception
         }
 	}
@@ -138,8 +159,8 @@ public class UserController {
 	 */
 	 @PostMapping("/refreshToken")
 	 public ResponseEntity<JwtResponseDTO> refreshToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequest) throws GeneralException {
-	     try {
-	         Optional<RefreshToken> optionalToken = refreshTokenService.findByToken(refreshTokenRequest.getToken());
+		 try {
+			 Optional<RefreshToken> optionalToken = refreshTokenService.findByToken(refreshTokenRequest.getToken());
 
 	         if (optionalToken.isPresent()) {
 	             RefreshToken token = optionalToken.get();
@@ -151,16 +172,17 @@ public class UserController {
 	                     .accessToken(accessToken)
 	                     .token(refreshTokenRequest.getToken())
 	                     .build();
+	             log.info("Token refreshed avec succès");
 	             return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
 	         } else {
+	        	 log.severe("Refresh token invalide");
 	             throw new GeneralException("Refresh token invalide");
 	         }
 	     } catch (GeneralException e) {
+	    	 log.severe(e.toString());
 	         throw e;
 	     }
 	 }
-
-
     
 	/**
 	 * Méthode qui gère les exceptions d'authentification
@@ -191,6 +213,7 @@ public class UserController {
 
  			errors.put(fieldName, errorMessage);
  		});
+ 		log.severe(errors.toString());
  		return errors;
  	}
 }
