@@ -36,12 +36,12 @@ public class PersistenceConfig {
 			dataSource.setDriverClassName("org.postgresql.Driver");
 			dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
 			dataSource.setUsername("postgres");
-			dataSource.setPassword("postgres");
+			dataSource.setPassword("1234");
 		}
 		return dataSource;
 	}
 
-//	// Initialisation de postgres BDD
+	// Initialisation de postgres BDD
 //	@Bean
 //	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
 //		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
