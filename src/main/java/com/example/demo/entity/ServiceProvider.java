@@ -22,6 +22,9 @@ public class ServiceProvider {
 	
 	@JsonProperty("spName")
 	private String spName;
+	
+	@JsonProperty("spEmail")
+	private String spEmail;
 
 	@JsonProperty("spCreationDate")
 	private LocalDateTime spCreationDate;
