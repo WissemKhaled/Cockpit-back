@@ -8,4 +8,6 @@ public interface ServiceProviderService {
 
 	int archiveServiceProvider(ServiceProvider serviceProviderToArchive);
 
+	int updateServiceProvider(ServiceProvider serviceProviderToUpdate);
+
 }

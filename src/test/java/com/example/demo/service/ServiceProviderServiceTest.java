@@ -60,7 +60,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToArchive.setSpFirstName("sp-first-name");
 		serviceProviderToArchive.setSpName("sp-name");
 		serviceProviderToArchive.setSpEmail("sp-email");
-		serviceProviderToArchive.setStatus(new Status(1));
+		serviceProviderToArchive.setSpStatus(new Status(1));
 
 		given(serviceProviderMapper.archive(serviceProviderToArchive)).willReturn(1);
 
@@ -76,12 +76,44 @@ public class ServiceProviderServiceTest {
 		serviceProviderToArchive.setSpFirstName("sp-first-name");
 		serviceProviderToArchive.setSpName("sp-name");
 		serviceProviderToArchive.setSpEmail("sp-email");
-		serviceProviderToArchive.setStatus(new Status(1));
+		serviceProviderToArchive.setSpStatus(new Status(1));
 
 		given(serviceProviderMapper.archive(serviceProviderToArchive)).willReturn(0);
 
 		int isArchived = serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
 
 		assertEquals(0, isArchived);
+	}
+	
+	@Test
+	public void givenServiceProviderEntity_whenServicePeroviderIsUpdated_thenReturnOne() {
+		ServiceProvider serviceProviderToUpdate = new ServiceProvider();
+		serviceProviderToUpdate.setSpId(10);
+		serviceProviderToUpdate.setSpFirstName("sp-first-name");
+		serviceProviderToUpdate.setSpName("sp-name");
+		serviceProviderToUpdate.setSpEmail("sp-email");
+		serviceProviderToUpdate.setSpStatus(new Status(1));
+
+		given(serviceProviderMapper.update(serviceProviderToUpdate)).willReturn(1);
+
+		int isUpdated = serviceProviderService.updateServiceProvider(serviceProviderToUpdate);
+
+		assertEquals(1, isUpdated);
+	}
+	
+	@Test
+	public void givenServiceProviderEntity_whenServicePeroviderIsNotUpdated_thenReturnZero() {
+		ServiceProvider serviceProviderToUpdate = new ServiceProvider();
+		serviceProviderToUpdate.setSpId(10);
+		serviceProviderToUpdate.setSpFirstName("sp-first-name");
+		serviceProviderToUpdate.setSpName("sp-name");
+		serviceProviderToUpdate.setSpEmail("sp-email");
+		serviceProviderToUpdate.setSpStatus(new Status(1));
+
+		given(serviceProviderMapper.update(serviceProviderToUpdate)).willReturn(0);
+
+		int isUpdated = serviceProviderService.updateServiceProvider(serviceProviderToUpdate);
+
+		assertEquals(0, isUpdated);
 	}
 }

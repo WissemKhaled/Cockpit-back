@@ -29,7 +29,7 @@ public class ServiceProviderDtoMapperTest {
 		serviceProviderEntity.setSpEmail("sp_email");
 		serviceProviderEntity.setSpCreationDate(LocalDateTime.now());
 		serviceProviderEntity.setSpLastUpdateDate(LocalDateTime.now());
-		serviceProviderEntity.setStatus(new Status(1));
+		serviceProviderEntity.setSpStatus(new Status(1));
 		serviceProviderEntity.setSubcontractor(new Subcontractor());
 		
 		ServiceProviderDto serviceProviderDto = serviceProviderDtoMapper.serviceProviderToDto(serviceProviderEntity);
@@ -40,7 +40,7 @@ public class ServiceProviderDtoMapperTest {
 		assertEquals(serviceProviderEntity.getSpEmail(), serviceProviderDto.getSpEmail());
 		assertEquals(serviceProviderEntity.getSpCreationDate(), serviceProviderDto.getSpCreationDate());
 		assertEquals(serviceProviderEntity.getSpLastUpdateDate(), serviceProviderDto.getSpLastUpdateDate());
-		assertEquals(serviceProviderEntity.getStatus(), serviceProviderDto.getStatus());
+		assertEquals(serviceProviderEntity.getSpStatus(), serviceProviderDto.getStatus());
 		assertEquals(serviceProviderEntity.getSubcontractor(), serviceProviderDto.getSubcontractor());
 	}
 	
@@ -64,7 +64,7 @@ public class ServiceProviderDtoMapperTest {
 		assertEquals(serviceProviderDto.getSpEmail(), serviceProvider.getSpEmail());
 		assertEquals(serviceProviderDto.getSpCreationDate(), serviceProvider.getSpCreationDate());
 		assertEquals(serviceProviderDto.getSpLastUpdateDate(), serviceProvider.getSpLastUpdateDate());
-		assertEquals(serviceProviderDto.getStatus(), serviceProvider.getStatus());
+		assertEquals(serviceProviderDto.getStatus(), serviceProvider.getSpStatus());
 		assertEquals(serviceProviderDto.getSubcontractor(), serviceProvider.getSubcontractor());
 	}
 }

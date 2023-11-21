@@ -31,4 +31,9 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		return serviceProviderMapper.archive(serviceProviderToArchive);
 	}
 
+	@Override
+	public int updateServiceProvider(ServiceProvider serviceProviderToUpdate) {
+		return serviceProviderMapper.update(serviceProviderToUpdate);
+	}
+
 }

@@ -34,8 +34,8 @@ public class ServiceProvider {
 	@JsonProperty("spLastUpdateDate")
 	private LocalDateTime spLastUpdateDate;
 	
-	@JsonProperty("status")
-	private Status status;
+	@JsonProperty("spStatus")
+	private Status spStatus;
 
 	@JsonProperty("subcontractor")
 	private Subcontractor subcontractor;
