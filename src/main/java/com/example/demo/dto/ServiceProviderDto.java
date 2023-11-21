@@ -1,7 +1,9 @@
-package com.example.demo.entity;
+package com.example.demo.dto;
 
 import java.time.LocalDateTime;
 
+import com.example.demo.entity.Status;
+import com.example.demo.entity.Subcontractor;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -10,12 +12,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
-public class ServiceProvider {
+public class ServiceProviderDto {
 	@JsonProperty("spId")
 	private int spId;
 
@@ -39,5 +41,4 @@ public class ServiceProvider {
 
 	@JsonProperty("subcontractor")
 	private Subcontractor subcontractor;
-
 }
