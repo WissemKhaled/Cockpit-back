@@ -84,7 +84,7 @@ public class SubcontractorController {
 
 	@GetMapping("/getAllWhitStatus")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWhitStatus(
-			@RequestParam(name = "nameColonne", defaultValue = "s_id", required = false) String nameColonne,
+			@RequestParam(name = "nameColonne", defaultValue = "s_name", required = false) String nameColonne,
 			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
 			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,

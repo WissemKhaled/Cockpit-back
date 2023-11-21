@@ -53,7 +53,7 @@ public interface SubcontractorMapper {
 	@Select("SELECT s.s_id, s.s_name, s.s_email, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
 			+ "FROM subcontractor s " + "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
 			+ "WHERE st.st_id= ${statusId} "
-			+ "ORDER BY ${nameColonne} ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} ")
+			+ "ORDER BY ${nameColonne}  ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} ")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "sName", column = "s_name")
 	@Result(property = "sEmail", column = "s_email")

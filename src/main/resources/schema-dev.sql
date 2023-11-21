@@ -32,3 +32,19 @@ CREATE TABLE IF NOT EXISTS refresh_token (
     rt_fk_user_id SMALLINT NOT NULL,
     FOREIGN KEY (rt_fk_user_id) REFERENCES u_user(u_id)
 );
+
+CREATE TABLE IF NOT EXISTS email_model (
+    em_id SERIAL PRIMARY KEY,
+    em_name VARCHAR(45) NOT NULL,
+    em_model TEXT NOT NULL,
+    em_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS email_send (
+    es_id SERIAL PRIMARY KEY,
+    es_mail_sender VARCHAR(45) DEFAULT NULL,
+    es_mail_recipient VARCHAR(45) DEFAULT NULL,
+    es_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    es_fk_model_email_id SMALLINT NOT NULL,
+    FOREIGN KEY (es_fk_model_email_id) REFERENCES email_model(em_id)
+);
