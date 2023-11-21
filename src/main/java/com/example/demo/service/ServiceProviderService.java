@@ -6,4 +6,6 @@ public interface ServiceProviderService {
 
 	int saveServiceProvider(ServiceProvider serviceProviderToSave);
 
+	int archiveServiceProvider(ServiceProvider serviceProviderToArchive);
+
 }
