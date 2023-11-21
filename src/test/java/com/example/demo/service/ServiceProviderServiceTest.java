@@ -52,7 +52,7 @@ public class ServiceProviderServiceTest {
 
 		assertEquals(0, savedId);
 	}
-	
+
 	@Test
 	public void givenServiceProviderEntity_whenServicePeroviderIsArchived_thenReturnOne() {
 		ServiceProvider serviceProviderToArchive = new ServiceProvider();
@@ -68,7 +68,7 @@ public class ServiceProviderServiceTest {
 
 		assertEquals(1, isArchived);
 	}
-	
+
 	@Test
 	public void givenServiceProviderEntity_whenServicePeroviderIsNotArchived_thenReturnZero() {
 		ServiceProvider serviceProviderToArchive = new ServiceProvider();
@@ -84,7 +84,7 @@ public class ServiceProviderServiceTest {
 
 		assertEquals(0, isArchived);
 	}
-	
+
 	@Test
 	public void givenServiceProviderEntity_whenServicePeroviderIsUpdated_thenReturnOne() {
 		ServiceProvider serviceProviderToUpdate = new ServiceProvider();
@@ -100,7 +100,7 @@ public class ServiceProviderServiceTest {
 
 		assertEquals(1, isUpdated);
 	}
-	
+
 	@Test
 	public void givenServiceProviderEntity_whenServicePeroviderIsNotUpdated_thenReturnZero() {
 		ServiceProvider serviceProviderToUpdate = new ServiceProvider();

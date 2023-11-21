@@ -18,15 +18,15 @@ public interface ServiceProviderMapper {
 
 	@Update("Update service_provider SET sp_fk_status_id = 4 WHERE sp_id = #{spId}")
 	@Result(property = "spId", column = "sp_id")
-	@Result(property = "status.stId", column = "sp_fk_status_id")
+	@Result(property = "spStatus.stId", column = "sp_fk_status_id")
 	int archive(ServiceProvider serviceProvider);
 
 	@Insert("INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date, sp_fk_subcontractor_id, sp_fk_status_id)"
-			+ "VALUES (#{spFirstName}, #{spName}, #{spEmail}, #{spCreationDate}, #{spLastUpdateDate}, #{subcontractor.sId}, #{status.stId})")
+			+ "VALUES (#{spFirstName}, #{spName}, #{spEmail}, #{spCreationDate}, #{spLastUpdateDate}, #{subcontractor.sId}, #{spStatus.stId})")
 	int insert(ServiceProvider serviceProvider);
 	
 	@Update("UPDATE service_provider SET sp_first_name = #{spFirstName}, sp_name = #{spName}, sp_email = #{spEmail}, sp_lastUpdate_date = #{spLastUpdateDate}, "
-			+ "sp_fk_status_id = #{status.stId}, sp_fk_subcontractor_id = #{subcontractor.sId} "
+			+ "sp_fk_status_id = #{spStatus.stId}, sp_fk_subcontractor_id = #{subcontractor.sId} "
 			+ "WHERE sp_id = #{spId}")
 	int update(ServiceProvider serviceProvider);
 
@@ -55,8 +55,8 @@ public interface ServiceProviderMapper {
 	@Result(property = "spEmail", column = "sp_email")
 	@Result(property = "spCreationDate", column = "sp_creation_date")
 	@Result(property = "spLastUpdateDate", column = "sp_lastUpdate_date")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
+	@Result(property = "spStatus.stId", column = "status_stId")
+	@Result(property = "spStatus.stName", column = "status_stName")
 	@Result(property = "subcontractor.sId", column = "subcontractor_sId")
 	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
 	List<ServiceProvider> findServiceProvidersBySubcontractorId(int sId);
