@@ -33,18 +33,22 @@ CREATE TABLE IF NOT EXISTS refresh_token (
     FOREIGN KEY (rt_fk_user_id) REFERENCES u_user(u_id)
 );
 
-CREATE TABLE IF NOT EXISTS email_model (
-    em_id SERIAL PRIMARY KEY,
-    em_name VARCHAR(45) NOT NULL,
-    em_model TEXT NOT NULL,
-    em_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS gst_message_model (
+    mm_id SERIAL PRIMARY KEY,
+    mm_type VARCHAR(45) NOT NULL,
+    mm_subject VARCHAR(255) NOT NULL,
+    mm_body TEXT NOT NULL,
+    mm_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    mm_last_update TIMESTAMP,
+    mm_fk_status_id SMALLINT NOT NULL,
+    FOREIGN KEY (mm_fk_status_id) REFERENCES status(st_id)
 );
 
-CREATE TABLE IF NOT EXISTS email_send (
-    es_id SERIAL PRIMARY KEY,
-    es_mail_sender VARCHAR(45) DEFAULT NULL,
-    es_mail_recipient VARCHAR(45) DEFAULT NULL,
-    es_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    es_fk_model_email_id SMALLINT NOT NULL,
-    FOREIGN KEY (es_fk_model_email_id) REFERENCES email_model(em_id)
+CREATE TABLE IF NOT EXISTS message_send (
+    ms_id SERIAL PRIMARY KEY,
+    ms_mail_sender VARCHAR(45) DEFAULT NULL,
+    ms_mail_recipient VARCHAR(45) DEFAULT NULL,
+    ms_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ms_fk_model_email_id SMALLINT NOT NULL,
+    FOREIGN KEY (ms_fk_model_email_id) REFERENCES gst_message_model(mm_id)
 );

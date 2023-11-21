@@ -41,7 +41,7 @@ public class PersistenceConfig {
 		return dataSource;
 	}
 
-//	// Initialisation de postgres BDD
+//	 Initialisation de postgres BDD
 //	@Bean
 //	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
 //		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
