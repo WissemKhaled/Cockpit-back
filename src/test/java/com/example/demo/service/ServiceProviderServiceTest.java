@@ -116,4 +116,20 @@ public class ServiceProviderServiceTest {
 
 		assertEquals(0, isUpdated);
 	}
+	
+	@Test
+	public void givenServiceProviderEntity_whenServicePeroviderIsFound_thenReturnOne() {
+		ServiceProvider serviceProviderToBeFound = new ServiceProvider();
+		serviceProviderToBeFound.setSpId(1);
+		serviceProviderToBeFound.setSpFirstName("sp-first-name");
+		serviceProviderToBeFound.setSpName("sp-name");
+		serviceProviderToBeFound.setSpEmail("sp-email");
+		serviceProviderToBeFound.setSpStatus(new Status(3));
+
+		given(serviceProviderMapper.update(serviceProviderToBeFound)).willReturn(1);
+
+		int isFound = serviceProviderService.updateServiceProvider(serviceProviderToBeFound);
+
+		assertEquals(0, isFound);
+	}
 }

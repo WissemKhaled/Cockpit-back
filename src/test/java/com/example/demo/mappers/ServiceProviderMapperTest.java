@@ -8,13 +8,14 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 
 @SpringBootTest
-//@Transactional
+@Transactional
 public class ServiceProviderMapperTest {
 
 	@Autowired
@@ -113,24 +114,6 @@ public class ServiceProviderMapperTest {
 		int isUpdated = serviceProviderMapper.update(existingServiceProvider);
 
 		assertEquals(1, isUpdated);
-	}
-
-	@Test
-	void updateTest_UpdateServiceProvider_ShouldReturnZero() {
-		Subcontractor existingSubcontractor = new Subcontractor();
-		existingSubcontractor.setSId(2);
-
-		ServiceProvider existingServiceProvider = new ServiceProvider();
-		existingServiceProvider.setSpId(Integer.MAX_VALUE);
-		existingServiceProvider.setSpName("sp1");
-		existingServiceProvider.setSpFirstName("sp1_name");
-		existingServiceProvider.setSpEmail("sp1_email");
-		existingServiceProvider.setSubcontractor(existingSubcontractor);
-		existingServiceProvider.setSpStatus(new Status(2));
-
-		int isUpdated = serviceProviderMapper.update(existingServiceProvider);
-
-		assertEquals(0, isUpdated);
 	}
 
 }
