@@ -8,11 +8,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public class ServiceProvider {
 	@JsonProperty("spId")
 	private int spId;
@@ -35,6 +37,4 @@ public class ServiceProvider {
 	@JsonProperty("subcontractor")
 	private Subcontractor subcontractor;
 
-	@JsonProperty("status")
-	private Status status;
 }

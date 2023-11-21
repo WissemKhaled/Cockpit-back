@@ -212,53 +212,53 @@ public class SubcontractorController {
 
 	// méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on
 	// le modifie
-	@PostMapping("/save")
-	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto, HttpServletRequest request) {
-		String authorizationHeader = request.getHeader("Authorization");
-		try {
-			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	            String token = authorizationHeader.substring(7);
-	            String email = jwtService.extractUsername(token);
-	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-	            if (jwtService.validateToken(token, userDetails)) {
-					if (subcontractorDto.getSId() > 0) {
-						boolean isSubcontractorExist = subcontractorService
-								.checkIfSubcontractorExist(subcontractorDto.getSId());
-						if (isSubcontractorExist) {
-							// si le sous-traitant existe, update
-							this.subcontractorService.handleSubcontractorUpdate(subcontractorDto);
-							Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
-							subcontractorService.updateSubcontractor(subcontractorToSaveOrUpdate);
-							Subcontractor updatedSubcontractor = subcontractorService
-									.getSubcontractorWithStatus(subcontractorToSaveOrUpdate.getSId());
-							SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
-							return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
-						} else {
-							// si le sous-traitant n'existe pas, save
-							this.subcontractorService.handleSubcontractorSave(subcontractorDto);
-							Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
-							int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorToSaveOrUpdate);
-							Subcontractor savedSubcontractor = subcontractorService
-									.getSubcontractorWithStatus(savedSubcontractorId);
-							SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
-							return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
-						}
-					} else {
-						return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
-					}
-		        } else {
-		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		        }
-			} else {
-				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-			}
-	            
-		} catch (SubcontractorDuplicateDataException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-		} catch (Exception e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+//	@PostMapping("/save")
+//	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto, HttpServletRequest request) {
+//		String authorizationHeader = request.getHeader("Authorization");
+//		try {
+//			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+//	            String token = authorizationHeader.substring(7);
+//	            String email = jwtService.extractUsername(token);
+//	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+//	            if (jwtService.validateToken(token, userDetails)) {
+//					if (subcontractorDto.getSId() > 0) {
+//						boolean isSubcontractorExist = subcontractorService
+//								.checkIfSubcontractorExist(subcontractorDto.getSId());
+//						if (isSubcontractorExist) {
+//							// si le sous-traitant existe, update
+//							this.subcontractorService.handleSubcontractorUpdate(subcontractorDto);
+//							Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
+//							subcontractorService.updateSubcontractor(subcontractorToSaveOrUpdate);
+//							Subcontractor updatedSubcontractor = subcontractorService
+//									.getSubcontractorWithStatus(subcontractorToSaveOrUpdate.getSId());
+//							SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
+//							return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
+//						} else {
+//							// si le sous-traitant n'existe pas, save
+//							this.subcontractorService.handleSubcontractorSave(subcontractorDto);
+//							Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
+//							int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorToSaveOrUpdate);
+//							Subcontractor savedSubcontractor = subcontractorService
+//									.getSubcontractorWithStatus(savedSubcontractorId);
+//							SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
+//							return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
+//						}
+//					} else {
+//						return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
+//					}
+//		        } else {
+//		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//		        }
+//			} else {
+//				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//			}
+//	            
+//		} catch (SubcontractorDuplicateDataException e) {
+//			return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+//		} catch (Exception e) {
+//			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//	}
 
 	// methode pour archiver le sous-traitant
 	@PutMapping("/archive/{id}")

@@ -19,9 +19,9 @@ public class SubcontractorDtoMapper {
 				subcontractor.getSCreationDate(), subcontractor.getSLastUpdateDate(), subcontractor.getStatus());
 	}
 
-	public Subcontractor dtoToSubcontractor(SubcontractorDto subcontractorDto) {
-		return new Subcontractor(subcontractorDto.getSId(), subcontractorDto.getSName(), subcontractorDto.getSEmail(),
-				subcontractorDto.getSCreationDate(), subcontractorDto.getSLastUpdateDate(),
-				statusService.getStatusById(subcontractorDto.getStatus().getStId()));
-	}
+//	public Subcontractor dtoToSubcontractor(SubcontractorDto subcontractorDto) {
+//		return new Subcontractor(subcontractorDto.getSId(), subcontractorDto.getSName(), subcontractorDto.getSEmail(),
+//				subcontractorDto.getSCreationDate(), subcontractorDto.getSLastUpdateDate(),
+//				statusService.getStatusById(subcontractorDto.getStatus().getStId()));
+//	}
 }

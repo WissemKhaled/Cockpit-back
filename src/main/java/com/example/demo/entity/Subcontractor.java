@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -33,6 +34,9 @@ public class Subcontractor {
 	
 	@JsonProperty("status")
 	private Status status;
+	
+	@JsonProperty("serviceProviders")
+	private List<ServiceProvider> serviceProviders;
 
 	public Subcontractor(String sName, String sEmail) {
 		this.sName = sName;
