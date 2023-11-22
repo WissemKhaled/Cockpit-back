@@ -24,12 +24,7 @@ public interface SubcontractorMapper {
 	@Select("SELECT COUNT(*) FROM subcontractor" + " WHERE s_fk_status_id = ${idStatus} ")
 	Integer countTotalItemsWithStatus(@Param("idStatus") Integer idStatus);
 
-	// debut cette method recupere tous les status
-	@Select("SELECT * FROM status")
-	@Result(property = "stId", column = "st_id")
-	@Result(property = "stName", column = "st_name")
-	@Result(property = "stDescription", column = "st_description")
-	List<Status> getAllStatus();
+
 
 	// ce code permet de renvoyer une liste de sous-traitans avec la
 	// pagination est le tri grave à la requette SQL

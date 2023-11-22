@@ -11,9 +11,11 @@ import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.SubcontractorDuplicateDataException;
 import com.example.demo.exception.SubcontractorNotFoundException;
+import com.example.demo.mappers.StatusMapper;
 import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.mappers.SubcontractorMapper;
 
+import ch.qos.logback.core.status.StatusManager;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -23,6 +25,8 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	private final SubcontractorDtoMapper dtoMapper;
 	
 	private final SubcontractorMapper subcontractorMapper;
+	
+	private final StatusMapper statusMapper;
 
 	@Override
 	public Subcontractor getSubcontractorWithStatus(int sId) {
@@ -94,7 +98,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	@Override
 	public List<Status> getAllStatus() {
-		return subcontractorMapper.getAllStatus();
+		return statusMapper.getAllStatus();
 	}
 
 	@Override
