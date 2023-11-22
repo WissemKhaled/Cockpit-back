@@ -22,7 +22,7 @@ public class ServiceProviderMapperTest {
 	private ServiceProviderMapper serviceProviderMapper;
 
 	@Test
-	void findTest_FindingServiceProvider_ShouldReturnOne() {
+	void findTest_FindingServiceProvidersBySubcontractorId_ShouldReturnTwo() {
 		int existingSubcontractorId = 1;
 
 		List<ServiceProvider> serviceProviders = serviceProviderMapper
@@ -32,7 +32,38 @@ public class ServiceProviderMapperTest {
 	}
 
 	@Test
-	void findTest_FindingServiceProviderFailed_ShouldReturnZero() {
+	void findTest_FindingServiceProvidersBySubcontractorIdFailed_ShouldReturnZero() {
+		int nonExistingSubcontractorId = Integer.MAX_VALUE;
+
+		List<ServiceProvider> serviceProviders = serviceProviderMapper
+				.findServiceProvidersBySubcontractorId(nonExistingSubcontractorId);
+
+		assertEquals(0, serviceProviders.size());
+	}
+	
+	@Test
+	void findTest_FindingServiceProviderByServiceProviderId_ShouldReturnTheServiceProviderIdAndItsFirstName() {
+		int existingServiceProviderId = 1;
+		
+		ServiceProvider foundedServiceProvider = serviceProviderMapper.findServiceProviderById(existingServiceProviderId);
+
+		assertEquals(1, foundedServiceProvider.getSpId());
+		assertEquals("sp-1-first_name", foundedServiceProvider.getSpFirstName());
+
+	}
+	
+	@Test
+	void findTest_FindingServiceProviderByServiceProviderIdFailed_ShouldReturnNull() {
+		int nonExistingServiceProviderId = Integer.MAX_VALUE-1000;
+		
+		ServiceProvider nonFoundedServiceProvider = serviceProviderMapper.findServiceProviderById(nonExistingServiceProviderId);
+
+		assertEquals(null, nonFoundedServiceProvider);
+
+	}
+
+	@Test
+	void findTest_FindingServiceProviderByServiceProviderIdFailed_ShouldReturnZero() {
 		int nonExistingSubcontractorId = Integer.MAX_VALUE;
 
 		List<ServiceProvider> serviceProviders = serviceProviderMapper

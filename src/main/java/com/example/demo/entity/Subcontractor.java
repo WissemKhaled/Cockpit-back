@@ -42,5 +42,9 @@ public class Subcontractor {
 		this.sName = sName;
 		this.sEmail = sEmail;
 	}
+	
+	public Subcontractor(int sId) {
+		this.sId = sId;
+	}
 
 }
