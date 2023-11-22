@@ -130,6 +130,18 @@ public class ServiceProviderServiceTest {
 
 		int isFound = serviceProviderService.updateServiceProvider(serviceProviderToBeFound);
 
+		assertEquals(1, isFound);
+	}
+	
+	@Test
+	public void givenServiceProviderEntity_whenServicePeroviderIsNotFound_thenReturnZero() {
+		ServiceProvider nonExistingserviceProvider = new ServiceProvider();
+		nonExistingserviceProvider.setSpId(Integer.MAX_VALUE-55);
+
+		given(serviceProviderMapper.update(nonExistingserviceProvider)).willReturn(0);
+
+		int isFound = serviceProviderService.updateServiceProvider(nonExistingserviceProvider);
+
 		assertEquals(0, isFound);
 	}
 }
