@@ -8,12 +8,12 @@ import com.example.demo.entity.MessageModel;
 @Component
 public class CreateMessageModelDtoMapper {
 	public CreateMessageModelDTO toDto(MessageModel messageModel) {
-		return new CreateMessageModelDTO(messageModel.getMmId(), messageModel.getMmType(), messageModel.getMmSubject(), messageModel.getMmModel(),
+		return new CreateMessageModelDTO(messageModel.getMmId(), messageModel.getMmType(), messageModel.getMmSubject(), messageModel.getMmBody(),
 				messageModel.getMmCreationDate(), messageModel.getMmLastUpdate());
 	}
 
 	public MessageModel toMessageModel(CreateMessageModelDTO createMessageModelDTO) {
-		return new MessageModel(createMessageModelDTO.getMmId(), createMessageModelDTO.getMmType(), createMessageModelDTO.getMmSubject(), createMessageModelDTO.getMmModel(),
+		return new MessageModel(createMessageModelDTO.getMmId(), createMessageModelDTO.getMmType(), createMessageModelDTO.getMmSubject(), createMessageModelDTO.getMmBody(),
 				createMessageModelDTO.getMmCreationDate(), createMessageModelDTO.getMmLastUpdate());
 	}
 }

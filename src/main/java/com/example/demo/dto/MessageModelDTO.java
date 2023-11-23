@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.dto;
 
 import java.time.LocalDateTime;
 
@@ -8,14 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
-public class MessageModel {
+public class MessageModelDTO {
 	@JsonProperty("mmId")
 	private int mmId;
 	

@@ -22,13 +22,13 @@ public class CreateMessageModelDTO {
 	@JsonProperty("mmType")
 	private String mmType;
 	
-	@NotEmpty(message = "Le sujet du modèle ne doit pas être vide")
+	@NotEmpty(message = "Le sujet du message ne doit pas être vide")
 	@JsonProperty("mmSubject")
 	private String mmSubject;
 	
-	@NotEmpty(message = "Le contenu du modèle ne doit pas être vide")
-	@JsonProperty("mmModel")
-	private String mmModel;
+	@NotEmpty(message = "Le corps du message ne doit pas être vide")
+	@JsonProperty("mmBody")
+	private String mmBody;
 	
 	@JsonProperty("mmCreationDate")
 	private LocalDateTime mmCreationDate;
