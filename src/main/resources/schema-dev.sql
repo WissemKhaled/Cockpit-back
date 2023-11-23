@@ -32,3 +32,20 @@ CREATE TABLE IF NOT EXISTS refresh_token (
     rt_fk_user_id SMALLINT NOT NULL,
     FOREIGN KEY (rt_fk_user_id) REFERENCES u_user(u_id)
 );
+
+CREATE TABLE IF NOT EXISTS gst_log (
+    log_id SERIAL PRIMARY KEY,
+    log_type VARCHAR(45) NOT NULL,
+    log_email VARCHAR(255) NOT NULL,
+    log_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    log_last_update TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS gst_message_model (
+    mm_id SERIAL PRIMARY KEY,
+    mm_type VARCHAR(45) NOT NULL,
+    mm_subject VARCHAR(255) NOT NULL,
+    mm_model TEXT NOT NULL,
+    mm_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    mm_last_update TIMESTAMP
+);
