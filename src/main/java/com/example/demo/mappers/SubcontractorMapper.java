@@ -127,6 +127,6 @@ public interface SubcontractorMapper {
 	@Update("Update subcontractor SET s_fk_status_id = 4 WHERE s_id = #{sId}")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "status.stId", column = "s_fk_status_id")
-	int archive(Subcontractor subcontractortoArchive);
+	int archiveSubcontractor(Subcontractor subcontractortoArchive);
 
 }

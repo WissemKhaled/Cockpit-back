@@ -7,11 +7,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.SubcontractorDuplicateDataException;
 import com.example.demo.exception.SubcontractorNotFoundException;
-import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.mappers.SubcontractorMapper;
 
 import lombok.AllArgsConstructor;
@@ -53,7 +53,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 	@Override
 	public int archiveSubcontractor(Subcontractor subcontractortoArchive) {
-		return subcontractorMapper.archive(subcontractortoArchive);
+		return subcontractorMapper.archiveSubcontractor(subcontractortoArchive);
 	}
 
 	// debut hamza : ce code permet de retoruner le nombre max de page qu'il y a

@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.AlreadyArchivedSubcontractor;
 import com.example.demo.exception.SubcontractorDuplicateDataException;
 import com.example.demo.exception.SubcontractorNotFoundException;
-import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.SubcontractorService;
 

@@ -19,10 +19,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.SubcontractorNotFoundException;
-import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.mappers.SubcontractorMapper;
 
 @ExtendWith(MockitoExtension.class)
@@ -196,7 +196,7 @@ public class SubcontractorServiceTest {
 		existingSubcontractor.setSName("testUpdate");
 		existingSubcontractor.setSEmail("testUpdate@testUpdate.fr");
 		existingSubcontractor.setStatus(new Status(1));
-		given(subcontractorMapper.archive(existingSubcontractor)).willReturn(1);
+		given(subcontractorMapper.archiveSubcontractor(existingSubcontractor)).willReturn(1);
 		int isSubcontractorArchived = subcontractorService.archiveSubcontractor(existingSubcontractor);
 		assertEquals(1, isSubcontractorArchived);
 	}
@@ -208,7 +208,7 @@ public class SubcontractorServiceTest {
 		existingSubcontractor.setSName("testUpdate");
 		existingSubcontractor.setSEmail("testUpdate@testUpdate.fr");
 		existingSubcontractor.setStatus(new Status(1));
-		given(subcontractorMapper.archive(existingSubcontractor)).willReturn(0);
+		given(subcontractorMapper.archiveSubcontractor(existingSubcontractor)).willReturn(0);
 		int isSubcontractorArchived = subcontractorService.archiveSubcontractor(existingSubcontractor);
 		assertEquals(isSubcontractorArchived, 0);
 	}

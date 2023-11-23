@@ -1,4 +1,4 @@
-package com.example.demo.mappers;
+package com.example.demo.dto.mapper;
 
 import org.springframework.stereotype.Component;
 

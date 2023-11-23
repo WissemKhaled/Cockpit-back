@@ -17,7 +17,6 @@ import lombok.extern.java.Log;
 
 @Service
 @AllArgsConstructor
-@Log
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 	
 	private ServiceProviderMapper serviceProviderMapper;
@@ -36,8 +35,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public int archiveServiceProvider(ServiceProvider serviceProviderToArchive) {
-		return serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive);
+	public int archiveServiceProvider(ServiceProvider serviceProviderIdToArchive) {
+		return serviceProviderMapper.archiveServiceProvider(serviceProviderIdToArchive);
 	}
 
 	@Override

@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
-import com.example.demo.mappers.ServiceProviderDtoMapper;
 
 @SpringBootTest
 public class ServiceProviderDtoMapperTest {
