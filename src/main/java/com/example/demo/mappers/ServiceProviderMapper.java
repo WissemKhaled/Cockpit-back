@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
@@ -19,16 +20,18 @@ public interface ServiceProviderMapper {
 	@Update("Update service_provider SET sp_fk_status_id = 4 WHERE sp_id = #{spId}")
 	@Result(property = "spId", column = "sp_id")
 	@Result(property = "spStatus.stId", column = "sp_fk_status_id")
-	int archive(ServiceProvider serviceProvider);
+	int archiveServiceProvider(ServiceProvider serviceProvider);
 
 	@Insert("INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date, sp_fk_subcontractor_id, sp_fk_status_id)"
 			+ "VALUES (#{spFirstName}, #{spName}, #{spEmail}, #{spCreationDate}, #{spLastUpdateDate}, #{subcontractor.sId}, #{spStatus.stId})")
-	int insert(ServiceProvider serviceProvider);
+	@Options(useGeneratedKeys = true, keyProperty = "spId", keyColumn = "sp_id")
+	int insertServiceProvider(ServiceProvider serviceProvider);
 	
 	@Update("UPDATE service_provider SET sp_first_name = #{spFirstName}, sp_name = #{spName}, sp_email = #{spEmail}, sp_lastUpdate_date = #{spLastUpdateDate}, "
 			+ "sp_fk_status_id = #{spStatus.stId}, sp_fk_subcontractor_id = #{subcontractor.sId} "
 			+ "WHERE sp_id = #{spId}")
-	int update(ServiceProvider serviceProvider);
+	@Options(useGeneratedKeys = true, keyProperty = "spId", keyColumn = "sp_id")
+	int updateServiceProvider(ServiceProvider serviceProvider);
 	
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, sp.sp_fk_subcontractor_id, sp.sp_fk_status_id "
 			+ "FROM service_provider sp "

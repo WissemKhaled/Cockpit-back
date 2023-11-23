@@ -86,7 +86,7 @@ public class ServiceProviderMapperTest {
 		existingServiceProvider.setSubcontractor(existingSubcontractor);
 		existingServiceProvider.setSpStatus(new Status(1));
 
-		int isArchived = serviceProviderMapper.archive(existingServiceProvider);
+		int isArchived = serviceProviderMapper.archiveServiceProvider(existingServiceProvider);
 
 		assertEquals(1, isArchived);
 	}
@@ -105,7 +105,7 @@ public class ServiceProviderMapperTest {
 		nonExistingServiceProvider.setSubcontractor(existingSubcontractor);
 		nonExistingServiceProvider.setSpStatus(new Status(1));
 
-		int isArchived = serviceProviderMapper.archive(nonExistingServiceProvider);
+		int isArchived = serviceProviderMapper.archiveServiceProvider(nonExistingServiceProvider);
 
 		assertEquals(0, isArchived);
 	}
@@ -123,7 +123,7 @@ public class ServiceProviderMapperTest {
 		serviceProvidertoSave.setSubcontractor(existingSubcontractor);
 		serviceProvidertoSave.setSpStatus(new Status(1));
 
-		int isInserted = serviceProviderMapper.insert(serviceProvidertoSave);
+		int isInserted = serviceProviderMapper.insertServiceProvider(serviceProvidertoSave);
 
 		assertEquals(1, isInserted);
 
@@ -142,7 +142,7 @@ public class ServiceProviderMapperTest {
 		existingServiceProvider.setSubcontractor(existingSubcontractor);
 		existingServiceProvider.setSpStatus(new Status(2));
 
-		int isUpdated = serviceProviderMapper.update(existingServiceProvider);
+		int isUpdated = serviceProviderMapper.updateServiceProvider(existingServiceProvider);
 
 		assertEquals(1, isUpdated);
 	}

@@ -38,7 +38,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToSave.setSpName("sp-name");
 		serviceProviderToSave.setSpEmail("sp-email");
 
-		given(serviceProviderMapper.insert(serviceProviderToSave)).willReturn(1);
+		given(serviceProviderMapper.insertServiceProvider(serviceProviderToSave)).willReturn(1);
 
 		int savedId = serviceProviderService.saveServiceProvider(serviceProviderToSave);
 
@@ -53,7 +53,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToSave.setSpName("sp-name");
 		serviceProviderToSave.setSpEmail("sp-email");
 
-		given(serviceProviderMapper.insert(serviceProviderToSave)).willReturn(0);
+		given(serviceProviderMapper.insertServiceProvider(serviceProviderToSave)).willReturn(0);
 
 		int savedId = serviceProviderService.saveServiceProvider(serviceProviderToSave);
 
@@ -69,7 +69,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToArchive.setSpEmail("sp-email");
 		serviceProviderToArchive.setSpStatus(new Status(1));
 
-		given(serviceProviderMapper.archive(serviceProviderToArchive)).willReturn(1);
+		given(serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive)).willReturn(1);
 
 		int isArchived = serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
 
@@ -85,7 +85,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToArchive.setSpEmail("sp-email");
 		serviceProviderToArchive.setSpStatus(new Status(1));
 
-		given(serviceProviderMapper.archive(serviceProviderToArchive)).willReturn(0);
+		given(serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive)).willReturn(0);
 
 		int isArchived = serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
 
@@ -101,7 +101,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToUpdate.setSpEmail("sp-email");
 		serviceProviderToUpdate.setSpStatus(new Status(1));
 
-		given(serviceProviderMapper.update(serviceProviderToUpdate)).willReturn(1);
+		given(serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate)).willReturn(1);
 
 		int isUpdated = serviceProviderService.updateServiceProvider(serviceProviderToUpdate);
 
@@ -117,7 +117,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToUpdate.setSpEmail("sp-email");
 		serviceProviderToUpdate.setSpStatus(new Status(1));
 
-		given(serviceProviderMapper.update(serviceProviderToUpdate)).willReturn(0);
+		given(serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate)).willReturn(0);
 
 		int isUpdated = serviceProviderService.updateServiceProvider(serviceProviderToUpdate);
 

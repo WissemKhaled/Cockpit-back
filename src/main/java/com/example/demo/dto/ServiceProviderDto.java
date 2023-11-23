@@ -36,9 +36,9 @@ public class ServiceProviderDto {
 	@JsonProperty("spLastUpdateDate")
 	private LocalDateTime spLastUpdateDate;
 	
-	@JsonProperty("status")
-	private Status status;
+	@JsonProperty("spStatusId")
+	private int spStatutId;
 
-	@JsonProperty("subcontractor")
-	private Subcontractor subcontractor;
+	@JsonProperty("subcontractorId")
+	private int subcontractorId;
 }

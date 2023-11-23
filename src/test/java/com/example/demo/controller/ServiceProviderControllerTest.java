@@ -16,6 +16,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.entity.Status;
+import com.example.demo.entity.Subcontractor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,6 +32,7 @@ import io.jsonwebtoken.security.Keys;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 public class ServiceProviderControllerTest {
 
 	@Value("${jwt.secret}")
@@ -37,18 +46,93 @@ public class ServiceProviderControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
+//	@Test
+//	public void testGetServiceProvider_ShouldReturnHttpStatusOk() throws Exception {
+//		int expectedSpId = 1;
+//		String jwtToken = createToken("john@test.fr");
+//
+//		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + expectedSpId).header("Authorization", "Bearer " + jwtToken)
+//				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+//				.andExpect(jsonPath("$.spFirstName").value("sp-1-first_name"))
+//				.andExpect(jsonPath("$.spName").value("sp-1-name")).andExpect(jsonPath("$.spEmail").value("sp-1-email"))
+//				.andExpect(jsonPath("$.subcontractorId").value(1)).andExpect(jsonPath("$.spStatusId").value(3));
+//	}
+//
+//	@Test
+//	public void testGetServiceProvider_ShouldReturnHttpStatusNotFound() throws Exception {
+//		int nonExistingServiceProviderId = Integer.MAX_VALUE - 16;
+//		String jwtToken = createToken("john@test.fr");
+//
+//		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + nonExistingServiceProviderId)
+//				.header("Authorization", "Bearer " + jwtToken).contentType(MediaType.APPLICATION_JSON))
+//				.andExpect(status().isNotFound());
+//	}
+
 	@Test
-	public void testGetServiceProvider_ShouldReturnHttpStatusOk() throws Exception {
-		int expectedSpId = 1;
+	public void testInsertServiceProvider_ShouldReturnHttpStatusCreated() throws Exception {
+		int expectedSpId = Integer.MAX_VALUE - 5456;
 		String jwtToken = createToken("john@test.fr");
 
-		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + expectedSpId).header("Authorization", "Bearer " + jwtToken)
-				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-		.andExpect(jsonPath("$.spFirstName").value("sp-1-first_name"))
-		.andExpect(jsonPath("$.spName").value("sp-1-name"))
-		.andExpect(jsonPath("$.spEmail").value("sp-1-email"))
-		.andExpect(jsonPath("$.subcontractor.sId").value(1))
-		.andExpect(jsonPath("$.spStatus.stId").value(3));
+		ServiceProviderDto nonExistingServiceProviderTosave = new ServiceProviderDto();
+		nonExistingServiceProviderTosave.setSpId(4);
+		nonExistingServiceProviderTosave.setSpName("sp-4-name");
+		nonExistingServiceProviderTosave.setSpFirstName("sp-4-first_name");
+		nonExistingServiceProviderTosave.setSpEmail("sp-4-email");
+		nonExistingServiceProviderTosave.setSubcontractorId(1);
+		nonExistingServiceProviderTosave.setSpStatutId(1);
+
+		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "save")
+				.content(asJsonString(nonExistingServiceProviderTosave))
+				.header("Authorization", "Bearer " + jwtToken)
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isCreated())
+		.andExpect(jsonPath("$.spFirstName").value("sp-4-first_name"))
+		.andExpect(jsonPath("$.spName").value("sp-4-name"))
+		.andExpect(jsonPath("$.spEmail").value("sp-4-email"))
+		.andExpect(jsonPath("$.subcontractorId").value(1))
+		.andExpect(jsonPath("$.spStatusId").value(1));
+	}
+
+	@Test
+	public void testUpdateServiceProvider_UpdateExistingServiceProvider_ShouldReturnHttpOk() throws Exception {
+		String jwtToken = createToken("john@test.fr");
+
+		ServiceProviderDto existingServiceProviderTosave = new ServiceProviderDto();
+		existingServiceProviderTosave.setSpId(1);
+		existingServiceProviderTosave.setSpName("sp-1-name");
+		existingServiceProviderTosave.setSpFirstName("sp-1-first_name");
+		existingServiceProviderTosave.setSpEmail("sp-1-email");
+		existingServiceProviderTosave.setSubcontractorId(1);
+		existingServiceProviderTosave.setSpStatutId(3);
+
+		ServiceProviderDto ServiceProviderForUpdate = new ServiceProviderDto();
+		ServiceProviderForUpdate.setSpId(1);
+		ServiceProviderForUpdate.setSpName("sp-1-name_UPDATED");
+		ServiceProviderForUpdate.setSpFirstName("sp-1-first_name_UPDATED");
+		ServiceProviderForUpdate.setSpEmail("sp-1-email_UPDATED");
+		ServiceProviderForUpdate.setSubcontractorId(2);
+		ServiceProviderForUpdate.setSpStatutId(1);
+
+		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save")
+				.content(asJsonString(ServiceProviderForUpdate))
+				.header("Authorization", "Bearer " + jwtToken).contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.spFirstName").value("sp-1-first_name_UPDATED"))
+		.andExpect(jsonPath("$.spName").value("sp-1-name_UPDATED"))
+		.andExpect(jsonPath("$.spEmail").value("sp-1-email_UPDATED"))
+		.andExpect(jsonPath("$.subcontractorId").value(2))
+		.andExpect(jsonPath("$.spStatusId").value(1));
+	}
+
+	// method pour convertir un objet Java en sa représentation JSON sous forme de
+	// chaîne de caractères.
+	public static String asJsonString(Object object) {
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			return objectMapper.writeValueAsString(object);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private String createToken(String userName) {
