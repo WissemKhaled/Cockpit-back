@@ -1,8 +1,13 @@
 package com.example.demo.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,7 +41,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToSave.setSpId(10);
 		serviceProviderToSave.setSpFirstName("sp-first-name");
 		serviceProviderToSave.setSpName("sp-name");
-		serviceProviderToSave.setSpEmail("sp-email");
+		serviceProviderToSave.setSpEmail("sp@email.com");
 
 		given(serviceProviderMapper.insertServiceProvider(serviceProviderToSave)).willReturn(1);
 
@@ -51,7 +56,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToSave.setSpId(10);
 		serviceProviderToSave.setSpFirstName("sp-first-name");
 		serviceProviderToSave.setSpName("sp-name");
-		serviceProviderToSave.setSpEmail("sp-email");
+		serviceProviderToSave.setSpEmail("sp@email.com");
 
 		given(serviceProviderMapper.insertServiceProvider(serviceProviderToSave)).willReturn(0);
 
@@ -66,7 +71,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToArchive.setSpId(10);
 		serviceProviderToArchive.setSpFirstName("sp-first-name");
 		serviceProviderToArchive.setSpName("sp-name");
-		serviceProviderToArchive.setSpEmail("sp-email");
+		serviceProviderToArchive.setSpEmail("sp@email.com");
 		serviceProviderToArchive.setSpStatus(new Status(1));
 
 		given(serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive)).willReturn(1);
@@ -82,7 +87,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToArchive.setSpId(10);
 		serviceProviderToArchive.setSpFirstName("sp-first-name");
 		serviceProviderToArchive.setSpName("sp-name");
-		serviceProviderToArchive.setSpEmail("sp-email");
+		serviceProviderToArchive.setSpEmail("sp@email.com");
 		serviceProviderToArchive.setSpStatus(new Status(1));
 
 		given(serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive)).willReturn(0);
@@ -98,7 +103,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToUpdate.setSpId(10);
 		serviceProviderToUpdate.setSpFirstName("sp-first-name");
 		serviceProviderToUpdate.setSpName("sp-name");
-		serviceProviderToUpdate.setSpEmail("sp-email");
+		serviceProviderToUpdate.setSpEmail("sp@email.com");
 		serviceProviderToUpdate.setSpStatus(new Status(1));
 
 		given(serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate)).willReturn(1);
@@ -114,7 +119,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToUpdate.setSpId(10);
 		serviceProviderToUpdate.setSpFirstName("sp-first-name");
 		serviceProviderToUpdate.setSpName("sp-name");
-		serviceProviderToUpdate.setSpEmail("sp-email");
+		serviceProviderToUpdate.setSpEmail("sp@email.com");
 		serviceProviderToUpdate.setSpStatus(new Status(1));
 
 		given(serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate)).willReturn(0);
@@ -128,10 +133,10 @@ public class ServiceProviderServiceTest {
 	public void givenServiceProviderEntity_whenServicePeroviderIsFound_thenReturnTheServiceProvider() {
 		ServiceProvider serviceProviderToBeFound = new ServiceProvider();
 		serviceProviderToBeFound.setSpId(1);
-		serviceProviderToBeFound.setSpFirstName("sp-first-name");
-		serviceProviderToBeFound.setSpName("sp-name");
-		serviceProviderToBeFound.setSpEmail("sp-email");
-		serviceProviderToBeFound.setSubcontractor(new Subcontractor("sp-1-name", "sp-1-email"));
+		serviceProviderToBeFound.setSpFirstName("sp-1-first_name");
+		serviceProviderToBeFound.setSpName("sp-1-name");
+		serviceProviderToBeFound.setSpEmail("sp1@email.com");
+		serviceProviderToBeFound.setSubcontractor(new Subcontractor("sp-1-name", "sp1@email.com"));
 		serviceProviderToBeFound.setSpStatus(new Status(3));
 
 		given(serviceProviderMapper.findServiceProviderById(serviceProviderToBeFound.getSpId()))
@@ -146,13 +151,11 @@ public class ServiceProviderServiceTest {
 	@Test
 	public void givenServiceProviderEntity_whenServicePeroviderIsNotFound_thenReturnNull() {
 		int nonExistingServiceProviderId = Integer.MAX_VALUE - 554;
-
-		given(serviceProviderMapper.findServiceProviderById(anyInt())).willReturn(null);
-
-		ServiceProvider nonFoundServiceProvider = serviceProviderService
-				.getServiceProviderById(nonExistingServiceProviderId);
-
-		assertEquals(null, nonFoundServiceProvider);
+		
+        ServiceProviderNotFoundException thrown = assertThrows(ServiceProviderNotFoundException.class, () -> {
+        	serviceProviderService.getServiceProviderById(nonExistingServiceProviderId);
+        });
+        assertEquals(String.format("le prestataire avec l'id: %d n'existe pas!!",nonExistingServiceProviderId), thrown.getMessage());
 	}
 
 	@Test
@@ -160,9 +163,9 @@ public class ServiceProviderServiceTest {
 		int existingSubcontractorId = 1;
 		List<ServiceProvider> expectedServiceProviders = new ArrayList<ServiceProvider>();
 
-		expectedServiceProviders.add(new ServiceProvider(1, "sp-1-first_name", "sp-1-name", "sp-1-email",
+		expectedServiceProviders.add(new ServiceProvider(1, "sp-1-first_name", "sp-1-name", "sp1@email.com",
 				LocalDateTime.now(), null, new Subcontractor(1), new Status(3)));
-		expectedServiceProviders.add(new ServiceProvider(2, "sp-2-first_name", "sp-2-name", "sp-2-email",
+		expectedServiceProviders.add(new ServiceProvider(2, "sp-2-first_name", "sp-2-name", "sp2@email.com",
 				LocalDateTime.now(), null, new Subcontractor(1), new Status(1)));
 
 		given(serviceProviderMapper.findServiceProvidersBySubcontractorId(anyInt()))
@@ -189,5 +192,27 @@ public class ServiceProviderServiceTest {
 			assert (e.getMessage().equals("le sous-traitant avec l'id: 1 n'a pas de prestataires"));
 		}
 
+	}
+
+	@Test
+	public void testCheckIfServiceProviderExistsWhenExists() {
+		given(serviceProviderMapper.findServiceProviderById(anyInt())).willReturn(new ServiceProvider());
+
+		boolean result = serviceProviderService.checkIfServiceProviderExist(1);
+
+		assertTrue(result);
+
+		verify(serviceProviderMapper).findServiceProviderById(1);
+	}
+	
+	@Test
+	public void testCheckIfServiceProviderExistsWhenNotExists() {
+		given(serviceProviderMapper.findServiceProviderById(anyInt())).willReturn(null);
+
+		boolean result = serviceProviderService.checkIfServiceProviderExist(1);
+
+		assertFalse(result);
+
+		verify(serviceProviderMapper).findServiceProviderById(1);
 	}
 }

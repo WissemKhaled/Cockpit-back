@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.ServiceProviderService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -66,7 +69,7 @@ public class ServiceProviderController {
 	}
 
 	@PostMapping("/save")
-	public ResponseEntity<ServiceProviderDto> saveServiceProvider(@RequestBody ServiceProviderDto serviceProviderDto,
+	public ResponseEntity<ServiceProviderDto> saveServiceProvider(@Valid @RequestBody ServiceProviderDto serviceProviderDto,
 			HttpServletRequest request) {
 		String authorizationHeader = request.getHeader("Authorization");
 		try {
@@ -75,12 +78,15 @@ public class ServiceProviderController {
 				String email = jwtService.extractUsername(token);
 				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 				if (jwtService.validateToken(token, userDetails)) {
-					boolean isSubcontractorExist = serviceProviderService
+					boolean isServiceProviderExist = serviceProviderService
 							.checkIfServiceProviderExist(serviceProviderDto.getSpId());
-					if (isSubcontractorExist) {
-						int updateServiceProviderId = serviceProviderService.updateServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
-						ServiceProvider updatedServiceProvider = serviceProviderService.getServiceProviderById(updateServiceProviderId);
-						return new ResponseEntity<ServiceProviderDto>(serviceProviderDtoMapper.serviceProviderToDto(updatedServiceProvider),HttpStatus.OK);
+					if (isServiceProviderExist) {
+						int updateServiceProviderId = serviceProviderService.updateServiceProvider(
+								serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
+						ServiceProvider updatedServiceProvider = serviceProviderService
+								.getServiceProviderById(updateServiceProviderId);
+						return new ResponseEntity<>(
+								serviceProviderDtoMapper.serviceProviderToDto(updatedServiceProvider), HttpStatus.OK);
 					} else {
 						if (serviceProviderDto.getSpId() > 0) {
 							int saveServiceProvider = serviceProviderService.saveServiceProvider(
@@ -110,13 +116,29 @@ public class ServiceProviderController {
 	public ResponseEntity<?> archiveServiceProvider(@PathVariable int serviceProviderId) {
 		try {
 			ServiceProvider serviceProviderToArchive = serviceProviderService.getServiceProviderById(serviceProviderId);
-			if (serviceProviderToArchive.getSpStatus().getStId() == 4) throw new AlreadyArchivedSubcontractor(String.format("le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
+			if (serviceProviderToArchive.getSpStatus().getStId() == 4) {
+				throw new AlreadyArchivedSubcontractor(
+						String.format("le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
+			}
 			serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
-			return new ResponseEntity<>(HttpStatus.OK);			
+			return new ResponseEntity<>("le prestataire est archivé avec succées",HttpStatus.OK);
 		} catch (AlreadyArchivedSubcontractor e) {
-			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);			
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);			
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("all-service-providers/{subcontractorId}")
+	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorId(@PathVariable int subcontractorId) {
+		try {
+			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersBySubcontractorId(subcontractorId).stream().map(serviceProvider -> serviceProviderDtoMapper.serviceProviderToDto(serviceProvider)).toList();
+			if (serviceProviders.isEmpty()) throw new ServiceProviderNotFoundException(String.format("Le sous-traitant avec l'id: %d n'a pas de prestataires", subcontractorId));
+			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
+		} catch (ServiceProviderNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }
