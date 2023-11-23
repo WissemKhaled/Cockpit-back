@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,7 +36,7 @@ public class ServiceProviderController {
 	private JwtServiceImplementation jwtService;
 
 	@GetMapping("/{spId}")
-	public ResponseEntity<ServiceProvider> getServiceProviderById(int spId, HttpServletRequest request) {
+	public ResponseEntity<ServiceProvider> getServiceProviderById(@PathVariable int spId, HttpServletRequest request) {
 		String authorizationHeader = request.getHeader("Authorization");
 		try {
 			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -44,8 +45,32 @@ public class ServiceProviderController {
 				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 				Boolean isTokenValid = jwtService.validateToken(token, userDetails);
 				if (isTokenValid) {
-					serviceProviderService.getServiceProviderById(spId).stream();
+					serviceProviderService.getServiceProviderById(spId);
 					return new ResponseEntity<>(serviceProviderService.getServiceProviderById(spId), HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+				}
+			} else {
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			}
+		} catch (ServiceProviderNotFoundException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("welcome")
+	public ResponseEntity<String> welcome(HttpServletRequest request) {
+		String authorizationHeader = request.getHeader("Authorization");
+		try {
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+				String token = authorizationHeader.substring(7);
+				String email = jwtService.extractUsername(token);
+				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+				Boolean isTokenValid = jwtService.validateToken(token, userDetails);
+				if (isTokenValid) {
+					return new ResponseEntity<>("welcome", HttpStatus.OK);
 				} else {
 					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 				}

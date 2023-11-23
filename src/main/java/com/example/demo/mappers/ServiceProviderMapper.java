@@ -55,7 +55,7 @@ public interface ServiceProviderMapper {
 	@Result(property = "status.stName", column = "status_stName")
 	@Result(property = "status.stDescription", column = "status_stDescription")
 	@Result(property = "serviceProviders", column = "s_id", javaType = List.class, many = @Many(select = "findServiceProvidersBySubcontractorId"))
-	Subcontractor findSubcontractorById(int id);
+	Subcontractor findSubcontractorWithServiceProvidersBySubcontractorId(int id);
 
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
 			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
