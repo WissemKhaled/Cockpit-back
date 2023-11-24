@@ -19,9 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.CreateMessageModelDTO;
+import com.example.demo.dto.CreateGstLogDTO;
+import com.example.demo.dto.GstLogDTO;
 import com.example.demo.dto.MessageModelDTO;
-import com.example.demo.service.MessageModelServiceImpl;
+import com.example.demo.service.GstLogServiceImpl;
 
 import jakarta.validation.Valid;
 import lombok.extern.java.Log;
@@ -29,15 +30,16 @@ import lombok.extern.java.Log;
 @Log
 @RestController
 @CrossOrigin("http://localhost:4200")
-@RequestMapping("/messages") 
-public class MessageModelController {
+@RequestMapping("/gstlogs") 
+public class GstLogController {
+	
 	@Autowired
-    private MessageModelServiceImpl messageModelService;
-    
-	@PostMapping("/createMm")
-    public ResponseEntity<String> createMessageModel(@Valid @RequestBody CreateMessageModelDTO createMessageModelDTO) {
+	private GstLogServiceImpl gstLogServiceImpl;
+	
+	@PostMapping("/createGstLog")
+    public ResponseEntity<String> createGstLog(@Valid @RequestBody CreateGstLogDTO createGstLogDTO) {
         try {
-            String result = messageModelService.saveMessageModel(createMessageModelDTO);
+            String result = gstLogServiceImpl.saveGstLog(createGstLogDTO);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.severe(e.getMessage());
@@ -48,10 +50,10 @@ public class MessageModelController {
         }
     }
 	
-	@GetMapping("/getMmByType")
-    public ResponseEntity<?> getMessageModelByType(@RequestParam String mmType) {
+	@GetMapping("/getGstLogByValue")
+    public ResponseEntity<?> getGstLogByValue(@RequestParam String logValue) {
         try {
-            MessageModelDTO messageModelDTO = messageModelService.getMessageModelByType(mmType);
+            GstLogDTO messageModelDTO = gstLogServiceImpl.getGstLogByValue(logValue);
             return new ResponseEntity<>(messageModelDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             log.severe(e.getMessage());

@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS gst_log (
     log_id SERIAL PRIMARY KEY,
     log_type VARCHAR(45) NOT NULL,
     log_email VARCHAR(255) NOT NULL,
-    log_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    log_last_update TIMESTAMP
+    log_value VARCHAR(45),
+    log_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS gst_message_model (

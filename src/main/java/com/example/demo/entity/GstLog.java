@@ -25,10 +25,10 @@ public class GstLog {
 	@JsonProperty("logEmail")
 	private String logEmail;
 	
+	@JsonProperty("logValue")
+	private String logValue;
+	
 	@JsonProperty("logCreationDate")
 	private LocalDateTime logCreationDate;
-	
-	@JsonProperty("mmLastUpdate")
-	private LocalDateTime logLastUpdate;
 	
 }

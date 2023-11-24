@@ -30,9 +30,10 @@ public class CreateGstLogDTO {
 	@JsonProperty("logEmail")
 	private String logEmail;
 	
+	@NotEmpty(message = "La valeur de log ne doit pas être vide")
+	@JsonProperty("logValue")
+	private String logValue;
+	
 	@JsonProperty("logCreationDate")
 	private LocalDateTime logCreationDate;
-	
-	@JsonProperty("mmLastUpdate")
-	private LocalDateTime logLastUpdate;
 }
