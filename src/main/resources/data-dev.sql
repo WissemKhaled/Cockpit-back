@@ -32,16 +32,16 @@ VALUES ('LYON', 'LYON@email.fr', 2);
 
 -- Prestataire 1
 INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id)
-VALUES ('Firstspfirstname', 'FIRSTSPNAME' ,'sp1@email.com', '2023-01-01 12:00:00', NULL,1 , 3);
+VALUES ('Firstspfirstname', 'FIRSTSPNAME' ,'Sp1@email.com', '2023-01-01 12:00:00', NULL,1 , 3);
 
 -- Prestataire 2
 INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id)
-VALUES ('Secondspfirstname', 'SECONDSPNAME'  ,'sp2@email.com', '2023-01-01 12:00:00', NULL,1 , 1);
+VALUES ('Secondspfirstname', 'SECONDSPNAME'  ,'Sp2@email.com', '2023-01-01 12:00:00', NULL,1 , 1);
 
 -- Prestataire 3
 INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id)
-VALUES ('Thirdspfirstname', 'THIRDSPNAME' ,'sp3@email.com', '2023-01-01 12:00:00', NULL,2 , 3);
+VALUES ('Thirdspfirstname', 'THIRDSPNAME' ,'Sp3@email.com', '2023-01-01 12:00:00', NULL,2 , 3);
 
 -- Prestataire 4
 INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id)
-VALUES ('Fourthspfirstname', 'FOURTHSPNAME' ,'sp4@email.com', '2023-01-01 12:00:00', NULL,2 , 4);
+VALUES ('Fourthspfirstname', 'FOURTHSPNAME' ,'Sp4@email.com', '2023-01-01 12:00:00', NULL,2 , 4);

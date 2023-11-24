@@ -27,7 +27,7 @@ public interface ServiceProviderService {
 
 	int checkIfSubcontractorExistBySpEmail(String serviceProviderSpEmail);
 
-	String FirstNameFormatter(String name);
+	String FirstNameAndEmailFormatter(String name);
 
 	String NameFormatter(String name);
 

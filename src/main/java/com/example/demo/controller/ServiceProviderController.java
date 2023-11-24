@@ -78,8 +78,9 @@ public class ServiceProviderController {
 				String email = jwtService.extractUsername(token);
 				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 				if (jwtService.validateToken(token, userDetails)) {
-					serviceProviderDto.setSpFirstName(serviceProviderService.FirstNameFormatter(serviceProviderDto.getSpFirstName()));
+					serviceProviderDto.setSpFirstName(serviceProviderService.FirstNameAndEmailFormatter(serviceProviderDto.getSpFirstName()));
 					serviceProviderDto.setSpName(serviceProviderService.NameFormatter(serviceProviderDto.getSpName()));
+					serviceProviderDto.setSpEmail(serviceProviderService.FirstNameAndEmailFormatter(serviceProviderDto.getSpEmail()));
 					boolean isServiceProviderExist = serviceProviderService.checkIfServiceProviderExistById(serviceProviderDto.getSpId());
 					if (isServiceProviderExist) {
 						serviceProviderService.handleServiceProviderUpdating(serviceProviderDto);

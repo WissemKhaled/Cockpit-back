@@ -42,7 +42,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToSave.setSpId(10);
 		serviceProviderToSave.setSpFirstName("Spfirstname");
 		serviceProviderToSave.setSpName("SPNAME");
-		serviceProviderToSave.setSpEmail("sp@email.com");
+		serviceProviderToSave.setSpEmail("Sp@email.com");
 
 		given(serviceProviderMapper.insertServiceProvider(serviceProviderToSave)).willReturn(1);
 
@@ -57,7 +57,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToSave.setSpId(10);
 		serviceProviderToSave.setSpFirstName("Spfirstname");
 		serviceProviderToSave.setSpName("SPNAME");
-		serviceProviderToSave.setSpEmail("sp@email.com");
+		serviceProviderToSave.setSpEmail("Sp@email.com");
 
 		given(serviceProviderMapper.insertServiceProvider(serviceProviderToSave)).willReturn(0);
 
@@ -72,7 +72,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToArchive.setSpId(10);
 		serviceProviderToArchive.setSpFirstName("Spfirstname");
 		serviceProviderToArchive.setSpName("SPNAME");
-		serviceProviderToArchive.setSpEmail("sp@email.com");
+		serviceProviderToArchive.setSpEmail("Sp@email.com");
 		serviceProviderToArchive.setSpStatus(new Status(1));
 
 		given(serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive)).willReturn(1);
@@ -88,7 +88,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToArchive.setSpId(10);
 		serviceProviderToArchive.setSpFirstName("Spfirstname");
 		serviceProviderToArchive.setSpName("SPNAME");
-		serviceProviderToArchive.setSpEmail("sp@email.com");
+		serviceProviderToArchive.setSpEmail("Sp@email.com");
 		serviceProviderToArchive.setSpStatus(new Status(1));
 
 		given(serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive)).willReturn(0);
@@ -104,7 +104,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToUpdate.setSpId(10);
 		serviceProviderToUpdate.setSpFirstName("Spfirstname");
 		serviceProviderToUpdate.setSpName("SPNAME");
-		serviceProviderToUpdate.setSpEmail("sp@email.com");
+		serviceProviderToUpdate.setSpEmail("Sp@email.com");
 		serviceProviderToUpdate.setSpStatus(new Status(1));
 
 		given(serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate)).willReturn(1);
@@ -120,7 +120,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToUpdate.setSpId(10);
 		serviceProviderToUpdate.setSpFirstName("Spfirstname");
 		serviceProviderToUpdate.setSpName("SPNAME");
-		serviceProviderToUpdate.setSpEmail("sp@email.com");
+		serviceProviderToUpdate.setSpEmail("Sp@email.com");
 		serviceProviderToUpdate.setSpStatus(new Status(1));
 
 		given(serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate)).willReturn(0);
@@ -136,7 +136,7 @@ public class ServiceProviderServiceTest {
 		serviceProviderToBeFound.setSpId(1);
 		serviceProviderToBeFound.setSpFirstName("Spfirstname");
 		serviceProviderToBeFound.setSpName("SPNAME");
-		serviceProviderToBeFound.setSpEmail("sp1@email.com");
+		serviceProviderToBeFound.setSpEmail("Sp1@email.com");
 		serviceProviderToBeFound.setSubcontractor(new Subcontractor("sname", "s1@email.com"));
 		serviceProviderToBeFound.setSpStatus(new Status(3));
 
@@ -163,9 +163,9 @@ public class ServiceProviderServiceTest {
 		int existingSubcontractorId = 1;
 		List<ServiceProvider> expectedServiceProviders = new ArrayList<ServiceProvider>();
 
-		expectedServiceProviders.add(new ServiceProvider(1, "Firstspfirstname", "Firstspname", "sp1@email.com",
+		expectedServiceProviders.add(new ServiceProvider(1, "Firstspfirstname", "FIRSTSPNAME", "Sp1@email.com",
 				LocalDateTime.now(), null, new Subcontractor(1), new Status(3)));
-		expectedServiceProviders.add(new ServiceProvider(2, "Secondspfirstname", "Secondspname", "sp2@email.com",
+		expectedServiceProviders.add(new ServiceProvider(2, "Secondspfirstname", "SECONDESPNAME", "Sp2@email.com",
 				LocalDateTime.now(), null, new Subcontractor(1), new Status(1)));
 
 		given(serviceProviderMapper.findServiceProvidersBySubcontractorId(anyInt()))
@@ -219,7 +219,7 @@ public class ServiceProviderServiceTest {
 	@Test
 	public void checkIfServiceProviderExistBySpEmail_ExistingEmail_ShouldReturnId() {
 		// Arrange
-		String email = "sp1@email.com";
+		String email = "Sp1@email.com";
 		ServiceProvider existingServiceProvider = new ServiceProvider();
 		existingServiceProvider.setSpId(1);
 
@@ -233,7 +233,7 @@ public class ServiceProviderServiceTest {
 	@Test
 	public void checkIfServiceProviderExistBySpEmail_NonExistingEmail_ShouldReturnZero() {
 		// Arrange
-		String email = "nonexistent@email.com";
+		String email = "Nonexistent@email.com";
 
 		given(serviceProviderMapper.findServiceProviderBySpEmail(email)).willReturn(null);
 
@@ -247,10 +247,10 @@ public class ServiceProviderServiceTest {
 		// Arrange
 		ServiceProviderDto serviceProviderDto = new ServiceProviderDto();
 		serviceProviderDto.setSpId(99);
-		serviceProviderDto.setSpEmail("sp1@email.com");
+		serviceProviderDto.setSpEmail("Sp1@email.com");
 
 		ServiceProvider existingServiceProvider = new ServiceProvider(1);
-		existingServiceProvider.setSpEmail("sp1@email.com");
+		existingServiceProvider.setSpEmail("Sp1@email.com");
 
 		given(serviceProviderMapper.findServiceProviderBySpEmail(serviceProviderDto.getSpEmail()))
 				.willReturn(existingServiceProvider);
@@ -265,10 +265,10 @@ public class ServiceProviderServiceTest {
 		// Arrange
 		ServiceProviderDto serviceProviderDto = new ServiceProviderDto();
 		serviceProviderDto.setSpId(1);
-		serviceProviderDto.setSpEmail("sp2@email.com");
+		serviceProviderDto.setSpEmail("Sp2@email.com");
 
 		ServiceProvider existingServiceProvider = new ServiceProvider(2);
-		existingServiceProvider.setSpEmail("sp2@email.com");
+		existingServiceProvider.setSpEmail("Sp2@email.com");
 
 		given(serviceProviderMapper.findServiceProviderBySpEmail(serviceProviderDto.getSpEmail()))
 				.willReturn(existingServiceProvider);

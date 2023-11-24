@@ -92,7 +92,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public String FirstNameFormatter(String name) {
+	public String FirstNameAndEmailFormatter(String name) {
        if (name == null || name.trim().isEmpty()) {
     	   throw new RuntimeException("le nom est necessaire");
         }

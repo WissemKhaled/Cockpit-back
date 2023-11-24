@@ -81,7 +81,7 @@ public class ServiceProviderMapperTest {
 		existingServiceProvider.setSpId(1);
 		existingServiceProvider.setSpName("FIRSTSPNAME");
 		existingServiceProvider.setSpFirstName("Firstspfirstname");
-		existingServiceProvider.setSpEmail("sp1@email.com");
+		existingServiceProvider.setSpEmail("Sp1@email.com");
 		existingServiceProvider.setSpCreationDate(LocalDateTime.now());
 		existingServiceProvider.setSubcontractor(existingSubcontractor);
 		existingServiceProvider.setSpStatus(new Status(1));
@@ -100,7 +100,7 @@ public class ServiceProviderMapperTest {
 		nonExistingServiceProvider.setSpId(Integer.MAX_VALUE);
 		nonExistingServiceProvider.setSpName("FIRSTSPNAME");
 		nonExistingServiceProvider.setSpFirstName("Firstspfirstname");
-		nonExistingServiceProvider.setSpEmail("sp999@email.com");
+		nonExistingServiceProvider.setSpEmail("Sp999@email.com");
 		nonExistingServiceProvider.setSpCreationDate(LocalDateTime.now());
 		nonExistingServiceProvider.setSubcontractor(existingSubcontractor);
 		nonExistingServiceProvider.setSpStatus(new Status(1));
@@ -118,7 +118,7 @@ public class ServiceProviderMapperTest {
 		ServiceProvider serviceProvidertoSave = new ServiceProvider();
 		serviceProvidertoSave.setSpName("FIRSTSPNAME");
 		serviceProvidertoSave.setSpFirstName("Firstspfirstname");
-		serviceProvidertoSave.setSpEmail("sp5@email.com");
+		serviceProvidertoSave.setSpEmail("Sp5@email.com");
 		serviceProvidertoSave.setSpCreationDate(LocalDateTime.now());
 		serviceProvidertoSave.setSubcontractor(existingSubcontractor);
 		serviceProvidertoSave.setSpStatus(new Status(1));
@@ -138,7 +138,7 @@ public class ServiceProviderMapperTest {
 		existingServiceProvider.setSpId(1);
 		existingServiceProvider.setSpName("FIRSTSPNAME");
 		existingServiceProvider.setSpFirstName("Firstspfirstname");
-		existingServiceProvider.setSpEmail("sp5@email.com");
+		existingServiceProvider.setSpEmail("Sp5@email.com");
 		existingServiceProvider.setSubcontractor(existingSubcontractor);
 		existingServiceProvider.setSpStatus(new Status(2));
 

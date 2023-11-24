@@ -64,7 +64,7 @@ public class ServiceProviderControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.spFirstName").value("Firstspfirstname")) 
 				.andExpect(jsonPath("$.spName").value("FIRSTSPNAME"))
-				.andExpect(jsonPath("$.spEmail").value("sp1@email.com"))
+				.andExpect(jsonPath("$.spEmail").value("Sp1@email.com"))
 				.andExpect(jsonPath("$.subcontractorId").value(1)).andExpect(jsonPath("$.spStatusId").value(3));
 	}
 
@@ -85,7 +85,7 @@ public class ServiceProviderControllerTest {
 		nonExistingServiceProviderTosave.setSpId(5);
 		nonExistingServiceProviderTosave.setSpFirstName("Fifthspfirstname");
 		nonExistingServiceProviderTosave.setSpName("FIRSTSPNAME");
-		nonExistingServiceProviderTosave.setSpEmail("sp5@email.com");
+		nonExistingServiceProviderTosave.setSpEmail("Sp5@email.com");
 		nonExistingServiceProviderTosave.setSubcontractorId(1);
 		nonExistingServiceProviderTosave.setSpStatutId(1);
 
@@ -94,7 +94,7 @@ public class ServiceProviderControllerTest {
 						.header("Authorization", "Bearer " + jwtToken).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isCreated()).andExpect(jsonPath("$.spFirstName").value("Fifthspfirstname"))
 				.andExpect(jsonPath("$.spName").value("FIRSTSPNAME"))
-				.andExpect(jsonPath("$.spEmail").value("sp5@email.com"))
+				.andExpect(jsonPath("$.spEmail").value("Sp5@email.com"))
 				.andExpect(jsonPath("$.subcontractorId").value(1)).andExpect(jsonPath("$.spStatusId").value(1));
 	}
 
@@ -105,7 +105,7 @@ public class ServiceProviderControllerTest {
 		existingServiceProviderTosave.setSpId(1);
 		existingServiceProviderTosave.setSpFirstName("Firstspfirstname");
 		existingServiceProviderTosave.setSpName("FIRSTSPNAME");
-		existingServiceProviderTosave.setSpEmail("sp1@email.com");
+		existingServiceProviderTosave.setSpEmail("Sp1@email.com");
 		existingServiceProviderTosave.setSubcontractorId(1);
 		existingServiceProviderTosave.setSpStatutId(3);
 
@@ -113,7 +113,7 @@ public class ServiceProviderControllerTest {
 		ServiceProviderForUpdate.setSpId(1);
 		ServiceProviderForUpdate.setSpName("FIRSTSPNAMEUPDATED");
 		ServiceProviderForUpdate.setSpFirstName("Firstspfirstnameupdated");
-		ServiceProviderForUpdate.setSpEmail("sp1@email-UPDATED.com");
+		ServiceProviderForUpdate.setSpEmail("Sp1@email-updated.com");
 		ServiceProviderForUpdate.setSubcontractorId(2);
 		ServiceProviderForUpdate.setSpStatutId(1);
 
@@ -121,7 +121,7 @@ public class ServiceProviderControllerTest {
 				.header("Authorization", "Bearer " + jwtToken).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andExpect(jsonPath("$.spFirstName").value("Firstspfirstnameupdated"))
 				.andExpect(jsonPath("$.spName").value("FIRSTSPNAMEUPDATED"))
-				.andExpect(jsonPath("$.spEmail").value("sp1@email-UPDATED.com"))
+				.andExpect(jsonPath("$.spEmail").value("Sp1@email-updated.com"))
 				.andExpect(jsonPath("$.subcontractorId").value(2)).andExpect(jsonPath("$.spStatusId").value(1));
 	}
 
