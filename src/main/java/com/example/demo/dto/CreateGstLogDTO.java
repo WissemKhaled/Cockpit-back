@@ -19,7 +19,7 @@ public class CreateGstLogDTO {
 	@JsonProperty("logId")
 	private int logId;
 	
-	@NotEmpty(message = "Le type de log ne doit pas être vide")
+	@NotEmpty(message = "Le type du log ne doit pas être vide")
 	@JsonProperty("logType")
 	private String logType;
 	
@@ -30,7 +30,7 @@ public class CreateGstLogDTO {
 	@JsonProperty("logEmail")
 	private String logEmail;
 	
-	@NotEmpty(message = "La valeur de log ne doit pas être vide")
+	@NotEmpty(message = "La valeur du log ne doit pas être vide")
 	@JsonProperty("logValue")
 	private String logValue;
 	

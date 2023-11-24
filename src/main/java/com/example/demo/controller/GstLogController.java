@@ -36,6 +36,9 @@ public class GstLogController {
 	@Autowired
 	private GstLogServiceImpl gstLogServiceImpl;
 	
+	/**
+	 * Méthode qui créé et insère un log en base de donnée
+	 */
 	@PostMapping("/createGstLog")
     public ResponseEntity<String> createGstLog(@Valid @RequestBody CreateGstLogDTO createGstLogDTO) {
         try {
@@ -50,6 +53,9 @@ public class GstLogController {
         }
     }
 	
+	/**
+	 * Méthode pour récupérer un log par sa valeur (son code)
+	*/
 	@GetMapping("/getGstLogByValue")
     public ResponseEntity<?> getGstLogByValue(@RequestParam String logValue) {
         try {

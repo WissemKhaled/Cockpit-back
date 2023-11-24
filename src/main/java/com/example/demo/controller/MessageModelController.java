@@ -34,6 +34,9 @@ public class MessageModelController {
 	@Autowired
     private MessageModelServiceImpl messageModelService;
     
+	/**
+	 * Méthode qui créé et insère un modèle de message en base de donnée
+	 */
 	@PostMapping("/createMm")
     public ResponseEntity<String> createMessageModel(@Valid @RequestBody CreateMessageModelDTO createMessageModelDTO) {
         try {
@@ -48,6 +51,9 @@ public class MessageModelController {
         }
     }
 	
+	/**
+	 * Méthode qui récupère des modèles de message par leur type
+	 */
 	@GetMapping("/getMmByType")
     public ResponseEntity<?> getMessageModelByType(@RequestParam String mmType) {
         try {

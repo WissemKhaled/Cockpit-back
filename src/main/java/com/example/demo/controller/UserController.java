@@ -106,12 +106,12 @@ public class UserController {
 	/**
 	 * Méthode de création d'un user avec validation du pattern de mot de passe et email
 	*/
-	@PostMapping("/addNewUser") 
+	@PostMapping("/addNewUser")
 	public ResponseEntity<String> addNewUser(@Valid @RequestBody CreateUserDTO userInfo) {
 	    try {
 	        String result = service.addUser(userInfo);
 	        return new ResponseEntity<>(result, HttpStatus.CREATED);
-	    } catch (Exception ex) {
+	    } catch (GeneralException ex) {
 	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	    }
 	}
@@ -195,7 +195,7 @@ public class UserController {
      * Méthode qui intercèpte les exceptions du type GeneralException
     */
  	@ExceptionHandler(GeneralException.class)
- 	public ResponseEntity<String> handleGeneralException(GeneralException ex) {
+	public ResponseEntity<String> handleGeneralException(GeneralException ex) {
  		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
  	}
     
