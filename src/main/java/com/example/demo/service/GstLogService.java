@@ -10,4 +10,6 @@ public interface GstLogService {
 	String saveGstLog(CreateGstLogDTO createGstLogDTO) throws GeneralException;
 	
 	GstLogDTO getGstLogByValue(String logValue) throws NotFoundException;
+	
+	boolean checkResetPasswordExpiration(String logValue) throws NotFoundException;
 }

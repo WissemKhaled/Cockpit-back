@@ -65,6 +65,7 @@ public class GstLogServiceImpl implements GstLogService{
 			GstLog gstLog = gstLogMapper.getLogByValue(logValue);
 	         if (gstLog != null) {
 	             GstLogDTO messageModelDTO = gstLogDtoMapper.toDto(gstLog);
+	             this.checkResetPasswordExpiration(messageModelDTO.getLogValue());
 	             return messageModelDTO;
 	         } else {
 	             throw new NotFoundException("Aucun gst log trouvé pour le type: " + logValue);
@@ -73,5 +74,29 @@ public class GstLogServiceImpl implements GstLogService{
 	         throw new IllegalArgumentException("logValue ne ^peut être vide ou null");
 	     }
 	}
+
+	@Override
+	public boolean checkResetPasswordExpiration(String logValue) throws NotFoundException {
+	    if (logValue != null && !logValue.isEmpty()) {
+	        GstLog gstLog = gstLogMapper.getLogByValue(logValue);
+	        if (gstLog != null) {
+	            LocalDateTime expirationMoment = gstLog.getLogCreationDate().plusMinutes(15);
+	            LocalDateTime currentTime = LocalDateTime.now();
+
+	            if (currentTime.isBefore(expirationMoment)) {
+	                log.info("La demande de réinitialisation de mot de passe est encore valide");
+	                return true;
+	            } else {
+	                log.severe("La demande de réinitialisation de mot de passe a expirée");
+	                return false;
+	            }
+	        } else {
+	            throw new NotFoundException("Aucun gst log trouvé pour le type: " + logValue);
+	        }
+	    } else {
+	        throw new IllegalArgumentException("logValue ne peut être vide ou null");
+	    }
+	}
+
 
 }
