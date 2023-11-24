@@ -1,5 +1,7 @@
 package com.example.demo.mappers;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -22,5 +24,5 @@ public interface MessageModelMapper {
 	@Result(property = "mmBody", column = "mm_body")
 	@Result(property = "mmCreationDate", column = "mm_creation_date")
 	@Result(property = "mmLastUpdate", column = "mm_last_update")
-	MessageModel getMessageModelByType(String mmType);
+	List<MessageModel> getMessageModelByType(String mmType);
 }

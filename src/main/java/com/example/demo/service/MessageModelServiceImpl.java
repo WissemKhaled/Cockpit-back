@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,45 +29,52 @@ public class MessageModelServiceImpl implements MessageModelService {
 	
 	@Autowired 
 	private MessageModelDtoMapper messageModelDtoMapper;
+	
+	/**
+	 * Méthode qui enregistre un modèle de message en bdd
+	 */
+	@Override
+    public String saveMessageModel(CreateMessageModelDTO createMessageModelDto) throws GeneralException {
+        try {
+            if (createMessageModelDto != null) {
+                MessageModel messageModel = createMessageModelDtoMapper.toMessageModel(createMessageModelDto);
+                messageModel.setMmCreationDate(LocalDateTime.now());
 
+                int isMessageModelInserted = messageModelMapper.insertMessageModel(messageModel);
+
+                if (isMessageModelInserted == 0) {
+                    log.severe("Échec de l'insertion du modèle de message dans la base de données");
+                    throw new GeneralException("Échec de l'insertion du modèle de message dans la base de données");
+                }
+                log.info("Modèle de message créé avec succès");
+                return "Modèle de message créé avec succès";
+            } else {
+            	log.severe("Le paramètre createMessageModelDto ne peut pas être nul");
+                throw new IllegalArgumentException("Le paramètre createMessageModelDto ne peut pas être nul");
+            }
+        } catch (Exception e) {
+            log.severe(e.getMessage());
+            throw new GeneralException("Erreur lors de la création du modèle de message");
+        }
+    }
+
+	/**
+	 * Méthode qui récupère une liste des modèles de message par type
+	 */
 	 @Override
-	    public String saveMessageModel(CreateMessageModelDTO createMessageModelDto) throws GeneralException {
-	        try {
-	            if (createMessageModelDto != null) {
-	                MessageModel messageModel = createMessageModelDtoMapper.toMessageModel(createMessageModelDto);
-	                messageModel.setMmCreationDate(LocalDateTime.now());
-
-	                int isMessageModelInserted = messageModelMapper.insertMessageModel(messageModel);
-
-	                if (isMessageModelInserted == 0) {
-	                    log.severe("Failed to insert message model into the database");
-	                    throw new GeneralException("Failed to insert message model into the database");
-	                }
-	                log.info("Message model created successfully");
-	                return "Message model created successfully";
-	            } else {
-	                log.severe("Parameter createMessageModelDto cannot be null");
-	                throw new IllegalArgumentException("Parameter createMessageModelDto cannot be null");
-	            }
-	        } catch (Exception e) {
-	            log.severe(e.getMessage());
-	            throw new GeneralException("Error during the creation of the message model");
-	        }
-	    }
-
-
-	 @Override
-	 public MessageModelDTO getMessageModelByType(String mmType) throws NotFoundException {
+	 public List<MessageModelDTO> getMessageModelByType(String mmType) throws NotFoundException {
 	     if (mmType != null && !mmType.isEmpty()) {
-	         MessageModel messageModel = messageModelMapper.getMessageModelByType(mmType);
-	         if (messageModel != null) {
-	             MessageModelDTO messageModelDTO = messageModelDtoMapper.toDto(messageModel);
-	             return messageModelDTO;
+	         List<MessageModel> messageModels = messageModelMapper.getMessageModelByType(mmType);
+	         if (messageModels != null && !messageModels.isEmpty()) {
+	             List<MessageModelDTO> messageModelDTOs = messageModels.stream()
+	                     .map(messageModelDtoMapper::toDto)
+	                     .collect(Collectors.toList());
+	             return messageModelDTOs;
 	         } else {
-	             throw new NotFoundException("No message model found for type: " + mmType);
+	             throw new NotFoundException("Aucun modèle de message trouvé pour le type : " + mmType);
 	         }
 	     } else {
-	         throw new IllegalArgumentException("mmType cannot be empty or null");
+	         throw new IllegalArgumentException("mmType ne peut pas être vide ou nul");
 	     }
 	 }
 }

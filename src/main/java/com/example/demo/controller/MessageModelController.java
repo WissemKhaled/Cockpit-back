@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.javassist.NotFoundException;
@@ -57,7 +58,7 @@ public class MessageModelController {
 	@GetMapping("/getMmByType")
     public ResponseEntity<?> getMessageModelByType(@RequestParam String mmType) {
         try {
-            MessageModelDTO messageModelDTO = messageModelService.getMessageModelByType(mmType);
+            List<MessageModelDTO> messageModelDTO = messageModelService.getMessageModelByType(mmType);
             return new ResponseEntity<>(messageModelDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             log.severe(e.getMessage());

@@ -28,6 +28,9 @@ public class GstLogServiceImpl implements GstLogService{
 	@Autowired 
 	private GstLogDtoMapper gstLogDtoMapper;
 	
+	/**
+	 * Méthode qui enregistre un log en bdd
+	 */
 	@Override
 	public String saveGstLog(CreateGstLogDTO createGstLogDTO) throws GeneralException {
 		try {
@@ -38,21 +41,24 @@ public class GstLogServiceImpl implements GstLogService{
                 int isMessageModelInserted = gstLogMapper.insertLog(gstLog);
 
                 if (isMessageModelInserted == 0) {
-                    log.severe("Failed to insert gst log into the database");
-                    throw new GeneralException("Failed to insert gst log into the database");
+                    log.severe("Échec de l'insertion du gst log dans la base de données");
+                    throw new GeneralException("Échec de l'insertion du gst log dans la base de données");
                 }
-                log.info("gst log created successfully");
-                return "gst log created successfully";
+                log.info("gst log créé avec succès");
+                return "gst log créé avec succès";
             } else {
-                log.severe("Parameter createGstLogDTO cannot be null");
-                throw new IllegalArgumentException("Parameter createGstLogDTO cannot be null");
+                log.severe("Le paramètre createGstLogDTO ne peut être null");
+                throw new IllegalArgumentException("Le paramètre createGstLogDTO ne peut être null");
             }
         } catch (Exception e) {
             log.severe(e.getMessage());
-            throw new GeneralException("Error during the creation of the message model");
+            throw new GeneralException("Erreur lors de la création du Gst log");
         }
 	}
-
+	
+	/**
+	 * Méthode qui récupère un log par sa valeur (logValue)
+	 */
 	@Override
 	public GstLogDTO getGstLogByValue(String logValue) throws NotFoundException {
 		if (logValue != null && !logValue.isEmpty()) {
@@ -61,10 +67,10 @@ public class GstLogServiceImpl implements GstLogService{
 	             GstLogDTO messageModelDTO = gstLogDtoMapper.toDto(gstLog);
 	             return messageModelDTO;
 	         } else {
-	             throw new NotFoundException("No gst log found for type: " + logValue);
+	             throw new NotFoundException("Aucun gst log trouvé pour le type: " + logValue);
 	         }
 	     } else {
-	         throw new IllegalArgumentException("logValue cannot be empty or null");
+	         throw new IllegalArgumentException("logValue ne ^peut être vide ou null");
 	     }
 	}
 
