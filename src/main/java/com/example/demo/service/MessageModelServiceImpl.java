@@ -57,6 +57,20 @@ public class MessageModelServiceImpl implements MessageModelService {
             throw new GeneralException("Erreur lors de la création du modèle de message");
         }
     }
+	
+	@Override
+	public MessageModelDTO getMessageModelById(int mmId) throws NotFoundException {
+	    // Retrieve the MessageModel by its ID
+	    MessageModel messageModel = messageModelMapper.getMessageModelById(mmId);
+
+	    if (messageModel != null) {
+	        // Convert the MessageModel to MessageModelDTO
+	        return messageModelDtoMapper.toDto(messageModel);
+	    } else {
+	        throw new NotFoundException("Aucun modèle de message trouvé pour l'ID : " + mmId);
+	    }
+	}
+
 
 	/**
 	 * Méthode qui récupère une liste des modèles de message par type
@@ -77,4 +91,34 @@ public class MessageModelServiceImpl implements MessageModelService {
 	         throw new IllegalArgumentException("mmType ne peut pas être vide ou nul");
 	     }
 	 }
+	 
+	 /**
+	  * Méthode qui édite un un modèle de message par id
+	 */
+	 @Override
+	 public String editMessageModel(int mmId, MessageModel messageModel) throws GeneralException {
+	     try {
+	         log.info("Retrieved MessageModel: " + messageModel);
+	         
+	         messageModel.setMmType(messageModel.getMmType());
+	         messageModel.setMmSubject(messageModel.getMmSubject());
+	         messageModel.setMmBody(messageModel.getMmBody());
+	         messageModel.setMmCreationDate(messageModel.getMmCreationDate());
+	         messageModel.setMmLastUpdate(LocalDateTime.now());
+	         
+	         int isMessageModelUpdated = messageModelMapper.updateMessageModel(messageModel);
+
+	         if (isMessageModelUpdated == 0) {
+	             log.severe("Échec de la mise à jour du modèle de message dans la base de données");
+	             throw new GeneralException("Échec de la mise à jour du modèle de message dans la base de données");
+	         }
+
+	         log.info("Modèle de message édité avec succès");
+	         return "Modèle de message édité avec succès";
+	     } catch (Exception e) {
+	         log.severe("Erreur lors de l'édition du modèle de message : " + e.getMessage());
+	         throw new GeneralException("Erreur lors de l'édition du modèle de message");
+	     }
+	 }
+
 }

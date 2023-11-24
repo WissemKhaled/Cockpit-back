@@ -13,7 +13,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CreateMessageModelDTO;
 import com.example.demo.dto.MessageModelDTO;
+import com.example.demo.entity.MessageModel;
 import com.example.demo.service.MessageModelServiceImpl;
 
 import jakarta.validation.Valid;
@@ -53,6 +56,24 @@ public class MessageModelController {
     }
 	
 	/**
+	 * Méthode qui récupère un modèle de message par son ID
+	 */
+	@GetMapping("/getMmById/{mmId}")
+	public ResponseEntity<?> getMessageModelById(@PathVariable int mmId) {
+	    try {
+	        MessageModelDTO messageModelDTO = messageModelService.getMessageModelById(mmId);
+	        return new ResponseEntity<>(messageModelDTO, HttpStatus.OK);
+	    } catch (NotFoundException e) {
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+	    } catch (IllegalArgumentException e) {
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	    } catch (RuntimeException e) {
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+	
+	/**
 	 * Méthode qui récupère des modèles de message par leur type
 	 */
 	@GetMapping("/getMmByType")
@@ -63,6 +84,23 @@ public class MessageModelController {
         } catch (NotFoundException e) {
             log.severe(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            log.severe(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            log.severe(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+	
+	/**
+	 * Méthode qui créé et insère un modèle de message en base de donnée
+	 */
+	@PutMapping("/updateMm/{mmId}")
+    public ResponseEntity<String> updateMessageModel(@PathVariable int mmId, @RequestBody MessageModel messageModel) {
+        try {
+            String result = messageModelService.editMessageModel(mmId, messageModel);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             log.severe(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
