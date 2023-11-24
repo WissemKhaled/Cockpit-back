@@ -40,8 +40,8 @@ public class ServiceProviderServiceTest {
 	public void givenServiceProviderEntity_whenServicePeroviderIsSaved_thenReturnOne() {
 		ServiceProvider serviceProviderToSave = new ServiceProvider();
 		serviceProviderToSave.setSpId(10);
-		serviceProviderToSave.setSpFirstName("spfirstname");
-		serviceProviderToSave.setSpName("spname");
+		serviceProviderToSave.setSpFirstName("Spfirstname");
+		serviceProviderToSave.setSpName("SPNAME");
 		serviceProviderToSave.setSpEmail("sp@email.com");
 
 		given(serviceProviderMapper.insertServiceProvider(serviceProviderToSave)).willReturn(1);
@@ -55,8 +55,8 @@ public class ServiceProviderServiceTest {
 	public void givenServiceProviderEntity_whenServicePeroviderIsNotSaved_thenReturnZero() {
 		ServiceProvider serviceProviderToSave = new ServiceProvider();
 		serviceProviderToSave.setSpId(10);
-		serviceProviderToSave.setSpFirstName("spfirstname");
-		serviceProviderToSave.setSpName("spname");
+		serviceProviderToSave.setSpFirstName("Spfirstname");
+		serviceProviderToSave.setSpName("SPNAME");
 		serviceProviderToSave.setSpEmail("sp@email.com");
 
 		given(serviceProviderMapper.insertServiceProvider(serviceProviderToSave)).willReturn(0);
@@ -70,8 +70,8 @@ public class ServiceProviderServiceTest {
 	public void givenServiceProviderEntity_whenServicePeroviderIsArchived_thenReturnOne() {
 		ServiceProvider serviceProviderToArchive = new ServiceProvider();
 		serviceProviderToArchive.setSpId(10);
-		serviceProviderToArchive.setSpFirstName("spfirstname");
-		serviceProviderToArchive.setSpName("spname");
+		serviceProviderToArchive.setSpFirstName("Spfirstname");
+		serviceProviderToArchive.setSpName("SPNAME");
 		serviceProviderToArchive.setSpEmail("sp@email.com");
 		serviceProviderToArchive.setSpStatus(new Status(1));
 
@@ -86,8 +86,8 @@ public class ServiceProviderServiceTest {
 	public void givenServiceProviderEntity_whenServicePeroviderIsNotArchived_thenReturnZero() {
 		ServiceProvider serviceProviderToArchive = new ServiceProvider();
 		serviceProviderToArchive.setSpId(10);
-		serviceProviderToArchive.setSpFirstName("spfirstname");
-		serviceProviderToArchive.setSpName("spname");
+		serviceProviderToArchive.setSpFirstName("Spfirstname");
+		serviceProviderToArchive.setSpName("SPNAME");
 		serviceProviderToArchive.setSpEmail("sp@email.com");
 		serviceProviderToArchive.setSpStatus(new Status(1));
 
@@ -102,8 +102,8 @@ public class ServiceProviderServiceTest {
 	public void givenServiceProviderEntity_whenServicePeroviderIsUpdated_thenReturnOne() {
 		ServiceProvider serviceProviderToUpdate = new ServiceProvider();
 		serviceProviderToUpdate.setSpId(10);
-		serviceProviderToUpdate.setSpFirstName("spfirstname");
-		serviceProviderToUpdate.setSpName("spname");
+		serviceProviderToUpdate.setSpFirstName("Spfirstname");
+		serviceProviderToUpdate.setSpName("SPNAME");
 		serviceProviderToUpdate.setSpEmail("sp@email.com");
 		serviceProviderToUpdate.setSpStatus(new Status(1));
 
@@ -118,8 +118,8 @@ public class ServiceProviderServiceTest {
 	public void givenServiceProviderEntity_whenServicePeroviderIsNotUpdated_thenReturnZero() {
 		ServiceProvider serviceProviderToUpdate = new ServiceProvider();
 		serviceProviderToUpdate.setSpId(10);
-		serviceProviderToUpdate.setSpFirstName("spfirstname");
-		serviceProviderToUpdate.setSpName("spname");
+		serviceProviderToUpdate.setSpFirstName("Spfirstname");
+		serviceProviderToUpdate.setSpName("SPNAME");
 		serviceProviderToUpdate.setSpEmail("sp@email.com");
 		serviceProviderToUpdate.setSpStatus(new Status(1));
 
@@ -134,8 +134,8 @@ public class ServiceProviderServiceTest {
 	public void givenServiceProviderEntity_whenServicePeroviderIsFound_thenReturnTheServiceProvider() {
 		ServiceProvider serviceProviderToBeFound = new ServiceProvider();
 		serviceProviderToBeFound.setSpId(1);
-		serviceProviderToBeFound.setSpFirstName("spfirstname");
-		serviceProviderToBeFound.setSpName("spname");
+		serviceProviderToBeFound.setSpFirstName("Spfirstname");
+		serviceProviderToBeFound.setSpName("SPNAME");
 		serviceProviderToBeFound.setSpEmail("sp1@email.com");
 		serviceProviderToBeFound.setSubcontractor(new Subcontractor("sname", "s1@email.com"));
 		serviceProviderToBeFound.setSpStatus(new Status(3));
@@ -143,8 +143,7 @@ public class ServiceProviderServiceTest {
 		given(serviceProviderMapper.findServiceProviderById(serviceProviderToBeFound.getSpId()))
 				.willReturn(serviceProviderToBeFound);
 
-		ServiceProvider foundedServiceProvider = serviceProviderService
-				.getServiceProviderById(serviceProviderToBeFound.getSpId());
+		ServiceProvider foundedServiceProvider = serviceProviderService.getServiceProviderById(serviceProviderToBeFound.getSpId());
 
 		assertEquals(serviceProviderToBeFound, foundedServiceProvider);
 	}

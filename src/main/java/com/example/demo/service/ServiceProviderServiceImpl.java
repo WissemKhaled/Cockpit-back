@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.entity.ServiceProvider;
@@ -90,4 +91,19 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		}		
 	}
 
+	@Override
+	public String FirstNameFormatter(String name) {
+       if (name == null || name.trim().isEmpty()) {
+    	   throw new RuntimeException("le nom est necessaire");
+        }
+        return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+	}
+
+	@Override
+	public String NameFormatter(String name) {
+		if (name == null || name.trim().isEmpty()) {
+			throw new RuntimeException("le nom est necessaire");
+		}
+		return name.toUpperCase();
+	}
 }

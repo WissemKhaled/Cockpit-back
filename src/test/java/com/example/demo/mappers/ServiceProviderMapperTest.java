@@ -79,8 +79,8 @@ public class ServiceProviderMapperTest {
 
 		ServiceProvider existingServiceProvider = new ServiceProvider();
 		existingServiceProvider.setSpId(1);
-		existingServiceProvider.setSpName("Firstspfirstname");
-		existingServiceProvider.setSpFirstName("Firstspname");
+		existingServiceProvider.setSpName("FIRSTSPNAME");
+		existingServiceProvider.setSpFirstName("Firstspfirstname");
 		existingServiceProvider.setSpEmail("sp1@email.com");
 		existingServiceProvider.setSpCreationDate(LocalDateTime.now());
 		existingServiceProvider.setSubcontractor(existingSubcontractor);
@@ -98,8 +98,8 @@ public class ServiceProviderMapperTest {
 
 		ServiceProvider nonExistingServiceProvider = new ServiceProvider();
 		nonExistingServiceProvider.setSpId(Integer.MAX_VALUE);
-		nonExistingServiceProvider.setSpName("spname");
-		nonExistingServiceProvider.setSpFirstName("spfirstname");
+		nonExistingServiceProvider.setSpName("FIRSTSPNAME");
+		nonExistingServiceProvider.setSpFirstName("Firstspfirstname");
 		nonExistingServiceProvider.setSpEmail("sp999@email.com");
 		nonExistingServiceProvider.setSpCreationDate(LocalDateTime.now());
 		nonExistingServiceProvider.setSubcontractor(existingSubcontractor);
@@ -116,8 +116,8 @@ public class ServiceProviderMapperTest {
 		existingSubcontractor.setSId(1);
 
 		ServiceProvider serviceProvidertoSave = new ServiceProvider();
-		serviceProvidertoSave.setSpName("Fifthspname");
-		serviceProvidertoSave.setSpFirstName("Fifthspfirstname");
+		serviceProvidertoSave.setSpName("FIRSTSPNAME");
+		serviceProvidertoSave.setSpFirstName("Firstspfirstname");
 		serviceProvidertoSave.setSpEmail("sp5@email.com");
 		serviceProvidertoSave.setSpCreationDate(LocalDateTime.now());
 		serviceProvidertoSave.setSubcontractor(existingSubcontractor);
@@ -136,8 +136,8 @@ public class ServiceProviderMapperTest {
 
 		ServiceProvider existingServiceProvider = new ServiceProvider();
 		existingServiceProvider.setSpId(1);
-		existingServiceProvider.setSpName("Fifthspname");
-		existingServiceProvider.setSpFirstName("Fifthspfirstname");
+		existingServiceProvider.setSpName("FIRSTSPNAME");
+		existingServiceProvider.setSpFirstName("Firstspfirstname");
 		existingServiceProvider.setSpEmail("sp5@email.com");
 		existingServiceProvider.setSubcontractor(existingSubcontractor);
 		existingServiceProvider.setSpStatus(new Status(2));

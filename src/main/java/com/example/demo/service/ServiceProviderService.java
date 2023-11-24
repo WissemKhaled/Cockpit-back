@@ -5,6 +5,8 @@ import java.util.List;
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.entity.ServiceProvider;
 
+import jakarta.validation.Valid;
+
 public interface ServiceProviderService {
 
 	int saveServiceProvider(ServiceProvider serviceProviderToSave);
@@ -24,5 +26,9 @@ public interface ServiceProviderService {
 	void handleServiceProviderSaving(ServiceProviderDto serviceProviderDto);
 
 	int checkIfSubcontractorExistBySpEmail(String serviceProviderSpEmail);
+
+	String FirstNameFormatter(String name);
+
+	String NameFormatter(String name);
 
 }

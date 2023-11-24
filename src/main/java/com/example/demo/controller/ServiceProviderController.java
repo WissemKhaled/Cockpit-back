@@ -54,8 +54,7 @@ public class ServiceProviderController {
 				String email = jwtService.extractUsername(token);
 				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 				if (jwtService.validateToken(token, userDetails)) {
-					return new ResponseEntity<>(serviceProviderDtoMapper
-							.serviceProviderToDto(serviceProviderService.getServiceProviderById(spId)), HttpStatus.OK);
+					return new ResponseEntity<>(serviceProviderDtoMapper.serviceProviderToDto(serviceProviderService.getServiceProviderById(spId)), HttpStatus.OK);
 				} else {
 					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 				}
@@ -79,9 +78,9 @@ public class ServiceProviderController {
 				String email = jwtService.extractUsername(token);
 				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 				if (jwtService.validateToken(token, userDetails)) {
-//					Boolean isSpNameValid = serviceProviderService.isSpNameValid(serviceProviderDto.getSpName());
-					boolean isServiceProviderExist = serviceProviderService
-							.checkIfServiceProviderExistById(serviceProviderDto.getSpId());
+					serviceProviderDto.setSpFirstName(serviceProviderService.FirstNameFormatter(serviceProviderDto.getSpFirstName()));
+					serviceProviderDto.setSpName(serviceProviderService.NameFormatter(serviceProviderDto.getSpName()));
+					boolean isServiceProviderExist = serviceProviderService.checkIfServiceProviderExistById(serviceProviderDto.getSpId());
 					if (isServiceProviderExist) {
 						serviceProviderService.handleServiceProviderUpdating(serviceProviderDto);
 						int updateServiceProviderId = serviceProviderService.updateServiceProvider(
@@ -93,12 +92,8 @@ public class ServiceProviderController {
 					} else {
 						if (serviceProviderDto.getSpId() > 0) {
 							serviceProviderService.handleServiceProviderSaving(serviceProviderDto);
-							int saveServiceProvider = serviceProviderService.saveServiceProvider(
-									serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
-							return new ResponseEntity<>(
-									serviceProviderDtoMapper.serviceProviderToDto(
-											serviceProviderService.getServiceProviderById(saveServiceProvider)),
-									HttpStatus.CREATED);
+							int savedServiceProviderId = serviceProviderService.saveServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
+							return new ResponseEntity<>(serviceProviderDtoMapper.serviceProviderToDto(serviceProviderService.getServiceProviderById(savedServiceProviderId)),HttpStatus.CREATED);
 						} else {
 							return new ResponseEntity("Invalid Id", HttpStatus.BAD_REQUEST);
 						}

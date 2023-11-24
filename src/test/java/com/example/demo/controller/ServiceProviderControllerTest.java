@@ -63,7 +63,7 @@ public class ServiceProviderControllerTest {
 		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + expectedSpId).header("Authorization", "Bearer " + jwtToken)
 				.contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.spFirstName").value("Firstspfirstname")) 
-				.andExpect(jsonPath("$.spName").value("Firstspname"))
+				.andExpect(jsonPath("$.spName").value("FIRSTSPNAME"))
 				.andExpect(jsonPath("$.spEmail").value("sp1@email.com"))
 				.andExpect(jsonPath("$.subcontractorId").value(1)).andExpect(jsonPath("$.spStatusId").value(3));
 	}
@@ -84,7 +84,7 @@ public class ServiceProviderControllerTest {
 		ServiceProviderDto nonExistingServiceProviderTosave = new ServiceProviderDto();
 		nonExistingServiceProviderTosave.setSpId(5);
 		nonExistingServiceProviderTosave.setSpFirstName("Fifthspfirstname");
-		nonExistingServiceProviderTosave.setSpName("Fifthspname");
+		nonExistingServiceProviderTosave.setSpName("FIRSTSPNAME");
 		nonExistingServiceProviderTosave.setSpEmail("sp5@email.com");
 		nonExistingServiceProviderTosave.setSubcontractorId(1);
 		nonExistingServiceProviderTosave.setSpStatutId(1);
@@ -93,7 +93,7 @@ public class ServiceProviderControllerTest {
 				MockMvcRequestBuilders.post(baseUrl + "save").content(asJsonString(nonExistingServiceProviderTosave))
 						.header("Authorization", "Bearer " + jwtToken).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isCreated()).andExpect(jsonPath("$.spFirstName").value("Fifthspfirstname"))
-				.andExpect(jsonPath("$.spName").value("Fifthspname"))
+				.andExpect(jsonPath("$.spName").value("FIRSTSPNAME"))
 				.andExpect(jsonPath("$.spEmail").value("sp5@email.com"))
 				.andExpect(jsonPath("$.subcontractorId").value(1)).andExpect(jsonPath("$.spStatusId").value(1));
 	}
@@ -104,14 +104,14 @@ public class ServiceProviderControllerTest {
 		ServiceProviderDto existingServiceProviderTosave = new ServiceProviderDto();
 		existingServiceProviderTosave.setSpId(1);
 		existingServiceProviderTosave.setSpFirstName("Firstspfirstname");
-		existingServiceProviderTosave.setSpName("Firstspname");
+		existingServiceProviderTosave.setSpName("FIRSTSPNAME");
 		existingServiceProviderTosave.setSpEmail("sp1@email.com");
 		existingServiceProviderTosave.setSubcontractorId(1);
 		existingServiceProviderTosave.setSpStatutId(3);
 
 		ServiceProviderDto ServiceProviderForUpdate = new ServiceProviderDto();
 		ServiceProviderForUpdate.setSpId(1);
-		ServiceProviderForUpdate.setSpName("Firstspnameupdated");
+		ServiceProviderForUpdate.setSpName("FIRSTSPNAMEUPDATED");
 		ServiceProviderForUpdate.setSpFirstName("Firstspfirstnameupdated");
 		ServiceProviderForUpdate.setSpEmail("sp1@email-UPDATED.com");
 		ServiceProviderForUpdate.setSubcontractorId(2);
@@ -120,7 +120,7 @@ public class ServiceProviderControllerTest {
 		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "save").content(asJsonString(ServiceProviderForUpdate))
 				.header("Authorization", "Bearer " + jwtToken).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andExpect(jsonPath("$.spFirstName").value("Firstspfirstnameupdated"))
-				.andExpect(jsonPath("$.spName").value("Firstspnameupdated"))
+				.andExpect(jsonPath("$.spName").value("FIRSTSPNAMEUPDATED"))
 				.andExpect(jsonPath("$.spEmail").value("sp1@email-UPDATED.com"))
 				.andExpect(jsonPath("$.subcontractorId").value(2)).andExpect(jsonPath("$.spStatusId").value(1));
 	}
@@ -151,9 +151,9 @@ public class ServiceProviderControllerTest {
 		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + "all-service-providers/" + existingSubcontractorId)
 				.header("Authorization", "Bearer " + jwtToken).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andExpect(jsonPath("$").isArray()).andExpect(jsonPath("$", hasSize(2)))
-				.andExpect(jsonPath("$[0].spName").value("Firstspname"))
+				.andExpect(jsonPath("$[0].spName").value("FIRSTSPNAME"))
 				.andExpect(jsonPath("$[0].spFirstName").value("Firstspfirstname"))
-				.andExpect(jsonPath("$[1].spName").value("Secondspname"))
+				.andExpect(jsonPath("$[1].spName").value("SECONDSPNAME"))
 				.andExpect(jsonPath("$[1].spFirstName").value("Secondspfirstname"));
 
 	}
