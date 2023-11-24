@@ -21,10 +21,10 @@ public class ServiceProvider {
 
 	@JsonProperty("spFirstName")
 	private String spFirstName;
-	
+
 	@JsonProperty("spName")
 	private String spName;
-	
+
 	@JsonProperty("spEmail")
 	private String spEmail;
 
@@ -36,8 +36,12 @@ public class ServiceProvider {
 
 	@JsonProperty("subcontractor")
 	private Subcontractor subcontractor;
-	
+
 	@JsonProperty("spStatus")
 	private Status spStatus;
+
+	public ServiceProvider(int spId) {
+		this.spId = spId;
+	}
 
 }

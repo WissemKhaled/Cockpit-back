@@ -136,7 +136,7 @@ public class ServiceProviderMapperTest {
 
 		ServiceProvider existingServiceProvider = new ServiceProvider();
 		existingServiceProvider.setSpId(1);
-		existingServiceProvider.setSpName("sp-1-name");
+		existingServiceProvider.setSpName("sp-5-name");
 		existingServiceProvider.setSpFirstName("sp-5-first_name");
 		existingServiceProvider.setSpEmail("sp5@email.com");
 		existingServiceProvider.setSubcontractor(existingSubcontractor);

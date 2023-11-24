@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.ServiceProviderNotFoundException;
+import com.example.demo.exception.SubcontractorDuplicateDataException;
 import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.ServiceProviderMapper;
 
@@ -63,13 +65,36 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public boolean checkIfServiceProviderExist(int serviceProviderId) {
+	public boolean checkIfServiceProviderExistById(int serviceProviderId) {
 		ServiceProvider foundServiceProviderById = serviceProviderMapper.findServiceProviderById(serviceProviderId);
 		Boolean isServiceProviderExists = false;
 		if (foundServiceProviderById != null) {
 			isServiceProviderExists = true;
 		}
 		return isServiceProviderExists;
+	}
+	
+	@Override
+	public int checkIfSubcontractorExistBySpEmail(String serviceProviderSpEmail) {
+		ServiceProvider foundServiceProvider = serviceProviderMapper.findServiceProviderBySpEmail(serviceProviderSpEmail);
+		if (foundServiceProvider == null) return 0;
+		return foundServiceProvider.getSpId();
+	}
+
+	@Override
+	public void handleServiceProviderUpdating(ServiceProviderDto serviceProviderDto) {
+		int isServiceProviderExistBySpEmail = checkIfSubcontractorExistBySpEmail(serviceProviderDto.getSpEmail());
+		if ( isServiceProviderExistBySpEmail != 0 && serviceProviderDto.getSpId() != isServiceProviderExistBySpEmail) {
+			throw new SubcontractorDuplicateDataException("l'émail du préstataire saisi existe déjà");
+		}
+	}
+
+	@Override
+	public void handleServiceProviderSaving(ServiceProviderDto serviceProviderDto) {
+		int isServiceProviderExistBySpEmail = checkIfSubcontractorExistBySpEmail(serviceProviderDto.getSpEmail());
+		if ( isServiceProviderExistBySpEmail != 0) {
+			throw new SubcontractorDuplicateDataException("l'émail du préstataire saisi existe déjà");
+		}		
 	}
 
 }

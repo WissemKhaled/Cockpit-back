@@ -79,8 +79,9 @@ public class ServiceProviderController {
 				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 				if (jwtService.validateToken(token, userDetails)) {
 					boolean isServiceProviderExist = serviceProviderService
-							.checkIfServiceProviderExist(serviceProviderDto.getSpId());
+							.checkIfServiceProviderExistById(serviceProviderDto.getSpId());
 					if (isServiceProviderExist) {
+						serviceProviderService.handleServiceProviderUpdating(serviceProviderDto);
 						int updateServiceProviderId = serviceProviderService.updateServiceProvider(
 								serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
 						ServiceProvider updatedServiceProvider = serviceProviderService
@@ -89,6 +90,7 @@ public class ServiceProviderController {
 								serviceProviderDtoMapper.serviceProviderToDto(updatedServiceProvider), HttpStatus.OK);
 					} else {
 						if (serviceProviderDto.getSpId() > 0) {
+							serviceProviderService.handleServiceProviderSaving(serviceProviderDto);
 							int saveServiceProvider = serviceProviderService.saveServiceProvider(
 									serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
 							return new ResponseEntity<>(
