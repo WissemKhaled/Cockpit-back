@@ -43,6 +43,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	@Override
 	public int updateServiceProvider(ServiceProvider serviceProviderToUpdate) {
+		serviceProviderToUpdate.setSpLastUpdateDate(LocalDateTime.now());
 		return serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate);
 	}
 	
