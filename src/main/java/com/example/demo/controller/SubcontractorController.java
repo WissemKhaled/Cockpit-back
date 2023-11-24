@@ -24,7 +24,7 @@ import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
-import com.example.demo.exception.AlreadyArchivedSubcontractor;
+import com.example.demo.exception.AlreadyArchivedEntity;
 import com.example.demo.exception.ServiceProviderNotFoundException;
 import com.example.demo.exception.SubcontractorDuplicateDataException;
 import com.example.demo.exception.SubcontractorNotFoundException;
@@ -277,7 +277,7 @@ public class SubcontractorController {
 						Subcontractor subcontractortoArchive = subcontractorService
 								.getSubcontractorWithStatus(parsedId);
 						if (subcontractortoArchive.getStatus().getStName().equals("Archivé")) {
-							throw new AlreadyArchivedSubcontractor(
+							throw new AlreadyArchivedEntity(
 									String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
 						}
 						subcontractorService.archiveSubcontractor(subcontractortoArchive);
@@ -292,7 +292,7 @@ public class SubcontractorController {
 			} else {
 				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 			}
-		} catch (AlreadyArchivedSubcontractor e) {
+		} catch (AlreadyArchivedEntity e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
 			return new ResponseEntity<>("format de l'id est invalide.", HttpStatus.NOT_ACCEPTABLE);

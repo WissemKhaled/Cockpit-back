@@ -77,7 +77,9 @@ public interface ServiceProviderMapper {
 			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
 			+ "FROM service_provider sp "
 			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
-			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id " + "WHERE sp_fk_subcontractor_id = #{sId}")
+			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
+			+ "WHERE sp_fk_subcontractor_id = #{sId} "
+			+ "ORDER BY sp_id")
 	@Result(property = "spId", column = "sp_id")
 	@Result(property = "spFirstName", column = "sp_first_name")
 	@Result(property = "spName", column = "sp_name")

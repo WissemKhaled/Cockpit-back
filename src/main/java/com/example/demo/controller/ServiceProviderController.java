@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.entity.ServiceProvider;
-import com.example.demo.exception.AlreadyArchivedSubcontractor;
+import com.example.demo.exception.AlreadyArchivedEntity;
 import com.example.demo.exception.ServiceProviderNotFoundException;
 import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.ServiceProviderService;
@@ -119,12 +119,12 @@ public class ServiceProviderController {
 		try {
 			ServiceProvider serviceProviderToArchive = serviceProviderService.getServiceProviderById(serviceProviderId);
 			if (serviceProviderToArchive.getSpStatus().getStId() == 4) {
-				throw new AlreadyArchivedSubcontractor(
-						String.format("le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
+				throw new AlreadyArchivedEntity(
+						String.format("le prestataire avec l'id %d a été déjà archivé.", serviceProviderId));
 			}
 			serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
 			return new ResponseEntity<>("le prestataire est archivé avec succées",HttpStatus.OK);
-		} catch (AlreadyArchivedSubcontractor e) {
+		} catch (AlreadyArchivedEntity e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

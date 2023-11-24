@@ -59,7 +59,7 @@ public class ServiceProviderControllerTest {
 		.andExpect(jsonPath("$.spName").value("sp-1-name"))
 		.andExpect(jsonPath("$.spEmail").value("sp1@email.com"))
 		.andExpect(jsonPath("$.subcontractorId").value(1))
-		.andExpect(jsonPath("$.spStatusId").value(3));
+		.andExpect(jsonPath("$.spStatusId").value(1));
 	}
 
 	@Test
@@ -149,7 +149,7 @@ public class ServiceProviderControllerTest {
 				.header("Authorization", "Bearer " + jwtToken)
 				.contentType(MediaType.APPLICATION_JSON))
 		.andExpect(status().isBadRequest())
-		.andExpect(content().string("le prestataire avec l'id "+ existingArchivedServiceProviderId +" est déjà archivé."));
+		.andExpect(content().string("le prestataire avec l'id "+ existingArchivedServiceProviderId +" a été déjà archivé."));
 	}
 	
 	@Test
