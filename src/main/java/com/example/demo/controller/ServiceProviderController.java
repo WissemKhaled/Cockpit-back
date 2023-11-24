@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.AlreadyArchivedEntity;
-import com.example.demo.exception.ServiceProviderNotFoundException;
+import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.ServiceProviderService;
 
@@ -61,7 +62,7 @@ public class ServiceProviderController {
 			} else {
 				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 			}
-		} catch (ServiceProviderNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -78,6 +79,7 @@ public class ServiceProviderController {
 				String email = jwtService.extractUsername(token);
 				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 				if (jwtService.validateToken(token, userDetails)) {
+//					Boolean isSpNameValid = serviceProviderService.isSpNameValid(serviceProviderDto.getSpName());
 					boolean isServiceProviderExist = serviceProviderService
 							.checkIfServiceProviderExistById(serviceProviderDto.getSpId());
 					if (isServiceProviderExist) {
@@ -107,7 +109,7 @@ public class ServiceProviderController {
 			} else {
 				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 			}
-		} catch (ServiceProviderNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -135,9 +137,9 @@ public class ServiceProviderController {
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorId(@PathVariable int subcontractorId) {
 		try {
 			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersBySubcontractorId(subcontractorId).stream().map(serviceProvider -> serviceProviderDtoMapper.serviceProviderToDto(serviceProvider)).toList();
-			if (serviceProviders.isEmpty()) throw new ServiceProviderNotFoundException(String.format("Le sous-traitant avec l'id: %d n'a pas de prestataires", subcontractorId));
+			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec l'id: %d n'a pas de prestataires", subcontractorId));
 			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
-		} catch (ServiceProviderNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);

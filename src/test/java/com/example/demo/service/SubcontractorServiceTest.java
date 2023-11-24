@@ -22,7 +22,7 @@ import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
-import com.example.demo.exception.SubcontractorNotFoundException;
+import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.mappers.SubcontractorMapper;
 
 @ExtendWith(MockitoExtension.class)
@@ -124,7 +124,7 @@ public class SubcontractorServiceTest {
 
 		try {
 			subcontractorService.getSubcontractorWithStatus(nonExistingId);
-		} catch (SubcontractorNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			assertEquals("le sous-traitant avec l'id: " + nonExistingId + " n'existe pas!!", e.getMessage());
 		}
 	}

@@ -28,11 +28,13 @@ public class ServiceProviderDto {
 
 	@NotEmpty(message = "le prénom ne doit pas étre null")
 	@Size(min = 2, max = 250, message = "la longueur du prénom doit etre entre 2 et 25O caractères")
+	@Pattern(regexp = "^[a-zA-Z]{2,}$", message = "Le format du prénom saisi est invalide")
 	@JsonProperty("spFirstName")
 	private String spFirstName;
 	
 	@NotEmpty(message = "le nom ne doit pas étre null")
 	@Size(min = 2, max = 250, message = "la longueur du nom doit etre entre 2 et 25O caractères")
+	@Pattern(regexp = "^[a-zA-Z]{2,}$", message = "Le format du nom saisi est invalide")
 	@JsonProperty("spName")
 	private String spName;
 	

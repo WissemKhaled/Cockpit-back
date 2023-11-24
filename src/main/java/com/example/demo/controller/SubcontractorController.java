@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,9 +23,8 @@ import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.AlreadyArchivedEntity;
-import com.example.demo.exception.ServiceProviderNotFoundException;
-import com.example.demo.exception.SubcontractorDuplicateDataException;
-import com.example.demo.exception.SubcontractorNotFoundException;
+import com.example.demo.exception.EntityDuplicateDataException;
+import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.SubcontractorService;
 
@@ -206,7 +203,7 @@ public class SubcontractorController {
 			}
 		} catch (NumberFormatException e) {
 			return new ResponseEntity("Id non valide", HttpStatus.BAD_REQUEST);
-		} catch (SubcontractorNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -254,7 +251,7 @@ public class SubcontractorController {
 			} else {
 				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 			}
-		} catch (SubcontractorDuplicateDataException e) {
+		} catch (EntityDuplicateDataException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -296,7 +293,7 @@ public class SubcontractorController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
 			return new ResponseEntity<>("format de l'id est invalide.", HttpStatus.NOT_ACCEPTABLE);
-		} catch (SubcontractorNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

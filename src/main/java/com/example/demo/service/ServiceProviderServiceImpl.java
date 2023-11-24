@@ -7,15 +7,11 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.entity.ServiceProvider;
-import com.example.demo.entity.Status;
-import com.example.demo.entity.Subcontractor;
-import com.example.demo.exception.ServiceProviderNotFoundException;
-import com.example.demo.exception.SubcontractorDuplicateDataException;
-import com.example.demo.exception.SubcontractorNotFoundException;
+import com.example.demo.exception.EntityDuplicateDataException;
+import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.mappers.ServiceProviderMapper;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
 
 @Service
 @AllArgsConstructor
@@ -51,7 +47,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	public ServiceProvider getServiceProviderById(int serviceProviderId) {
 		ServiceProvider foundedSubcontractorById = serviceProviderMapper.findServiceProviderById(serviceProviderId);
 		if (foundedSubcontractorById == null) {
-			throw new ServiceProviderNotFoundException("le prestataire avec l'id: " + serviceProviderId + " n'existe pas!!");
+			throw new EntityNotFoundException("le prestataire avec l'id: " + serviceProviderId + " n'existe pas!!");
 		}
 		return foundedSubcontractorById;
 	}
@@ -82,7 +78,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	public void handleServiceProviderUpdating(ServiceProviderDto serviceProviderDto) {
 		int isServiceProviderExistBySpEmail = checkIfSubcontractorExistBySpEmail(serviceProviderDto.getSpEmail());
 		if ( isServiceProviderExistBySpEmail != 0 && serviceProviderDto.getSpId() != isServiceProviderExistBySpEmail) {
-			throw new SubcontractorDuplicateDataException("l'émail du préstataire saisi existe déjà");
+			throw new EntityDuplicateDataException("l'émail du préstataire saisi existe déjà");
 		}
 	}
 
@@ -90,7 +86,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	public void handleServiceProviderSaving(ServiceProviderDto serviceProviderDto) {
 		int isServiceProviderExistBySpEmail = checkIfSubcontractorExistBySpEmail(serviceProviderDto.getSpEmail());
 		if ( isServiceProviderExistBySpEmail != 0) {
-			throw new SubcontractorDuplicateDataException("l'émail du préstataire saisi existe déjà");
+			throw new EntityDuplicateDataException("l'émail du préstataire saisi existe déjà");
 		}		
 	}
 

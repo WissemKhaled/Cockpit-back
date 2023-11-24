@@ -48,7 +48,7 @@ public class ServiceProviderMapperTest {
 		ServiceProvider foundedServiceProvider = serviceProviderMapper.findServiceProviderById(existingServiceProviderId);
 
 		assertEquals(1, foundedServiceProvider.getSpId());
-		assertEquals("sp-1-first_name", foundedServiceProvider.getSpFirstName());
+		assertEquals("Firstspfirstname", foundedServiceProvider.getSpFirstName());
 
 	}
 	
@@ -79,9 +79,9 @@ public class ServiceProviderMapperTest {
 
 		ServiceProvider existingServiceProvider = new ServiceProvider();
 		existingServiceProvider.setSpId(1);
-		existingServiceProvider.setSpName("sp-1-first_name");
-		existingServiceProvider.setSpFirstName("sp-1-nom");
-		existingServiceProvider.setSpEmail("sp@email.com");
+		existingServiceProvider.setSpName("Firstspfirstname");
+		existingServiceProvider.setSpFirstName("Firstspname");
+		existingServiceProvider.setSpEmail("sp1@email.com");
 		existingServiceProvider.setSpCreationDate(LocalDateTime.now());
 		existingServiceProvider.setSubcontractor(existingSubcontractor);
 		existingServiceProvider.setSpStatus(new Status(1));
@@ -98,8 +98,8 @@ public class ServiceProviderMapperTest {
 
 		ServiceProvider nonExistingServiceProvider = new ServiceProvider();
 		nonExistingServiceProvider.setSpId(Integer.MAX_VALUE);
-		nonExistingServiceProvider.setSpName("sp-999-name");
-		nonExistingServiceProvider.setSpFirstName("sp-999-first_name");
+		nonExistingServiceProvider.setSpName("spname");
+		nonExistingServiceProvider.setSpFirstName("spfirstname");
 		nonExistingServiceProvider.setSpEmail("sp999@email.com");
 		nonExistingServiceProvider.setSpCreationDate(LocalDateTime.now());
 		nonExistingServiceProvider.setSubcontractor(existingSubcontractor);
@@ -116,8 +116,8 @@ public class ServiceProviderMapperTest {
 		existingSubcontractor.setSId(1);
 
 		ServiceProvider serviceProvidertoSave = new ServiceProvider();
-		serviceProvidertoSave.setSpName("sp-5-name");
-		serviceProvidertoSave.setSpFirstName("sp-5-first_name");
+		serviceProvidertoSave.setSpName("Fifthspname");
+		serviceProvidertoSave.setSpFirstName("Fifthspfirstname");
 		serviceProvidertoSave.setSpEmail("sp5@email.com");
 		serviceProvidertoSave.setSpCreationDate(LocalDateTime.now());
 		serviceProvidertoSave.setSubcontractor(existingSubcontractor);
@@ -136,8 +136,8 @@ public class ServiceProviderMapperTest {
 
 		ServiceProvider existingServiceProvider = new ServiceProvider();
 		existingServiceProvider.setSpId(1);
-		existingServiceProvider.setSpName("sp-5-name");
-		existingServiceProvider.setSpFirstName("sp-5-first_name");
+		existingServiceProvider.setSpName("Fifthspname");
+		existingServiceProvider.setSpFirstName("Fifthspfirstname");
 		existingServiceProvider.setSpEmail("sp5@email.com");
 		existingServiceProvider.setSubcontractor(existingSubcontractor);
 		existingServiceProvider.setSpStatus(new Status(2));
