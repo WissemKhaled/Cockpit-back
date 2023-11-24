@@ -57,11 +57,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	@Override
 	public List<ServiceProvider>  getServiceProvidersBySubcontractorId(int subcontractorId) {
-		List<ServiceProvider> foundServiceProviderBySubcontractorId = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId);
-		if (foundServiceProviderBySubcontractorId.isEmpty()) {
-			throw new ServiceProviderNotFoundException("le sous-traitant avec l'id: " + subcontractorId + " n'a pas de prestataires");
-		}
-		return foundServiceProviderBySubcontractorId;
+		return  serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId);
 	}
 
 	@Override

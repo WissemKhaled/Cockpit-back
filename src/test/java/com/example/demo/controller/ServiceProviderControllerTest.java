@@ -179,7 +179,7 @@ public class ServiceProviderControllerTest {
 				.header("Authorization", "Bearer " + jwtToken)
 				.contentType(MediaType.APPLICATION_JSON))
 		.andExpect(status().isNotFound())
-        .andExpect(content().string(String.format("le sous-traitant avec l'id: %d n'a pas de prestataires", SubcontractorIdHasNoServiceProviders)));
+        .andExpect(content().string(String.format("Le sous-traitant avec l'id: %d n'a pas de prestataires", SubcontractorIdHasNoServiceProviders)));
 	}
 
 	// method pour convertir un objet Java en sa représentation JSON sous forme de

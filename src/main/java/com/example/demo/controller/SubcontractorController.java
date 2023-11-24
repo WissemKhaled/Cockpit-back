@@ -25,6 +25,7 @@ import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.AlreadyArchivedSubcontractor;
+import com.example.demo.exception.ServiceProviderNotFoundException;
 import com.example.demo.exception.SubcontractorDuplicateDataException;
 import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.service.JwtServiceImplementation;
@@ -41,8 +42,8 @@ import lombok.AllArgsConstructor;
 public class SubcontractorController {
 
 	private final SubcontractorService subcontractorService;
-	private final SubcontractorDtoMapper dtoMapper;
-	
+	private final SubcontractorDtoMapper subcontractorDtoMapper;
+
 	@Autowired
 	@Qualifier("userDetailsService")
 	private UserDetailsService userDetailsService;
@@ -63,20 +64,21 @@ public class SubcontractorController {
 			HttpServletRequest request) {
 		String authorizationHeader = request.getHeader("Authorization");
 		try {
-			 if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-		            String token = authorizationHeader.substring(7);
-		            String email = jwtService.extractUsername(token);
-		            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-		            if (jwtService.validateToken(token, userDetails)) {
-		            	return new ResponseEntity<>(
-		            			subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize), HttpStatus.OK);
-		            } else {
-		                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		            }
-		        } else {
-		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		        }
-			} catch (RuntimeException e) {
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+				String token = authorizationHeader.substring(7);
+				String email = jwtService.extractUsername(token);
+				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+				if (jwtService.validateToken(token, userDetails)) {
+					return new ResponseEntity<>(
+							subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize),
+							HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+				}
+			} else {
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			}
+		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 
@@ -88,24 +90,22 @@ public class SubcontractorController {
 			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
 			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
-			@RequestParam(name = "statusId", required = false) int statusId,
-			HttpServletRequest request) {
-			String authorizationHeader = request.getHeader("Authorization");
+			@RequestParam(name = "statusId", required = false) int statusId, HttpServletRequest request) {
+		String authorizationHeader = request.getHeader("Authorization");
 		try {
 			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	            String token = authorizationHeader.substring(7);
-	            String email = jwtService.extractUsername(token);
-	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-	            if (jwtService.validateToken(token, userDetails)) {
-					return new ResponseEntity<>(
-							subcontractorService.getAllSubcontractorWhitStatus(nameColonne, sorting, pageSize, page, statusId),
-							HttpStatus.OK);
-	            } else {
-		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		        }
+				String token = authorizationHeader.substring(7);
+				String email = jwtService.extractUsername(token);
+				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+				if (jwtService.validateToken(token, userDetails)) {
+					return new ResponseEntity<>(subcontractorService.getAllSubcontractorWhitStatus(nameColonne, sorting,
+							pageSize, page, statusId), HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+				}
 			} else {
-	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-	        }
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			}
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -116,17 +116,17 @@ public class SubcontractorController {
 		String authorizationHeader = request.getHeader("Authorization");
 		try {
 			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	            String token = authorizationHeader.substring(7);
-	            String email = jwtService.extractUsername(token);
-	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-	            if (jwtService.validateToken(token, userDetails)) {
-	            	return new ResponseEntity<>(subcontractorService.getAllStatus(), HttpStatus.OK);
-	            } else {
-		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		        }
+				String token = authorizationHeader.substring(7);
+				String email = jwtService.extractUsername(token);
+				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+				if (jwtService.validateToken(token, userDetails)) {
+					return new ResponseEntity<>(subcontractorService.getAllStatus(), HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+				}
 			} else {
-	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-	        }
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			}
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -139,17 +139,17 @@ public class SubcontractorController {
 		String authorizationHeader = request.getHeader("Authorization");
 		try {
 			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	            String token = authorizationHeader.substring(7);
-	            String email = jwtService.extractUsername(token);
-	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-	            if (jwtService.validateToken(token, userDetails)) {
-	            	return new ResponseEntity<>(subcontractorService.getNumbersOfPages(), HttpStatus.OK);
-	            } else {
-		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		        }
+				String token = authorizationHeader.substring(7);
+				String email = jwtService.extractUsername(token);
+				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+				if (jwtService.validateToken(token, userDetails)) {
+					return new ResponseEntity<>(subcontractorService.getNumbersOfPages(), HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+				}
 			} else {
-	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-	        }
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			}
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -182,83 +182,84 @@ public class SubcontractorController {
 	// méthode pour récuperer un sous-traitant s'il existe, sinon elle retourn un
 	// error 404
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getSubcontractor(@PathVariable String id, HttpServletRequest request) {
+	public ResponseEntity<SubcontractorDto> getSubcontractor(@PathVariable String id, HttpServletRequest request) {
 		String authorizationHeader = request.getHeader("Authorization");
 		try {
 			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	            String token = authorizationHeader.substring(7);
-	            String email = jwtService.extractUsername(token);
-	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-	            if (jwtService.validateToken(token, userDetails)) {
-	            	int parsedId = Integer.parseInt(id);
-	    			if (parsedId > 0) {
-	    				Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(parsedId);
-	    				return new ResponseEntity<>(subcontractor, HttpStatus.OK);
-	    			} else {
-	    				throw new NumberFormatException();
-	    			}
-	            } else {
-		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		        }
-			} else { 
+				String token = authorizationHeader.substring(7);
+				String email = jwtService.extractUsername(token);
+				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+				if (jwtService.validateToken(token, userDetails)) {
+					int parsedId = Integer.parseInt(id);
+					if (parsedId > 0) {
+						Subcontractor subcontractor = subcontractorService.getSubcontractorWithStatus(parsedId);
+						return new ResponseEntity<>(subcontractorDtoMapper.subcontractorToDto(subcontractor),
+								HttpStatus.OK);
+					} else {
+						throw new NumberFormatException();
+					}
+				} else {
+					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+				}
+			} else {
 				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-	        }
+			}
 		} catch (NumberFormatException e) {
-			return new ResponseEntity<>("Id non valide", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity("Id non valide", HttpStatus.BAD_REQUEST);
 		} catch (SubcontractorNotFoundException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	// méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on
 	// le modifie
-//	@PostMapping("/save")
-//	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto, HttpServletRequest request) {
-//		String authorizationHeader = request.getHeader("Authorization");
-//		try {
-//			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-//	            String token = authorizationHeader.substring(7);
-//	            String email = jwtService.extractUsername(token);
-//	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-//	            if (jwtService.validateToken(token, userDetails)) {
-//					if (subcontractorDto.getSId() > 0) {
-//						boolean isSubcontractorExist = subcontractorService
-//								.checkIfSubcontractorExist(subcontractorDto.getSId());
-//						if (isSubcontractorExist) {
-//							// si le sous-traitant existe, update
-//							this.subcontractorService.handleSubcontractorUpdate(subcontractorDto);
-//							Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
-//							subcontractorService.updateSubcontractor(subcontractorToSaveOrUpdate);
-//							Subcontractor updatedSubcontractor = subcontractorService
-//									.getSubcontractorWithStatus(subcontractorToSaveOrUpdate.getSId());
-//							SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
-//							return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
-//						} else {
-//							// si le sous-traitant n'existe pas, save
-//							this.subcontractorService.handleSubcontractorSave(subcontractorDto);
-//							Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
-//							int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorToSaveOrUpdate);
-//							Subcontractor savedSubcontractor = subcontractorService
-//									.getSubcontractorWithStatus(savedSubcontractorId);
-//							SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
-//							return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
-//						}
-//					} else {
-//						return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
-//					}
-//		        } else {
-//		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//		        }
-//			} else {
-//				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//			}
-//	            
-//		} catch (SubcontractorDuplicateDataException e) {
-//			return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-//		} catch (Exception e) {
-//			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//	}
+	@PostMapping("/save")
+	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto,
+			HttpServletRequest request) {
+		String authorizationHeader = request.getHeader("Authorization");
+		try {
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+				String token = authorizationHeader.substring(7);
+				String email = jwtService.extractUsername(token);
+				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+				if (jwtService.validateToken(token, userDetails)) {
+					if (subcontractorDto.getSId() > 0) {
+						boolean isSubcontractorExist = subcontractorService
+								.checkIfSubcontractorExist(subcontractorDto.getSId());
+						if (isSubcontractorExist) {
+							// si le sous-traitant existe, update
+							this.subcontractorService.handleSubcontractorUpdate(subcontractorDto);
+							Subcontractor subcontractorToUpdate = subcontractorDtoMapper.dtoToSubcontractor(subcontractorDto);
+							subcontractorService.updateSubcontractor(subcontractorToUpdate);
+							Subcontractor updatedSubcontractor = subcontractorService.getSubcontractorWithStatus(subcontractorToUpdate.getSId());
+							SubcontractorDto updatedSubcontractorDto = subcontractorDtoMapper.subcontractorToDto(updatedSubcontractor);
+							return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
+						} else {
+							// si le sous-traitant n'existe pas, save
+							this.subcontractorService.handleSubcontractorSave(subcontractorDto);
+							Subcontractor subcontractorToSave = subcontractorDtoMapper.dtoToSubcontractor(subcontractorDto);
+							int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorToSave);
+							Subcontractor savedSubcontractor = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
+							SubcontractorDto savedSubcontractorDto = subcontractorDtoMapper.subcontractorToDto(savedSubcontractor);
+							return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
+						}
+					} else {
+						return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
+					}
+				} else {
+					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+				}
+			} else {
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			}
+		} catch (SubcontractorDuplicateDataException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	// methode pour archiver le sous-traitant
 	@PutMapping("/archive/{id}")
@@ -266,29 +267,31 @@ public class SubcontractorController {
 		String authorizationHeader = request.getHeader("Authorization");
 		try {
 			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	            String token = authorizationHeader.substring(7);
-	            String email = jwtService.extractUsername(token);
-	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-	            if (jwtService.validateToken(token, userDetails)) {
-			
-			        int parsedId = Integer.parseInt(id);
+				String token = authorizationHeader.substring(7);
+				String email = jwtService.extractUsername(token);
+				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+				if (jwtService.validateToken(token, userDetails)) {
+
+					int parsedId = Integer.parseInt(id);
 					if (parsedId > 0) {
-						Subcontractor subcontractortoArchive = subcontractorService.getSubcontractorWithStatus(parsedId);
+						Subcontractor subcontractortoArchive = subcontractorService
+								.getSubcontractorWithStatus(parsedId);
 						if (subcontractortoArchive.getStatus().getStName().equals("Archivé")) {
 							throw new AlreadyArchivedSubcontractor(
 									String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
 						}
 						subcontractorService.archiveSubcontractor(subcontractortoArchive);
-						return new ResponseEntity<>(subcontractorService.getSubcontractorWithStatus(parsedId), HttpStatus.OK);
+						return new ResponseEntity<>(subcontractorService.getSubcontractorWithStatus(parsedId),
+								HttpStatus.OK);
 					} else {
 						throw new NumberFormatException();
 					}
-	            } else {
-		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		        }
-		} else {
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
+				} else {
+					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+				}
+			} else {
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			}
 		} catch (AlreadyArchivedSubcontractor e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
