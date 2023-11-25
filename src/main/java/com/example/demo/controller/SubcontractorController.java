@@ -59,23 +59,10 @@ public class SubcontractorController {
 			@RequestParam(name = "nameColonne", defaultValue = "s_fk_status_id", required = false) String nameColonne,
 			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
 			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
-			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
-			HttpServletRequest request) {
-		String authorizationHeader = request.getHeader("Authorization");
+			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) 
+	{
 		try {
-			 if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-		            String token = authorizationHeader.substring(7);
-		            String email = jwtService.extractUsername(token);
-		            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-		            if (jwtService.validateToken(token, userDetails)) {
-		            	return new ResponseEntity<>(
-		            			subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize), HttpStatus.OK);
-		            } else {
-		                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		            }
-		        } else {
-		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		        }
+			 return new ResponseEntity<>(subcontractorService.getAllSubcontractor(nameColonne, sorting, page, pageSize), HttpStatus.OK);
 			} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
