@@ -35,8 +35,6 @@ public class SecurityConfig {
 
 	/**
 	 * Configuration de pring security
-	 * @todo : régler le problème de spring security et la vérification de l'authentification qui ne fonctionne pas et renvoie une erreur cors en front
-	 * Pour le moment j'ai mis la route "/subcontractor/**" dans permitAll
 	*/
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
