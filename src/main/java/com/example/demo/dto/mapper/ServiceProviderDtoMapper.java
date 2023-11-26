@@ -24,8 +24,8 @@ public class ServiceProviderDtoMapper {
 		serviceProviderDto.setSpEmail(serviceProvider.getSpEmail());
 		serviceProviderDto.setSpCreationDate(serviceProvider.getSpCreationDate());
 		serviceProviderDto.setSpLastUpdateDate(serviceProvider.getSpLastUpdateDate());
-		serviceProviderDto.setSpStatutId(serviceProvider.getSpStatus().getStId());
-		serviceProviderDto.setSubcontractorId(serviceProvider.getSubcontractor().getSId());
+		serviceProviderDto.setSpStatus(serviceProvider.getSpStatus());
+		serviceProviderDto.setSubcontractorSName(serviceProvider.getSubcontractor().getSName());
 		return serviceProviderDto;
 	}
 
@@ -37,8 +37,8 @@ public class ServiceProviderDtoMapper {
 		serviceProvider.setSpEmail(serviceProviderDto.getSpEmail());
 		serviceProvider.setSpCreationDate(serviceProviderDto.getSpCreationDate());
 		serviceProvider.setSpLastUpdateDate(serviceProviderDto.getSpLastUpdateDate());
-		serviceProvider.setSpStatus(statusService.getStatusById(serviceProviderDto.getSpStatutId()));
-		serviceProvider.setSubcontractor(subcontractorService.getSubcontractorWithStatus(serviceProviderDto.getSubcontractorId()));
+		serviceProvider.setSpStatus(statusService.getStatusById(serviceProviderDto.getSpStatus().getStId()));
+		serviceProvider.setSubcontractor(subcontractorService.getSubcontractorBySName(serviceProviderDto.getSubcontractorSName()));
 		return serviceProvider;
 	}
 

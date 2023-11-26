@@ -31,4 +31,6 @@ public interface ServiceProviderService {
 
 	String NameFormatter(String name);
 
+	List<ServiceProvider> getAllServiceProviders();
+
 }

@@ -38,4 +38,7 @@ public interface SubcontractorService {
 	void handleSubcontractorSave(SubcontractorDto subcontractorDto);
 
 	void handleSubcontractorUpdate(SubcontractorDto subcontractorDto);
+	
+	Subcontractor getSubcontractorBySName(String sName);
+
 }

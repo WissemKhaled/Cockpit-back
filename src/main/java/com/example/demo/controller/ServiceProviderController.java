@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.AlreadyArchivedEntity;
+import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.ServiceProviderService;
@@ -32,6 +34,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/service-providers")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ServiceProviderController {
 
 	private final ServiceProviderService serviceProviderService;
@@ -84,10 +87,8 @@ public class ServiceProviderController {
 					boolean isServiceProviderExist = serviceProviderService.checkIfServiceProviderExistById(serviceProviderDto.getSpId());
 					if (isServiceProviderExist) {
 						serviceProviderService.handleServiceProviderUpdating(serviceProviderDto);
-						int updateServiceProviderId = serviceProviderService.updateServiceProvider(
-								serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
-						ServiceProvider updatedServiceProvider = serviceProviderService
-								.getServiceProviderById(updateServiceProviderId);
+						int updateServiceProviderId = serviceProviderService.updateServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
+						ServiceProvider updatedServiceProvider = serviceProviderService.getServiceProviderById(updateServiceProviderId);
 						return new ResponseEntity<>(
 								serviceProviderDtoMapper.serviceProviderToDto(updatedServiceProvider), HttpStatus.OK);
 					} else {
@@ -107,6 +108,8 @@ public class ServiceProviderController {
 			}
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (EntityDuplicateDataException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -132,8 +135,21 @@ public class ServiceProviderController {
 	@GetMapping("all-service-providers/{subcontractorId}")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorId(@PathVariable int subcontractorId) {
 		try {
-			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersBySubcontractorId(subcontractorId).stream().map(serviceProvider -> serviceProviderDtoMapper.serviceProviderToDto(serviceProvider)).toList();
+			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersBySubcontractorId(subcontractorId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec l'id: %d n'a pas de prestataires", subcontractorId));
+			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("all-service-providers")
+	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProviders() {
+		try {
+			List<ServiceProviderDto> serviceProviders = serviceProviderService.getAllServiceProviders().stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+			if (serviceProviders.isEmpty()) throw new EntityNotFoundException("Il n'y a pas de prestataires enregistrés.");
 			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);

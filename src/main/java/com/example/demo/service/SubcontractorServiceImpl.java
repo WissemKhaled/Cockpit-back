@@ -164,4 +164,13 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		}
 	}
 
+	@Override
+	public Subcontractor getSubcontractorBySName(String sName) {
+		Subcontractor foundSubcontractorBySName = subcontractorMapper.findSubcontractorWithStatusBySName(sName);
+		if (foundSubcontractorBySName == null) {
+			throw new EntityNotFoundException("le sous-traitant avec le nom: " + sName + " n'existe pas!!");
+		}
+		return foundSubcontractorBySName;
+	}
+
 }
