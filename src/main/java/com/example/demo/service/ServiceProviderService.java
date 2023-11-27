@@ -5,8 +5,6 @@ import java.util.List;
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.entity.ServiceProvider;
 
-import jakarta.validation.Valid;
-
 public interface ServiceProviderService {
 
 	int saveServiceProvider(ServiceProvider serviceProviderToSave);

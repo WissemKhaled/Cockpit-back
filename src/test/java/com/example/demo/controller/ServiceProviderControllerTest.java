@@ -145,7 +145,7 @@ public class ServiceProviderControllerTest {
 		mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "archive/" + existingArchivedServiceProviderId)
 				.header("Authorization", "Bearer " + jwtToken).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest()).andExpect(content().string(
-						"le prestataire avec l'id " + existingArchivedServiceProviderId + " a été déjà archivé."));
+						"Erreur: le prestataire avec l'id " + existingArchivedServiceProviderId + " est déjà archivé."));
 	}
 
 	@Test
