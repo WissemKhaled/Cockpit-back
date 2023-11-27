@@ -46,7 +46,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	
 	@Override
 	public ServiceProvider getServiceProviderById(int serviceProviderId) {
-		ServiceProvider foundedServiceProviderById = serviceProviderMapper.findServiceProviderById(serviceProviderId);
+		ServiceProvider foundedServiceProviderById = serviceProviderMapper.findServiceProviderWithSubcontractorBySpId(serviceProviderId);
 		if (foundedServiceProviderById == null) {
 			throw new EntityNotFoundException("le prestataire avec l'id: " + serviceProviderId + " n'existe pas!!");
 		}
