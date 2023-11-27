@@ -46,8 +46,8 @@ CREATE TABLE IF NOT EXISTS gst_message_model (
 
 CREATE TABLE IF NOT EXISTS message_send (
     ms_id SERIAL PRIMARY KEY,
-    ms_mail_sender VARCHAR(45) DEFAULT NULL,
-    ms_mail_recipient VARCHAR(45) DEFAULT NULL,
+    ms_sender VARCHAR(45) DEFAULT NULL,
+    ms_recipient VARCHAR(45) DEFAULT NULL,
     ms_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ms_fk_model_email_id SMALLINT NOT NULL,
     FOREIGN KEY (ms_fk_model_email_id) REFERENCES gst_message_model(mm_id)
