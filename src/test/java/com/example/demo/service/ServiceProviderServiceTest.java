@@ -140,9 +140,9 @@ public class ServiceProviderServiceTest {
 		serviceProviderToBeFound.setSubcontractor(new Subcontractor("sname", "s1@email.com"));
 		serviceProviderToBeFound.setSpStatus(new Status(3));
 
-		given(serviceProviderMapper.findServiceProviderById(serviceProviderToBeFound.getSpId()))
+		given(serviceProviderMapper.findServiceProviderWithSubcontractorBySpId(serviceProviderToBeFound.getSpId()))
 				.willReturn(serviceProviderToBeFound);
-
+		
 		ServiceProvider foundedServiceProvider = serviceProviderService.getServiceProviderById(serviceProviderToBeFound.getSpId());
 
 		assertEquals(serviceProviderToBeFound, foundedServiceProvider);
