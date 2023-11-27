@@ -78,20 +78,6 @@ public interface ServiceProviderMapper {
 	@Result(property = "subcontractor.sId", column = "sp_fk_subcontractor_id")
 	@Result(property = "spStatus.stId", column = "sp_fk_status_id")
 	ServiceProvider findServiceProviderBySpEmail(String spEmail);
-	
-//	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
-//			+ "FROM subcontractor s " + "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
-//			+ "WHERE s.s_id = #{sId}")
-//	@Result(property = "sId", column = "s_id")
-//	@Result(property = "sName", column = "s_name")
-//	@Result(property = "sEmail", column = "s_email")
-//	@Result(property = "sCreationDate", column = "s_creation_date")
-//	@Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
-//	@Result(property = "status.stId", column = "status_stId")
-//	@Result(property = "status.stName", column = "status_stName")
-//	@Result(property = "status.stDescription", column = "status_stDescription")
-//	@Result(property = "serviceProviders", column = "s_id", javaType = List.class, many = @Many(select = "findServiceProvidersBySubcontractorId"))
-//	Subcontractor findSubcontractorWithServiceProvidersBySubcontractorId(int id);
 
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
 			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
