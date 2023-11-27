@@ -116,7 +116,7 @@ public class ServiceProviderController {
 	}
 
 	@PutMapping("/archive/{serviceProviderId}")
-	public ResponseEntity<?> archiveServiceProvider(@PathVariable int serviceProviderId, HttpServletRequest request) {
+	public ResponseEntity<String> archiveServiceProvider(@PathVariable int serviceProviderId, HttpServletRequest request) {
 		String authorizationHeader = request.getHeader("Authorization");
 		try {
 			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -126,21 +126,20 @@ public class ServiceProviderController {
 				ServiceProvider serviceProviderToArchive = serviceProviderService.getServiceProviderById(serviceProviderId);
 				if (jwtService.validateToken(token, userDetails)) {
 					if (serviceProviderToArchive.getSpStatus().getStId() == 4) {
-						throw new AlreadyArchivedEntity(
-								String.format("Erreur: le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
+						throw new AlreadyArchivedEntity(String.format("Erreur: le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
 					}
 					serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
+					return new ResponseEntity<>(String.format("Le prestataire avec l'id: %d a été archivé avec succées", serviceProviderId), HttpStatus.OK);
 				} else {
 					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 				}
 			} else {
 				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 			}
-			return new ResponseEntity<>(String.format("Le prestataire avec l'id: %d a été archivé avec succées", serviceProviderId),HttpStatus.OK);
 		} catch (AlreadyArchivedEntity e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
