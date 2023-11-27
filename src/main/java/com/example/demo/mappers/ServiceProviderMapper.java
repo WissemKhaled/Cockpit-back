@@ -47,7 +47,7 @@ public interface ServiceProviderMapper {
 	ServiceProvider findServiceProviderById(int spId);
 	
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
-			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
+			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName, s.s_email as subcontractor_sEmail " 
 			+ "FROM service_provider sp "
 			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
 			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
@@ -62,6 +62,7 @@ public interface ServiceProviderMapper {
 	@Result(property = "spStatus.stName", column = "status_stName")
 	@Result(property = "subcontractor.sId", column = "subcontractor_sId")
 	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
+	@Result(property = "subcontractor.sEmail", column = "subcontractor_sEmail")
 	ServiceProvider findServiceProviderWithSubcontractorBySpId(int sId);
 	
 
