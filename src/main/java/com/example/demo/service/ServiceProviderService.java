@@ -11,8 +11,6 @@ public interface ServiceProviderService {
 
 	int saveServiceProvider(ServiceProvider serviceProviderToSave);
 
-	int archiveServiceProvider(ServiceProvider serviceProviderToArchive);
-
 	int updateServiceProvider(ServiceProvider serviceProviderToUpdate);
 
 	ServiceProvider getServiceProviderById(int serviceProviderId);

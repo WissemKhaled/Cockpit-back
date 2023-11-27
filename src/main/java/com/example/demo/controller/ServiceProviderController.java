@@ -114,23 +114,6 @@ public class ServiceProviderController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-
-	@PutMapping("/archive/{serviceProviderId}")
-	public ResponseEntity<?> archiveServiceProvider(@PathVariable int serviceProviderId) {
-		try {
-			ServiceProvider serviceProviderToArchive = serviceProviderService.getServiceProviderById(serviceProviderId);
-			if (serviceProviderToArchive.getSpStatus().getStId() == 4) {
-				throw new AlreadyArchivedEntity(
-						String.format("le prestataire avec l'id %d a été déjà archivé.", serviceProviderId));
-			}
-			serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
-			return new ResponseEntity<>("le prestataire est archivé avec succées",HttpStatus.OK);
-		} catch (AlreadyArchivedEntity e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
 	
 	@GetMapping("all-service-providers/{subcontractorId}")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorId(@PathVariable int subcontractorId) {
