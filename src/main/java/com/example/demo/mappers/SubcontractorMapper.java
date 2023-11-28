@@ -129,4 +129,14 @@ public interface SubcontractorMapper {
 	@Result(property = "status.stId", column = "s_fk_status_id")
 	int archiveSubcontractor(Subcontractor subcontractortoArchive);
 
+	@Select("SELECT s.s_id, s.s_name, s.s_email "
+			+ "FROM subcontractor s "
+			+ "ORDER BY s_name")
+	@Result(property = "sId", column = "s_id")
+	@Result(property = "sName", column = "s_name")
+	@Result(property = "sEmail", column = "s_email")
+	@Result(property = "sCreationDate", column = "s_creation_date")
+	@Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
+	List<Subcontractor> findAllSubcontractors();
+
 }

@@ -173,4 +173,11 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		return foundSubcontractorBySName;
 	}
 
+	@Override
+	public List<Subcontractor> getAllSubcontractors() {
+		List<Subcontractor> subcontractors = subcontractorMapper.findAllSubcontractors();
+		if (subcontractors.isEmpty()) throw new EntityNotFoundException("Il n'y a pas de sous-traiatns enregistrés");
+		return subcontractors;
+	}
+
 }
