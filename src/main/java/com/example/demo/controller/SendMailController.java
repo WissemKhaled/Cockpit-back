@@ -22,6 +22,7 @@ import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.MessageModelService;
 import com.example.demo.service.SendMailService;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -35,7 +36,7 @@ public class SendMailController {
 	private final SendMailService mailService;
 
 	@PostMapping("/saveAndSendMail")
-	public ResponseEntity<?> saveAndSendMail(@Valid @RequestBody SendMail sendMail ){
+	public ResponseEntity<?> saveAndSendMail(@Valid @RequestBody SendMail sendMail ) throws MessagingException{
 		try {
 			return new ResponseEntity<>(mailService.saveAndSendMail(sendMail), HttpStatus.OK);
 			
