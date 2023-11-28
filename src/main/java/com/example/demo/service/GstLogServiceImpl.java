@@ -28,6 +28,9 @@ public class GstLogServiceImpl implements GstLogService{
 	@Autowired 
 	private GstLogDtoMapper gstLogDtoMapper;
 	
+	@Autowired
+	private MailSenderService mailService;
+	
 	/**
 	 * Méthode qui enregistre un log en bdd
 	 */
@@ -56,6 +59,40 @@ public class GstLogServiceImpl implements GstLogService{
         }
 	}
 	
+//	@Override
+//	public String saveGstLog(CreateGstLogDTO createGstLogDTO) throws GeneralException {
+//		try {
+//            if (createGstLogDTO != null) {
+//            	String existingGstLog = gstLogMapper.getLogByValue(createGstLogDTO.getLogValue()).getLogValue();
+//            	
+//            	if (existingGstLog != null) {
+//            		log.severe("La valeur du log passé dans le body existe déjà, veuillez renseigner une autre valeur");
+//                    throw new IllegalArgumentException("La valeur du log passé dans le body existe déjà, veuillez renseigner une autre valeur");
+//            	} else {
+//            		GstLog gstLog = createGstLogDtoMapper.toGstLog(createGstLogDTO);
+//                    gstLog.setLogCreationDate(LocalDateTime.now());
+//
+//                    int isMessageModelInserted = gstLogMapper.insertLog(gstLog);
+//
+//                    if (isMessageModelInserted == 0) {
+//                        log.severe("Échec de l'insertion du gst log dans la base de données");
+//                        throw new GeneralException("Échec de l'insertion du gst log dans la base de données");
+//                    }
+//                    log.info("gst log créé avec succès");
+//                    return "gst log créé avec succès";
+//            	}
+//            	
+//             
+//            } else {
+//                log.severe("Le paramètre createGstLogDTO ne peut être null");
+//                throw new IllegalArgumentException("Le paramètre createGstLogDTO ne peut être null");
+//            }
+//        } catch (Exception e) {
+//            log.severe(e.getMessage());
+//            throw new GeneralException("Erreur lors de la création du Gst log");
+//        }
+//	}
+	
 	/**
 	 * Méthode qui récupère un log par sa valeur (logValue)
 	 */
@@ -65,13 +102,17 @@ public class GstLogServiceImpl implements GstLogService{
 			GstLog gstLog = gstLogMapper.getLogByValue(logValue);
 	         if (gstLog != null) {
 	             GstLogDTO messageModelDTO = gstLogDtoMapper.toDto(gstLog);
-	             this.checkResetPasswordExpiration(messageModelDTO.getLogValue());
+	             boolean isNotExpired = this.checkResetPasswordExpiration(messageModelDTO.getLogValue());
+	             
+	             if (isNotExpired) {
+	            	 mailService.sendNewMail("younes.bouaziz74@gmail.com", "Subject right here", "Body right there!");
+	             }
 	             return messageModelDTO;
 	         } else {
 	             throw new NotFoundException("Aucun gst log trouvé pour le type: " + logValue);
 	         }
 	     } else {
-	         throw new IllegalArgumentException("logValue ne ^peut être vide ou null");
+	         throw new IllegalArgumentException("logValue ne peut être vide ou null");
 	     }
 	}
 
