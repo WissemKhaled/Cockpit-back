@@ -34,15 +34,18 @@ public class SendMailServiceImpl implements SendMailService {
 			@Override
 			public void prepare(MimeMessage mimeMessage) throws Exception {
 				
-				mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(mail.getMsRecipient()));
 				mimeMessage.setFrom(new InternetAddress("jesuisuneAdressMail@test.fr"));
-				mimeMessage.setText("je suis un foutu text");
+				mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(mail.getMsTo()));
+				mimeMessage.setSubject(mail.getMsSubject());
+				mimeMessage.setText(mail.getMsBody());
+				mimeMessage.setHeader("header", mail.getMsSender());
 				
 			}
 		};
 		
 		try {
 			
+			mailMapper.saveMailAndSend(mail);
 			this.mailSender.send(messagePreparator);
 			
 		} catch (MailException e) {
@@ -50,15 +53,7 @@ public class SendMailServiceImpl implements SendMailService {
 			System.err.println(e.getMessage());
 			
 		}
-//		mailMapper.saveMailAndSend(mail);
-		
-//		
-//		SimpleMailMessage message = new SimpleMailMessage();
-//		message.setFrom("noreply@noreply.fr");
-//		message.setTo(mail.getMsRecipient());
-//		message.setSubject("je suis le sujet");
-//		message.setText("je suis le Text avec un FROM");
-//		mailSender.send(message);
+
 
 		return mail;
 	}
