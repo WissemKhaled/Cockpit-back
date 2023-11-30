@@ -29,13 +29,6 @@ public class MessageModelController {
 
 	private final MessageModelService messageModelService;
 	
-//	@Autowired
-//	@Qualifier("userDetailsService")
-//	private UserDetailsService userDetailsService;
-//
-//	@Autowired
-//	private JwtServiceImplementation jwtService;
-	
 	
 	@GetMapping("/getAll")
 	public ResponseEntity<List<MessageModel>> getAllMessageModelWhitStatus(@RequestParam("statusId") Integer statusId){

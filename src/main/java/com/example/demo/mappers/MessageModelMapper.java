@@ -12,10 +12,7 @@ import com.example.demo.entity.MessageModel;
 @Mapper
 public interface MessageModelMapper {
 
-//	@Select("SELECT s.s_id, s.s_name, s.s_email, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
-//			+ "FROM subcontractor s " + "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
-//			+ "WHERE st.st_id= ${statusId} "
-//			+ "ORDER BY ${nameColonne}  ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} ")
+
 	@Select("SELECT  gmm.mm_id, gmm.mm_type, gmm.mm_subject, gmm.mm_body, st.st_Id as status_stId,st.st_name as status_stName, st.st_description as status_stDescription "
             +"FROM gst_message_model gmm "
             +"INNER JOIN status st ON mm_fk_status_id = st.st_Id "
