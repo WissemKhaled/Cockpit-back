@@ -90,7 +90,6 @@ public class SubcontractorController {
 				String email = jwtService.extractUsername(token);
 				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 				if (jwtService.validateToken(token, userDetails)) {
-					System.err.println("here");
 					return new ResponseEntity<>(subcontractorService.getAllSubcontractors().stream().map(subcontractorDtoMapper::subcontractorToDto).toList(), HttpStatus.OK);
 				} else {
 					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
