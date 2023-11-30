@@ -1,7 +1,9 @@
 package com.example.demo.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Status;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -43,5 +45,8 @@ public class SubcontractorDto {
 	@Valid
 	@JsonProperty("status")
 	private Status status;
+	
+	@JsonProperty("serviceProvidersIds")
+	private List<Integer> serviceProvidersIds;
 
 }

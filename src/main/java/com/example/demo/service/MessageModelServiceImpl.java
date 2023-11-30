@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.entity.MessageModel;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.MessageModelNotFoundException;
-import com.example.demo.exception.SubcontractorNotFoundException;
 import com.example.demo.mappers.MessageModelMapper;
-import com.example.demo.mappers.SubcontractorDtoMapper;
 import com.example.demo.mappers.SubcontractorMapper;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +16,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class MessageModelServiceImpl implements MessageModelService {
 	
-	MessageModelMapper mapper;
+	private final MessageModelMapper mapper;
 
 	@Override
 	public List<MessageModel> getAllMessageModelWhitStatus(Integer statusId) {
