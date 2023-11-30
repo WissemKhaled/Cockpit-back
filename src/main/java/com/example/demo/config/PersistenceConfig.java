@@ -20,6 +20,7 @@ public class PersistenceConfig {
 
 	private String[] dBTypes = {"H2","postgres"};
 	private String chosenDBType = dBTypes[1];
+	private Boolean isTestMode = false;
 
 	// configuration de la BDD embarquée H2
 	@Bean
@@ -36,18 +37,19 @@ public class PersistenceConfig {
 			dataSource.setDriverClassName("org.postgresql.Driver");
 			dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
 			dataSource.setUsername("postgres");
-			dataSource.setPassword("postgres");
+			dataSource.setPassword("1234");
 		}
 		return dataSource;
 	}
 
-//	// Initialisation de postgres BDD
+	// Initialisation de postgres BDD
 //	@Bean
 //	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
 //		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//		if (chosenDBType.equals("H2")) {
+//		if (isTestMode) {
+//			populator.addScript(new ClassPathResource("schema-dev.sql"));
 //			populator.addScript(new ClassPathResource("data-test.sql"));
-//		} else if (chosenDBType.equals("postgres")) {
+//		} else {
 //			populator.addScript(new ClassPathResource("schema-dev.sql"));
 //			populator.addScript(new ClassPathResource("data-dev.sql"));
 //		}

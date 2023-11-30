@@ -1,7 +1,8 @@
-package com.example.demo.dto;
+package com.example.demo.dto.mapper;
 
 import org.springframework.stereotype.Component;
 
+import com.example.demo.dto.CreateUserDTO;
 import com.example.demo.entity.UUser;
 
 @Component

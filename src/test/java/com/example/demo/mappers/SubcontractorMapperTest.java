@@ -2,6 +2,7 @@ package com.example.demo.mappers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +24,7 @@ public class SubcontractorMapperTest {
 		existingSubcontractor.setSEmail("Subcontractor1@example.com");
 		existingSubcontractor.setStatus(new Status(1));
 
-		int isArchived = subcontractorMapper.archive(existingSubcontractor);
+		int isArchived = subcontractorMapper.archiveSubcontractor(existingSubcontractor);
 		assertEquals(1, isArchived);
 	}
 
@@ -35,7 +36,7 @@ public class SubcontractorMapperTest {
 		nonExistingSubcontractor.setSEmail("NonExistingSubcontractor@example.fr");
 		nonExistingSubcontractor.setStatus(new Status(1));
 
-		int isNotArchived = subcontractorMapper.archive(nonExistingSubcontractor);
+		int isNotArchived = subcontractorMapper.archiveSubcontractor(nonExistingSubcontractor);
 		assertEquals(0, isNotArchived);
 	}
 }
