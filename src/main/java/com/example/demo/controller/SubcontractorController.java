@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
-import com.example.demo.exception.AlreadyArchivedSubcontractor;
-import com.example.demo.exception.SubcontractorDuplicateDataException;
-import com.example.demo.exception.SubcontractorNotFoundException;
-import com.example.demo.mappers.SubcontractorDtoMapper;
+import com.example.demo.exception.AlreadyArchivedEntity;
+import com.example.demo.exception.EntityDuplicateDataException;
+import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.SubcontractorService;
 
@@ -39,8 +39,8 @@ import lombok.AllArgsConstructor;
 public class SubcontractorController {
 
 	private final SubcontractorService subcontractorService;
-	private final SubcontractorDtoMapper dtoMapper;
-	
+	private final SubcontractorDtoMapper subcontractorDtoMapper;
+
 	@Autowired
 	@Qualifier("userDetailsService")
 	private UserDetailsService userDetailsService;
@@ -64,7 +64,15 @@ public class SubcontractorController {
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
-
+	}
+	
+	@GetMapping("/getAllSubcontractors")
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractors() {
+		try {
+			return new ResponseEntity<>(subcontractorService.getAllSubcontractors().stream().map(subcontractorDtoMapper::subcontractorToDto).toList(), HttpStatus.OK);
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@GetMapping("/getAllWhitStatus")
@@ -89,7 +97,6 @@ public class SubcontractorController {
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
-
 	}
 
 	// ce code perùer de renvoyer le nombre max de page en fonction de l'affichage
@@ -139,9 +146,11 @@ public class SubcontractorController {
 					throw new NumberFormatException();
 				} 
 		} catch (NumberFormatException e) {
-			return new ResponseEntity<>("Id non valide", HttpStatus.BAD_REQUEST);
-		} catch (SubcontractorNotFoundException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+			return new ResponseEntity("Id non valide", HttpStatus.BAD_REQUEST);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -156,27 +165,26 @@ public class SubcontractorController {
 					if (isSubcontractorExist) {
 						// si le sous-traitant existe, update
 						this.subcontractorService.handleSubcontractorUpdate(subcontractorDto);
-						Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
+						Subcontractor subcontractorToSaveOrUpdate = subcontractorDtoMapper.dtoToSubcontractor(subcontractorDto);
 						subcontractorService.updateSubcontractor(subcontractorToSaveOrUpdate);
 						Subcontractor updatedSubcontractor = subcontractorService
 								.getSubcontractorWithStatus(subcontractorToSaveOrUpdate.getSId());
-						SubcontractorDto updatedSubcontractorDto = dtoMapper.subcontractorToDto(updatedSubcontractor);
+						SubcontractorDto updatedSubcontractorDto = subcontractorDtoMapper.subcontractorToDto(updatedSubcontractor);
 						return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
 					} else {
 						// si le sous-traitant n'existe pas, save
 						this.subcontractorService.handleSubcontractorSave(subcontractorDto);
-						Subcontractor subcontractorToSaveOrUpdate = dtoMapper.dtoToSubcontractor(subcontractorDto);
+						Subcontractor subcontractorToSaveOrUpdate = subcontractorDtoMapper.dtoToSubcontractor(subcontractorDto);
 						int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorToSaveOrUpdate);
 						Subcontractor savedSubcontractor = subcontractorService
 								.getSubcontractorWithStatus(savedSubcontractorId);
-						SubcontractorDto savedSubcontractorDto = dtoMapper.subcontractorToDto(savedSubcontractor);
+						SubcontractorDto savedSubcontractorDto = subcontractorDtoMapper.subcontractorToDto(savedSubcontractor);
 						return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
 					}
-				} else {
-					return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
-				}
-	            
-		} catch (SubcontractorDuplicateDataException e) {
+			} else {
+				return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
+			}
+		} catch (EntityDuplicateDataException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -191,7 +199,7 @@ public class SubcontractorController {
 			if (parsedId > 0) {
 				Subcontractor subcontractortoArchive = subcontractorService.getSubcontractorWithStatus(parsedId);
 				if (subcontractortoArchive.getStatus().getStName().equals("Archivé")) {
-					throw new AlreadyArchivedSubcontractor(
+					throw new AlreadyArchivedEntity(
 							String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
 				}
 				subcontractorService.archiveSubcontractor(subcontractortoArchive);
@@ -199,11 +207,11 @@ public class SubcontractorController {
 			} else {
 				throw new NumberFormatException();
 			}
-		} catch (AlreadyArchivedSubcontractor e) {
+		} catch (AlreadyArchivedEntity e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
 			return new ResponseEntity<>("format de l'id est invalide.", HttpStatus.NOT_ACCEPTABLE);
-		} catch (SubcontractorNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

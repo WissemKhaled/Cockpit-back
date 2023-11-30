@@ -7,11 +7,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
-import com.example.demo.exception.SubcontractorDuplicateDataException;
-import com.example.demo.exception.SubcontractorNotFoundException;
-import com.example.demo.mappers.SubcontractorDtoMapper;
+import com.example.demo.exception.EntityDuplicateDataException;
+import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.mappers.SubcontractorMapper;
 
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	public Subcontractor getSubcontractorWithStatus(int sId) {
 		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusById(sId);
 		if (subcontractor == null) {
-			throw new SubcontractorNotFoundException("le sous-traitant avec l'id: " + sId + " n'existe pas!!");
+			throw new EntityNotFoundException("le sous-traitant avec l'id: " + sId + " n'existe pas!!");
 		}
 		return subcontractor;
 	}
@@ -53,7 +53,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 	@Override
 	public int archiveSubcontractor(Subcontractor subcontractortoArchive) {
-		return subcontractorMapper.archive(subcontractortoArchive);
+		return subcontractorMapper.archiveSubcontractor(subcontractortoArchive);
 	}
 
 	// debut hamza : ce code permet de retoruner le nombre max de page qu'il y a
@@ -144,11 +144,11 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	public void handleSubcontractorSave(SubcontractorDto subcontractorDto) {
 		int isSubcontractorExistBysName = checkIfSubcontractorExistBySName(subcontractorDto.getSName());
 		if (isSubcontractorExistBysName != 0) {
-			throw new SubcontractorDuplicateDataException("le nom saisi existe déjà");
+			throw new EntityDuplicateDataException("le nom saisi existe déjà");
 		}
 		int isSubcontractorExistBysEmail = checkIfSubcontractorExistBySEmail(subcontractorDto.getSEmail());
 		if (isSubcontractorExistBysEmail != 0) {
-			throw new SubcontractorDuplicateDataException("l'émail saisi existe déjà");
+			throw new EntityDuplicateDataException("l'émail saisi existe déjà");
 		}
 	}
 
@@ -156,12 +156,28 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	public void handleSubcontractorUpdate(SubcontractorDto subcontractorDto) {
 		int isSubcontractorExistBysName = checkIfSubcontractorExistBySName(subcontractorDto.getSName());
 		if (isSubcontractorExistBysName != 0 && subcontractorDto.getSId() != isSubcontractorExistBysName) {
-			throw new SubcontractorDuplicateDataException("le nom saisi existe déjà");
+			throw new EntityDuplicateDataException("le nom saisi existe déjà");
 		}
 		int isSubcontractorExistBysEmail = checkIfSubcontractorExistBySEmail(subcontractorDto.getSEmail());
 		if (isSubcontractorExistBysEmail != 0 && subcontractorDto.getSId() != isSubcontractorExistBysEmail) {
-			throw new SubcontractorDuplicateDataException("l'émail saisi existe déjà");
+			throw new EntityDuplicateDataException("l'émail saisi existe déjà");
 		}
+	}
+
+	@Override
+	public Subcontractor getSubcontractorBySName(String sName) {
+		Subcontractor foundSubcontractorBySName = subcontractorMapper.findSubcontractorWithStatusBySName(sName);
+		if (foundSubcontractorBySName == null) {
+			throw new EntityNotFoundException("le sous-traitant avec le nom: " + sName + " n'existe pas!!");
+		}
+		return foundSubcontractorBySName;
+	}
+
+	@Override
+	public List<Subcontractor> getAllSubcontractors() {
+		List<Subcontractor> subcontractors = subcontractorMapper.findAllSubcontractors();
+		if (subcontractors.isEmpty()) throw new EntityNotFoundException("Il n'y a pas de sous-traiatns enregistrés");
+		return subcontractors;
 	}
 
 }

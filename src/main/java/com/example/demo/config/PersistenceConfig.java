@@ -20,6 +20,7 @@ public class PersistenceConfig {
 
 	private String[] dBTypes = {"H2","postgres"};
 	private String chosenDBType = dBTypes[1];
+	private Boolean isTestMode = false;
 
 	// configuration de la BDD embarquée H2
 	@Bean
@@ -41,20 +42,22 @@ public class PersistenceConfig {
 		return dataSource;
 	}
 
-//	// Initialisation de postgres BDD
-//	@Bean
-//	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//		if (chosenDBType.equals("H2")) {
-//			populator.addScript(new ClassPathResource("data-test.sql"));
-//		} else if (chosenDBType.equals("postgres")) {
-//			populator.addScript(new ClassPathResource("schema-dev.sql"));
-//			populator.addScript(new ClassPathResource("data-dev.sql"));
-//		}
-//		DataSourceInitializer initializer = new DataSourceInitializer();
-//		initializer.setDataSource(dataSource);
-//		initializer.setDatabasePopulator(populator);
-//
-//		return initializer;
-//	}
+	// Initialisation de postgres BDD
+	@Bean
+	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		if (isTestMode) {
+			populator.addScript(new ClassPathResource("schema-dev.sql"));
+			populator.addScript(new ClassPathResource("data-test.sql"));
+		} else {
+			populator.addScript(new ClassPathResource("schema-dev.sql"));
+			populator.addScript(new ClassPathResource("data-dev.sql"));
+		}
+		DataSourceInitializer initializer = new DataSourceInitializer();
+		initializer.setDataSource(dataSource);
+		initializer.setDatabasePopulator(populator);
+
+		return initializer;
+	}
+
 }

@@ -14,6 +14,19 @@ CREATE TABLE IF NOT EXISTS subcontractor (
     FOREIGN KEY (s_fk_status_id) REFERENCES status(st_id)
 );
 
+CREATE TABLE IF NOT EXISTS service_provider (
+    sp_id SERIAL PRIMARY KEY,
+    sp_first_name VARCHAR(250) NOT NULL,
+    sp_name VARCHAR(250) NOT NULL,
+    sp_email VARCHAR(45) NOT NULL,
+    sp_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    sp_lastUpdate_date TIMESTAMP,
+    sp_fk_subcontractor_id SMALLINT NOT NULL, 
+    FOREIGN KEY (sp_fk_subcontractor_id) REFERENCES subcontractor(s_id),
+    sp_fk_status_id SMALLINT NOT NULL, 
+    FOREIGN KEY (sp_fk_status_id) REFERENCES status(st_id)
+);
+
 CREATE TABLE IF NOT EXISTS u_user (
     u_id SERIAL PRIMARY KEY,
     u_email VARCHAR(45) NOT NULL,

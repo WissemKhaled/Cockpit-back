@@ -19,9 +19,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.demo.dto.CreateUserDTO;
-import com.example.demo.dto.CreateUserMapperEntityDTO;
 import com.example.demo.dto.UUserDTO;
 import com.example.demo.dto.UUserMapperEntityDTO;
+import com.example.demo.dto.mapper.CreateUserMapperEntityDTO;
 import com.example.demo.entity.UUser;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.UUserMapper;

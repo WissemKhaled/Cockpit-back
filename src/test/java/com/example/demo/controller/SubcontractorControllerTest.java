@@ -96,7 +96,7 @@ public class SubcontractorControllerTest {
 	}
 
 	@Test
-	public void testSaveSubcontractor_saveNewSubcontractor_ShouldReturnHttpOk() throws Exception {
+	public void testSaveSubcontractor_saveNewSubcontractor_ShouldReturnHttpCreated() throws Exception {
 		Subcontractor nonExistingSubcontractorTosave = new Subcontractor() ;  
 		nonExistingSubcontractorTosave.setSId(99991);
 		nonExistingSubcontractorTosave.setSName("test_saving");
