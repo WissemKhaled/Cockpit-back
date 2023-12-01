@@ -1,11 +1,8 @@
-INSERT INTO status (st_id, st_name, st_description)
-VALUES (1, 'En cours', NULL);
 
-INSERT INTO status (st_id, st_name, st_description)
-VALUES (2, 'En validation', NULL);
 
-INSERT INTO status (st_id, st_name, st_description)
-VALUES (3, 'Validé', NULL);
+-- gst_message_model
+INSERT INTO gst_message_model (mm_type, mm_subject, mm_body, mm_fk_status_id)
+VALUES ('En_cour', 'Recueil Info Admin | Référencement fournisseur sous-traitant', 'je suis le body du mail',1);
 
 INSERT INTO status (st_id, st_name, st_description)
 VALUES (4, 'Archivé', NULL);
