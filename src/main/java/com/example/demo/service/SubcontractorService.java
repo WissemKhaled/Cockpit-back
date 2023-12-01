@@ -15,6 +15,8 @@ public interface SubcontractorService {
 
 	List<Status> getAllStatus();
 
+	List<Subcontractor> getAllSubcontractors();
+
 	int getNumbersOfPages();
 
 	Integer getNumbersOfSubContractor();
@@ -40,5 +42,6 @@ public interface SubcontractorService {
 	void handleSubcontractorUpdate(SubcontractorDto subcontractorDto);
 	
 	Subcontractor getSubcontractorBySName(String sName);
+
 
 }

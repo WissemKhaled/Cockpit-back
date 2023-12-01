@@ -130,6 +130,24 @@ public class ServiceProviderControllerTest {
 	}
 
 	@Test
+	public void archiveTest_ArchiveExistingServiceProvider_ShouldReturnOk() throws Exception {
+		int existingNonArchivedServiceProviderId = 1;
+		mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "archive/" + existingNonArchivedServiceProviderId)
+				.header("Authorization", "Bearer " + jwtToken).contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	public void archiveTest_ArchiveExistingServiceProviderFailed_ShouldReturnAlreadyArchivedException()
+			throws Exception {
+		int existingArchivedServiceProviderId = 4;
+
+		mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "archive/" + existingArchivedServiceProviderId)
+				.header("Authorization", "Bearer " + jwtToken).contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest()).andExpect(content().string(
+						"Erreur: le prestataire avec l'id " + existingArchivedServiceProviderId + " est déjà archivé."));
+	}
+
 	public void getTest_GetServiceProvidersBySubcontractorId_ShouldReturnListOfTwoServiceProviders() throws Exception {
 		int existingSubcontractorId = 1;
 

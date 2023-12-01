@@ -114,6 +114,34 @@ public class ServiceProviderController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
+
+	@PutMapping("/archive/{serviceProviderId}")
+	public ResponseEntity<String> archiveServiceProvider(@PathVariable int serviceProviderId, HttpServletRequest request) {
+		String authorizationHeader = request.getHeader("Authorization");
+		try {
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+				String token = authorizationHeader.substring(7);
+				String email = jwtService.extractUsername(token);
+				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+				ServiceProvider serviceProviderToArchive = serviceProviderService.getServiceProviderById(serviceProviderId);
+				if (jwtService.validateToken(token, userDetails)) {
+					if (serviceProviderToArchive.getSpStatus().getStId() == 4) {
+						throw new AlreadyArchivedEntity(String.format("Erreur: le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
+					}
+					serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
+					return new ResponseEntity<>(String.format("Le prestataire avec l'id: %d a été archivé avec succées", serviceProviderId), HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+				}
+			} else {
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			}
+		} catch (AlreadyArchivedEntity e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 	
 	@GetMapping("all-service-providers/{subcontractorId}")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorId(@PathVariable int subcontractorId) {

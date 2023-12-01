@@ -10,10 +10,12 @@ import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
+import com.example.demo.mappers.StatusMapper;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.mappers.SubcontractorMapper;
 
+import ch.qos.logback.core.status.StatusManager;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -21,7 +23,10 @@ import lombok.AllArgsConstructor;
 public class SubcontractorServiceImpl implements SubcontractorService {
 
 	private final SubcontractorDtoMapper dtoMapper;
+
 	private final SubcontractorMapper subcontractorMapper;
+
+	private final StatusMapper statusMapper;
 
 	@Override
 	public Subcontractor getSubcontractorWithStatus(int sId) {
@@ -50,7 +55,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		subcontractor.setSLastUpdateDate(LocalDateTime.now());
 		return subcontractorMapper.updateSubcontractor(subcontractor);
 	}
-	
+
 	@Override
 	public int archiveSubcontractor(Subcontractor subcontractortoArchive) {
 		return subcontractorMapper.archiveSubcontractor(subcontractortoArchive);
@@ -93,7 +98,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	@Override
 	public List<Status> getAllStatus() {
-		return subcontractorMapper.getAllStatus();
+		return statusMapper.getAllStatus();
 	}
 
 	@Override
@@ -171,6 +176,14 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 			throw new EntityNotFoundException("le sous-traitant avec le nom: " + sName + " n'existe pas!!");
 		}
 		return foundSubcontractorBySName;
+	}
+
+	@Override
+	public List<Subcontractor> getAllSubcontractors() {
+		List<Subcontractor> subcontractors = subcontractorMapper.findAllSubcontractors();
+		if (subcontractors.isEmpty())
+			throw new EntityNotFoundException("Il n'y a pas de sous-traiatns enregistrés");
+		return subcontractors;
 	}
 
 }

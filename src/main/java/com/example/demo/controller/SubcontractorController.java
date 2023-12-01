@@ -80,10 +80,34 @@ public class SubcontractorController {
 		}
 
 	}
+	
+	@GetMapping("/getAllSubcontractors")
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractors(HttpServletRequest request) {
+		String authorizationHeader = request.getHeader("Authorization");
+		try {
+			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+				String token = authorizationHeader.substring(7);
+				String email = jwtService.extractUsername(token);
+				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+				if (jwtService.validateToken(token, userDetails)) {
+					return new ResponseEntity<>(subcontractorService.getAllSubcontractors().stream().map(subcontractorDtoMapper::subcontractorToDto).toList(), HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+				}
+			} else {
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			}
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+
+	}
 
 	@GetMapping("/getAllWhitStatus")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWhitStatus(
-			@RequestParam(name = "nameColonne", defaultValue = "s_id", required = false) String nameColonne,
+			@RequestParam(name = "nameColonne", defaultValue = "s_name", required = false) String nameColonne,
 			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
 			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
