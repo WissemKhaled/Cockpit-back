@@ -14,7 +14,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -107,12 +106,12 @@ public class UserController {
 	/**
 	 * Méthode de création d'un user avec validation du pattern de mot de passe et email
 	*/
-	@PostMapping("/addNewUser") 
+	@PostMapping("/addNewUser")
 	public ResponseEntity<String> addNewUser(@Valid @RequestBody CreateUserDTO userInfo) {
 	    try {
 	        String result = service.addUser(userInfo);
 	        return new ResponseEntity<>(result, HttpStatus.CREATED);
-	    } catch (Exception ex) {
+	    } catch (GeneralException ex) {
 	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	    }
 	}

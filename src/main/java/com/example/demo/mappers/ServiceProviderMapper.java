@@ -16,7 +16,12 @@ import com.example.demo.entity.Subcontractor;
 
 @Mapper
 public interface ServiceProviderMapper {
-
+	
+	@Update("Update service_provider SET sp_fk_status_id = 4 WHERE sp_id = #{spId}")
+	@Result(property = "spId", column = "sp_id")
+	@Result(property = "spStatus.stId", column = "sp_fk_status_id")
+	int archiveServiceProvider(ServiceProvider serviceProvider);
+	
 	@Insert("INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date, sp_fk_subcontractor_id, sp_fk_status_id)"
 			+ "VALUES (#{spFirstName}, #{spName}, #{spEmail}, #{spCreationDate}, #{spLastUpdateDate}, #{subcontractor.sId}, #{spStatus.stId})")
 	@Options(useGeneratedKeys = true, keyProperty = "spId", keyColumn = "sp_id")

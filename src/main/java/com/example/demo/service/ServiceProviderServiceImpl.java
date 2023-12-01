@@ -107,4 +107,9 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		return name.toUpperCase();
 	}
 
+	@Override
+	public int archiveServiceProvider(ServiceProvider serviceProviderIdToArchive) {
+		return serviceProviderMapper.archiveServiceProvider(serviceProviderIdToArchive);
+	}
+
 }
