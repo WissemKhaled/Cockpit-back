@@ -16,6 +16,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class StatusDto {
+	
 	@NotNull
 	@Max(value = 4, message = "L'id doit être inférieure ou égale à 4")
 	@Min(value = 1, message = "L'id doit être supérieure ou égale à 1")

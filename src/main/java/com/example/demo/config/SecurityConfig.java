@@ -39,7 +39,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/addNewUser", "/auth/generateToken", "/auth/refreshToken", "/messages/**", "/gstlogs/**").permitAll())
+				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/addNewUser", "/auth/generateToken", "/auth/refreshToken", "/messages/**", "/gstlogs/**", "/MessageModel/**", "/SendMail/**").permitAll())
 				.authorizeHttpRequests(ar ->ar.requestMatchers("/auth/user/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/admin/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/subcontractor/**").authenticated())

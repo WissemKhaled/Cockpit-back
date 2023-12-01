@@ -18,7 +18,7 @@ public class PersistenceConfig {
 	 * dépendance postgre : scope compile (bdd utilisée pour la compilation)
 	 */
 
-	private String[] dBTypes = {"H2","postgres"};
+	private String[] dBTypes = { "H2", "postgres" };
 	private String chosenDBType = dBTypes[1];
 	private Boolean isTestMode = false;
 
@@ -37,12 +37,12 @@ public class PersistenceConfig {
 			dataSource.setDriverClassName("org.postgresql.Driver");
 			dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
 			dataSource.setUsername("postgres");
-			dataSource.setPassword("postgres");
+			dataSource.setPassword("0622178800-Yb");
 		}
 		return dataSource;
-	}
+  }
 
-	// Initialisation de postgres BDD
+//	 Initialisation de postgres BDD
 //	@Bean
 //	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
 //		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();

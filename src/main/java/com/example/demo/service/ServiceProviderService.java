@@ -9,8 +9,6 @@ public interface ServiceProviderService {
 
 	int saveServiceProvider(ServiceProvider serviceProviderToSave);
 
-	int archiveServiceProvider(ServiceProvider serviceProviderToArchive);
-
 	int updateServiceProvider(ServiceProvider serviceProviderToUpdate);
 
 	ServiceProvider getServiceProviderById(int serviceProviderId);
@@ -30,5 +28,6 @@ public interface ServiceProviderService {
 	String NameFormatter(String name);
 
 	List<ServiceProvider> getAllServiceProviders();
-
+	
+	int archiveServiceProvider(ServiceProvider serviceProviderToArchive);
 }
