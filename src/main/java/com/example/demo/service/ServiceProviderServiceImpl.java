@@ -34,11 +34,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public int archiveServiceProvider(ServiceProvider serviceProviderIdToArchive) {
-		return serviceProviderMapper.archiveServiceProvider(serviceProviderIdToArchive);
-	}
-
-	@Override
 	public int updateServiceProvider(ServiceProvider serviceProviderToUpdate) {
 		serviceProviderToUpdate.setSpLastUpdateDate(LocalDateTime.now());
 		return serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate);

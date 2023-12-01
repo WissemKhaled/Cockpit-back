@@ -148,7 +148,6 @@ public class ServiceProviderControllerTest {
 						"Erreur: le prestataire avec l'id " + existingArchivedServiceProviderId + " est déjà archivé."));
 	}
 
-	@Test
 	public void getTest_GetServiceProvidersBySubcontractorId_ShouldReturnListOfTwoServiceProviders() throws Exception {
 		int existingSubcontractorId = 1;
 

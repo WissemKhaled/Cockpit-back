@@ -73,44 +73,6 @@ public class ServiceProviderMapperTest {
 	}
 
 	@Test
-	void archiveTest_ArchivingServiceProvider_ShouldReturnOne() {
-		Subcontractor existingSubcontractor = new Subcontractor();
-		existingSubcontractor.setSId(1);
-
-		ServiceProvider existingServiceProvider = new ServiceProvider();
-		existingServiceProvider.setSpId(1);
-		existingServiceProvider.setSpName("FIRSTSPNAME");
-		existingServiceProvider.setSpFirstName("Firstspfirstname");
-		existingServiceProvider.setSpEmail("Sp1@email.com");
-		existingServiceProvider.setSpCreationDate(LocalDateTime.now());
-		existingServiceProvider.setSubcontractor(existingSubcontractor);
-		existingServiceProvider.setSpStatus(new Status(1));
-
-		int isArchived = serviceProviderMapper.archiveServiceProvider(existingServiceProvider);
-
-		assertEquals(1, isArchived);
-	}
-
-	@Test
-	void archiveTest_ArchivingServiceProviderFailed_ShouldReturnZero() {
-		Subcontractor existingSubcontractor = new Subcontractor();
-		existingSubcontractor.setSId(1);
-
-		ServiceProvider nonExistingServiceProvider = new ServiceProvider();
-		nonExistingServiceProvider.setSpId(Integer.MAX_VALUE);
-		nonExistingServiceProvider.setSpName("FIRSTSPNAME");
-		nonExistingServiceProvider.setSpFirstName("Firstspfirstname");
-		nonExistingServiceProvider.setSpEmail("Sp999@email.com");
-		nonExistingServiceProvider.setSpCreationDate(LocalDateTime.now());
-		nonExistingServiceProvider.setSubcontractor(existingSubcontractor);
-		nonExistingServiceProvider.setSpStatus(new Status(1));
-
-		int isArchived = serviceProviderMapper.archiveServiceProvider(nonExistingServiceProvider);
-
-		assertEquals(0, isArchived);
-	}
-
-	@Test
 	void insertTest_InsertingServiceProvider_ShouldReturnOne() {
 		Subcontractor existingSubcontractor = new Subcontractor();
 		existingSubcontractor.setSId(1);
