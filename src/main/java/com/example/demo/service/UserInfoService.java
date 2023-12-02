@@ -107,6 +107,8 @@ public class UserInfoService implements UserDetailsService {
 	        throw new GeneralException("Erreur d'ajout d'utilisateur. Veuillez réessayer plus tard");
 	    }
 	}
-
-
+	
+	public void resetPassword(String newPassword, String email) {
+		userMapper.updatePassword(newPassword, email);
+	}
 }
