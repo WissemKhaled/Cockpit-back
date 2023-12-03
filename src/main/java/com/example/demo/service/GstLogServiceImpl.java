@@ -143,7 +143,7 @@ public class GstLogServiceImpl implements GstLogService{
 	            String subject = messageModelDto.get(0).getMmSubject();
 	            String firstName = user.getUFirstName();
 	            String lastName = user.getULastName();
-	            String resetPwdLink = "http://localhost:4200/renouveler_mdp?gstLogValue=" + createGstLogDTO.getLogValue();
+	            String resetPwdLink = "http://localhost:4200/#/renouveler_mdp?gstLogValue=" + createGstLogDTO.getLogValue();
 
 	            String body = messageModelDto.get(0).getMmBody();
 	            body = body.replace("[[firstName]]", firstName);

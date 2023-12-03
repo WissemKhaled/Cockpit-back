@@ -38,8 +38,8 @@ VALUES (
     'Bonjour [[firstName]] [[lastName]],\n\n' ||
     'Vous avez souhaité renouveler votre mot de passe pour accéder à l''application GST.\n' ||
     'Pour cela, veuillez cliquer sur le lien ci-dessous :\n' ||
-    ' [[resetPwdLink]]\n\n' ||
-    'En vous remerciant de votre confiance,\n\n' ||
+    ' [[resetPwdLink]]' ||
+    '\n\n En vous remerciant de votre confiance,\n\n' ||
     'L''équipe Open',
     NOW(),
     NULL
