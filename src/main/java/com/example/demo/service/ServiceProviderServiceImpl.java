@@ -1,13 +1,16 @@
 package com.example.demo.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.entity.ServiceProvider;
+import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.mappers.ServiceProviderMapper;
@@ -92,7 +95,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public String FirstNameAndEmailFormatter(String name) {
+	public String firstNameAndEmailFormatter(String name) {
        if (name == null || name.trim().isEmpty()) {
     	   throw new RuntimeException("le nom est necessaire");
         }
@@ -100,7 +103,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public String NameFormatter(String name) {
+	public String nameFormatter(String name) {
 		if (name == null || name.trim().isEmpty()) {
 			throw new RuntimeException("le nom est necessaire");
 		}
@@ -110,6 +113,13 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	@Override
 	public int archiveServiceProvider(ServiceProvider serviceProviderIdToArchive) {
 		return serviceProviderMapper.archiveServiceProvider(serviceProviderIdToArchive);
+	}
+
+	@Override
+	public List<ServiceProvider> getAllNonArchivedServiceProviders(String selectedStatusId, String sorting, int page,
+			int pageSize) {
+		int offset = (page - 1) * pageSize;
+		return 	serviceProviderMapper.findAllNonArchivedServiceProviders(selectedStatusId, sorting, offset, pageSize);
 	}
 
 }

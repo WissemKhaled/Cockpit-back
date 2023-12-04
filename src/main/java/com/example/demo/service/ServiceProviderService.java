@@ -23,11 +23,14 @@ public interface ServiceProviderService {
 
 	int checkIfSubcontractorExistBySpEmail(String serviceProviderSpEmail);
 
-	String FirstNameAndEmailFormatter(String name);
+	String firstNameAndEmailFormatter(String name);
 
-	String NameFormatter(String name);
+	String nameFormatter(String name);
 
 	List<ServiceProvider> getAllServiceProviders();
 	
 	int archiveServiceProvider(ServiceProvider serviceProviderToArchive);
+
+	List<ServiceProvider> getAllNonArchivedServiceProviders(String selectedStatusId, String sorting, int page,
+			int pageSize);
 }

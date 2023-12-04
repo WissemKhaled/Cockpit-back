@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.AlreadyArchivedEntity;
@@ -54,9 +56,9 @@ public class ServiceProviderController {
 	@PostMapping("/save")
 	public ResponseEntity<ServiceProviderDto> saveServiceProvider(@Valid @RequestBody ServiceProviderDto serviceProviderDto) {
 		try {
-			serviceProviderDto.setSpFirstName(serviceProviderService.FirstNameAndEmailFormatter(serviceProviderDto.getSpFirstName()));
-			serviceProviderDto.setSpName(serviceProviderService.NameFormatter(serviceProviderDto.getSpName()));
-			serviceProviderDto.setSpEmail(serviceProviderService.FirstNameAndEmailFormatter(serviceProviderDto.getSpEmail()));
+			serviceProviderDto.setSpFirstName(serviceProviderService.firstNameAndEmailFormatter(serviceProviderDto.getSpFirstName()));
+			serviceProviderDto.setSpName(serviceProviderService.nameFormatter(serviceProviderDto.getSpName()));
+			serviceProviderDto.setSpEmail(serviceProviderService.firstNameAndEmailFormatter(serviceProviderDto.getSpEmail()));
 			boolean isServiceProviderExist = serviceProviderService.checkIfServiceProviderExistById(serviceProviderDto.getSpId());
 			if (isServiceProviderExist) {
 				serviceProviderService.handleServiceProviderUpdating(serviceProviderDto);
@@ -121,6 +123,20 @@ public class ServiceProviderController {
 			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/all-non-archived-service-providers")
+	public ResponseEntity<List<ServiceProviderDto>> getAllNonArchivedServiceProviders(
+			@RequestParam(name = "selectedStatusId", defaultValue = "s_fk_status_id", required = false) String selectedStatusId,
+			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
+			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
+			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
+	) {
+		try {
+			return new ResponseEntity<>(serviceProviderService.getAllNonArchivedServiceProviders(selectedStatusId, sorting, page, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList(), HttpStatus.OK);    
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 }
