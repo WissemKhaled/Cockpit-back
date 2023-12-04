@@ -40,30 +40,10 @@ public class ServiceProviderController {
 	private final ServiceProviderService serviceProviderService;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
 
-	@Autowired
-	@Qualifier("userDetailsService")
-	private UserDetailsService userDetailsService;
-
-	@Autowired
-	private JwtServiceImplementation jwtService;
-
 	@GetMapping("/{spId}")
-	public ResponseEntity<ServiceProviderDto> getServiceProviderById(@PathVariable int spId,
-			HttpServletRequest request) {
-		String authorizationHeader = request.getHeader("Authorization");
+	public ResponseEntity<ServiceProviderDto> getServiceProviderById(@PathVariable int spId) {
 		try {
-			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-				String token = authorizationHeader.substring(7);
-				String email = jwtService.extractUsername(token);
-				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-				if (jwtService.validateToken(token, userDetails)) {
-					return new ResponseEntity<>(serviceProviderDtoMapper.serviceProviderToDto(serviceProviderService.getServiceProviderById(spId)), HttpStatus.OK);
-				} else {
-					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-				}
-			} else {
-				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-			}
+			return new ResponseEntity<>(serviceProviderDtoMapper.serviceProviderToDto(serviceProviderService.getServiceProviderById(spId)), HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
@@ -72,39 +52,26 @@ public class ServiceProviderController {
 	}
 
 	@PostMapping("/save")
-	public ResponseEntity<ServiceProviderDto> saveServiceProvider(@Valid @RequestBody ServiceProviderDto serviceProviderDto,
-			HttpServletRequest request) {
-		String authorizationHeader = request.getHeader("Authorization");
+	public ResponseEntity<ServiceProviderDto> saveServiceProvider(@Valid @RequestBody ServiceProviderDto serviceProviderDto) {
 		try {
-			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-				String token = authorizationHeader.substring(7);
-				String email = jwtService.extractUsername(token);
-				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-				if (jwtService.validateToken(token, userDetails)) {
-					serviceProviderDto.setSpFirstName(serviceProviderService.FirstNameAndEmailFormatter(serviceProviderDto.getSpFirstName()));
-					serviceProviderDto.setSpName(serviceProviderService.NameFormatter(serviceProviderDto.getSpName()));
-					serviceProviderDto.setSpEmail(serviceProviderService.FirstNameAndEmailFormatter(serviceProviderDto.getSpEmail()));
-					boolean isServiceProviderExist = serviceProviderService.checkIfServiceProviderExistById(serviceProviderDto.getSpId());
-					if (isServiceProviderExist) {
-						serviceProviderService.handleServiceProviderUpdating(serviceProviderDto);
-						int updateServiceProviderId = serviceProviderService.updateServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
-						ServiceProvider updatedServiceProvider = serviceProviderService.getServiceProviderById(updateServiceProviderId);
-						return new ResponseEntity<>(
-								serviceProviderDtoMapper.serviceProviderToDto(updatedServiceProvider), HttpStatus.OK);
-					} else {
-						if (serviceProviderDto.getSpId() > 0) {
-							serviceProviderService.handleServiceProviderSaving(serviceProviderDto);
-							int savedServiceProviderId = serviceProviderService.saveServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
-							return new ResponseEntity<>(serviceProviderDtoMapper.serviceProviderToDto(serviceProviderService.getServiceProviderById(savedServiceProviderId)),HttpStatus.CREATED);
-						} else {
-							return new ResponseEntity("Invalid Id", HttpStatus.BAD_REQUEST);
-						}
-					}
-				} else {
-					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-				}
+			serviceProviderDto.setSpFirstName(serviceProviderService.FirstNameAndEmailFormatter(serviceProviderDto.getSpFirstName()));
+			serviceProviderDto.setSpName(serviceProviderService.NameFormatter(serviceProviderDto.getSpName()));
+			serviceProviderDto.setSpEmail(serviceProviderService.FirstNameAndEmailFormatter(serviceProviderDto.getSpEmail()));
+			boolean isServiceProviderExist = serviceProviderService.checkIfServiceProviderExistById(serviceProviderDto.getSpId());
+			if (isServiceProviderExist) {
+				serviceProviderService.handleServiceProviderUpdating(serviceProviderDto);
+				int updateServiceProviderId = serviceProviderService.updateServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
+				ServiceProvider updatedServiceProvider = serviceProviderService.getServiceProviderById(updateServiceProviderId);
+				return new ResponseEntity<>(
+						serviceProviderDtoMapper.serviceProviderToDto(updatedServiceProvider), HttpStatus.OK);
 			} else {
-				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+				if (serviceProviderDto.getSpId() > 0) {
+					serviceProviderService.handleServiceProviderSaving(serviceProviderDto);
+					int savedServiceProviderId = serviceProviderService.saveServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
+					return new ResponseEntity<>(serviceProviderDtoMapper.serviceProviderToDto(serviceProviderService.getServiceProviderById(savedServiceProviderId)),HttpStatus.CREATED);
+				} else {
+					return new ResponseEntity("Invalid Id", HttpStatus.BAD_REQUEST);
+				}
 			}
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -116,26 +83,14 @@ public class ServiceProviderController {
 	}
 
 	@PutMapping("/archive/{serviceProviderId}")
-	public ResponseEntity<String> archiveServiceProvider(@PathVariable int serviceProviderId, HttpServletRequest request) {
-		String authorizationHeader = request.getHeader("Authorization");
+	public ResponseEntity<String> archiveServiceProvider(@PathVariable int serviceProviderId) {
 		try {
-			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-				String token = authorizationHeader.substring(7);
-				String email = jwtService.extractUsername(token);
-				UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-				ServiceProvider serviceProviderToArchive = serviceProviderService.getServiceProviderById(serviceProviderId);
-				if (jwtService.validateToken(token, userDetails)) {
-					if (serviceProviderToArchive.getSpStatus().getStId() == 4) {
-						throw new AlreadyArchivedEntity(String.format("Erreur: le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
-					}
-					serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
-					return new ResponseEntity<>(String.format("Le prestataire avec l'id: %d a été archivé avec succées", serviceProviderId), HttpStatus.OK);
-				} else {
-					return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-				}
-			} else {
-				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		ServiceProvider serviceProviderToArchive = serviceProviderService.getServiceProviderById(serviceProviderId);
+			if (serviceProviderToArchive.getSpStatus().getStId() == 4) {
+				throw new AlreadyArchivedEntity(String.format("Erreur: le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
 			}
+			serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
+			return new ResponseEntity<>(String.format("Le prestataire avec l'id: %d a été archivé avec succées", serviceProviderId), HttpStatus.OK);
 		} catch (AlreadyArchivedEntity e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
@@ -143,7 +98,7 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("all-service-providers/{subcontractorId}")
+	@GetMapping("/all-service-providers/{subcontractorId}")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorId(@PathVariable int subcontractorId) {
 		try {
 			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersBySubcontractorId(subcontractorId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
@@ -156,7 +111,7 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("all-service-providers")
+	@GetMapping("/all-service-providers")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProviders() {
 		try {
 			List<ServiceProviderDto> serviceProviders = serviceProviderService.getAllServiceProviders().stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
