@@ -1,8 +1,7 @@
 package com.example.demo.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +11,15 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogDTO;
-import com.example.demo.dto.MessageModelDTO;
 import com.example.demo.dto.UUserDTO;
 import com.example.demo.entity.GstLog;
-import com.example.demo.entity.MessageModel;
-import com.example.demo.entity.UUser;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.CreateGstLogDtoMapper;
 import com.example.demo.mappers.GstLogDtoMapper;
 import com.example.demo.mappers.GstLogMapper;
-import com.example.demo.mappers.MessageModelDtoMapper;
-import com.example.demo.mappers.MessageModelMapper;
+import com.example.demo.utility.JsonFileLoader;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.mail.MessagingException;
 import lombok.extern.java.Log;
@@ -46,13 +43,13 @@ public class GstLogServiceImpl implements GstLogService{
 	private UserInfoService userInfoService;
 	
 	@Autowired
-	MessageModelMapper messageModelMapper;
-	
-	@Autowired
 	private PasswordEncoder encoder;
 	
+	@Autowired
+    private JsonFileLoader jsonFileLoader;
+	
 	@Override
-	public String saveGstLog(CreateGstLogDTO createGstLogDTO) throws GeneralException {
+	public String saveGstLog(CreateGstLogDTO createGstLogDTO) throws GeneralException, NotFoundException {
 	    if (createGstLogDTO == null) {
 	        log.severe("Le paramètre createGstLogDTO ne peut être null");
 	        throw new IllegalArgumentException("Le paramètre createGstLogDTO ne peut être null");
@@ -62,7 +59,7 @@ public class GstLogServiceImpl implements GstLogService{
 	        UUserDTO user = userInfoService.findUserByEmail(createGstLogDTO.getLogEmail());
 	        if (user == null) {
 	            log.severe("Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
-	            return "Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail();
+	            throw new UsernameNotFoundException("Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
 	        }
 
 	        GstLog gstLog = createGstLogDtoMapper.toGstLog(createGstLogDTO);
@@ -88,6 +85,7 @@ public class GstLogServiceImpl implements GstLogService{
 	        return "Erreur lors de l'envoi de l'email : " + e.getMessage();
 	    }
 	}
+
 	
 	/**
 	 * Méthode qui récupère un log par sa valeur (logValue)
@@ -97,8 +95,8 @@ public class GstLogServiceImpl implements GstLogService{
 		if (logValue != null && !logValue.isEmpty()) {
 			GstLog gstLog = gstLogMapper.getLogByValue(logValue);
 	         if (gstLog != null) {
-	             GstLogDTO messageModelDTO = gstLogDtoMapper.toDto(gstLog);
-	             return messageModelDTO;
+	             GstLogDTO gstLogDTO = gstLogDtoMapper.toDto(gstLog);
+	             return gstLogDTO;
 	         } else {
 	             throw new NotFoundException("Aucun gst log trouvé pour le type: " + logValue);
 	         }
@@ -131,31 +129,42 @@ public class GstLogServiceImpl implements GstLogService{
 	}
 
 	public void sendResetPwdLinkByEmail(CreateGstLogDTO createGstLogDTO) throws MessagingException {
-	    List<MessageModel> messageModelDto = messageModelMapper.getMessageModelByType("RESET_PASSWORD");
+        try {
+        	String jsonContent = jsonFileLoader.loadJsonFileContent("FR.json");
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(jsonContent);
 
-	    if (createGstLogDTO != null && !messageModelDto.isEmpty()) {
-	        String email = createGstLogDTO.getLogEmail();
-	        UUserDTO user = userInfoService.findUserByEmail(email);
+            if (createGstLogDTO != null && jsonNode.has("messageModel")) {
+            	JsonNode messageModel = jsonNode.get("messageModel");
+                JsonNode resetPasswordNode = messageModel.get("resetPassword");
 
-	        if (user != null) {
-	            // L'utilisa, proceed to send the reset password email
-	            String to = email;
-	            String subject = messageModelDto.get(0).getMmSubject();
-	            String firstName = user.getUFirstName();
-	            String lastName = user.getULastName();
-	            String resetPwdLink = "http://localhost:4200/#/renouveler_mdp?gstLogValue=" + createGstLogDTO.getLogValue();
+                // Proceed to send the reset password email
+                String email = createGstLogDTO.getLogEmail();
+                UUserDTO user = userInfoService.findUserByEmail(email);
 
-	            String body = messageModelDto.get(0).getMmBody();
-	            body = body.replace("[[firstName]]", firstName);
-	            body = body.replace("[[lastName]]", lastName);
-	            body = body.replace("[[resetPwdLink]]", resetPwdLink);
+                if (user != null && resetPasswordNode != null) {
+                    String to = email;
+                    String subject = resetPasswordNode.get("mmSubject").asText();
+                    String firstName = user.getUFirstName();
+                    String lastName = user.getULastName();
+                    String resetPwdLink = "http://localhost:4200/#/renouveler_mdp?gstLogValue=" + createGstLogDTO.getLogValue();
 
-	            mailService.sendNewMail(to, subject, body);
-	        } else {
-	            throw new UsernameNotFoundException("Utilisateur " + email + " non trouvé. Email non envoyé");
-	        }
-	    }
-	}
+                    String body = resetPasswordNode.get("mmBody").asText();
+                    body = body.replace("[[firstName]]", firstName);
+                    body = body.replace("[[lastName]]", lastName);
+                    body = body.replace("[[resetPwdLink]]", resetPwdLink);
+
+                    mailService.sendNewMail(to, subject, body);
+                } else {
+                    throw new UsernameNotFoundException("Utilisateur " + email + " non trouvé. Email non envoyé");
+                }
+            }
+        } catch (IOException e) {
+            log.severe("Error reading JSON file content : " + e.toString());
+        } catch (Exception e) {
+            log.severe("An unexpected error occurred : " +  e.toString());
+        }
+    }
 	
 	public void manageResetUserPassword(String logValue, String newPassword) throws NotFoundException {
 		 if (logValue != null && !logValue.isEmpty()) {

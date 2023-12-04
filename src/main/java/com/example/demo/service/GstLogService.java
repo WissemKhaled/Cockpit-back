@@ -7,7 +7,7 @@ import com.example.demo.dto.GstLogDTO;
 import com.example.demo.exception.GeneralException;
 
 public interface GstLogService {
-	String saveGstLog(CreateGstLogDTO createGstLogDTO) throws GeneralException;
+	String saveGstLog(CreateGstLogDTO createGstLogDTO) throws GeneralException, NotFoundException;
 	
 	GstLogDTO getGstLogByValue(String logValue) throws NotFoundException;
 	

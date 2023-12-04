@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.ibatis.javassist.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,12 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogDTO;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.service.GstLogServiceImpl;
+import com.example.demo.utility.JsonFileLoader;
 
 import jakarta.validation.Valid;
 import lombok.extern.java.Log;
 
-@Log
 @RestController
 @CrossOrigin("http://localhost:4200")
 @RequestMapping("/gstlogs") 
@@ -36,22 +40,31 @@ public class GstLogController {
 	@Autowired
 	private GstLogServiceImpl gstLogServiceImpl;
 	
+	private static final Logger log = LoggerFactory.getLogger(JsonFileLoader.class);
+	
 	/**
 	 * Méthode qui créé et insère un log en base de donnée
 	 */
 	@PostMapping("/createGstLog")
-    public ResponseEntity<String> createGstLog(@Valid @RequestBody CreateGstLogDTO createGstLogDTO) {
-        try {
-            String result = gstLogServiceImpl.saveGstLog(createGstLogDTO);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            log.severe(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            log.severe(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+	public ResponseEntity<String> createGstLog(@Valid @RequestBody CreateGstLogDTO createGstLogDTO) {
+	    try {
+	        String result = gstLogServiceImpl.saveGstLog(createGstLogDTO);
+	        return new ResponseEntity<>(result, HttpStatus.OK);
+	    } catch (IllegalArgumentException e) {
+	        log.error(e.getMessage());
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	    } catch (GeneralException e) {
+	        log.error(e.getMessage());
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	    } catch (NotFoundException e) {
+	        log.error("Not Found: " + e.getMessage(), e);
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+	    } catch (Exception e) {
+	        log.error(e.getMessage());
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
 	
 	/**
 	 * Méthode pour récupérer un log par sa valeur (son code)
@@ -62,13 +75,13 @@ public class GstLogController {
             GstLogDTO messageModelDTO = gstLogServiceImpl.getGstLogByValue(logValue);
             return new ResponseEntity<>(messageModelDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
-            log.severe(e.getMessage());
+            log.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (IllegalArgumentException e) {
-            log.severe(e.getMessage());
+            log.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            log.severe(e.getMessage());
+            log.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -106,7 +119,7 @@ public class GstLogController {
 
  			errors.put(fieldName, errorMessage);
  		});
- 		log.severe(errors.toString());
+ 		log.error(errors.toString());
  		return errors;
  	}
 }

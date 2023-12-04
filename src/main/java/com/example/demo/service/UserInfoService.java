@@ -64,7 +64,7 @@ public class UserInfoService implements UserDetailsService {
 				throw new IllegalArgumentException("Email invalide");
 			}
 		} catch (UsernameNotFoundException e) {
-			log.severe(String.format("Utilisateur non trouvé : {}", e.getMessage(), e));
+			log.severe(String.format("Utilisateur non trouvé : %o", e.getMessage(), e));
 			e.printStackTrace();
 			return null;
 		}
