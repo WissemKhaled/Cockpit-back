@@ -31,6 +31,7 @@ import com.example.demo.service.ServiceProviderService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -129,14 +130,42 @@ public class ServiceProviderController {
 	@GetMapping("/all-non-archived-service-providers")
 	public ResponseEntity<List<ServiceProviderDto>> getAllNonArchivedServiceProviders(
 			@RequestParam(name = "selectedStatusId", defaultValue = "s_fk_status_id", required = false) String selectedStatusId,
-			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
-			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
-			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
+			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
+			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize
 	) {
+			return new ResponseEntity<>(serviceProviderService.getAllNonArchivedServiceProviders(selectedStatusId, sortingMethod, pageNumber, pageSize)
+					.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList(), HttpStatus.OK);    
+	}
+	
+	@GetMapping("/count-all-non-archived-service-providers")
+	public ResponseEntity<Integer> countAllNonArchivedServiceProviders() {
+			return new ResponseEntity<>(serviceProviderService.countAllNonArchivedServiceProviders(), HttpStatus.OK);    
+	}
+	
+	@GetMapping("/all-service-providers-filtred-by-status")
+	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersFiltredByStatus(
+			@RequestParam(name = "selectedStatusId", defaultValue = "s_fk_status_id", required = false) String selectedStatusId,
+			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
+			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
+			@RequestParam(name = "statusId", required = false) int statusId
+	) {
+			return new ResponseEntity<>(serviceProviderService.getAllServiceProvidersFiltredByStatus(selectedStatusId, sortingMethod, pageNumber, pageSize, statusId)
+					.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList(), HttpStatus.OK);    
+	}
+	
+	@GetMapping("/count-all-service-providers-filtred-by-status")
+	public ResponseEntity<Integer> countAllServiceProvidersFiltredByStatus(@RequestParam int statusId) {
 		try {
-			return new ResponseEntity<>(serviceProviderService.getAllNonArchivedServiceProviders(selectedStatusId, sorting, page, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList(), HttpStatus.OK);    
-		} catch (RuntimeException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+			if (1 <= statusId  && statusId <= 4) {
+				return new ResponseEntity<>(serviceProviderService.countAllServiceProvidersFiltredByStatus(statusId), HttpStatus.OK);    			
+			}
+			throw new EntityNotFoundException("l'id du statut n'existe pas.");			
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

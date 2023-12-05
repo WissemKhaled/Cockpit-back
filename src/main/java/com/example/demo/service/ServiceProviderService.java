@@ -33,4 +33,11 @@ public interface ServiceProviderService {
 
 	List<ServiceProvider> getAllNonArchivedServiceProviders(String selectedStatusId, String sorting, int page,
 			int pageSize);
+
+	int countAllNonArchivedServiceProviders();
+
+	int countAllServiceProvidersFiltredByStatus(int statusId);
+
+	List<ServiceProvider> getAllServiceProvidersFiltredByStatus(String selectedStatusId, String sortingMethod,
+			int pageNumber, int pageSize, int statusId);
 }

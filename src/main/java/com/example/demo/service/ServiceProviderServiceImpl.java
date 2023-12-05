@@ -116,10 +116,26 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public List<ServiceProvider> getAllNonArchivedServiceProviders(String selectedStatusId, String sorting, int page,
-			int pageSize) {
-		int offset = (page - 1) * pageSize;
-		return 	serviceProviderMapper.findAllNonArchivedServiceProviders(selectedStatusId, sorting, offset, pageSize);
+	public List<ServiceProvider> getAllNonArchivedServiceProviders(String selectedStatusId, String sortingMethod, int pageNumber, int pageSize) {
+		int offset = (pageNumber - 1) * pageSize;
+		return 	serviceProviderMapper.findAllNonArchivedServiceProviders(selectedStatusId, sortingMethod, offset, pageSize);
+	}
+
+	@Override
+	public int countAllNonArchivedServiceProviders() {
+		return serviceProviderMapper.countAllNonArchivedServiceProviders();
+	}
+
+	@Override
+	public int countAllServiceProvidersFiltredByStatus(int statusId) {
+		return serviceProviderMapper.countAllServiceProvidersFiltredByStatus(statusId);
+	}
+
+	@Override
+	public List<ServiceProvider> getAllServiceProvidersFiltredByStatus(String selectedStatusId, String sortingMethod,
+			int pageNumber, int pageSize, int statusId) {
+		int offset = (pageNumber - 1) * pageSize;
+		return serviceProviderMapper.findAllServiceProvidersFlitredByStatus(selectedStatusId, sortingMethod, offset, pageSize, statusId);
 	}
 
 }
