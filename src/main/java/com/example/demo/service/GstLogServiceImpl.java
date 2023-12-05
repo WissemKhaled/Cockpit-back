@@ -188,6 +188,8 @@ public class GstLogServiceImpl implements GstLogService{
 		        } else {
 		            throw new NotFoundException("Aucun gst log trouvé pour le type: " + logValue);
 		        }
+			 } else {
+				 throw new GeneralException("Demande de changement de mot de passe expirée.");
 			 }
 		 } else {
 			 throw new IllegalArgumentException("logValue ne peut être vide ou null");

@@ -103,7 +103,7 @@ public class GstLogController {
 	    } catch (NotFoundException e) {
 	        return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.NOT_FOUND);
 	    } catch (Exception e) {
-	        return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+	        return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.BAD_REQUEST);
 	    }
 	}
 
