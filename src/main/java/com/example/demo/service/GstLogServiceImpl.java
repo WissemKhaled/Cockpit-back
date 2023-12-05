@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogDTO;
+import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.UUserDTO;
 import com.example.demo.entity.GstLog;
 import com.example.demo.exception.GeneralException;
@@ -48,18 +49,17 @@ public class GstLogServiceImpl implements GstLogService{
 	@Autowired
     private JsonFileLoader jsonFileLoader;
 	
-	@Override
-	public String saveGstLog(CreateGstLogDTO createGstLogDTO) throws GeneralException, NotFoundException {
+	public GstLogResponseDTO saveGstLog(CreateGstLogDTO createGstLogDTO) {
 	    if (createGstLogDTO == null) {
 	        log.severe("Le paramètre createGstLogDTO ne peut être null");
-	        throw new IllegalArgumentException("Le paramètre createGstLogDTO ne peut être null");
+	        return new GstLogResponseDTO("error", "Le paramètre createGstLogDTO ne peut être null");
 	    }
 
 	    try {
 	        UUserDTO user = userInfoService.findUserByEmail(createGstLogDTO.getLogEmail());
 	        if (user == null) {
 	            log.severe("Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
-	            throw new UsernameNotFoundException("Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
+	            return new GstLogResponseDTO("error", "Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
 	        }
 
 	        GstLog gstLog = createGstLogDtoMapper.toGstLog(createGstLogDTO);
@@ -68,23 +68,28 @@ public class GstLogServiceImpl implements GstLogService{
 	        int isGstLogInserted = gstLogMapper.insertLog(gstLog);
 	        if (isGstLogInserted == 0) {
 	            log.severe("Échec de l'insertion du gst log dans la base de données");
-	            throw new GeneralException("Échec de l'insertion du gst log dans la base de données");
+	            return new GstLogResponseDTO("error", "Échec de l'insertion du gst log dans la base de données");
 	        }
 
 	        // Envoi d'email avec lien vers page de réinitialisation de mdp
 	        sendResetPwdLinkByEmail(createGstLogDTO);
 
 	        log.info("gst log créé avec succès");
-	        return "gst log créé avec succès";
-	    } catch (IllegalArgumentException | GeneralException e) {
+	        return new GstLogResponseDTO("success", "gst log créé avec succès");
+	    } catch (IllegalArgumentException e) {
 	        log.severe(e.getMessage());
-	        throw new GeneralException("Erreur lors de la création du Gst log");
+	        return new GstLogResponseDTO("error", "Erreur lors de la création du Gst log");
 	    } catch (MessagingException | UsernameNotFoundException e) {
 	        log.severe("Erreur lors de l'envoi de l'email : " + e.getMessage());
-	        // Handle specific exception, if needed
-	        return "Erreur lors de l'envoi de l'email : " + e.getMessage();
+	        return new GstLogResponseDTO("error", "Erreur lors de l'envoi de l'email : " + e.getMessage());
+	    } catch (Exception e) {
+	        // Handle other exceptions or log them if needed
+	        log.severe(e.getMessage());
+	        return new GstLogResponseDTO("error", e.getMessage());
 	    }
 	}
+
+
 
 	
 	/**
@@ -166,7 +171,7 @@ public class GstLogServiceImpl implements GstLogService{
         }
     }
 	
-	public void manageResetUserPassword(String logValue, String newPassword) throws NotFoundException {
+	public void manageResetUserPassword(String logValue, String newPassword) throws NotFoundException, GeneralException {
 		 if (logValue != null && !logValue.isEmpty()) {
 			 
 			 if (checkResetPasswordExpiration(logValue)) {

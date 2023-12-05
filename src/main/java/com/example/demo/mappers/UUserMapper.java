@@ -10,8 +10,6 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-
-import com.example.demo.entity.MessageModel;
 import com.example.demo.entity.UUser;
 
 @Mapper
@@ -47,5 +45,5 @@ public interface UUserMapper {
 	void insert(UUser userInfo);
 	
 	@Update("UPDATE u_user SET u_password = #{newPassword} WHERE u_email = #{email}")
-	void updatePassword(@Param("newPassword") String newPassword, @Param("email") String email);
+	int updatePassword(@Param("newPassword") String newPassword, @Param("email") String email);
 }

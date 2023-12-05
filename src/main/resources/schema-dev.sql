@@ -40,12 +40,3 @@ CREATE TABLE IF NOT EXISTS gst_log (
     log_value VARCHAR(45),
     log_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TABLE IF NOT EXISTS gst_message_model (
-    mm_id SERIAL PRIMARY KEY,
-    mm_type VARCHAR(45) NOT NULL,
-    mm_subject VARCHAR(255) NOT NULL,
-    mm_body TEXT NOT NULL,
-    mm_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    mm_last_update TIMESTAMP
-);

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogDTO;
+import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.service.GstLogServiceImpl;
 import com.example.demo.utility.JsonFileLoader;
@@ -46,22 +47,18 @@ public class GstLogController {
 	 * Méthode qui créé et insère un log en base de donnée
 	 */
 	@PostMapping("/createGstLog")
-	public ResponseEntity<String> createGstLog(@Valid @RequestBody CreateGstLogDTO createGstLogDTO) {
+	public ResponseEntity<Object> createGstLog(@Valid @RequestBody CreateGstLogDTO createGstLogDTO) {
 	    try {
-	        String result = gstLogServiceImpl.saveGstLog(createGstLogDTO);
-	        return new ResponseEntity<>(result, HttpStatus.OK);
-	    } catch (IllegalArgumentException e) {
-	        log.error(e.getMessage());
-	        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-	    } catch (GeneralException e) {
-	        log.error(e.getMessage());
-	        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-	    } catch (NotFoundException e) {
-	        log.error("Not Found: " + e.getMessage(), e);
-	        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+	        GstLogResponseDTO responseDTO = gstLogServiceImpl.saveGstLog(createGstLogDTO);
+
+	        if ("success".equals(responseDTO.getStatus())) {
+	            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+	        } else {
+	            return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+	        }
 	    } catch (Exception e) {
 	        log.error(e.getMessage());
-	        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	        return new ResponseEntity<>(new GstLogResponseDTO("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 
