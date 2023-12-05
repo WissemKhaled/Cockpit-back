@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogDTO;
 import com.example.demo.dto.GstLogResponseDTO;
+import com.example.demo.dto.ResetPasswordResponseDTO;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.service.GstLogServiceImpl;
 import com.example.demo.utility.JsonFileLoader;
@@ -86,22 +87,26 @@ public class GstLogController {
 	 /**
      * Methode pour redéfinir le mot de passe
      */
-    @PutMapping("/resetPassword")
-    public ResponseEntity<String> resetUserPassword(@RequestBody Map<String, Object> requestBody) {
-        try {
-        	 String logValue = (String) requestBody.get("logValue");
-        	 String newPassword = (String) requestBody.get("newPassword");
-        	    
-        	gstLogServiceImpl.manageResetUserPassword(logValue, newPassword);
-            return new ResponseEntity<>("Mot de passe mis à jour avec succès", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+	@PutMapping("/resetPassword")
+	public ResponseEntity<ResetPasswordResponseDTO> resetUserPassword(@RequestBody Map<String, Object> requestBody) {
+	    try {
+	        String logValue = (String) requestBody.get("logValue");
+	        String newPassword = (String) requestBody.get("newPassword");
+
+	        gstLogServiceImpl.manageResetUserPassword(logValue, newPassword);
+
+	        // Return a JSON response
+	        ResetPasswordResponseDTO responseDTO = new ResetPasswordResponseDTO("success", "Mot de passe mis à jour avec succès");
+	        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+	    } catch (IllegalArgumentException e) {
+	        return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.BAD_REQUEST);
+	    } catch (NotFoundException e) {
+	        return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.NOT_FOUND);
+	    } catch (Exception e) {
+	        return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
 	
 	/**
      * Méthode qui intercèpte les exceptions de validation
