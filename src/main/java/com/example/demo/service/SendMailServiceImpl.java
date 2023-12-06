@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.io.File;
+
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -25,9 +27,10 @@ public class SendMailServiceImpl implements SendMailService {
 	private final JavaMailSender mailSender;
 
 	@Override
-	public SendMail saveAndSendMail(SendMail mail) throws  MessagingException {
+	public SendMail saveAndSendMail(SendMail mail, File file) throws  MessagingException {
 
 	
+		System.err.println(file);
 
 		MimeMessagePreparator messagePreparator = new MimeMessagePreparator() {
 			
@@ -45,8 +48,8 @@ public class SendMailServiceImpl implements SendMailService {
 		
 		try {
 			
-			mailMapper.saveMailAndSend(mail);
 			this.mailSender.send(messagePreparator);
+			mailMapper.saveMailAndSend(mail);
 			
 		} catch (MailException e) {
 			
