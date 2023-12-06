@@ -27,6 +27,7 @@ import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogDTO;
 import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.ResetPasswordResponseDTO;
+import com.example.demo.dto.ResetPwdExpirationResponseDTO;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.service.GstLogServiceImpl;
 import com.example.demo.utility.JsonFileLoader;
@@ -83,6 +84,28 @@ public class GstLogController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+	
+	@GetMapping("/checkResetPasswordExpiration")
+	public ResponseEntity<ResetPwdExpirationResponseDTO> checkResetPasswordExpiration(@RequestParam String logValue) {
+	    try {
+	        boolean isValid = gstLogServiceImpl.checkResetPasswordExpiration(logValue);
+	        ResetPwdExpirationResponseDTO response = new ResetPwdExpirationResponseDTO("success", "Operation successful");
+	        response.setValid(isValid);
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	    } catch (IllegalArgumentException e) {
+	        log.error("IllegalArgumentException in checkResetPasswordExpiration: " + e.getMessage(), e);
+	        return new ResponseEntity<>(new ResetPwdExpirationResponseDTO("error", e.getMessage()), HttpStatus.BAD_REQUEST);
+	    } catch (NotFoundException e) {
+	        log.error("NotFoundException in checkResetPasswordExpiration: " + e.getMessage(), e);
+	        return new ResponseEntity<>(new ResetPwdExpirationResponseDTO("error", e.getMessage()), HttpStatus.NOT_FOUND);
+	    } catch (Exception e) {
+	        log.error("Unexpected Exception in checkResetPasswordExpiration: " + e.getMessage(), e);
+	        return new ResponseEntity<>(new ResetPwdExpirationResponseDTO("error", "Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+
+
 	
 	 /**
      * Methode pour redéfinir le mot de passe
