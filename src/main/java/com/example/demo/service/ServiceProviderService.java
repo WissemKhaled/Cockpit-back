@@ -40,6 +40,6 @@ public interface ServiceProviderService {
 
 	int countAllServiceProvidersFiltredByStatus(int statusId);
 
-	List<ServiceProvider> getAllServiceProvidersFiltredByStatus(String selectedStatusId, String sortingMethod,
+	List<ServiceProvider> getAllServiceProvidersFiltredByStatus(String sortingMethod,
 			int pageNumber, int pageSize, int statusId);
 }

@@ -161,13 +161,12 @@ public class ServiceProviderController {
 	
 	@GetMapping("/all-service-providers-filtred-by-status")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersFiltredByStatus(
-			@RequestParam(name = "selectedStatusId", defaultValue = "s_fk_status_id", required = false) String selectedStatusId,
 			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
 			@RequestParam(name = "statusId", required = false) int statusId
 	) {
-			return new ResponseEntity<>(serviceProviderService.getAllServiceProvidersFiltredByStatus(selectedStatusId, sortingMethod, pageNumber, pageSize, statusId)
+			return new ResponseEntity<>(serviceProviderService.getAllServiceProvidersFiltredByStatus(sortingMethod, pageNumber, pageSize, statusId)
 					.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList(), HttpStatus.OK);    
 	}
 	

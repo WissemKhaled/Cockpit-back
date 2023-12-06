@@ -172,7 +172,7 @@ public interface ServiceProviderMapper {
 	@Result(property = "spStatus.stId", column = "status_stId")
 	@Result(property = "spStatus.stName", column = "status_stName")
 	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
-	List<ServiceProvider> findAllServiceProvidersFlitredByStatus(@Param("selectedStatusId") String selectedStatusId, @Param("sorting") String sorting,
+	List<ServiceProvider> findAllServiceProvidersFlitredByStatus( @Param("sorting") String sorting,
 			@Param("pageSize") int offset, @Param("offset") int pageSize, @Param("statusId") int statusId);
 
 	

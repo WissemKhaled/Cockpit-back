@@ -132,10 +132,10 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public List<ServiceProvider> getAllServiceProvidersFiltredByStatus(String selectedStatusId, String sortingMethod,
+	public List<ServiceProvider> getAllServiceProvidersFiltredByStatus(String sortingMethod,
 			int pageNumber, int pageSize, int statusId) {
 		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findAllServiceProvidersFlitredByStatus(selectedStatusId, sortingMethod, offset, pageSize, statusId);
+		return serviceProviderMapper.findAllServiceProvidersFlitredByStatus(sortingMethod, offset, pageSize, statusId);
 	}
 
 	@Override
