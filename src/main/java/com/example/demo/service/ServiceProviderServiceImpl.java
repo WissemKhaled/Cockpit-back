@@ -138,4 +138,9 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		return serviceProviderMapper.findAllServiceProvidersFlitredByStatus(selectedStatusId, sortingMethod, offset, pageSize, statusId);
 	}
 
+	@Override
+	public List<ServiceProvider> getServiceProvidersBySubcontractorSName(String sName) {
+		return  serviceProviderMapper.findServiceProvidersBySubcontractorSName(sName.toUpperCase());
+	}
+
 }

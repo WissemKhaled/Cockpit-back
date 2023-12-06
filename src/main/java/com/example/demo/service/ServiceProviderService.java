@@ -14,6 +14,8 @@ public interface ServiceProviderService {
 	ServiceProvider getServiceProviderById(int serviceProviderId);
 
 	List<ServiceProvider> getServiceProvidersBySubcontractorId(int subcontractorId);
+	
+	List<ServiceProvider> getServiceProvidersBySubcontractorSName(String sName);
 
 	boolean checkIfServiceProviderExistById(int serviceProviderId);
 

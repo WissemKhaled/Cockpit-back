@@ -28,6 +28,7 @@ import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.ServiceProviderService;
+import com.example.demo.service.SubcontractorService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -42,6 +43,7 @@ public class ServiceProviderController {
 
 	private final ServiceProviderService serviceProviderService;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
+	private final SubcontractorService subcontractorService;
 
 	@GetMapping("/{spId}")
 	public ResponseEntity<ServiceProviderDto> getServiceProviderById(@PathVariable int spId) {
@@ -106,6 +108,21 @@ public class ServiceProviderController {
 		try {
 			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersBySubcontractorId(subcontractorId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec l'id: %d n'a pas de prestataires", subcontractorId));
+			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/all-service-providers/by-sname/{sName}")
+	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorSName(@PathVariable String sName) {
+		try {
+			int checkIfSubcontractorExistBySName = subcontractorService.checkIfSubcontractorExistBySName(sName);
+			if (checkIfSubcontractorExistBySName == 0 ) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'existe pas", sName));
+			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersBySubcontractorSName(sName).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'a pas de prestataires", sName));
 			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);

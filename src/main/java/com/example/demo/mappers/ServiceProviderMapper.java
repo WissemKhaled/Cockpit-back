@@ -174,4 +174,24 @@ public interface ServiceProviderMapper {
 	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
 	List<ServiceProvider> findAllServiceProvidersFlitredByStatus(@Param("selectedStatusId") String selectedStatusId, @Param("sorting") String sorting,
 			@Param("pageSize") int offset, @Param("offset") int pageSize, @Param("statusId") int statusId);
+
+	
+	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
+			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
+			+ "FROM service_provider sp "
+			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
+			+ "WHERE s.s_name = #{sName} "
+			+ "ORDER BY sp_id")
+	@Result(property = "spId", column = "sp_id")
+	@Result(property = "spFirstName", column = "sp_first_name")
+	@Result(property = "spName", column = "sp_name")
+	@Result(property = "spEmail", column = "sp_email")
+	@Result(property = "spCreationDate", column = "sp_creation_date")
+	@Result(property = "spLastUpdateDate", column = "sp_lastUpdate_date")
+	@Result(property = "spStatus.stId", column = "status_stId")
+	@Result(property = "spStatus.stName", column = "status_stName")
+	@Result(property = "subcontractor.sId", column = "subcontractor_sId")
+	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
+	List<ServiceProvider> findServiceProvidersBySubcontractorSName(String sName);
 }
