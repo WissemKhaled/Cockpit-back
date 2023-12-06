@@ -119,8 +119,8 @@ public class ServiceProviderController {
 	@GetMapping("/all-service-providers/by-sname/{sName}")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorSName(@PathVariable String sName) {
 		try {
-			int checkIfSubcontractorExistBySName = subcontractorService.checkIfSubcontractorExistBySName(sName);
-			if (checkIfSubcontractorExistBySName == 0 ) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'existe pas", sName));
+//			int checkIfSubcontractorExistBySName = subcontractorService.checkIfSubcontractorExistBySName(sName);
+//			if (checkIfSubcontractorExistBySName == 0 ) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'existe pas", sName));
 			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersBySubcontractorSName(sName).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'a pas de prestataires", sName));
 			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
@@ -146,12 +146,11 @@ public class ServiceProviderController {
 	
 	@GetMapping("/all-non-archived-service-providers")
 	public ResponseEntity<List<ServiceProviderDto>> getAllNonArchivedServiceProviders(
-			@RequestParam(name = "selectedStatusId", defaultValue = "s_fk_status_id", required = false) String selectedStatusId,
 			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize
 	) {
-			return new ResponseEntity<>(serviceProviderService.getAllNonArchivedServiceProviders(selectedStatusId, sortingMethod, pageNumber, pageSize)
+			return new ResponseEntity<>(serviceProviderService.getAllNonArchivedServiceProviders(sortingMethod, pageNumber, pageSize)
 					.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList(), HttpStatus.OK);    
 	}
 	

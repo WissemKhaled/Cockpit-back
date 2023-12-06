@@ -33,7 +33,7 @@ public interface ServiceProviderService {
 	
 	int archiveServiceProvider(ServiceProvider serviceProviderToArchive);
 
-	List<ServiceProvider> getAllNonArchivedServiceProviders(String selectedStatusId, String sorting, int page,
+	List<ServiceProvider> getAllNonArchivedServiceProviders(String sorting, int page,
 			int pageSize);
 
 	int countAllNonArchivedServiceProviders();

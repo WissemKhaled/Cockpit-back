@@ -146,7 +146,7 @@ public interface ServiceProviderMapper {
 	@Result(property = "spStatus.stId", column = "status_stId")
 	@Result(property = "spStatus.stName", column = "status_stName")
 	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
-	List<ServiceProvider> findAllNonArchivedServiceProviders(@Param("selectedStatusId") String selectedStatusId, @Param("sorting") String sorting,
+	List<ServiceProvider> findAllNonArchivedServiceProviders(@Param("sorting") String sorting,
 			@Param("pageSize") int offset, @Param("offset") int pageSize);
 
 	@Select("SELECT COUNT(*) FROM service_provider WHERE sp_fk_status_id != 4")
@@ -181,8 +181,10 @@ public interface ServiceProviderMapper {
 			+ "FROM service_provider sp "
 			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
 			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
-			+ "WHERE s.s_name = #{sName} "
-			+ "ORDER BY sp_id")
+			+ "WHERE s.s_name ILIKE #{sName} || '%' "
+			+ "AND st.st_id != 4 "
+			+ "ORDER BY s.s_name, st.st_id, sp.sp_name")
+//	+ "ORDER BY s.s_name, ${sorting}, sp.sp_name LIMIT #{offset} OFFSET #{pageSize}")
 	@Result(property = "spId", column = "sp_id")
 	@Result(property = "spFirstName", column = "sp_first_name")
 	@Result(property = "spName", column = "sp_name")
