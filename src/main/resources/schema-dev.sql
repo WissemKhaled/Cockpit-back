@@ -14,6 +14,19 @@ CREATE TABLE IF NOT EXISTS subcontractor (
     FOREIGN KEY (s_fk_status_id) REFERENCES status(st_id)
 );
 
+CREATE TABLE IF NOT EXISTS service_provider (
+    sp_id SERIAL PRIMARY KEY,
+    sp_first_name VARCHAR(250) NOT NULL,
+    sp_name VARCHAR(250) NOT NULL,
+    sp_email VARCHAR(45) NOT NULL,
+    sp_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    sp_lastUpdate_date TIMESTAMP,
+    sp_fk_subcontractor_id SMALLINT NOT NULL, 
+    FOREIGN KEY (sp_fk_subcontractor_id) REFERENCES subcontractor(s_id),
+    sp_fk_status_id SMALLINT NOT NULL, 
+    FOREIGN KEY (sp_fk_status_id) REFERENCES status(st_id)
+);
+
 CREATE TABLE IF NOT EXISTS u_user (
     u_id SERIAL PRIMARY KEY,
     u_email VARCHAR(45) NOT NULL,
@@ -39,4 +52,28 @@ CREATE TABLE IF NOT EXISTS gst_log (
     log_email VARCHAR(255) NOT NULL,
     log_value VARCHAR(45),
     log_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+CREATE TABLE IF NOT EXISTS gst_message_model (
+    mm_id SERIAL PRIMARY KEY,
+    mm_type VARCHAR(45) NOT NULL,
+    mm_subject VARCHAR(255) NOT NULL,
+    mm_body TEXT NOT NULL,
+    mm_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    mm_last_update TIMESTAMP,
+    mm_fk_status_id SMALLINT NOT NULL,
+    FOREIGN KEY (mm_fk_status_id) REFERENCES status(st_id)
+);
+
+CREATE TABLE IF NOT EXISTS message_send (
+    ms_id SERIAL PRIMARY KEY,
+    ms_sender VARCHAR(55) Not NULL,
+    ms_to VARCHAR(55) DEFAULT NULL,
+    ms_cc VARCHAR(255) DEFAULT NULL,
+    ms_subject VARCHAR(255) NOT NULL,
+    ms_body TEXT NOT NULL,
+    ms_error varchar(250),
+    ms_status SMALLINT,
+    ms_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ms_fk_model_email_id SMALLINT NOT NULL,
+    FOREIGN KEY (ms_fk_model_email_id) REFERENCES gst_message_model(mm_id)
 );
