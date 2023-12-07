@@ -1,19 +1,18 @@
 package com.example.demo.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.example.demo.dto.ServiceProviderDto;
-import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.mappers.ServiceProviderMapper;
+import com.example.demo.mappers.SubcontractorMapper;
 
 import lombok.AllArgsConstructor;
 
@@ -22,6 +21,7 @@ import lombok.AllArgsConstructor;
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 	
 	private ServiceProviderMapper serviceProviderMapper;
+	private SubcontractorMapper subcontractorMapper;
 
 	@Override
 	public int saveServiceProvider(ServiceProvider serviceProviderToSave) {
@@ -139,8 +139,26 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public List<ServiceProvider> getServiceProvidersBySubcontractorSName(String sName) {
-		return  serviceProviderMapper.findServiceProvidersBySubcontractorSName(sName.toUpperCase());
+	public List<ServiceProvider> getServiceProvidersBySubcontractorSName(String sName, String sorting, int pageNumber,int pageSize) {
+		int offset = (pageNumber - 1) * pageSize;
+		return  serviceProviderMapper.findServiceProvidersBySubcontractorSName(sName.toUpperCase(), sorting, offset, pageSize);
+	}
+
+	@Override
+	public Integer getNumberOfAllServiceProvidersBySubcontractorSName(String sName) {
+		return  serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorSName(sName.toUpperCase());
+	}
+
+	@Override
+	public Integer getNumberOfAllServiceProvidersBySubcontractorSNameAndFiltredByStatus(String sName, int statusId) {
+		return  serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorSNameAndFiltredByStatus(sName.toUpperCase(),statusId);
+	}
+
+	@Override
+	public List<ServiceProvider> getServiceProvidersBySubcontractorSNameAndStatus(String sName,
+			int pageNumber, int pageSize, int statusId) {
+		int offset = (pageNumber - 1) * pageSize;
+		return  serviceProviderMapper.findAllServiceProvidersBySubcontractorSNameAndStatus(sName.toUpperCase(), offset, pageSize, statusId);
 	}
 
 }

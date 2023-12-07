@@ -2,13 +2,8 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,19 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ServiceProviderDto;
-import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.AlreadyArchivedEntity;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.ServiceProviderService;
-import com.example.demo.service.SubcontractorService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -43,7 +33,6 @@ public class ServiceProviderController {
 
 	private final ServiceProviderService serviceProviderService;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
-	private final SubcontractorService subcontractorService;
 
 	@GetMapping("/{spId}")
 	public ResponseEntity<ServiceProviderDto> getServiceProviderById(@PathVariable int spId) {
@@ -116,20 +105,6 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("/all-service-providers/by-sname/{sName}")
-	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorSName(@PathVariable String sName) {
-		try {
-//			int checkIfSubcontractorExistBySName = subcontractorService.checkIfSubcontractorExistBySName(sName);
-//			if (checkIfSubcontractorExistBySName == 0 ) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'existe pas", sName));
-			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersBySubcontractorSName(sName).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'a pas de prestataires", sName));
-			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
-		} catch (EntityNotFoundException e) {
-			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
 	
 	@GetMapping("/all-service-providers")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProviders() {
@@ -181,6 +156,67 @@ public class ServiceProviderController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/all-service-providers/by-sname/{sName}")
+	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorSName(
+			@PathVariable String sName,
+			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
+			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize) {
+		try {
+			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersBySubcontractorSName(sName, sortingMethod, pageNumber, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'a pas de prestataires", sName));
+			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/count-all-service-providers/by-sname/{sName}")
+	public ResponseEntity<Integer> getNumberOfAllServiceProvidersBySubcontractorSName(@PathVariable String sName) {
+		try {
+			Integer numberOfAllServiceProvidersBySubcontractorSName= serviceProviderService.getNumberOfAllServiceProvidersBySubcontractorSName(sName);
+			if (numberOfAllServiceProvidersBySubcontractorSName == 0) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'a pas de prestataires", sName));
+			return new ResponseEntity<>(numberOfAllServiceProvidersBySubcontractorSName, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/all-service-providers/by-sname-and-by-status/{sName}")
+	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersAssociatedToSubcontractorByItsNameAndFiltredByStatus(
+			@PathVariable String sName,
+			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
+			@RequestParam(name = "statusId", required = false) int statusId) {
+		try {
+			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersBySubcontractorSNameAndStatus(sName, pageNumber, pageSize, statusId)
+					.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'a pas de prestataires", sName));
+			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/count-all-service-providers/by-sname-and-by-status/{sName}")
+	public ResponseEntity<Integer> getTheNumberOfAllServiceProvidersBySubcontractorNameAndFiltredByStatus(@PathVariable String sName, @RequestParam int statusId) {
+		try {
+			Integer numberOfAllServiceProvidersBySubcontractorSName= serviceProviderService.getNumberOfAllServiceProvidersBySubcontractorSNameAndFiltredByStatus(sName,statusId);
+			if (numberOfAllServiceProvidersBySubcontractorSName == 0) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'a pas de prestataires", sName));
+			return new ResponseEntity<>(numberOfAllServiceProvidersBySubcontractorSName, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }
