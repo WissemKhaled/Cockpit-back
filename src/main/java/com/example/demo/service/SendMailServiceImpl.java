@@ -2,9 +2,12 @@ package com.example.demo.service;
 
 import java.io.File;
 
+import org.apache.tomcat.util.buf.Utf8Encoder;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
@@ -28,37 +31,36 @@ public class SendMailServiceImpl implements SendMailService {
 
 	@Override
 	public SendMail saveAndSendMail(SendMail mail, File file) throws  MessagingException {
-
-	
-		System.err.println(file);
-
-		MimeMessagePreparator messagePreparator = new MimeMessagePreparator() {
-			
-			@Override
-			public void prepare(MimeMessage mimeMessage) throws Exception {
-				
-				mimeMessage.setFrom(new InternetAddress("jesuisuneAdressMail@test.fr"));
-				mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(mail.getMsTo()));
-				mimeMessage.setSubject(mail.getMsSubject());
-				mimeMessage.setText(mail.getMsBody());
-				mimeMessage.setHeader("header", mail.getMsSender());
-				
-			}
-		};
+		
 		
 		try {
 			
-			this.mailSender.send(messagePreparator);
-			mailMapper.saveMailAndSend(mail);
+			MimeMessage message = getMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message, true);
+			
+			helper.setPriority(1);
+			helper.setFrom("jesuisuneAdressMail@test.fr");
+			helper.setTo(mail.getMsTo());
+			helper.setSubject(mail.getMsSubject());
+			helper.setText(mail.getMsBody());
+			
+			FileSystemResource attachment = new FileSystemResource(file);
+			helper.addAttachment(attachment.getFilename(), attachment);
+			
+			mailSender.send(message);
+			
 			
 		} catch (MailException e) {
-			
+
 			System.err.println(e.getMessage());
-			
 		}
 
-
 		return mail;
+	}
+	
+	
+	private MimeMessage getMimeMessage() {
+		return mailSender.createMimeMessage();
 	}
 
 }
