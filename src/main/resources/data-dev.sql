@@ -32,9 +32,6 @@ VALUES ('ENEDIS', 'ENDIS@email.fr', '2023-01-01 12:00:00', NULL, 3);
 
 -- Subcontractor 5
 INSERT INTO subcontractor (s_name, s_email, s_fk_status_id)
-<<<<<<< HEAD
-VALUES ('LYON', 'LYON@email.fr', 2);
-=======
 VALUES ('LYON', 'LYON@email.fr', 2);
 
 -- Prestataire 01
@@ -171,4 +168,3 @@ INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date
 
 -- Prestataire 49
 INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Charlotte', 'GIRARD' ,'CharlotteGirard-5@email.com', '2023-01-01 12:00:00', NULL, 5 , 3);
->>>>>>> 4c46edfe779a471740bc921b03184257680ba9af
