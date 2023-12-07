@@ -40,10 +40,9 @@ public class SendMailController {
 	private final SendMailService mailService;
 	
 	@PostMapping("/saveAndSendMail")
-	public ResponseEntity<?> saveAndSendMail(@Valid @RequestBody SendMail sendMail ) throws MessagingException{
-		File file = new File("popo");		
+	public ResponseEntity<?> saveAndSendMail(@Valid @RequestBody SendMail sendMail, @RequestParam("files") List<MultipartFile> files ) throws MessagingException{	
 		try {
-			return new ResponseEntity<>(mailService.saveAndSendMail(sendMail, file), HttpStatus.OK);
+			return new ResponseEntity<>(mailService.saveAndSendMail(sendMail, files), HttpStatus.OK);
 			
 		} catch (MessageModelNotFoundException e) {
 			
@@ -51,28 +50,5 @@ public class SendMailController {
 		}
 	}
 
-
-
-	
-    @PostMapping("/uploadFile")
-    public ResponseEntity<List<String>> handleFileUpload(@RequestParam("files") List<MultipartFile> files) {
-    	System.err.println("errre");
-    	SendMail sendMail =  SendMail.builder().msTo("test@tes.fr").msBody("lololo").msSubject("llllll").build();  
-    	
-        List<String> fileNames = files.stream()
-                .map(file -> {
-                	File file1 = new File(file.getOriginalFilename());
-                    try {
-                    	System.err.println(file1.getPath());
-                        return file1.getPath();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return "Error handling file: " + file.getOriginalFilename();
-                    }
-                })
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(fileNames);
-    }
     
 }

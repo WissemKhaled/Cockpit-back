@@ -1,19 +1,26 @@
 package com.example.demo.service;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.tomcat.util.buf.Utf8Encoder;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entity.SendMail;
 import com.example.demo.mappers.SendMailMapper;
 
+import io.jsonwebtoken.io.IOException;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.AddressException;
@@ -30,9 +37,9 @@ public class SendMailServiceImpl implements SendMailService {
 	private final JavaMailSender mailSender;
 
 	@Override
-	public SendMail saveAndSendMail(SendMail mail, File file) throws  MessagingException {
+	public SendMail saveAndSendMail(SendMail mail, List<MultipartFile> files) throws  MessagingException {
 		
-		
+
 		try {
 			
 			MimeMessage message = getMimeMessage();
@@ -44,8 +51,13 @@ public class SendMailServiceImpl implements SendMailService {
 			helper.setSubject(mail.getMsSubject());
 			helper.setText(mail.getMsBody());
 			
-			FileSystemResource attachment = new FileSystemResource(file);
-			helper.addAttachment(attachment.getFilename(), attachment);
+			for (MultipartFile file : files) {
+				
+				
+				helper.addAttachment(file.getName(), file);
+				System.err.println(file);
+				
+			}
 			
 			mailSender.send(message);
 			
