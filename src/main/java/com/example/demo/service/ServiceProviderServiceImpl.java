@@ -3,12 +3,10 @@ package com.example.demo.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.entity.ServiceProvider;
-import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.mappers.ServiceProviderMapper;
@@ -21,7 +19,6 @@ import lombok.AllArgsConstructor;
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 	
 	private ServiceProviderMapper serviceProviderMapper;
-	private SubcontractorMapper subcontractorMapper;
 
 	@Override
 	public int saveServiceProvider(ServiceProvider serviceProviderToSave) {
