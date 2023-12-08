@@ -61,8 +61,6 @@ public class SendMailDTO {
 	@JsonProperty("msCreationsDate")
 	private LocalDateTime msCreationsDate;
 	
-	@Valid
-	@JsonProperty("messageModel")
-	private MessageModel messageModel;
+	
 
 }

@@ -37,13 +37,21 @@ public class SendMailServiceImpl implements SendMailService {
 	private final JavaMailSender mailSender;
 
 	@Override
-	public SendMail saveAndSendMail(SendMail mail, List<MultipartFile> files) throws  MessagingException {
+	public SendMail saveAndSendMail(SendMail mail, File files) throws  MessagingException {
 		
 
+		MimeMessage message = getMimeMessage();
 		try {
 			
-			MimeMessage message = getMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
+			
+			
+			
+				FileSystemResource attachement = new FileSystemResource(File.pathSeparator);
+				helper.addAttachment(attachement.getFilename(), attachement);
+				System.err.println(attachement);
+				
+			
 			
 			helper.setPriority(1);
 			helper.setFrom("jesuisuneAdressMail@test.fr");
@@ -51,13 +59,6 @@ public class SendMailServiceImpl implements SendMailService {
 			helper.setSubject(mail.getMsSubject());
 			helper.setText(mail.getMsBody());
 			
-			for (MultipartFile file : files) {
-				
-				
-				helper.addAttachment(file.getName(), file);
-				System.err.println(file);
-				
-			}
 			
 			mailSender.send(message);
 			

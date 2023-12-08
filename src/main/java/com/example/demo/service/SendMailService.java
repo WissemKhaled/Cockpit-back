@@ -12,6 +12,6 @@ import jakarta.mail.MessagingException;
 
 public interface SendMailService {
 	
-	SendMail saveAndSendMail (SendMail mail, List<MultipartFile> files)  throws  MessagingException;
+	SendMail saveAndSendMail (SendMail mail, File file)  throws  MessagingException;
 
 }
