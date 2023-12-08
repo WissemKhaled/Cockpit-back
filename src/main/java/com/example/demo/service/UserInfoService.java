@@ -64,7 +64,7 @@ public class UserInfoService implements UserDetailsService {
 				throw new IllegalArgumentException("Email invalide");
 			}
 		} catch (UsernameNotFoundException e) {
-			log.severe(String.format("Utilisateur non trouvé : {}", e.getMessage(), e));
+			log.severe(String.format("Utilisateur non trouvé : %o", e.getMessage(), e));
 			e.printStackTrace();
 			return null;
 		}
@@ -106,5 +106,17 @@ public class UserInfoService implements UserDetailsService {
 	        log.severe("Erreur d'ajout d'utilisateur: " + ex.getMessage());
 	        throw new GeneralException("Erreur d'ajout d'utilisateur. Veuillez réessayer plus tard");
 	    }
+	}
+	
+	public void resetPassword(String newPassword, String email) throws GeneralException {
+		
+		int isPasswordUpdated = userMapper.updatePassword(newPassword, email);
+		
+		if (isPasswordUpdated == 0) {
+			 log.severe("Échec de mise à jour du mot de passe dans la base de données");
+	         throw new GeneralException("Échec de mise à jour du mot de passe dans la base de données");
+		} else {
+			log.info("mot de passe mis à jour pour l'utilisateur : " + email);
+		}
 	}
 }
