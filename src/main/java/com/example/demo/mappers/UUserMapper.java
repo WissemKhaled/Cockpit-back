@@ -44,6 +44,6 @@ public interface UUserMapper {
 	@Options(useGeneratedKeys = true, keyProperty = "uId", keyColumn = "u_id")
 	void insert(UUser userInfo);
 	
-	@Update("UPDATE u_user SET u_password = #{newPassword} WHERE u_email = #{email}")
-	int updatePassword(@Param("newPassword") String newPassword, @Param("email") String email);
+	@Update("UPDATE u_user SET u_password = #{user.uPassword}, u_last_update = #{user.uLastUpdate} WHERE u_email = #{user.uEmail}")
+	int updatePassword(@Param("user") UUser user);
 }

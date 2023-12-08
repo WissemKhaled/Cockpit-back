@@ -109,14 +109,25 @@ public class UserInfoService implements UserDetailsService {
 	}
 	
 	public void resetPassword(String newPassword, String email) throws GeneralException {
-		
-		int isPasswordUpdated = userMapper.updatePassword(newPassword, email);
-		
-		if (isPasswordUpdated == 0) {
-			 log.severe("Échec de mise à jour du mot de passe dans la base de données");
-	         throw new GeneralException("Échec de mise à jour du mot de passe dans la base de données");
-		} else {
-			log.info("mot de passe mis à jour pour l'utilisateur : " + email);
-		}
+	    Optional<UUser> userOptional = userMapper.findByEmail(email);
+	    log.info("newPassword : " + newPassword);
+	    if (userOptional.isPresent()) {
+	        UUser user = userOptional.get();
+	        user.setUPassword(newPassword);
+	        user.setULastUpdate(LocalDateTime.now());
+
+	        int isPasswordUpdated = userMapper.updatePassword(user);
+
+	        if (isPasswordUpdated == 0) {
+	            log.severe("Échec de mise à jour du mot de passe dans la base de données");
+	            throw new GeneralException("Échec de mise à jour du mot de passe dans la base de données");
+	        } else {
+	            log.info("mot de passe mis à jour pour l'utilisateur : " + email);
+	        }
+	    } else {
+	        log.warning("Utilisateur non trouvé avec l'email : " + email);
+	        throw new GeneralException("Utilisateur non trouvé avec l'email : " + email);
+	    }
 	}
+
 }
