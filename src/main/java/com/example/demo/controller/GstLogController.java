@@ -54,7 +54,7 @@ public class GstLogController {
 	        GstLogResponseDTO responseDTO = gstLogServiceImpl.saveGstLog(createGstLogDTO);
 
 	        if ("success".equals(responseDTO.getStatus())) {
-	            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+	            return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
 	        } else {
 	            return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
 	        }
