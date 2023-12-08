@@ -115,8 +115,6 @@ public class GstLogController {
 	    try {
 	        String logValue = (String) requestBody.get("logValue");
 	        String newPassword = (String) requestBody.get("newPassword");
-	        
-	        log.info("newPassword : " + newPassword);
 
 	        gstLogServiceImpl.manageResetUserPassword(logValue, newPassword);
 

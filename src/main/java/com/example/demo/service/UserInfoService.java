@@ -110,7 +110,6 @@ public class UserInfoService implements UserDetailsService {
 	
 	public void resetPassword(String newPassword, String email) throws GeneralException {
 	    Optional<UUser> userOptional = userMapper.findByEmail(email);
-	    log.info("newPassword : " + newPassword);
 	    if (userOptional.isPresent()) {
 	        UUser user = userOptional.get();
 	        user.setUPassword(newPassword);
