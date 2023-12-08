@@ -15,6 +15,10 @@ public interface ServiceProviderService {
 
 	List<ServiceProvider> getServiceProvidersBySubcontractorId(int subcontractorId);
 
+	List<ServiceProvider> getServiceProvidersBySubcontractorSName(String sName, String sorting, int pageNumber,int pageSize);
+	
+	Integer getNumberOfAllServiceProvidersBySubcontractorSName(String sName);
+
 	boolean checkIfServiceProviderExistById(int serviceProviderId);
 
 	void handleServiceProviderUpdating(ServiceProviderDto serviceProviderDto);
@@ -23,11 +27,26 @@ public interface ServiceProviderService {
 
 	int checkIfSubcontractorExistBySpEmail(String serviceProviderSpEmail);
 
-	String FirstNameAndEmailFormatter(String name);
+	String firstNameAndEmailFormatter(String name);
 
-	String NameFormatter(String name);
+	String nameFormatter(String name);
 
 	List<ServiceProvider> getAllServiceProviders();
-	
+
 	int archiveServiceProvider(ServiceProvider serviceProviderToArchive);
+
+	List<ServiceProvider> getAllNonArchivedServiceProviders(String sorting, int page, int pageSize);
+
+	int countAllNonArchivedServiceProviders();
+
+	int countAllServiceProvidersFiltredByStatus(int statusId);
+
+	List<ServiceProvider> getAllServiceProvidersFiltredByStatus(String sortingMethod, int pageNumber, int pageSize,
+			int statusId);
+
+	Integer getNumberOfAllServiceProvidersBySubcontractorSNameAndFiltredByStatus(String sName, int statusId);
+
+	List<ServiceProvider> getServiceProvidersBySubcontractorSNameAndStatus(String sName,
+			int pageNumber, int pageSize, int statusId);
+
 }
