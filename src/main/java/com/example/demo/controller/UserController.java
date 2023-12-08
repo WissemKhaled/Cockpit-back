@@ -14,7 +14,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -107,12 +106,12 @@ public class UserController {
 	/**
 	 * Méthode de création d'un user avec validation du pattern de mot de passe et email
 	*/
-	@PostMapping("/addNewUser") 
+	@PostMapping("/addNewUser")
 	public ResponseEntity<String> addNewUser(@Valid @RequestBody CreateUserDTO userInfo) {
 	    try {
 	        String result = service.addUser(userInfo);
 	        return new ResponseEntity<>(result, HttpStatus.CREATED);
-	    } catch (Exception ex) {
+	    } catch (GeneralException ex) {
 	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 	    }
 	}
@@ -126,7 +125,8 @@ public class UserController {
 	    	// décoder le mdp venant du front et encodé en base64
 	    	byte[] decodedBytes = Base64.getDecoder().decode(authRequest.getPassword());
 	    	String decodedPwd = new String(decodedBytes);
-	    	Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), decodedPwd));
+	    	System.out.println(decodedPwd);
+	    	Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 
 		    // on vérifie que l'utilisateur a un status actif. Si c'est le cas, on génère un token
 		    UUserDTO user = service.findUserByEmail(authRequest.getEmail());
@@ -145,7 +145,7 @@ public class UserController {
 		        return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
 		    } else {
 		    	log.severe("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
-		        throw new UsernameNotFoundException("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
+		        throw new UsernameNotFoundException("Requête utilisateur invalide ou utilisateur inactif '" + authRequest.getEmail() + "' inactif !");
 		    }
 
 	    }  catch (AuthenticationException e) {
@@ -196,7 +196,7 @@ public class UserController {
      * Méthode qui intercèpte les exceptions du type GeneralException
     */
  	@ExceptionHandler(GeneralException.class)
- 	public ResponseEntity<String> handleGeneralException(GeneralException ex) {
+	public ResponseEntity<String> handleGeneralException(GeneralException ex) {
  		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
  	}
     

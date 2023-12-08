@@ -71,12 +71,12 @@ public class ServiceProviderMapperTest {
 
 		assertEquals(0, serviceProviders.size());
 	}
-
+	
 	@Test
 	void archiveTest_ArchivingServiceProvider_ShouldReturnOne() {
 		Subcontractor existingSubcontractor = new Subcontractor();
 		existingSubcontractor.setSId(1);
-
+ 
 		ServiceProvider existingServiceProvider = new ServiceProvider();
 		existingServiceProvider.setSpId(1);
 		existingServiceProvider.setSpName("FIRSTSPNAME");
@@ -85,17 +85,17 @@ public class ServiceProviderMapperTest {
 		existingServiceProvider.setSpCreationDate(LocalDateTime.now());
 		existingServiceProvider.setSubcontractor(existingSubcontractor);
 		existingServiceProvider.setSpStatus(new Status(1));
-
+ 
 		int isArchived = serviceProviderMapper.archiveServiceProvider(existingServiceProvider);
-
+ 
 		assertEquals(1, isArchived);
 	}
-
+ 
 	@Test
 	void archiveTest_ArchivingServiceProviderFailed_ShouldReturnZero() {
 		Subcontractor existingSubcontractor = new Subcontractor();
 		existingSubcontractor.setSId(1);
-
+ 
 		ServiceProvider nonExistingServiceProvider = new ServiceProvider();
 		nonExistingServiceProvider.setSpId(Integer.MAX_VALUE);
 		nonExistingServiceProvider.setSpName("FIRSTSPNAME");
@@ -104,9 +104,9 @@ public class ServiceProviderMapperTest {
 		nonExistingServiceProvider.setSpCreationDate(LocalDateTime.now());
 		nonExistingServiceProvider.setSubcontractor(existingSubcontractor);
 		nonExistingServiceProvider.setSpStatus(new Status(1));
-
+ 
 		int isArchived = serviceProviderMapper.archiveServiceProvider(nonExistingServiceProvider);
-
+ 
 		assertEquals(0, isArchived);
 	}
 

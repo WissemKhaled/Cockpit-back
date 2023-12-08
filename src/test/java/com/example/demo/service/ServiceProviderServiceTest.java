@@ -65,7 +65,7 @@ public class ServiceProviderServiceTest {
 
 		assertEquals(0, savedId);
 	}
-
+	
 	@Test
 	public void givenServiceProviderEntity_whenServicePeroviderIsArchived_thenReturnOne() {
 		ServiceProvider serviceProviderToArchive = new ServiceProvider();
@@ -74,14 +74,14 @@ public class ServiceProviderServiceTest {
 		serviceProviderToArchive.setSpName("SPNAME");
 		serviceProviderToArchive.setSpEmail("Sp@email.com");
 		serviceProviderToArchive.setSpStatus(new Status(1));
-
+ 
 		given(serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive)).willReturn(1);
-
+ 
 		int isArchived = serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
-
+ 
 		assertEquals(1, isArchived);
 	}
-
+ 
 	@Test
 	public void givenServiceProviderEntity_whenServicePeroviderIsNotArchived_thenReturnZero() {
 		ServiceProvider serviceProviderToArchive = new ServiceProvider();
@@ -90,14 +90,14 @@ public class ServiceProviderServiceTest {
 		serviceProviderToArchive.setSpName("SPNAME");
 		serviceProviderToArchive.setSpEmail("Sp@email.com");
 		serviceProviderToArchive.setSpStatus(new Status(1));
-
+ 
 		given(serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive)).willReturn(0);
-
+ 
 		int isArchived = serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
-
+ 
 		assertEquals(0, isArchived);
 	}
-
+	
 	@Test
 	public void givenServiceProviderEntity_whenServicePeroviderIsUpdated_thenReturnOne() {
 		ServiceProvider serviceProviderToUpdate = new ServiceProvider();

@@ -34,11 +34,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public int archiveServiceProvider(ServiceProvider serviceProviderIdToArchive) {
-		return serviceProviderMapper.archiveServiceProvider(serviceProviderIdToArchive);
-	}
-
-	@Override
 	public int updateServiceProvider(ServiceProvider serviceProviderToUpdate) {
 		serviceProviderToUpdate.setSpLastUpdateDate(LocalDateTime.now());
 		return serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate);
@@ -110,6 +105,11 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 			throw new RuntimeException("le nom est necessaire");
 		}
 		return name.toUpperCase();
+	}
+
+	@Override
+	public int archiveServiceProvider(ServiceProvider serviceProviderIdToArchive) {
+		return serviceProviderMapper.archiveServiceProvider(serviceProviderIdToArchive);
 	}
 
 }

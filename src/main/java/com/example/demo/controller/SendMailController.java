@@ -27,7 +27,8 @@ import lombok.AllArgsConstructor;
 @CrossOrigin(origins = "http://localhost:4200")
 public class SendMailController {
 
-	private final SendMailService mailService;
+	//les lignes commentées sont en cours de developpement 
+	//private final SendMailService mailService;
 
 	@PostMapping("/saveAndSendMail")
 	public ResponseEntity<?> saveAndSendMail(@RequestParam("files") List<MultipartFile> file,
