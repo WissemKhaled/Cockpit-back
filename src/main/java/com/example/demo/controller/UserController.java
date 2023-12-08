@@ -125,8 +125,7 @@ public class UserController {
 	    	// décoder le mdp venant du front et encodé en base64
 	    	byte[] decodedBytes = Base64.getDecoder().decode(authRequest.getPassword());
 	    	String decodedPwd = new String(decodedBytes);
-	    	System.out.println(decodedPwd);
-	    	Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
+	    	Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), decodedPwd));
 
 		    // on vérifie que l'utilisateur a un status actif. Si c'est le cas, on génère un token
 		    UUserDTO user = service.findUserByEmail(authRequest.getEmail());
