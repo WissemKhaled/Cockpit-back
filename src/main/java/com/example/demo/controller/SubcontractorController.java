@@ -24,7 +24,6 @@ import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.AlreadyArchivedEntity;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.SubcontractorService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,9 +42,6 @@ public class SubcontractorController {
 	@Autowired
 	@Qualifier("userDetailsService")
 	private UserDetailsService userDetailsService;
-
-	@Autowired
-	private JwtServiceImplementation jwtService;
 
 	// ce code permet de renvoyer la liste des sous-traitants la methode
 	// getAllSubcontractor prend en paramettre pour le tri le nom de la colonne et
