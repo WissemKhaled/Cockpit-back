@@ -28,7 +28,7 @@ import lombok.AllArgsConstructor;
 public class SendMailController {
 
 	//les lignes commentées sont en cours de developpement 
-	//private final SendMailService mailService;
+	private final SendMailService mailService;
 
 	@PostMapping("/saveAndSendMail")
 	public ResponseEntity<?> saveAndSendMail(@RequestParam("files") List<MultipartFile> file,
@@ -46,8 +46,8 @@ public class SendMailController {
 	            System.out.println("Sujet : " + subject);
 	            System.out.println("Corps du message : " + body);
 			
-			return ResponseEntity.ok("Fichier envoyé avec succès.");
-			//return new ResponseEntity<>(mailService.saveAndSendMail(sendMail, file), HttpStatus.OK);
+			
+			return new ResponseEntity<>(mailService.saveAndSendMail(to, subject, body, sender, file), HttpStatus.OK);
 
 		} catch (MessageModelNotFoundException e) {
 

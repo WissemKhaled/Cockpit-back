@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.tomcat.util.buf.Utf8Encoder;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -37,38 +39,39 @@ public class SendMailServiceImpl implements SendMailService {
 	private final JavaMailSender mailSender;
 
 	@Override
-	public SendMail saveAndSendMail(SendMail mail, File files) throws  MessagingException {
+	public SendMail saveAndSendMail(String to, String subject, String body, String sender,  List<MultipartFile> files) throws  MessagingException {
 		
+		System.err.println("err");
 
 		MimeMessage message = getMimeMessage();
 		try {
 			
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
-			
-			
-			
-				FileSystemResource attachement = new FileSystemResource(File.pathSeparator);
-				helper.addAttachment(attachement.getFilename(), attachement);
-				System.err.println(attachement);
-				
-			
+
 			
 			helper.setPriority(1);
 			helper.setFrom("jesuisuneAdressMail@test.fr");
-			helper.setTo(mail.getMsTo());
-			helper.setSubject(mail.getMsSubject());
-			helper.setText(mail.getMsBody());
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(body);
 			
+			for (MultipartFile file : files) {
+				
+				Resource resource = new ByteArrayResource(file.getBytes());
+					
+				helper.addAttachment(file.getOriginalFilename(), resource);
+							
+			}
 			
 			mailSender.send(message);
 			
 			
-		} catch (MailException e) {
+		} catch (MailException | java.io.IOException e) {
 
 			System.err.println(e.getMessage());
 		}
 
-		return mail;
+		return null;
 	}
 	
 	
