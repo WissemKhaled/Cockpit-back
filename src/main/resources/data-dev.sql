@@ -14,6 +14,10 @@ VALUES (3, 'Validé', NULL);
 INSERT INTO status (st_id, st_name, st_description)
 VALUES (4, 'Archivé', NULL);
 
+--model de message 
+INSERT INTO gst_message_model (mm_type, mm_subject, mm_body, mm_fk_status_id)
+VALUES ('En_cour', 'Recueil Info Admin | Référencement fournisseur sous-traitant', 'je suis le body du mail',1);
+
 -- Subcontractor 1
 INSERT INTO subcontractor (s_name, s_email, s_fk_status_id)
 VALUES ('Orange', 'Orange@email.fr', 1);

@@ -52,6 +52,7 @@ public class SendMailDTO {
 	
 	@JsonProperty("msError")
 	private String msError;
+	
 	@Max(value = 3, message = "L'id doit être inférieure ou égale à 3")
 	@Min(value = 1, message = "L'id doit être supérieure ou égale à 1")
 	@JsonProperty("msStatus")
@@ -60,8 +61,6 @@ public class SendMailDTO {
 	@JsonProperty("msCreationsDate")
 	private LocalDateTime msCreationsDate;
 	
-	@Valid
-	@JsonProperty("messageModel")
-	private MessageModel messageModel;
+	
 
 }
