@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,8 +181,12 @@ public class GstLogServiceImpl implements GstLogService{
 		        if (gstLog != null) {
 		        	UUserDTO user = userInfoService.findUserByEmail(gstLog.getLogEmail());
 		        	
+		        	// décoder le mdp venant du front et encodé en base64
+			    	byte[] decodedBytes = Base64.getDecoder().decode(newPassword);
+			    	String decodedPwd = new String(decodedBytes);
+		        	
 		        	if (user != null) {
-		        		userInfoService.resetPassword(encoder.encode(newPassword), user.getUEmail());
+		        		userInfoService.resetPassword(encoder.encode(decodedPwd), user.getUEmail());
 		        	} else {
 			            throw new UsernameNotFoundException("Utilisateur " + gstLog.getLogEmail() + " non trouvé.");
 			        }
