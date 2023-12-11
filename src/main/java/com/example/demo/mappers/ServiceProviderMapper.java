@@ -3,14 +3,15 @@ package com.example.demo.mappers;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.Many;
 
+import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Subcontractor;
 
@@ -65,7 +66,6 @@ public interface ServiceProviderMapper {
 	@Result(property = "subcontractor.sEmail", column = "subcontractor_sEmail")
 	ServiceProvider findServiceProviderWithSubcontractorBySpId(int sId);
 	
-
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, sp.sp_fk_subcontractor_id, sp.sp_fk_status_id "
 			+ "FROM service_provider sp "
 			+ "WHERE sp.sp_email = #{spEmail}")
@@ -112,7 +112,6 @@ public interface ServiceProviderMapper {
     @Result(property = "serviceProviders", column = "s_id", javaType = List.class, many = @Many(select = "findServiceProvidersBySubcontractorId"))
     Subcontractor findSubcontractorWithServiceProvidersBySubcontractorId(int sId);
 
-
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
 			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
 			+ "FROM service_provider sp "
@@ -130,5 +129,105 @@ public interface ServiceProviderMapper {
 	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
 	List<ServiceProvider> findAllServiceProviders();
 	
+	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, "
+			+ "st.st_id as status_stId, st.st_name as status_stName, "
+			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
+			+ "FROM service_provider sp "
+			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
+			+ "WHERE st.st_id != 4 "
+			+ "ORDER BY subcontractor_sName, st.st_id, sp.sp_name ${sorting} LIMIT #{offset} OFFSET #{pageSize}")
+	@Result(property = "spId", column = "sp_id")
+	@Result(property = "spFirstName", column = "sp_first_name")
+	@Result(property = "spName", column = "sp_name")
+	@Result(property = "spEmail", column = "sp_email")
+	@Result(property = "spCreationDate", column = "sp_creation_date")
+	@Result(property = "spLastUpdateDate", column = "sp_lastUpdate_date")
+	@Result(property = "spStatus.stId", column = "status_stId")
+	@Result(property = "spStatus.stName", column = "status_stName")
+	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
+	List<ServiceProvider> findAllNonArchivedServiceProviders(@Param("sorting") String sorting,
+			@Param("pageSize") int offset, @Param("offset") int pageSize);
 
+	@Select("SELECT COUNT(*) FROM service_provider WHERE sp_fk_status_id != 4")
+	int countAllNonArchivedServiceProviders();
+
+	@Select("SELECT COUNT(*) FROM service_provider WHERE sp_fk_status_id = ${statusId}")
+	int countAllServiceProvidersFiltredByStatus(int statusId);
+
+	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, "
+			+ "st.st_id as status_stId, st.st_name as status_stName, "
+			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
+			+ "FROM service_provider sp "
+			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
+			+ "WHERE st.st_id = ${statusId} "
+			+ "ORDER BY subcontractor_sName, sp.sp_name ${sorting} LIMIT #{offset} OFFSET #{pageSize}")
+	@Result(property = "spId", column = "sp_id")
+	@Result(property = "spFirstName", column = "sp_first_name")
+	@Result(property = "spName", column = "sp_name")
+	@Result(property = "spEmail", column = "sp_email")
+	@Result(property = "spCreationDate", column = "sp_creation_date")
+	@Result(property = "spLastUpdateDate", column = "sp_lastUpdate_date")
+	@Result(property = "spStatus.stId", column = "status_stId")
+	@Result(property = "spStatus.stName", column = "status_stName")
+	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
+	List<ServiceProvider> findAllServiceProvidersFlitredByStatus(@Param("sorting") String sorting,
+			@Param("pageSize") int offset, @Param("offset") int pageSize, @Param("statusId") int statusId);
+
+	
+	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
+			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
+			+ "FROM service_provider sp "
+			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
+			+ "WHERE s.s_name ILIKE #{sName} || '%' "
+			+ "AND st.st_id != 4 "
+			+ "ORDER BY  subcontractor_sName, st.st_id, sp.sp_email LIMIT #{offset} OFFSET #{pageSize}")
+	@Result(property = "spId", column = "sp_id")
+	@Result(property = "spFirstName", column = "sp_first_name")
+	@Result(property = "spName", column = "sp_name")
+	@Result(property = "spEmail", column = "sp_email")
+	@Result(property = "spCreationDate", column = "sp_creation_date")
+	@Result(property = "spLastUpdateDate", column = "sp_lastUpdate_date")
+	@Result(property = "spStatus.stId", column = "status_stId")
+	@Result(property = "spStatus.stName", column = "status_stName")
+	@Result(property = "subcontractor.sId", column = "subcontractor_sId")
+	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
+	List<ServiceProvider> findServiceProvidersBySubcontractorSName(String sName,@Param("sorting") String sorting,
+			@Param("pageSize") int offset, @Param("offset") int pageSize);
+	
+	@Select("SELECT COUNT(*) " 
+			+ "FROM service_provider sp "
+			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "WHERE s.s_name ILIKE #{sName} || '%' "
+			+ "AND sp.sp_fk_status_id != 4 ")
+	Integer findNumberOfAllServiceProvidersBySubcontractorSName(String sName);
+
+	@Select("SELECT COUNT(*) " 
+			+ "FROM service_provider sp "
+			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "WHERE s.s_name ILIKE #{sName} || '%' "
+			+ "AND sp.sp_fk_status_id = ${statusId} ")
+	Integer findNumberOfAllServiceProvidersBySubcontractorSNameAndFiltredByStatus(String sName, int statusId);
+
+	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
+			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
+			+ "FROM service_provider sp "
+			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
+			+ "WHERE s.s_name ILIKE 'bp' || '%' "
+			+ "AND st.st_id = ${statusId} "
+			+ "ORDER BY  subcontractor_sName, st.st_id, sp.sp_email LIMIT #{offset} OFFSET #{pageSize}")
+	@Result(property = "spId", column = "sp_id")
+	@Result(property = "spFirstName", column = "sp_first_name")
+	@Result(property = "spName", column = "sp_name")
+	@Result(property = "spEmail", column = "sp_email")
+	@Result(property = "spCreationDate", column = "sp_creation_date")
+	@Result(property = "spLastUpdateDate", column = "sp_lastUpdate_date")
+	@Result(property = "spStatus.stId", column = "status_stId")
+	@Result(property = "spStatus.stName", column = "status_stName")
+	@Result(property = "subcontractor.sId", column = "subcontractor_sId")
+	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
+	List<ServiceProvider> findAllServiceProvidersBySubcontractorSNameAndStatus(String sName, @Param("pageSize") int offset, @Param("offset") int pageSize, @Param("statusId") int statusId);
 }
