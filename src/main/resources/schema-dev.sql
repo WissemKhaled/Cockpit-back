@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS gst_log (
     log_email VARCHAR(255) NOT NULL,
     log_value VARCHAR(45),
     log_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
+);
 CREATE TABLE IF NOT EXISTS gst_message_model (
     mm_id SERIAL PRIMARY KEY,
     mm_type VARCHAR(45) NOT NULL,
