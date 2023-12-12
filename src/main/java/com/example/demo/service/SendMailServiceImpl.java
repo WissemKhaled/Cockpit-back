@@ -1,32 +1,20 @@
 package com.example.demo.service;
 
-import java.io.File;
-import java.util.Iterator;
+import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.apache.tomcat.util.buf.Utf8Encoder;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entity.SendMail;
 import com.example.demo.mappers.SendMailMapper;
 
-import io.jsonwebtoken.io.IOException;
-import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.AddressException;
-import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 
@@ -46,27 +34,31 @@ public class SendMailServiceImpl implements SendMailService {
 		MimeMessage message = getMimeMessage();
 		try {
 			
+			
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
+			
 			
 			helper.setPriority(1);
 			helper.setFrom("jesuisuneAdressMail@test.fr");
 			helper.setTo(to);
 			helper.setSubject(subject);
 			helper.setText(body, true);
+			//helper.setReplyTo(to);
 			
-			for (MultipartFile file : files) {
+			if(files != null && !files.isEmpty()) {
 				
-				Resource resource = new ByteArrayResource(file.getBytes());
-					
-				helper.addAttachment(file.getOriginalFilename(), resource);
-							
+				for (MultipartFile file : files) {
+					Resource resource = new ByteArrayResource(file.getBytes());
+					helper.addAttachment(file.getOriginalFilename(), resource);
+				}
 			}
 			
 			mailSender.send(message);
 			
 			
-		} catch (MailException | java.io.IOException e) {
+			
+			
+		} catch (MailException | IOException e) {
 
 			System.err.println(e.getMessage());
 		}

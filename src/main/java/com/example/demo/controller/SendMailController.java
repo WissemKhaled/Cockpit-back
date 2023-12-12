@@ -31,7 +31,7 @@ public class SendMailController {
 	private final SendMailService mailService;
 
 	@PostMapping("/saveAndSendMail")
-	public ResponseEntity<?> saveAndSendMail(@RequestParam("files") List<MultipartFile> file,
+	public ResponseEntity<?> saveAndSendMail(@RequestParam(value="files", required = false) List<MultipartFile> file,
 			                                 @RequestParam("msTo") String to,
 			                                 @RequestParam("msSubject") String subject,
 			                                 @RequestParam("msBody") String body,
@@ -39,12 +39,12 @@ public class SendMailController {
 			                                   ) throws MessagingException {
 		
 		try {
-			for (MultipartFile fil : file) {
-				System.err.println(fil.getOriginalFilename());
-			}
-	            System.out.println("Destinataire : " + to);
-	            System.out.println("Sujet : " + subject);
-	            System.out.println("Corps du message : " + body);
+//			for (MultipartFile fil : file) {
+//				System.err.println(fil.getOriginalFilename());
+//			}
+//	            System.out.println("Destinataire : " + to);
+//	            System.out.println("Sujet : " + subject);
+//	            System.out.println("Corps du message : " + body);
 			
 			
 			return new ResponseEntity<>(mailService.saveAndSendMail(to, subject, body, sender, file), HttpStatus.OK);
