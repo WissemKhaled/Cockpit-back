@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,20 +27,24 @@ import com.example.demo.service.SubcontractorService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/subcontractor")
-@AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 public class SubcontractorController {
 
 	private final SubcontractorService subcontractorService;
 	private final SubcontractorDtoMapper subcontractorDtoMapper;
-
-	@Autowired
+	
 	@Qualifier("userDetailsService")
-	private UserDetailsService userDetailsService;
+	private final UserDetailsService userDetailsService;
+
+	public SubcontractorController(SubcontractorService subcontractorService,
+			SubcontractorDtoMapper subcontractorDtoMapper, UserDetailsService userDetailsService) {
+		this.subcontractorService = subcontractorService;
+		this.subcontractorDtoMapper = subcontractorDtoMapper;
+		this.userDetailsService = userDetailsService;
+	}
 
 	// ce code permet de renvoyer la liste des sous-traitants la methode
 	// getAllSubcontractor prend en paramettre pour le tri le nom de la colonne et

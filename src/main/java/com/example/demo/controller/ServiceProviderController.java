@@ -23,9 +23,7 @@ import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.service.ServiceProviderService;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 @RestController
 @RequestMapping("/service-providers")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -33,6 +31,12 @@ public class ServiceProviderController {
 
 	private final ServiceProviderService serviceProviderService;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
+	
+	public ServiceProviderController(ServiceProviderService serviceProviderService,
+			ServiceProviderDtoMapper serviceProviderDtoMapper) {
+		this.serviceProviderService = serviceProviderService;
+		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
+	}
 
 	@GetMapping("/{spId}")
 	public ResponseEntity<ServiceProviderDto> getServiceProviderById(@PathVariable int spId) {

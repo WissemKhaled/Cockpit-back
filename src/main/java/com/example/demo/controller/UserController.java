@@ -49,23 +49,26 @@ import lombok.extern.java.Log;
 @CrossOrigin("http://localhost:4200")
 @RequestMapping("/auth") 
 public class UserController {
-	@Autowired
+	private final JwtServiceImplementation jwtService;
+	private final AuthenticationManager authenticationManager; 
+	private final RefreshTokenService refreshTokenService;
+	
 	@Qualifier("userInfoService")
-	private UserInfoService service; 
+	private final UserInfoService service; 
 	
-	@Autowired
 	@Qualifier("userDetailsService")
-	private UserDetailsService userDetailsService;
-
-	@Autowired
-	private JwtServiceImplementation jwtService;
-
-	@Autowired
-	private AuthenticationManager authenticationManager; 
+	private final UserDetailsService userDetailsService;
 	
-	@Autowired
-	private RefreshTokenService refreshTokenService;
-	
+	public UserController(UserInfoService service, UserDetailsService userDetailsService,
+			JwtServiceImplementation jwtService, AuthenticationManager authenticationManager,
+			RefreshTokenService refreshTokenService) {
+		this.service = service;
+		this.userDetailsService = userDetailsService;
+		this.jwtService = jwtService;
+		this.authenticationManager = authenticationManager;
+		this.refreshTokenService = refreshTokenService;
+	}
+
 	/**
 	 * Méthode qui retourne les infos du user authentifié
 	*/
