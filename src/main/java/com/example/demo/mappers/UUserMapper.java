@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
-
+import org.apache.ibatis.annotations.Update;
 import com.example.demo.entity.UUser;
 
 @Mapper
@@ -43,4 +43,7 @@ public interface UUserMapper {
 	@Insert("INSERT INTO u_user(u_email, u_password, u_first_name, u_last_name, u_status, u_insertion_date, u_last_update) VALUES (#{uEmail}, #{uPassword}, #{uFirstName}, #{uLastName}, #{uStatus}, #{uInsertionDate}, #{uLastUpdate})")
 	@Options(useGeneratedKeys = true, keyProperty = "uId", keyColumn = "u_id")
 	void insert(UUser userInfo);
+	
+	@Update("UPDATE u_user SET u_password = #{user.uPassword}, u_last_update = #{user.uLastUpdate} WHERE u_email = #{user.uEmail}")
+	int updatePassword(@Param("user") UUser user);
 }

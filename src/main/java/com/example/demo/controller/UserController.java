@@ -144,7 +144,7 @@ public class UserController {
 		        return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
 		    } else {
 		    	log.severe("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
-		        throw new UsernameNotFoundException("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
+		        throw new UsernameNotFoundException("Requête utilisateur invalide ou utilisateur inactif '" + authRequest.getEmail() + "' inactif !");
 		    }
 
 	    }  catch (AuthenticationException e) {
@@ -195,7 +195,7 @@ public class UserController {
      * Méthode qui intercèpte les exceptions du type GeneralException
     */
  	@ExceptionHandler(GeneralException.class)
- 	public ResponseEntity<String> handleGeneralException(GeneralException ex) {
+	public ResponseEntity<String> handleGeneralException(GeneralException ex) {
  		return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
  	}
     

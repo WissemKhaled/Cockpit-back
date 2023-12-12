@@ -1,0 +1,9 @@
+{
+	"messageModel": {
+		"resetPassword": {
+			"mmType": "RESET_PASSWORD",
+			"mmSubject": "Réinitialisation du mot de passe",
+			"mmBody": "Bonjour [[firstName]] [[lastName]], \n\nVous avez souhaité renouveler votre mot de passe pour accéder à l'application GST. \n\nPour cela, veuillez cliquer sur le lien ci-dessous : \n[[resetPwdLink]]\n\nCe lien est valable pour une durée de 15 minutes. \n\nEn vous remerciant de votre confiance, \n\nL'équipe Open"
+		}
+	}
+}
