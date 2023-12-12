@@ -5,15 +5,7 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class CreateMessageModelDTO {
 	@JsonProperty("mmId")
 	private int mmId;
@@ -35,4 +27,65 @@ public class CreateMessageModelDTO {
 	
 	@JsonProperty("mmLastUpdate")
 	private LocalDateTime mmLastUpdate;
+	
+	public CreateMessageModelDTO() {
+	}
+
+	public CreateMessageModelDTO(int mmId, String mmType, String mmSubject, String mmBody, LocalDateTime mmCreationDate,
+			LocalDateTime mmLastUpdate) {
+		this.mmId = mmId;
+		this.mmType = mmType;
+		this.mmSubject = mmSubject;
+		this.mmBody = mmBody;
+		this.mmCreationDate = mmCreationDate;
+		this.mmLastUpdate = mmLastUpdate;
+	}
+
+	public int getMmId() {
+		return mmId;
+	}
+
+	public void setMmId(int mmId) {
+		this.mmId = mmId;
+	}
+
+	public String getMmType() {
+		return mmType;
+	}
+
+	public void setMmType(String mmType) {
+		this.mmType = mmType;
+	}
+
+	public String getMmSubject() {
+		return mmSubject;
+	}
+
+	public void setMmSubject(String mmSubject) {
+		this.mmSubject = mmSubject;
+	}
+
+	public String getMmBody() {
+		return mmBody;
+	}
+
+	public void setMmBody(String mmBody) {
+		this.mmBody = mmBody;
+	}
+
+	public LocalDateTime getMmCreationDate() {
+		return mmCreationDate;
+	}
+
+	public void setMmCreationDate(LocalDateTime mmCreationDate) {
+		this.mmCreationDate = mmCreationDate;
+	}
+
+	public LocalDateTime getMmLastUpdate() {
+		return mmLastUpdate;
+	}
+
+	public void setMmLastUpdate(LocalDateTime mmLastUpdate) {
+		this.mmLastUpdate = mmLastUpdate;
+	}
 }
