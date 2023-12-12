@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.SubcontractorDtoMapper;
+import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
+import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.mappers.StatusMapper;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
@@ -22,11 +24,10 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SubcontractorServiceImpl implements SubcontractorService {
 
-	private final SubcontractorDtoMapper dtoMapper;
-
+	private final SubcontractorDtoMapper subcontractorDtoMapper;
 	private final SubcontractorMapper subcontractorMapper;
-
 	private final StatusMapper statusMapper;
+	private final ServiceProviderMapper serviceProviderMapper;
 
 	@Override
 	public Subcontractor getSubcontractorWithStatus(int sId) {
@@ -57,8 +58,15 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 
 	@Override
-	public int archiveSubcontractor(Subcontractor subcontractortoArchive) {
-		return subcontractorMapper.archiveSubcontractor(subcontractortoArchive);
+	public int archiveSubcontractor(Subcontractor subcontractorToArchive) {
+		int isArchivedSubcontractor = subcontractorMapper.archiveSubcontractor(subcontractorToArchive);
+		List<ServiceProvider> foundedServiceProvidersBySubcontractorId = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorToArchive.getSId());
+		if (!foundedServiceProvidersBySubcontractorId.isEmpty()) {
+			for (ServiceProvider serviceProvider : foundedServiceProvidersBySubcontractorId) {
+				serviceProviderMapper.archiveServiceProvider(serviceProvider);
+			}			
+		}
+		return isArchivedSubcontractor;
 	}
 
 	// debut hamza : ce code permet de retoruner le nombre max de page qu'il y a
@@ -84,7 +92,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 				pageSize);
 		if (!subContarcList.isEmpty()) {
 			for (Subcontractor subcontractor : subContarcList) {
-				subcontractorDtosList.add(dtoMapper.subcontractorToDto(subcontractor));
+				subcontractorDtosList.add(subcontractorDtoMapper.subcontractorToDto(subcontractor));
 			}
 			return subcontractorDtosList;
 		} else
@@ -111,7 +119,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 		if (!subContarcList.isEmpty()) {
 			for (Subcontractor subcontractor : subContarcList) {
-				subcontractorDtosList.add(dtoMapper.subcontractorToDto(subcontractor));
+				subcontractorDtosList.add(subcontractorDtoMapper.subcontractorToDto(subcontractor));
 			}
 			return subcontractorDtosList;
 		} else
