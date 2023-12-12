@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.Implementation;
 
 import java.security.Key;
 import java.util.Date;
@@ -9,6 +9,8 @@ import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import com.example.demo.service.JwtService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

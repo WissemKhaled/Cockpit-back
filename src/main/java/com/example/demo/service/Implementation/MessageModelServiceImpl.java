@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.Implementation;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.mappers.MessageModelMapper;
 import com.example.demo.mappers.SubcontractorMapper;
+import com.example.demo.service.MessageModelService;
 
 import lombok.AllArgsConstructor;
 

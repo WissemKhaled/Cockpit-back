@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.Implementation;
 
 import java.io.File;
 import java.util.Iterator;
@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entity.SendMail;
 import com.example.demo.mappers.SendMailMapper;
+import com.example.demo.service.SendMailService;
 
 import io.jsonwebtoken.io.IOException;
 import jakarta.mail.Message;

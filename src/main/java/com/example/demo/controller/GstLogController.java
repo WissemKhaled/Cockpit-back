@@ -26,7 +26,7 @@ import com.example.demo.dto.GstLogDTO;
 import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.ResetPasswordResponseDTO;
 import com.example.demo.dto.ResetPwdExpirationResponseDTO;
-import com.example.demo.service.GstLogServiceImpl;
+import com.example.demo.service.Implementation.GstLogServiceImpl;
 import com.example.demo.utility.JsonFileLoader;
 
 import jakarta.validation.Valid;
