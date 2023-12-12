@@ -46,14 +46,14 @@ public class SendMailServiceImpl implements SendMailService {
 		MimeMessage message = getMimeMessage();
 		try {
 			
-			MimeMessageHelper helper = new MimeMessageHelper(message, true);
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
 			
 			helper.setPriority(1);
 			helper.setFrom("jesuisuneAdressMail@test.fr");
 			helper.setTo(to);
 			helper.setSubject(subject);
-			helper.setText(body);
+			helper.setText(body, true);
 			
 			for (MultipartFile file : files) {
 				
