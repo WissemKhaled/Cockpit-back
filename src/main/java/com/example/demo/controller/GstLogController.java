@@ -27,7 +27,6 @@ import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.ResetPasswordResponseDTO;
 import com.example.demo.dto.ResetPwdExpirationResponseDTO;
 import com.example.demo.service.Implementation.GstLogServiceImpl;
-import com.example.demo.utility.JsonFileLoader;
 
 import jakarta.validation.Valid;
 
@@ -36,13 +35,12 @@ import jakarta.validation.Valid;
 @RequestMapping("/gstlogs")
 public class GstLogController {
 
+	private static final Logger log = LoggerFactory.getLogger(GstLogController.class);
 	private final GstLogServiceImpl gstLogServiceImpl;
 
 	public GstLogController(GstLogServiceImpl gstLogServiceImpl) {
 		this.gstLogServiceImpl = gstLogServiceImpl;
 	}
-
-	private static final Logger log = LoggerFactory.getLogger(JsonFileLoader.class);
 
 	/**
 	 * Méthode qui créé et insère un log en base de donnée
