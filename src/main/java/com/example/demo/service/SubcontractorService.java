@@ -22,7 +22,7 @@ public interface SubcontractorService {
 	Integer getNumbersOfSubContractor();
 
 	Integer countTotalItemWhitStatus(Integer statusId);
-	
+
 	Subcontractor getSubcontractorWithStatus(int sId);
 
 	int saveSubcontractor(Subcontractor subcontractor);
@@ -40,8 +40,7 @@ public interface SubcontractorService {
 	void handleSubcontractorSave(SubcontractorDto subcontractorDto);
 
 	void handleSubcontractorUpdate(SubcontractorDto subcontractorDto);
-	
-	Subcontractor getSubcontractorBySName(String sName);
 
+	Subcontractor getSubcontractorBySName(String sName);
 
 }
