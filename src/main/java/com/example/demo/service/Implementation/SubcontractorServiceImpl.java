@@ -1,4 +1,4 @@
-package com.example.demo.service.Implementation;
+package com.example.demo.service.implementation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,24 +11,29 @@ import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
-import com.example.demo.mappers.ServiceProviderMapper;
-import com.example.demo.mappers.StatusMapper;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.mappers.ServiceProviderMapper;
+import com.example.demo.mappers.StatusMapper;
 import com.example.demo.mappers.SubcontractorMapper;
 import com.example.demo.service.SubcontractorService;
 
-import ch.qos.logback.core.status.StatusManager;
-import lombok.AllArgsConstructor;
-
 @Service
-@AllArgsConstructor
 public class SubcontractorServiceImpl implements SubcontractorService {
 
 	private final SubcontractorDtoMapper subcontractorDtoMapper;
 	private final SubcontractorMapper subcontractorMapper;
 	private final StatusMapper statusMapper;
 	private final ServiceProviderMapper serviceProviderMapper;
+
+	public SubcontractorServiceImpl(SubcontractorDtoMapper subcontractorDtoMapper,
+			SubcontractorMapper subcontractorMapper, StatusMapper statusMapper,
+			ServiceProviderMapper serviceProviderMapper) {
+		this.subcontractorDtoMapper = subcontractorDtoMapper;
+		this.subcontractorMapper = subcontractorMapper;
+		this.statusMapper = statusMapper;
+		this.serviceProviderMapper = serviceProviderMapper;
+	}
 
 	@Override
 	public Subcontractor getSubcontractorWithStatus(int sId) {
@@ -61,11 +66,12 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	@Override
 	public int archiveSubcontractor(Subcontractor subcontractorToArchive) {
 		int isArchivedSubcontractor = subcontractorMapper.archiveSubcontractor(subcontractorToArchive);
-		List<ServiceProvider> foundedServiceProvidersBySubcontractorId = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorToArchive.getSId());
+		List<ServiceProvider> foundedServiceProvidersBySubcontractorId = serviceProviderMapper
+				.findServiceProvidersBySubcontractorId(subcontractorToArchive.getSId());
 		if (!foundedServiceProvidersBySubcontractorId.isEmpty()) {
 			for (ServiceProvider serviceProvider : foundedServiceProvidersBySubcontractorId) {
 				serviceProviderMapper.archiveServiceProvider(serviceProvider);
-			}			
+			}
 		}
 		return isArchivedSubcontractor;
 	}

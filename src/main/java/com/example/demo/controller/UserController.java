@@ -38,7 +38,7 @@ import com.example.demo.entity.UUser;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.service.RefreshTokenService;
 import com.example.demo.service.UserInfoService;
-import com.example.demo.service.Implementation.JwtServiceImplementation;
+import com.example.demo.service.implementation.JwtServiceImplementation;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

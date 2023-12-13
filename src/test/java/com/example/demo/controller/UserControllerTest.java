@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.example.demo.dto.CreateUserDTO;
 import com.example.demo.service.RefreshTokenService;
 import com.example.demo.service.UserInfoService;
-import com.example.demo.service.Implementation.JwtServiceImplementation;
+import com.example.demo.service.implementation.JwtServiceImplementation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
