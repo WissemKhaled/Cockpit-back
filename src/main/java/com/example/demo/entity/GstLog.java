@@ -25,10 +25,23 @@ public class GstLog {
 	@JsonProperty("logEmail")
 	private String logEmail;
 	
+	@JsonProperty("logPassword")
+	private String logPassword;
+	
 	@JsonProperty("logValue")
 	private String logValue;
 	
 	@JsonProperty("logCreationDate")
 	private LocalDateTime logCreationDate;
 	
+	@JsonProperty("logLastUpdate")
+	private LocalDateTime logLastUpdate;
+	
+	public GstLog(int logId, String logType, String logEmail, String logValue, LocalDateTime logCreationDate) {
+		this.logId = logId;
+		this.logType = logType;
+		this.logEmail = logEmail;
+		this.logValue = logValue;
+		this.logCreationDate = logCreationDate;
+	}
 }

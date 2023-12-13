@@ -3,6 +3,8 @@ package com.example.demo.service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
 
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,12 @@ import com.example.demo.dto.GstLogDTO;
 import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.UUserDTO;
 import com.example.demo.entity.GstLog;
+import com.example.demo.entity.UUser;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.CreateGstLogDtoMapper;
 import com.example.demo.mappers.GstLogDtoMapper;
 import com.example.demo.mappers.GstLogMapper;
+import com.example.demo.mappers.UUserMapper;
 import com.example.demo.utility.JsonFileLoader;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,6 +54,9 @@ public class GstLogServiceImpl implements GstLogService{
 	@Autowired
     private JsonFileLoader jsonFileLoader;
 	
+	@Autowired
+	private UUserMapper userMapper;
+	
 	public GstLogResponseDTO saveGstLog(CreateGstLogDTO createGstLogDTO) {
 	    if (createGstLogDTO == null) {
 	        log.severe("Le paramètre createGstLogDTO ne peut être null");
@@ -61,6 +68,11 @@ public class GstLogServiceImpl implements GstLogService{
 	        if (user == null) {
 	            log.severe("Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
 	            return new GstLogResponseDTO("error", "Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
+	        }
+	        
+	        if (!user.isUStatus()) {
+	        	log.severe("L'utilisateur " + user.getUEmail() + " est inactif");
+    			throw new GeneralException("L'utilisateur " + user.getUEmail() + " est inactif");
 	        }
 
 	        GstLog gstLog = createGstLogDtoMapper.toGstLog(createGstLogDTO);
@@ -116,7 +128,7 @@ public class GstLogServiceImpl implements GstLogService{
 	    if (logValue != null && !logValue.isEmpty()) {
 	        GstLog gstLog = gstLogMapper.getLogByValue(logValue);
 	        if (gstLog != null) {
-	            LocalDateTime expirationMoment = gstLog.getLogCreationDate().plusMinutes(15);
+	            LocalDateTime expirationMoment = gstLog.getLogCreationDate().plusMinutes(60);
 	            LocalDateTime currentTime = LocalDateTime.now();
 
 	            if (currentTime.isBefore(expirationMoment)) {
@@ -133,6 +145,45 @@ public class GstLogServiceImpl implements GstLogService{
 	        throw new IllegalArgumentException("logValue ne peut être vide ou null");
 	    }
 	}
+	
+	public boolean checkNewPasswordAvailability(String newPwd, String email) {
+	    if (newPwd == null || newPwd.isEmpty()) {
+	        throw new IllegalArgumentException("Le paramètre newPwd ne doit pas être null ou vide");
+	    }
+
+	    try {
+	        List<GstLog> gstLogs = gstLogMapper.getThreeLatestLogs(email);
+	        log.info("liste des 3 derniers logs = " + gstLogs.toString());
+
+	        // If the list is empty, password is considered available
+	        if (gstLogs == null || gstLogs.isEmpty()) {
+	        	Optional<UUser> currentUser = userMapper.findByEmail(email);
+	        	log.info("Current user mdp = " + currentUser.get().getUPassword());
+	        	if (encoder.matches(newPwd, currentUser.get().getUPassword())) {
+	        		log.severe("Votre nouveau mot de passe doit être différent du mot de passe actuel");
+	        		return false;
+	        	}
+	            return true;
+	        }
+
+	        log.info("test");
+	        for (GstLog gstLog : gstLogs) {
+	            log.info("password décodé = " + newPwd + " password de la bdd = " + gstLog.getLogPassword());
+	            if (encoder.matches(newPwd, gstLog.getLogPassword())) {
+	                // If the password matches any of the three latest passwords, return false (not available)
+	            	log.severe("Votre nouveau mot de passe doit être différent de vos 3 derniers");
+	                return false;
+	            }
+	        }
+	        // If no match is found, return true (available)
+	        return true;
+	    } catch (Exception e) {
+	        log.severe(e.toString());
+	        return false;
+	    }
+	}
+
+
 
 	public void sendResetPwdLinkByEmail(CreateGstLogDTO createGstLogDTO) throws MessagingException {
         try {
@@ -148,7 +199,7 @@ public class GstLogServiceImpl implements GstLogService{
                 String email = createGstLogDTO.getLogEmail();
                 UUserDTO user = userInfoService.findUserByEmail(email);
 
-                if (user != null && resetPasswordNode != null) {
+                if (user != null && user.isUStatus() && resetPasswordNode != null) {
                     String to = email;
                     String subject = resetPasswordNode.get("mmSubject").asText();
                     String firstName = user.getUFirstName();
@@ -162,7 +213,8 @@ public class GstLogServiceImpl implements GstLogService{
 
                     mailService.sendNewMail(to, subject, body);
                 } else {
-                    throw new UsernameNotFoundException("Utilisateur " + email + " non trouvé. Email non envoyé");
+                	log.severe("Utilisateur " + email + " non trouvé ou innactif. Email non envoyé");
+                    throw new UsernameNotFoundException("Utilisateur " + email + " non trouvé ou innactif. Email non envoyé");
                 }
             }
         } catch (IOException e) {
@@ -181,22 +233,51 @@ public class GstLogServiceImpl implements GstLogService{
 		        if (gstLog != null) {
 		        	UUserDTO user = userInfoService.findUserByEmail(gstLog.getLogEmail());
 		        	
-		        	// décoder le mdp venant du front et encodé en base64
-			    	byte[] decodedBytes = Base64.getDecoder().decode(newPassword);
-			    	String decodedPwd = new String(decodedBytes);
-		        	
 		        	if (user != null) {
-		        		userInfoService.resetPassword(encoder.encode(decodedPwd), user.getUEmail());
+		        		if (user.isUStatus()) {
+		        			// décoder le mdp venant du front et encodé en base64
+	    			    	byte[] decodedBytes = Base64.getDecoder().decode(newPassword);
+	    			    	String decodedPwd = new String(decodedBytes);
+	    			    	
+		        			if (this.checkNewPasswordAvailability(decodedPwd, user.getUEmail())) {
+		        				log.info("newPassword = " + newPassword);
+		    			    	
+		        				userInfoService.resetPassword(encoder.encode(decodedPwd), user.getUEmail());
+				        		
+				        		// Maj du log pour ajouter le nouveau mdp
+					        	gstLog.setLogPassword(encoder.encode(decodedPwd));
+					        	gstLog.setLogLastUpdate(LocalDateTime.now());
+					        	
+					        	int isGstLogUpdated = gstLogMapper.updateGstLogPwd(gstLog);
+					        	
+					        	if (isGstLogUpdated == 0) {
+					        		log.severe("Échec de mise à jour du gstLog dans la base de données");
+						            throw new GeneralException("Échec de mise à jour du gstLog dans la base de données");
+					        	}  else {
+						            log.info("gstLog mis à jour pour le loogValue : " + logValue);
+						        }
+		        			} else {
+		        				log.severe("Vous avez déjà utilisé ce mot de passe, veuillez en choisir un autre");
+		        			}
+		        			
+		        		} else {
+		        			log.severe("L'utilisateur " + user.getUEmail() + " est inactif");
+		        			throw new GeneralException("L'utilisateur " + user.getUEmail() + " est inactif");
+		        		}
 		        	} else {
+		        		log.severe("Utilisateur " + gstLog.getLogEmail() + " non trouvé.");
 			            throw new UsernameNotFoundException("Utilisateur " + gstLog.getLogEmail() + " non trouvé.");
 			        }
 		        } else {
+		        	log.severe("Aucun gst log trouvé pour le type: " + logValue);
 		            throw new NotFoundException("Aucun gst log trouvé pour le type: " + logValue);
 		        }
 			 } else {
+				 log.severe("Demande de changement de mot de passe expirée.");
 				 throw new GeneralException("Demande de changement de mot de passe expirée.");
 			 }
 		 } else {
+			 log.severe("logValue ne peut être vide ou null");
 			 throw new IllegalArgumentException("logValue ne peut être vide ou null");
 		 }
 	}

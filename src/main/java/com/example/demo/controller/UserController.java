@@ -149,7 +149,7 @@ public class UserController {
 
 	    }  catch (AuthenticationException e) {
 	    	log.severe("Requête utilisateur invalide pour l'identifiant '" + authRequest.getEmail());
-            throw new BadCredentialsException("Identifiants invalides"); // or a custom exception
+            throw new BadCredentialsException("Identifiants invalides");
         }
 	}
 	 
