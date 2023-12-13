@@ -51,13 +51,13 @@ public class SendMailServiceImpl implements SendMailService {
 			
 			String signature = loadSignature();
 			signature = signature.replace("[[nom]]", "et ouiassss mumu");
-			System.err.println(signature);
+			System.err.println(body);
 
 			helper.setPriority(1);
 			helper.setFrom("jesuisuneAdressMail@test.fr");
 			helper.setTo(to);
 			helper.setSubject(subject);
-			helper.setText(body + "<br><br>" +signature, true);
+			helper.setText(body + "<br><br>" + signature, true);
 			// helper.setReplyTo(to);
 
 			if (files != null && !files.isEmpty()) {

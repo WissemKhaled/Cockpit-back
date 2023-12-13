@@ -44,7 +44,7 @@ public class SendMailController {
 //			}
 //	            System.out.println("Destinataire : " + to);
 //	            System.out.println("Sujet : " + subject);
-//	            System.out.println("Corps du message : " + body);
+	            System.out.println("Corps du message : " + body);
 			
 			
 			return new ResponseEntity<>(mailService.saveAndSendMail(to, subject, body, sender, file), HttpStatus.OK);
