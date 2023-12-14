@@ -111,7 +111,7 @@ public class GstLogController {
         try {
             boolean isAvailable = gstLogServiceImpl.checkNewPasswordAvailability(newPwd, email);
             // Return a success response if the password is available
-            return new ResponseEntity<>("Le mot d epasse est disponible", HttpStatus.OK);
+            return new ResponseEntity<>("Le mot de passe est disponible", HttpStatus.OK);
         } catch (PasswordAvailabilityException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
