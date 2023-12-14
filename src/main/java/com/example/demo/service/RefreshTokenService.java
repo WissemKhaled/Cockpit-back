@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.RefreshToken;
+import com.example.demo.entity.builder.RefreshTokenBuilder;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.RefreshTokenMapper;
 import com.example.demo.mappers.UUserMapper;
@@ -32,12 +33,16 @@ public class RefreshTokenService {
 	}
 	
 	public RefreshToken createRefreshToken(String email) {
-		
-		RefreshToken refreshToken = RefreshToken.builder()
-				.uUser(uUserMapper.findByEmail(email).get())
-				.rtToken(UUID.randomUUID().toString())
-				.rtExpiryDate(Instant.now().plusSeconds(refreshTokenExpirationDuration))
+		RefreshToken refreshToken = new RefreshTokenBuilder()
+				.withUUser(uUserMapper.findByEmail(email).get())
+				.withRtToken(UUID.randomUUID().toString())
+				.withRtExpiryDate(Instant.now().plusSeconds(refreshTokenExpirationDuration))
 				.build();
+//		RefreshToken refreshToken = RefreshToken.builder()
+//				.uUser(uUserMapper.findByEmail(email).get())
+//				.rtToken(UUID.randomUUID().toString())
+//				.rtExpiryDate(Instant.now().plusSeconds(refreshTokenExpirationDuration))
+//				.build();
 
 		LOG.info("refreshToken suivant créé : " + refreshToken);
 
