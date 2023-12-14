@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.builder.RefreshTokenBuilder;
 import com.example.demo.entity.RefreshToken;
-import com.example.demo.entity.builder.RefreshTokenBuilder;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.RefreshTokenMapper;
 import com.example.demo.mappers.UUserMapper;

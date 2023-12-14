@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.builder.JwtResponseDTOBuilder;
 import com.example.demo.dto.CreateUserDTO;
 import com.example.demo.dto.JwtResponseDTO;
 import com.example.demo.dto.RefreshTokenRequestDTO;
@@ -37,7 +38,6 @@ import com.example.demo.dto.UUserDTO;
 import com.example.demo.entity.AuthRequest;
 import com.example.demo.entity.RefreshToken;
 import com.example.demo.entity.UUser;
-import com.example.demo.entity.builder.JwtResponseDTOBuilder;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.service.RefreshTokenService;
 import com.example.demo.service.UserInfoService;

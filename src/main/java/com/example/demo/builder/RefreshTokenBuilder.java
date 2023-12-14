@@ -1,4 +1,4 @@
-package com.example.demo.entity.builder;
+package com.example.demo.builder;
 
 import java.time.Instant;
 
