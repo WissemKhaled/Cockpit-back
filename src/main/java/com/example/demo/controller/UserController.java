@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -120,38 +121,49 @@ public class UserController {
 	 * Méthode qui vérifie l'authentification du User et génère un token avec un tokenId servant à le refresh si l'authentification réussie
 	*/
 	@PostMapping("/generateToken")
-	public ResponseEntity<JwtResponseDTO> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+	public ResponseEntity<?> authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
 	    try {
-	    	// décoder le mdp venant du front et encodé en base64
-	    	byte[] decodedBytes = Base64.getDecoder().decode(authRequest.getPassword());
-	    	String decodedPwd = new String(decodedBytes);
-	    	Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), decodedPwd));
+	        // décoder le mdp venant du front et encodé en base64
+	        byte[] decodedBytes = Base64.getDecoder().decode(authRequest.getPassword());
+	        String decodedPwd = new String(decodedBytes);
+	        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), decodedPwd));
 
-		    // on vérifie que l'utilisateur a un status actif. Si c'est le cas, on génère un token
-		    UUserDTO user = service.findUserByEmail(authRequest.getEmail());
+	        // on vérifie que l'utilisateur a un status actif. Si c'est le cas, on génère un token
+	        UUserDTO user = service.findUserByEmail(authRequest.getEmail());
 
-		    if (authentication.isAuthenticated() && user.isUStatus()) {
-		    	log.info("Utilisateur authentifié avec un compte actif");
-		    	int userId = service.findUserByEmail(authRequest.getEmail()).getUId();
-	           	 // on supprime la clé de refresh token associée à l'utilisateur s'il y en a déjà une en bdd avant d'en créer une
-	           	 refreshTokenService.deleteTokenByUserId(userId);
-	           	 
-		        RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getEmail());
-		        JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
-		                .accessToken(jwtService.generateToken(authRequest.getEmail()))
-		                .token(refreshToken.getRtToken())
-		                .build();
-		        return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
-		    } else {
-		    	log.severe("Requête utilisateur invalide ou utilisateur '" + authRequest.getEmail() + "' inactif !");
-		        throw new UsernameNotFoundException("Requête utilisateur invalide ou utilisateur inactif '" + authRequest.getEmail() + "' inactif !");
-		    }
+	        if (authentication.isAuthenticated()) {
+	            if (user.isUStatus()) {
+	                log.info("Utilisateur authentifié avec un compte actif");
+	                int userId = service.findUserByEmail(authRequest.getEmail()).getUId();
+	                // on supprime la clé de refresh token associée à l'utilisateur s'il y en a déjà une en bdd avant d'en créer une
+	                refreshTokenService.deleteTokenByUserId(userId);
 
-	    }  catch (AuthenticationException e) {
-	    	log.severe("Requête utilisateur invalide pour l'identifiant '" + authRequest.getEmail());
-            throw new BadCredentialsException("Identifiants invalides");
-        }
+	                RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getEmail());
+	                JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
+	                        .accessToken(jwtService.generateToken(authRequest.getEmail()))
+	                        .token(refreshToken.getRtToken())
+	                        .build();
+	                return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
+	            } else {
+	                log.severe("L'utilisateur " + user.getUEmail() + " est inactif");
+	                // Return a specific response when the user is inactive
+	                return new ResponseEntity<>("L'utilisateur est inactif", HttpStatus.UNAUTHORIZED);
+	            }
+	        } else {
+	            log.severe("Requête utilisateur invalide");
+	            throw new UsernameNotFoundException("Requête utilisateur invalide");
+	        }
+
+	    } catch (DisabledException e) {
+	        // Handle DisabledException separately to return a specific message
+	        log.severe("L'utilisateur est inactif");
+	        return new ResponseEntity<>("L'utilisateur est inactif", HttpStatus.UNAUTHORIZED);
+	    } catch (AuthenticationException e) {
+	        log.severe("Requête utilisateur invalide pour l'identifiant '" + authRequest.getEmail());
+	        throw new BadCredentialsException("Identifiants invalides");
+	    }
 	}
+
 	 
 	 /**
 	  * Méthode qui génère un refreshToken à partir de l'id du token en cours

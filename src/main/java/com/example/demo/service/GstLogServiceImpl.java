@@ -72,7 +72,7 @@ public class GstLogServiceImpl implements GstLogService{
 	        
 	        if (!user.isUStatus()) {
 	        	log.severe("L'utilisateur " + user.getUEmail() + " est inactif");
-    			throw new GeneralException("L'utilisateur " + user.getUEmail() + " est inactif");
+    			throw new GeneralException("L'utilisateur est inactif");
 	        }
 
 	        GstLog gstLog = createGstLogDtoMapper.toGstLog(createGstLogDTO);
@@ -262,7 +262,7 @@ public class GstLogServiceImpl implements GstLogService{
 		        			
 		        		} else {
 		        			log.severe("L'utilisateur " + user.getUEmail() + " est inactif");
-		        			throw new GeneralException("L'utilisateur " + user.getUEmail() + " est inactif");
+		        			throw new GeneralException("L'utilisateur est inactif");
 		        		}
 		        	} else {
 		        		log.severe("Utilisateur " + gstLog.getLogEmail() + " non trouvé.");
