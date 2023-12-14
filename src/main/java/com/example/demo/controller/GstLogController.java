@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,14 +27,11 @@ import com.example.demo.dto.GstLogDTO;
 import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.ResetPasswordResponseDTO;
 import com.example.demo.dto.ResetPwdExpirationResponseDTO;
-import com.example.demo.exception.GeneralException;
 import com.example.demo.exception.PasswordAvailabilityException;
 import com.example.demo.exception.PasswordClaimExpirationException;
 import com.example.demo.service.GstLogServiceImpl;
-import com.example.demo.utility.JsonFileLoader;
 
 import jakarta.validation.Valid;
-import lombok.extern.java.Log;
 
 @RestController
 @CrossOrigin("http://localhost:4200")
@@ -45,7 +41,7 @@ public class GstLogController {
 	@Autowired
 	private GstLogServiceImpl gstLogServiceImpl;
 	
-	private static final Logger log = LoggerFactory.getLogger(JsonFileLoader.class);
+	private static final Logger log = LoggerFactory.getLogger(GstLogController.class);
 	
 	/**
 	 * Méthode qui créé et insère un log en base de donnée
@@ -87,6 +83,9 @@ public class GstLogController {
         }
     }
 	
+	/**
+     * Methode qui vérifie l'expiration de la demande de changement de mdp
+     */
 	@GetMapping("/checkResetPasswordExpiration")
 	public ResponseEntity<ResetPwdExpirationResponseDTO> checkResetPasswordExpiration(@RequestParam String logValue) {
 	    try {
@@ -106,6 +105,9 @@ public class GstLogController {
 	    }
 	}
 	
+	/**
+     * Methode qui vérifie la disponibilité d'un mot de passe
+     */
 	@GetMapping("/checkNewPasswordAvailability")
     public ResponseEntity<?> checkNewPasswordAvailability(@RequestParam String newPwd, @RequestParam String email) {
         try {
