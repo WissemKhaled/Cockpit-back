@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entity.SendMail;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.service.SendMailService;
 
@@ -52,6 +53,8 @@ public class SendMailController {
 		} catch (MessageModelNotFoundException e) {
 
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (GeneralException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

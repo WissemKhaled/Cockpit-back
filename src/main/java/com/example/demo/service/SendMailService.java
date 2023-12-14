@@ -10,13 +10,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.SendMailDTO;
 import com.example.demo.entity.SendMail;
+import com.example.demo.exception.GeneralException;
 
 import io.jsonwebtoken.io.IOException;
 import jakarta.mail.MessagingException;
 
 public interface SendMailService {
 	
-	SendMail saveAndSendMail (String to, String subject, String body, String sender,  List<MultipartFile> file)  throws  MessagingException ;
+	String saveAndSendMail (String to, String subject, String body, String sender,  List<MultipartFile> file)  throws  MessagingException, GeneralException ;
 
 	 
 }

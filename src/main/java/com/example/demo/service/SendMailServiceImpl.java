@@ -21,6 +21,7 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entity.SendMail;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.SendMailMapper;
 
 import jakarta.mail.MessagingException;
@@ -41,8 +42,8 @@ public class SendMailServiceImpl implements SendMailService {
 	private ResourceLoader resourceLoader;
 
 	@Override
-	public SendMail saveAndSendMail(String to, String subject, String body, String sender, List<MultipartFile> files)
-			throws MessagingException {
+	public String saveAndSendMail(String to, String subject, String body, String sender, List<MultipartFile> files)
+			throws MessagingException, GeneralException {
 
 		MimeMessage message = getMimeMessage();
 		try {
@@ -71,12 +72,13 @@ public class SendMailServiceImpl implements SendMailService {
 			
 			mailSender.send(message);
 
+			return "bla";
 		} catch (MailException | IOException e) {
 
-			System.err.println(e.getMessage());
+		 throw new GeneralException("une erreur est survenue");
 		}
 
-		return null;
+		
 	}
 
 	private MimeMessage getMimeMessage() {
