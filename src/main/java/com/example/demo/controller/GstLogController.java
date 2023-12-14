@@ -29,6 +29,8 @@ import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.ResetPasswordResponseDTO;
 import com.example.demo.dto.ResetPwdExpirationResponseDTO;
 import com.example.demo.exception.GeneralException;
+import com.example.demo.exception.PasswordAvailabilityException;
+import com.example.demo.exception.PasswordClaimExpirationException;
 import com.example.demo.service.GstLogServiceImpl;
 import com.example.demo.utility.JsonFileLoader;
 
@@ -103,9 +105,21 @@ public class GstLogController {
 	        return new ResponseEntity<>(new ResetPwdExpirationResponseDTO("error", "Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
-
-
-
+	
+	@GetMapping("/checkNewPasswordAvailability")
+    public ResponseEntity<?> checkNewPasswordAvailability(@RequestParam String newPwd, @RequestParam String email) {
+        try {
+            boolean isAvailable = gstLogServiceImpl.checkNewPasswordAvailability(newPwd, email);
+            // Return a success response if the password is available
+            return new ResponseEntity<>("Le mot d epasse est disponible", HttpStatus.OK);
+        } catch (PasswordAvailabilityException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            // Handle other exceptions or log them if needed
+            log.error(e.getMessage());
+            return new ResponseEntity<>("Une erreur innatendue est survenue", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 	
 	 /**
      * Methode pour redéfinir le mot de passe
@@ -125,6 +139,8 @@ public class GstLogController {
 	        return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.BAD_REQUEST);
 	    } catch (NotFoundException e) {
 	        return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.NOT_FOUND);
+	    }	catch (PasswordClaimExpirationException e) {
+	    	return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.GONE);
 	    } catch (Exception e) {
 	        return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.BAD_REQUEST);
 	    }

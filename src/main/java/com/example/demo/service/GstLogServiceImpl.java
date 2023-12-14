@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ import com.example.demo.dto.UUserDTO;
 import com.example.demo.entity.GstLog;
 import com.example.demo.entity.UUser;
 import com.example.demo.exception.GeneralException;
+import com.example.demo.exception.PasswordAvailabilityException;
+import com.example.demo.exception.PasswordClaimExpirationException;
 import com.example.demo.mappers.CreateGstLogDtoMapper;
 import com.example.demo.mappers.GstLogDtoMapper;
 import com.example.demo.mappers.GstLogMapper;
@@ -56,6 +59,9 @@ public class GstLogServiceImpl implements GstLogService{
 	
 	@Autowired
 	private UUserMapper userMapper;
+	
+	@Value("${reset.password.claim.expiration.duration}")
+    private int ResetPasswordClaimExpirationDuration;
 	
 	public GstLogResponseDTO saveGstLog(CreateGstLogDTO createGstLogDTO) {
 	    if (createGstLogDTO == null) {
@@ -128,7 +134,7 @@ public class GstLogServiceImpl implements GstLogService{
 	    if (logValue != null && !logValue.isEmpty()) {
 	        GstLog gstLog = gstLogMapper.getLogByValue(logValue);
 	        if (gstLog != null) {
-	            LocalDateTime expirationMoment = gstLog.getLogCreationDate().plusMinutes(60);
+	            LocalDateTime expirationMoment = gstLog.getLogCreationDate().plusMinutes(ResetPasswordClaimExpirationDuration);
 	            LocalDateTime currentTime = LocalDateTime.now();
 
 	            if (currentTime.isBefore(expirationMoment)) {
@@ -146,7 +152,7 @@ public class GstLogServiceImpl implements GstLogService{
 	    }
 	}
 	
-	public boolean checkNewPasswordAvailability(String newPwd, String email) {
+	public boolean checkNewPasswordAvailability(String newPwd, String email) throws PasswordAvailabilityException {
 	    if (newPwd == null || newPwd.isEmpty()) {
 	        throw new IllegalArgumentException("Le paramètre newPwd ne doit pas être null ou vide");
 	    }
@@ -157,31 +163,31 @@ public class GstLogServiceImpl implements GstLogService{
 
 	        // If the list is empty, password is considered available
 	        if (gstLogs == null || gstLogs.isEmpty()) {
-	        	Optional<UUser> currentUser = userMapper.findByEmail(email);
-	        	log.info("Current user mdp = " + currentUser.get().getUPassword());
-	        	if (encoder.matches(newPwd, currentUser.get().getUPassword())) {
-	        		log.severe("Votre nouveau mot de passe doit être différent du mot de passe actuel");
-	        		return false;
-	        	}
+	            Optional<UUser> currentUser = userMapper.findByEmail(email);
+	            log.info("Current user mdp = " + currentUser.get().getUPassword());
+	            if (encoder.matches(newPwd, currentUser.get().getUPassword())) {
+	                log.severe("Votre nouveau mot de passe doit être différent du mot de passe actuel");
+	                throw new PasswordAvailabilityException("Votre nouveau mot de passe doit être différent du mot de passe actuel");
+	            }
 	            return true;
 	        }
-
-	        log.info("test");
+	        
 	        for (GstLog gstLog : gstLogs) {
 	            log.info("password décodé = " + newPwd + " password de la bdd = " + gstLog.getLogPassword());
 	            if (encoder.matches(newPwd, gstLog.getLogPassword())) {
 	                // If the password matches any of the three latest passwords, return false (not available)
-	            	log.severe("Votre nouveau mot de passe doit être différent de vos 3 derniers");
-	                return false;
+	                log.severe("Votre nouveau mot de passe doit être différent de vos 3 derniers");
+	                throw new PasswordAvailabilityException("Votre nouveau mot de passe doit être différent de vos 3 derniers");
 	            }
 	        }
 	        // If no match is found, return true (available)
 	        return true;
 	    } catch (Exception e) {
 	        log.severe(e.toString());
-	        return false;
+	        throw new PasswordAvailabilityException(e.getMessage().toString());
 	    }
 	}
+
 
 
 
@@ -224,7 +230,7 @@ public class GstLogServiceImpl implements GstLogService{
         }
     }
 	
-	public void manageResetUserPassword(String logValue, String newPassword) throws NotFoundException, GeneralException {
+	public void manageResetUserPassword(String logValue, String newPassword) throws NotFoundException, GeneralException, PasswordAvailabilityException, PasswordClaimExpirationException {
 		 if (logValue != null && !logValue.isEmpty()) {
 			 
 			 if (checkResetPasswordExpiration(logValue)) {
@@ -274,7 +280,7 @@ public class GstLogServiceImpl implements GstLogService{
 		        }
 			 } else {
 				 log.severe("Demande de changement de mot de passe expirée.");
-				 throw new GeneralException("Demande de changement de mot de passe expirée.");
+				 throw new PasswordClaimExpirationException("Demande de changement de mot de passe expirée.");
 			 }
 		 } else {
 			 log.severe("logValue ne peut être vide ou null");
