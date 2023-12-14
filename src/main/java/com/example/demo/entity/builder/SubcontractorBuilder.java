@@ -56,15 +56,4 @@ public class SubcontractorBuilder {
 		return new Subcontractor(sId, sName, sEmail, sCreationDate, sLastUpdateDate, status, serviceProviders);
 	}
 
-	public static void main(String[] args) {
-		 Subcontractor subcontractor = new SubcontractorBuilder()
-	                .withSId(1)
-	                .withSName("ABC Subcontractors")
-	                .withSEmail("abc@example.com")
-	                .withSCreationDate(LocalDateTime.now())
-	                .withSLastUpdateDate(LocalDateTime.now())
-	                .withStatus(new Status(1))
-	                .withServiceProviders(Arrays.asList(new ServiceProvider(1),new ServiceProvider(2)))
-	                .build();
-	}
 }
