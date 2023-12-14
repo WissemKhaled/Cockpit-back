@@ -1,16 +1,21 @@
 package com.example.demo.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
 public class RefreshTokenRequestDTO {
-    private String token;
+	private String token;
+
+	public RefreshTokenRequestDTO() {
+	}
+
+	public RefreshTokenRequestDTO(String token) {
+		this.token = token;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
 }
