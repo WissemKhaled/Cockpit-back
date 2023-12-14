@@ -37,6 +37,7 @@ import com.example.demo.dto.UUserDTO;
 import com.example.demo.entity.AuthRequest;
 import com.example.demo.entity.RefreshToken;
 import com.example.demo.entity.UUser;
+import com.example.demo.entity.builder.JwtResponseDTOBuilder;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.service.RefreshTokenService;
 import com.example.demo.service.UserInfoService;
@@ -146,8 +147,9 @@ public class UserController {
 				refreshTokenService.deleteTokenByUserId(userId);
 
 				RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getEmail());
-				JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
-						.accessToken(jwtService.generateToken(authRequest.getEmail())).token(refreshToken.getRtToken())
+				JwtResponseDTO jwtResponseDTO = new JwtResponseDTOBuilder()
+						.withAccessToken(jwtService.generateToken(authRequest.getEmail()))
+						.withToken(refreshToken.getRtToken())
 						.build();
 				return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
 			} else {
@@ -177,8 +179,10 @@ public class UserController {
 				UUser userInfo = token.getUUser();
 
 				String accessToken = jwtService.generateToken(userInfo.getUEmail());
-				JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder().accessToken(accessToken)
-						.token(refreshTokenRequest.getToken()).build();
+				JwtResponseDTO jwtResponseDTO = new JwtResponseDTOBuilder()
+						.withAccessToken(accessToken)
+						.withToken(refreshTokenRequest.getToken())
+						.build();
 				log.info("Token refreshed avec succès");
 				return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
 			} else {
