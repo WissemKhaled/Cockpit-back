@@ -1,15 +1,23 @@
 package com.example.demo.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.apache.ibatis.javassist.NotFoundException;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,6 +33,7 @@ import com.example.demo.dto.UUserDTO;
 import com.example.demo.dto.UUserMapperEntityDTO;
 import com.example.demo.entity.GstLog;
 import com.example.demo.entity.UUser;
+import com.example.demo.exception.PasswordAvailabilityException;
 import com.example.demo.mappers.CreateGstLogDtoMapper;
 import com.example.demo.mappers.GstLogDtoMapper;
 import com.example.demo.mappers.GstLogMapper;
@@ -232,5 +241,61 @@ public class GstLogServiceTest {
         assertThrows(IllegalArgumentException.class,
                 () -> gstLogService.checkResetPasswordExpiration(emptyLogValue),
                 "logValue ne peut être vide ou null");
+    }
+    
+    @Test
+    void testCheckNewPasswordAvailability_EmptyNewPwd() {
+        assertThrows(IllegalArgumentException.class, () -> gstLogService.checkNewPasswordAvailability("", "test@test.com"),
+                "Le paramètre newPwd ne doit pas être null ou vide");
+    }
+
+    @Test
+    void testCheckNewPasswordAvailability_NewPwdMatchesCurrentPwd() {
+        String email = "test@test.com";
+        String newPwd = "newPassword";
+        String encodedPassword = "encodedPassword";
+
+        UUser currentUser = new UUser(1, email, "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now().plusDays(2));
+        when(userMapper.findByEmail(email)).thenReturn(Optional.of(currentUser));
+        when(encoder.matches(newPwd, encodedPassword)).thenReturn(true);
+
+        assertThrows(PasswordAvailabilityException.class, () -> gstLogService.checkNewPasswordAvailability(newPwd, email),
+                "Votre nouveau mot de passe doit être différent du mot de passe actuel");
+    }
+
+    @Test
+    void testCheckNewPasswordAvailability_NewPwdMatchesLatestPwd() {
+        String email = "test@test.com";
+        String newPwd = "newPassword";
+        String encodedPassword = "encodedPassword";
+
+        UUser currentUser = new UUser(1, email, "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now().plusDays(2));
+        when(userMapper.findByEmail(email)).thenReturn(Optional.of(currentUser));
+        when(encoder.matches(newPwd, encodedPassword)).thenReturn(false);
+
+        List<GstLog> latestLogs = new ArrayList<>();
+        latestLogs.add(new GstLog(1, "RESET_PASSWORD", email, encodedPassword, LocalDateTime.now()));
+        when(gstLogMapper.getThreeLatestLogs(email)).thenReturn(latestLogs);
+
+        assertThrows(PasswordAvailabilityException.class, () -> gstLogService.checkNewPasswordAvailability(newPwd, email),
+                "Votre nouveau mot de passe doit être différent de vos 3 derniers");
+    }
+
+    @Test
+    void testCheckNewPasswordAvailability_Success() throws PasswordAvailabilityException {
+        String email = "test@test.com";
+        String newPwd = "newPassword";
+
+        UUser currentUser = new UUser(1, email, "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now().plusDays(2));
+
+        // Corrected stubbing to match the actual invocation in the service
+        when(encoder.matches(newPwd, currentUser.getUPassword())).thenReturn(false);
+
+        List<GstLog> latestLogs = new ArrayList<>();
+        latestLogs.add(new GstLog(1, "RESET_PASSWORD", email, "differentEncodedPassword", LocalDateTime.now()));
+        when(gstLogMapper.getThreeLatestLogs(email)).thenReturn(latestLogs);
+
+        boolean result = gstLogService.checkNewPasswordAvailability(newPwd, email);
+        assertTrue(result, "The new password should be available");
     }
 }
