@@ -143,7 +143,7 @@ public class GstLogServiceImpl implements GstLogService{
 	                return false;
 	            }
 	        } else {
-	            throw new NotFoundException("Aucun gst log trouvé pour le type: " + logValue);
+	            throw new NotFoundException("Aucun gst log trouvé pour le token : " + logValue);
 	        }
 	    } else {
 	        throw new IllegalArgumentException("logValue ne peut être vide ou null");
