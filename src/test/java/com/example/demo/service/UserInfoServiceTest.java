@@ -225,7 +225,7 @@ public class UserInfoServiceTest {
         }).when(userMapper).insert(user);
 
         // Appel de la méthode addUser et vérification que cela lance une exception
-        assertThrows(RuntimeException.class, () -> userInfoService.addUser(userDTO));
+        assertThrows(GeneralException.class, () -> userInfoService.addUser(userDTO));
     }
 	
 }
