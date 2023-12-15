@@ -26,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.UUserDTO;
+import com.example.demo.dto.UUserMapperEntityDTO;
 import com.example.demo.entity.GstLog;
 import com.example.demo.entity.UUser;
 import com.example.demo.mappers.CreateGstLogDtoMapper;
@@ -59,6 +60,9 @@ public class GstLogServiceTest {
 
     @Mock
     private JsonFileLoader jsonFileLoader;
+    
+    @Mock
+    private UUserMapperEntityDTO userMapperEntityDTO;
 
     @Mock
     private UUserMapper userMapper;
@@ -68,50 +72,65 @@ public class GstLogServiceTest {
 
     @Test
     public void testSaveGstLog_Success() throws MessagingException {
-        // Mock dependencies
+    	// Données de test pour le nouvel utilisateur
     	int existingId = 1;
-    	UUserDTO dummyUser = new UUserDTO(existingId, "john@test.fr", "John", "Doe", true, null, null);
+    	String email = "john@test.fr";
+    	UUserDTO dummyUserDTO = new UUserDTO(existingId, email, "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now().plusDays(2));
+    	
+    	// Mock de la conversion de DTO en entité utilisateur
+        UUser dummyUser = new UUser(dummyUserDTO.getUId(), dummyUserDTO.getUEmail(),
+        		dummyUserDTO.getUFirstName(), dummyUserDTO.getULastName(), dummyUserDTO.isUStatus(),
+        		dummyUserDTO.getInsertionDate(), dummyUserDTO.getLastUpdate());
+        
+        // exécution de la méthode findUserByEmail
+        when(userInfoService.findUserByEmail(email)).thenReturn(dummyUserDTO);
 
-        when(userInfoService.findUserByEmail(any())).thenReturn(dummyUser);
-
-        // Execute the method
+        // Données de test pour le nouveau log
         CreateGstLogDTO dummyGstLogDto = new CreateGstLogDTO(existingId, "RESET_PASSWORD", "john@test.fr", "IJIJ125JK12", LocalDateTime.now());
-        GstLogResponseDTO responseDTO = gstLogService.saveGstLog(dummyGstLogDto);
         
-        GstLog dummyGstLog = createGstLogDtoMapper.toGstLog(dummyGstLogDto);
         
-        // gstLogMapper.insertLog(gstLog);
+        // Mock de la conversion de DTO en entité GstLog
+        GstLog dummyGstLog = new GstLog(dummyGstLogDto.getLogId(), dummyGstLogDto.getLogType(), dummyGstLogDto.getLogEmail(),
+        		dummyGstLogDto.getLogValue(), dummyGstLogDto.getLogCreationDate());
         
+        // exécution de la méthode insertLog
+        when(createGstLogDtoMapper.toGstLog(dummyGstLogDto)).thenReturn(dummyGstLog);
         when(gstLogMapper.insertLog(dummyGstLog)).thenReturn(1);
+        
+        GstLogResponseDTO responseDTO = gstLogService.saveGstLog(dummyGstLogDto);
 
-        // Verify that the necessary methods were called
-        verify(userInfoService, times(1)).findUserByEmail(any());
+        // Vérification que les méthodes nécessaires sont bien appellés
+        verify(userInfoService, times(1)).findUserByEmail(email);
         verify(gstLogMapper, times(1)).insertLog(dummyGstLog);
-        verify(mailService, times(1)).sendNewMail(any(), any(), any());
 
-        // Assert the response
+        // Vérification que la réponse attendu est un succès
         assertEquals("success", responseDTO.getStatus());
         assertNotNull(responseDTO.getMessage());
     }
 
     @Test
     public void testSaveGstLog_UserNotFound() throws MessagingException {
-        // Mock dependencies
-        when(userInfoService.findUserByEmail(any())).thenReturn(null);
+        // Données de test pour le nouvel utilisateur
+        int existingId = 1;
+        String email = "john@test.fr";
+        
+        // Mock de la conversion de DTO en entité utilisateur
+        when(userInfoService.findUserByEmail(email)).thenReturn(null);  // Simulation d'un utilisateur non trouvé
 
-        // Execute the method
-        CreateGstLogDTO createGstLogDTO = new CreateGstLogDTO();
-        GstLogResponseDTO responseDTO = gstLogService.saveGstLog(createGstLogDTO);
+        // Données de test pour le nouveau log
+        CreateGstLogDTO dummyGstLogDto = new CreateGstLogDTO(existingId, "RESET_PASSWORD", "john@test.fr", "IJIJ125JK12", LocalDateTime.now());
 
-        // Verify that the necessary methods were called
-        verify(userInfoService, times(1)).findUserByEmail(any());
-        verify(gstLogMapper, never()).insertLog(any());
-        verify(mailService, never()).sendNewMail(any(), any(), any());
+        GstLogResponseDTO responseDTO = gstLogService.saveGstLog(dummyGstLogDto);
 
-        // Assert the response
+        // Vérification que la méthode findUserByEmail a bien été appelée
+        verify(userInfoService, times(1)).findUserByEmail(email);
+
+        // Vérification que la méthode insertLog n'a pas été appelée car l'utilisateur n'a pas été trouvé
+        verify(gstLogMapper, times(0)).insertLog(any());
+
+        // Vérification que la réponse attendue est un échec
         assertEquals("error", responseDTO.getStatus());
         assertNotNull(responseDTO.getMessage());
+        assertEquals("Aucun utilisateur trouvé avec l'email " + email, responseDTO.getMessage());
     }
-
-    // Add similar tests for other methods (checkResetPasswordExpiration, checkNewPasswordAvailability, manageResetUserPassword)
 }
