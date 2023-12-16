@@ -50,7 +50,7 @@ public class SendMailController {
 			
 			return new ResponseEntity<>(mailService.saveAndSendMail(to, subject, body, sender, file), HttpStatus.OK);
 
-		} catch (MessageModelNotFoundException e) {
+		} catch (MessagingException e) {
 
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (GeneralException e) {

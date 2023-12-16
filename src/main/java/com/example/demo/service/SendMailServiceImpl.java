@@ -18,6 +18,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
+import org.springframework.util.unit.DataSize;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entity.SendMail;
@@ -52,7 +54,7 @@ public class SendMailServiceImpl implements SendMailService {
 			
 			String signature = loadSignature();
 			signature = signature.replace("[[nom]]", "et ouiassss mumu");
-			System.err.println(body);
+			//System.err.println(body);
 
 			helper.setPriority(1);
 			helper.setFrom("jesuisuneAdressMail@test.fr");
@@ -64,15 +66,25 @@ public class SendMailServiceImpl implements SendMailService {
 			if (files != null && !files.isEmpty()) {
 
 				for (MultipartFile file : files) {
-					Resource resource = new ByteArrayResource(file.getBytes());
-					helper.addAttachment(file.getOriginalFilename(), resource);
-				}
-			}
+					
+					
+		                    if (file.getSize() > DataSize.ofMegabytes(5).toBytes()) {
+		                    	System.err.println("trop lourd");
+		                        throw new GeneralException("La taille du fichier " + file.getOriginalFilename() + " dépasse la limite autorisée.");
+		                    }
 
+		                    Resource resource = new ByteArrayResource(file.getBytes());
+		                    helper.addAttachment(file.getOriginalFilename(), resource);
+		                    
+		                } 
+					 
+				}
 			
+
+			System.err.println("errrrr");
 			mailSender.send(message);
 
-			return "bla";
+			return "le mail a ete envoyer avec succes";
 		} catch (MailException | IOException e) {
 
 		 throw new GeneralException("une erreur est survenue");
