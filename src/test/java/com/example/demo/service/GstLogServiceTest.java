@@ -269,30 +269,36 @@ public class GstLogServiceTest {
         String newPwd = "newPassword";
         String encodedPassword = "encodedPassword";
 
-        UUser currentUser = new UUser(1, email, "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now().plusDays(2));
+        UUser currentUser = new UUser(1, email, "123-Az", "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now().plusDays(2));
         when(userMapper.findByEmail(email)).thenReturn(Optional.of(currentUser));
         when(encoder.matches(newPwd, encodedPassword)).thenReturn(false);
+        when(encoder.matches(newPwd, currentUser.getUPassword())).thenReturn(false);
 
         List<GstLog> latestLogs = new ArrayList<>();
-        latestLogs.add(new GstLog(1, "RESET_PASSWORD", email, encodedPassword, LocalDateTime.now()));
+        latestLogs.add(new GstLog(1, "RESET_PASSWORD", email, "123-Azz", LocalDateTime.now()));
+        latestLogs.add(new GstLog(2, "RESET_PASSWORD", email, encodedPassword, LocalDateTime.now()));
+        latestLogs.add(new GstLog(3, "RESET_PASSWORD", email, "789-Def", LocalDateTime.now()));
         when(gstLogMapper.getThreeLatestLogs(email)).thenReturn(latestLogs);
 
         assertThrows(PasswordAvailabilityException.class, () -> gstLogService.checkNewPasswordAvailability(newPwd, email),
                 "Votre nouveau mot de passe doit être différent de vos 3 derniers");
     }
 
+
     @Test
     void testCheckNewPasswordAvailability_Success() throws PasswordAvailabilityException {
         String email = "test@test.com";
         String newPwd = "newPassword";
 
-        UUser currentUser = new UUser(1, email, "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now().plusDays(2));
+        UUser currentUser = new UUser(1, email, "123-Az", "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now().plusDays(2));
 
         // Corrected stubbing to match the actual invocation in the service
         when(encoder.matches(newPwd, currentUser.getUPassword())).thenReturn(false);
 
         List<GstLog> latestLogs = new ArrayList<>();
-        latestLogs.add(new GstLog(1, "RESET_PASSWORD", email, "differentEncodedPassword", LocalDateTime.now()));
+        latestLogs.add(new GstLog(1, "RESET_PASSWORD", email, "543-Cpl", LocalDateTime.now()));
+        latestLogs.add(new GstLog(2, "RESET_PASSWORD", email, "differentEncodedPassword", LocalDateTime.now()));
+        latestLogs.add(new GstLog(3, "RESET_PASSWORD", email, "123-Azz", LocalDateTime.now()));
         when(gstLogMapper.getThreeLatestLogs(email)).thenReturn(latestLogs);
 
         boolean result = gstLogService.checkNewPasswordAvailability(newPwd, email);
