@@ -196,13 +196,13 @@ public class ServiceProviderController {
 	@GetMapping("/all-service-providers/by-sname-and-by-status/{sName}")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersAssociatedToSubcontractorByItsNameAndFiltredByStatus(
 			@PathVariable String sName,
-			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
-			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
-			@RequestParam(name = "statusId", required = false) int statusId) {
+			@RequestParam(name = "pageNumber", defaultValue = "1", required = true) int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "20", required = true) int pageSize,
+			@RequestParam(name = "statusId", required = true) int statusId) {
 		try {
 			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersBySubcontractorSNameAndStatus(sName, pageNumber, pageSize, statusId)
 					.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'a pas de prestataires", sName));
+			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'a pas de prestataires avec le statusId: %d", sName, statusId));
 			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
@@ -215,7 +215,7 @@ public class ServiceProviderController {
 	public ResponseEntity<Integer> getTheNumberOfAllServiceProvidersBySubcontractorNameAndFiltredByStatus(@PathVariable String sName, @RequestParam int statusId) {
 		try {
 			Integer numberOfAllServiceProvidersBySubcontractorSName= serviceProviderService.getNumberOfAllServiceProvidersBySubcontractorSNameAndFiltredByStatus(sName,statusId);
-			if (numberOfAllServiceProvidersBySubcontractorSName == 0) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'a pas de prestataires", sName));
+			if (numberOfAllServiceProvidersBySubcontractorSName == 0) throw new EntityNotFoundException(String.format("Le sous-traitant avec le nom: %s n'a pas de prestataires avec le statusId: %d", sName, statusId));
 			return new ResponseEntity<>(numberOfAllServiceProvidersBySubcontractorSName, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
@@ -223,4 +223,70 @@ public class ServiceProviderController {
 			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	@GetMapping("/all-service-providers/by-spemail/{spEmail}")
+	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorSpEmail(
+			@PathVariable String spEmail,
+			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
+			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize) {
+		try {
+			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersByServiceProviderEmail(spEmail, pageNumber, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le prestataire avec l'émail: %s n'existe pas", spEmail));
+			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/count-all-service-providers/by-spemail/{spEmail}")
+	public ResponseEntity<Integer> getNumberOfAllServiceProvidersBySubcontractorSpEmail(@PathVariable String spEmail) {
+		try {
+			Integer numberOfAllServiceProvidersBySubcontractorSName= serviceProviderService.getNumberOfAllServiceProvidersByServiceProviderEmail(spEmail);
+			if (numberOfAllServiceProvidersBySubcontractorSName == 0) throw new EntityNotFoundException(String.format("Le prestataire avec l'émail: %s n'existe pas", spEmail));
+			return new ResponseEntity<>(numberOfAllServiceProvidersBySubcontractorSName, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/all-service-providers/by-spName/{spName}")
+	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersByServiceProviderName(
+			@PathVariable String spName,
+			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
+			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize) {
+		try {
+			List<ServiceProviderDto> serviceProviders= serviceProviderService.getServiceProvidersByServiceProviderName(spName, pageNumber, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le prestataire avec le nom: %s n'existe pas", spName));
+			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/count-all-service-providers/by-spName/{spName}")
+	public ResponseEntity<Integer> getNumberOfAllServiceProvidersByServiceProviderName(@PathVariable String spName) {
+		try {
+			Integer numberOfAllServiceProvidersBySubcontractorSName= serviceProviderService.getNumberOfAllServiceProvidersByServiceProviderName(spName);
+			if (numberOfAllServiceProvidersBySubcontractorSName == 0) throw new EntityNotFoundException(String.format("Le prestataire avec le nom: %s n'existe pas", spName));
+			return new ResponseEntity<>(numberOfAllServiceProvidersBySubcontractorSName, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 }

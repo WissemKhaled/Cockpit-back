@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
@@ -164,6 +165,32 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		int offset = (pageNumber - 1) * pageSize;
 		return serviceProviderMapper.findAllServiceProvidersBySubcontractorSNameAndStatus(sName.toUpperCase(), offset,
 				pageSize, statusId);
+	}
+
+	@Override
+	public List<ServiceProvider> getServiceProvidersByServiceProviderEmail(String spEmail,
+			int pageNumber, int pageSize) {
+		int offset = (pageNumber - 1) * pageSize;
+		return serviceProviderMapper.findAllServiceProvidersByServiceProviderEmail(spEmail, offset,
+				pageSize);
+	}
+
+	@Override
+	public Integer getNumberOfAllServiceProvidersByServiceProviderEmail(String spEmail) {
+		return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderEmail(spEmail);
+	}
+
+	@Override
+	public List<ServiceProvider> getServiceProvidersByServiceProviderName(String spName, int pageNumber, int pageSize) {
+		int offset = (pageNumber - 1) * pageSize;
+		return serviceProviderMapper.findAllServiceProvidersByServiceProviderName(spName, offset,
+				pageSize);
+	}
+
+	@Override
+	public Integer getNumberOfAllServiceProvidersByServiceProviderName(String spName) {
+		return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderName(spName);
+
 	}
 
 }

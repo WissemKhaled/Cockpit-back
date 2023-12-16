@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.example.demo.dto.ServiceProviderDto;
@@ -49,5 +50,15 @@ public interface ServiceProviderService {
 
 	List<ServiceProvider> getServiceProvidersBySubcontractorSNameAndStatus(String sName, int pageNumber, int pageSize,
 			int statusId);
+
+	List<ServiceProvider> getServiceProvidersByServiceProviderEmail(String spEmail,
+			int pageNumber, int pageSize);
+
+	Integer getNumberOfAllServiceProvidersByServiceProviderEmail(String spEmail);
+
+	List<ServiceProvider> getServiceProvidersByServiceProviderName(String spName, int pageNumber,
+			int pageSize);
+
+	Integer getNumberOfAllServiceProvidersByServiceProviderName(String spName);
 
 }
