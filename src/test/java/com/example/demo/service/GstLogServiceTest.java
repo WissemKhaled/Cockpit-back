@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -287,13 +288,15 @@ public class GstLogServiceTest {
 
     @Test
     void testCheckNewPasswordAvailability_Success() throws PasswordAvailabilityException {
-        String email = "test@test.com";
-        String newPwd = "newPassword";
+        String email = "jack@test.fr";
+        String newPwd = "236-CX";
 
-        UUser currentUser = new UUser(1, email, "123-Az", "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now().plusDays(2));
+        UUser currentUser = new UUser(1, email, "123-Az", "Jack", "Smith", true, LocalDateTime.now(), LocalDateTime.now().plusDays(2));
+        UUserDTO currentUserDTO = new UUserDTO(currentUser.getUId(), currentUser.getUEmail(), currentUser.getUFirstName(),
+        		currentUser.getULastName(), currentUser.isUStatus(), currentUser.getUInsertionDate(), currentUser.getULastUpdate());
 
-        // Corrected stubbing to match the actual invocation in the service
-        when(encoder.matches(newPwd, currentUser.getUPassword())).thenReturn(false);
+        when(userInfoService.findUserByEmail(email)).thenReturn(currentUserDTO);
+        when(encoder.matches(eq(newPwd), any())).thenReturn(false);
 
         List<GstLog> latestLogs = new ArrayList<>();
         latestLogs.add(new GstLog(1, "RESET_PASSWORD", email, "543-Cpl", LocalDateTime.now()));
@@ -303,5 +306,9 @@ public class GstLogServiceTest {
 
         boolean result = gstLogService.checkNewPasswordAvailability(newPwd, email);
         assertTrue(result, "The new password should be available");
+
+        // Vérifie que la méthode du service intéragit avec currentUser et compare avec les 3 derniers mdps
+        verify(userInfoService, times(1)).findUserByEmail(email);
+        verify(gstLogMapper, times(1)).getThreeLatestLogs(email);
     }
 }

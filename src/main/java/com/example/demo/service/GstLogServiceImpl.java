@@ -90,15 +90,14 @@ public class GstLogServiceImpl implements GstLogService{
 	            log.error("Échec de l'insertion du gst log dans la base de données");
 	            return new GstLogResponseDTO("error", "Échec de l'insertion du gst log dans la base de données");
 	        }
-
 	        // Envoi d'email avec lien vers page de réinitialisation de mdp
 	        sendResetPwdLinkByEmail(createGstLogDTO);
-
+	        
 	        log.info("gst log créé avec succès");
 	        return new GstLogResponseDTO("success", "gst log créé avec succès");
 	    } catch (IllegalArgumentException e) {
-	        log.error(e.getMessage());
-	        return new GstLogResponseDTO("error", "Erreur lors de la création du Gst log");
+	    	log.error("Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
+	        return new GstLogResponseDTO("error", "Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
 	    } catch (MessagingException | UsernameNotFoundException e) {
 	        log.error("Erreur lors de l'envoi de l'email : " + e.getMessage());
 	        return new GstLogResponseDTO("error", "Erreur lors de l'envoi de l'email : " + e.getMessage());
