@@ -233,9 +233,9 @@ public class ServiceProviderController {
 	
 	
 	
-	@GetMapping("/all-service-providers/by-spName/{spName}")
+	@GetMapping("/all-service-providers/by-spName")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersByServiceProviderName(
-			@PathVariable String spName,
+			@RequestParam(name = "spName", required = true) String spName,
 			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize) {
@@ -250,8 +250,8 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("/count-all-service-providers/by-spName/{spName}")
-	public ResponseEntity<Integer> getNumberOfAllServiceProvidersByServiceProviderName(@PathVariable String spName) {
+	@GetMapping("/count-all-service-providers/by-spName")
+	public ResponseEntity<Integer> getNumberOfAllServiceProvidersByServiceProviderName(@RequestParam(name = "spName", required = true) String spName) {
 		try {
 			Integer numberOfAllServiceProvidersBySubcontractorSName= serviceProviderService.getNumberOfAllServiceProvidersByServiceProviderName(spName);
 			if (numberOfAllServiceProvidersBySubcontractorSName == 0) throw new EntityNotFoundException(String.format("Le prestataire avec le nom: %s n'existe pas", spName));
@@ -294,9 +294,9 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("/all-service-providers/by-spemail/{spEmail}")
+	@GetMapping("/all-service-providers/by-spemail")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorSpEmail(
-			@PathVariable String spEmail,
+			@RequestParam (name = "spEmail") String spEmail,
 			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize) {
@@ -311,8 +311,8 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("/count-all-service-providers/by-spemail/{spEmail}")
-	public ResponseEntity<Integer> getNumberOfAllServiceProvidersBySubcontractorSpEmail(@PathVariable String spEmail) {
+	@GetMapping("/count-all-service-providers/by-spemail")
+	public ResponseEntity<Integer> getNumberOfAllServiceProvidersBySubcontractorSpEmail(@RequestParam (name = "spEmail") String spEmail) {
 		try {
 			Integer numberOfAllServiceProvidersBySubcontractorSName= serviceProviderService.getNumberOfAllServiceProvidersByServiceProviderEmail(spEmail);
 			if (numberOfAllServiceProvidersBySubcontractorSName == 0) throw new EntityNotFoundException(String.format("Le prestataire avec l'émail: %s n'existe pas", spEmail));
@@ -355,9 +355,9 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("/all-service-providers/by-spFirstName/{spFirstName}")
+	@GetMapping("/all-service-providers/by-spFirstName")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersByServiceProviderFirstName(
-			@PathVariable String spFirstName,
+			@RequestParam (name = "spFirstName") String spFirstName,
 			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize) {
@@ -372,8 +372,8 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("/count-all-service-providers/by-spFirstName/{spFirstName}")
-	public ResponseEntity<Integer> getNumberOfAllServiceProvidersByServiceProviderFirstName(@PathVariable String spFirstName) {
+	@GetMapping("/count-all-service-providers/by-spFirstName")
+	public ResponseEntity<Integer> getNumberOfAllServiceProvidersByServiceProviderFirstName(@RequestParam (name = "spFirstName") String spFirstName) {
 		try {
 			Integer numberOfAllServiceProvidersBySubcontractorSName= serviceProviderService.getNumberOfAllServiceProvidersByServiceProviderFirstName(spFirstName);
 			if (numberOfAllServiceProvidersBySubcontractorSName == 0) throw new EntityNotFoundException(String.format("Le prestataire avec le prénom: %s n'existe pas", spFirstName));

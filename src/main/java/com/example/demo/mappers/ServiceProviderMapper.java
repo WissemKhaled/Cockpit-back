@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Subcontractor;
@@ -263,7 +264,7 @@ public interface ServiceProviderMapper {
 	@Result(property = "subcontractor.sId", column = "subcontractor_sId")
 	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
 	List<ServiceProvider> findAllServiceProvidersByServiceProviderEmail(
-			String spEmail, 
+			@Param("spEmail") String spEmail, 
 			@Param("pageSize") int offset, 
 			@Param("offset") int pageSize);
 
@@ -273,7 +274,7 @@ public interface ServiceProviderMapper {
 			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
 			+ "WHERE sp.sp_email ILIKE #{spEmail} || '%' "
 			+ "AND sp.sp_fk_status_id != 4 ")
-	Integer findNumberOfAllServiceProvidersByServiceProviderEmail(String spEmail);
+	Integer findNumberOfAllServiceProvidersByServiceProviderEmail(@RequestParam (name = "spEmail") String spEmail);
 
 	
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
@@ -293,7 +294,8 @@ public interface ServiceProviderMapper {
 	@Result(property = "spStatus.stName", column = "status_stName")
 	@Result(property = "subcontractor.sId", column = "subcontractor_sId")
 	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
-	List<ServiceProvider> findAllServiceProvidersByServiceProviderName(String spName,
+	List<ServiceProvider> findAllServiceProvidersByServiceProviderName(
+			@Param("spName") String spName,
 			@Param("pageSize") int offset, 
 			@Param("offset") int pageSize);
 	
@@ -303,7 +305,7 @@ public interface ServiceProviderMapper {
 			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
 			+ "WHERE sp.sp_name ILIKE #{spName} || '%' "
 			+ "AND sp.sp_fk_status_id != 4 ")
-	Integer findNumberOfAllServiceProvidersByServiceProviderName(String spName);
+	Integer findNumberOfAllServiceProvidersByServiceProviderName(@Param("spName") String spName);
 
 	
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
@@ -323,7 +325,8 @@ public interface ServiceProviderMapper {
 	@Result(property = "spStatus.stName", column = "status_stName")
 	@Result(property = "subcontractor.sId", column = "subcontractor_sId")
 	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
-	List<ServiceProvider> findAllServiceProvidersByServiceProviderFirstName(String spFirstName,
+	List<ServiceProvider> findAllServiceProvidersByServiceProviderFirstName(
+			@Param("spFirstName") String spFirstName, 
 			@Param("pageSize") int offset, 
 			@Param("offset") int pageSize);
 
@@ -333,7 +336,7 @@ public interface ServiceProviderMapper {
 			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
 			+ "WHERE sp.sp_first_name ILIKE #{spFirstName} || '%' "
 			+ "AND sp.sp_fk_status_id != 4 ")
-	Integer findNumberOfAllServiceProvidersByServiceProviderFirstName(String spFirstName);
+	Integer findNumberOfAllServiceProvidersByServiceProviderFirstName(@Param("spFirstName") String spFirstName);
 
 	
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
