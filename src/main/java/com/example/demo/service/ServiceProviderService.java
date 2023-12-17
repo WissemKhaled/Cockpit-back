@@ -56,9 +56,29 @@ public interface ServiceProviderService {
 
 	Integer getNumberOfAllServiceProvidersByServiceProviderEmail(String spEmail);
 
-	List<ServiceProvider> getServiceProvidersByServiceProviderName(String spName, int pageNumber,
+	List<ServiceProvider> getAllServiceProvidersByServiceProviderName(String spName, int pageNumber,
 			int pageSize);
 
 	Integer getNumberOfAllServiceProvidersByServiceProviderName(String spName);
+
+	List<ServiceProvider> getAllServiceProvidersByServiceProviderFirstName(String spFirstName, int pageNumber,
+			int pageSize);
+
+	Integer getNumberOfAllServiceProvidersByServiceProviderFirstName(String spFirstName);
+
+	List<ServiceProvider> getAllServiceProvidersByNameAndStatus(String spName, int pageNumber, int pageSize,
+			int statusId);
+
+	Integer getNumberOfAllServiceProvidersByNameAndFiltredByStatus(String spName, int statusId);
+
+	List<ServiceProvider> getAllServiceProvidersByEmailAndStatus(String spEmail, int pageNumber, int pageSize,
+			int statusId);
+
+	Integer getNumberOfAllServiceProvidersByEmailAndFiltredByStatus(String spEmail, int statusId);
+
+	List<ServiceProvider> getAllServiceProvidersByFirstNameAndStatus(String spFirstName, int pageNumber,
+			int pageSize, int statusId);
+
+	Integer getNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(String spFirstName, int statusId);
 
 }

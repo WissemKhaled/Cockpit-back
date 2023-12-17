@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ServiceProviderDto;
-import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
@@ -181,7 +180,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public List<ServiceProvider> getServiceProvidersByServiceProviderName(String spName, int pageNumber, int pageSize) {
+	public List<ServiceProvider> getAllServiceProvidersByServiceProviderName(String spName, int pageNumber, int pageSize) {
 		int offset = (pageNumber - 1) * pageSize;
 		return serviceProviderMapper.findAllServiceProvidersByServiceProviderName(spName, offset,
 				pageSize);
@@ -191,6 +190,61 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	public Integer getNumberOfAllServiceProvidersByServiceProviderName(String spName) {
 		return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderName(spName);
 
+	}
+
+	@Override
+	public List<ServiceProvider> getAllServiceProvidersByServiceProviderFirstName(String spFirstName, int pageNumber,
+			int pageSize) {
+		int offset = (pageNumber - 1) * pageSize;
+		return serviceProviderMapper.findAllServiceProvidersByServiceProviderFirstName(spFirstName, offset,
+				pageSize);
+	}
+
+	@Override
+	public Integer getNumberOfAllServiceProvidersByServiceProviderFirstName(String spFirstName) {
+		return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderFirstName(spFirstName);
+	}
+
+	@Override
+	public List<ServiceProvider> getAllServiceProvidersByNameAndStatus(String spName, int pageNumber, int pageSize,
+			int statusId) {
+		int offset = (pageNumber - 1) * pageSize;
+		return serviceProviderMapper.findAllServiceProvidersByNameAndFiltredStatus(spName.toUpperCase(), offset,
+				pageSize, statusId);
+	}
+
+	@Override
+	public Integer getNumberOfAllServiceProvidersByNameAndFiltredByStatus(String spName, int statusId) {
+		return serviceProviderMapper
+				.findNumberOfAllServiceProvidersByNameAndFiltredByStatus(spName.toUpperCase(), statusId);
+	}
+
+	@Override
+	public List<ServiceProvider> getAllServiceProvidersByEmailAndStatus(String spEmail, int pageNumber, int pageSize,
+			int statusId) {
+		int offset = (pageNumber - 1) * pageSize;
+		return serviceProviderMapper.findAllServiceProvidersByEmailAndStatus(spEmail, offset,
+				pageSize, statusId);
+	}
+
+	@Override
+	public Integer getNumberOfAllServiceProvidersByEmailAndFiltredByStatus(String spEmail, int statusId) {
+		return serviceProviderMapper
+				.findNumberOfAllServiceProvidersByEmailAndFiltredByStatus(spEmail, statusId);
+	}
+
+	@Override
+	public List<ServiceProvider> getAllServiceProvidersByFirstNameAndStatus(String spFirstName, int pageNumber,
+			int pageSize, int statusId) {
+		int offset = (pageNumber - 1) * pageSize;
+		return serviceProviderMapper.findAllServiceProvidersByFirstNameAndFiltredStatus(spFirstName, offset,
+				pageSize, statusId);
+	}
+
+	@Override
+	public Integer getNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(String spFirstName, int statusId) {
+		return serviceProviderMapper
+				.findNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(spFirstName, statusId);
 	}
 
 }
