@@ -294,7 +294,7 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("/all-service-providers/by-spemail")
+	@GetMapping("/all-service-providers/by-spEmail")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySubcontractorSpEmail(
 			@RequestParam (name = "spEmail") String spEmail,
 			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
@@ -311,7 +311,7 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("/count-all-service-providers/by-spemail")
+	@GetMapping("/count-all-service-providers/by-spEmail")
 	public ResponseEntity<Integer> getNumberOfAllServiceProvidersBySubcontractorSpEmail(@RequestParam (name = "spEmail") String spEmail) {
 		try {
 			Integer numberOfAllServiceProvidersBySubcontractorSName= serviceProviderService.getNumberOfAllServiceProvidersByServiceProviderEmail(spEmail);

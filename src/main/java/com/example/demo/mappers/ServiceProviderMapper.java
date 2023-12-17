@@ -367,7 +367,7 @@ public interface ServiceProviderMapper {
 	@Select("SELECT COUNT(*) " 
 			+ "FROM service_provider sp "
 			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
-			+ "WHERE sp.sp_first_name ILIKE #{spName} || '%' "
+			+ "WHERE sp.sp_name ILIKE #{spName} || '%' "
 			+ "AND sp.sp_fk_status_id = ${statusId} ")
 	Integer findNumberOfAllServiceProvidersByNameAndFiltredByStatus(
 			@Param("spName") String spName, 
@@ -442,4 +442,5 @@ public interface ServiceProviderMapper {
 	Integer findNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(
 			@Param("spFirstName") String spFirstName, 
 			@Param("statusId") int statusId);
+	
 }
