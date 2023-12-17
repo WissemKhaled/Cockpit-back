@@ -11,7 +11,6 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Subcontractor;
 
