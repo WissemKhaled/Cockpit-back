@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogResponseDTO;
-import com.example.demo.service.GstLogServiceImpl;
+import com.example.demo.service.implementation.GstLogServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

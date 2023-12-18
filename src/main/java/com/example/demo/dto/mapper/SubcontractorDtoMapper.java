@@ -8,19 +8,22 @@ import com.example.demo.entity.Subcontractor;
 import com.example.demo.service.ServiceProviderService;
 import com.example.demo.service.StatusService;
 
-import lombok.AllArgsConstructor;
-
 @Component
-@AllArgsConstructor
 public class SubcontractorDtoMapper {
 
 	private final StatusService statusService;
 	private final ServiceProviderService serviceProviderService;
 
+	public SubcontractorDtoMapper(StatusService statusService, ServiceProviderService serviceProviderService) {
+		this.statusService = statusService;
+		this.serviceProviderService = serviceProviderService;
+	}
+
 	public SubcontractorDto subcontractorToDto(Subcontractor subcontractor) {
 		return new SubcontractorDto(subcontractor.getSId(), subcontractor.getSName(), subcontractor.getSEmail(),
 				subcontractor.getSCreationDate(), subcontractor.getSLastUpdateDate(), subcontractor.getStatus(),
-				serviceProviderService.getServiceProvidersBySubcontractorId(subcontractor.getSId()).stream().map(ServiceProvider::getSpId).toList());
+				serviceProviderService.getServiceProvidersBySubcontractorId(subcontractor.getSId()).stream()
+						.map(ServiceProvider::getSpId).toList());
 	}
 
 	public Subcontractor dtoToSubcontractor(SubcontractorDto subcontractorDto) {

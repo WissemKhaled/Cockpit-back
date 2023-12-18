@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.implementation;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -9,7 +9,6 @@ import java.util.Optional;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,50 +18,66 @@ import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogDTO;
 import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.UUserDTO;
+import com.example.demo.dto.mapper.CreateGstLogDtoMapper;
+import com.example.demo.dto.mapper.GstLogDtoMapper;
 import com.example.demo.entity.GstLog;
 import com.example.demo.entity.UUser;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.exception.PasswordAvailabilityException;
 import com.example.demo.exception.PasswordClaimExpirationException;
-import com.example.demo.mappers.CreateGstLogDtoMapper;
-import com.example.demo.mappers.GstLogDtoMapper;
 import com.example.demo.mappers.GstLogMapper;
 import com.example.demo.mappers.UUserMapper;
+import com.example.demo.service.GstLogService;
+import com.example.demo.service.MailSenderService;
+import com.example.demo.service.UserInfoService;
 import com.example.demo.utility.JsonFileLoader;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.mail.MessagingException;
 
 @Service
 public class GstLogServiceImpl implements GstLogService{
-	@Autowired
-	GstLogMapper gstLogMapper;
+	private final GstLogMapper gstLogMapper;
 	
-	@Autowired
-	private CreateGstLogDtoMapper createGstLogDtoMapper;
+	private final CreateGstLogDtoMapper createGstLogDtoMapper;
 	
-	@Autowired 
-	private GstLogDtoMapper gstLogDtoMapper;
+	private final GstLogDtoMapper gstLogDtoMapper;
 	
-	@Autowired
-	private MailSenderService mailService;
+	private final MailSenderService mailService;
 	
-	@Autowired
-	private UserInfoService userInfoService;
+	private final UserInfoService userInfoService;
 	
-	@Autowired
-	private PasswordEncoder encoder;
+	private final PasswordEncoder encoder;
 	
-	@Autowired
-    private JsonFileLoader jsonFileLoader;
+	private final JsonFileLoader jsonFileLoader;
 	
-	@Autowired
-	private UUserMapper userMapper;
+	private final UUserMapper userMapper;
 	
 	@Value("${reset.password.claim.expiration.duration}")
     private int ResetPasswordClaimExpirationDuration;
 	
 	private static final Logger log = LoggerFactory.getLogger(GstLogServiceImpl.class);
+	
+	public GstLogServiceImpl (
+			GstLogMapper gstLogMapper,
+			CreateGstLogDtoMapper createGstLogDtoMapper,
+			GstLogDtoMapper gstLogDtoMapper,
+			MailSenderService mailService,
+			UserInfoService userInfoService,
+			PasswordEncoder encoder,
+			JsonFileLoader jsonFileLoader,
+			UUserMapper userMapper
+	) {
+		this.gstLogMapper = gstLogMapper;
+		this.createGstLogDtoMapper = createGstLogDtoMapper;
+		this.gstLogDtoMapper = gstLogDtoMapper;
+		this.mailService = mailService;
+		this.userInfoService = userInfoService;
+		this.encoder = encoder;
+		this.jsonFileLoader = jsonFileLoader;
+		this.userMapper = userMapper;
+	}
 	
 	public GstLogResponseDTO saveGstLog(CreateGstLogDTO createGstLogDTO) {
 	    if (createGstLogDTO == null) {

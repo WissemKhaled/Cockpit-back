@@ -1,5 +1,6 @@
-package com.example.demo.dto;
+package com.example.demo.dto.mapper;
 
+import com.example.demo.dto.SendMailDTO;
 import com.example.demo.entity.SendMail;
 import com.example.demo.entity.UUser;
 

@@ -15,8 +15,9 @@ public interface ServiceProviderService {
 
 	List<ServiceProvider> getServiceProvidersBySubcontractorId(int subcontractorId);
 
-	List<ServiceProvider> getServiceProvidersBySubcontractorSName(String sName, String sorting, int pageNumber,int pageSize);
-	
+	List<ServiceProvider> getServiceProvidersBySubcontractorSName(String sName, String sorting, int pageNumber,
+			int pageSize);
+
 	Integer getNumberOfAllServiceProvidersBySubcontractorSName(String sName);
 
 	boolean checkIfServiceProviderExistById(int serviceProviderId);
@@ -46,7 +47,7 @@ public interface ServiceProviderService {
 
 	Integer getNumberOfAllServiceProvidersBySubcontractorSNameAndFiltredByStatus(String sName, int statusId);
 
-	List<ServiceProvider> getServiceProvidersBySubcontractorSNameAndStatus(String sName,
-			int pageNumber, int pageSize, int statusId);
+	List<ServiceProvider> getServiceProvidersBySubcontractorSNameAndStatus(String sName, int pageNumber, int pageSize,
+			int statusId);
 
 }

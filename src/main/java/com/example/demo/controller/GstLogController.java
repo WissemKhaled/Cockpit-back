@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -29,20 +28,21 @@ import com.example.demo.dto.ResetPasswordResponseDTO;
 import com.example.demo.dto.ResetPwdExpirationResponseDTO;
 import com.example.demo.exception.PasswordAvailabilityException;
 import com.example.demo.exception.PasswordClaimExpirationException;
-import com.example.demo.service.GstLogServiceImpl;
+import com.example.demo.service.implementation.GstLogServiceImpl;
 
 import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin("http://localhost:4200")
-@RequestMapping("/gstlogs") 
+@RequestMapping("/gstlogs")
 public class GstLogController {
-	
-	@Autowired
-	private GstLogServiceImpl gstLogServiceImpl;
-	
 	private static final Logger log = LoggerFactory.getLogger(GstLogController.class);
-	
+	private final GstLogServiceImpl gstLogServiceImpl;
+
+	public GstLogController(GstLogServiceImpl gstLogServiceImpl) {
+		this.gstLogServiceImpl = gstLogServiceImpl;
+	}
+
 	/**
 	 * Méthode qui créé et insère un log en base de donnée
 	 */

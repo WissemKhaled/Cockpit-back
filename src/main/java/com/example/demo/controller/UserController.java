@@ -1,11 +1,13 @@
 package com.example.demo.controller;
 
 import java.util.Base64;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,36 +39,38 @@ import com.example.demo.entity.AuthRequest;
 import com.example.demo.entity.RefreshToken;
 import com.example.demo.entity.UUser;
 import com.example.demo.exception.GeneralException;
-import com.example.demo.service.JwtServiceImplementation;
 import com.example.demo.service.RefreshTokenService;
 import com.example.demo.service.UserInfoService;
+import com.example.demo.service.implementation.JwtServiceImplementation;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.extern.java.Log;
 
-@Log
 @RestController
 @CrossOrigin("http://localhost:4200")
-@RequestMapping("/auth") 
+@RequestMapping("/auth")
 public class UserController {
-	@Autowired
+	private static final Logger log = LoggerFactory.getLogger(UserController.class);
+	private final JwtServiceImplementation jwtService;
+	private final AuthenticationManager authenticationManager;
+	private final RefreshTokenService refreshTokenService;
+
 	@Qualifier("userInfoService")
-	private UserInfoService service; 
-	
-	@Autowired
+	private final UserInfoService service;
+
 	@Qualifier("userDetailsService")
-	private UserDetailsService userDetailsService;
+	private final UserDetailsService userDetailsService;
 
-	@Autowired
-	private JwtServiceImplementation jwtService;
+	public UserController(UserInfoService service, UserDetailsService userDetailsService,
+			JwtServiceImplementation jwtService, AuthenticationManager authenticationManager,
+			RefreshTokenService refreshTokenService) {
+		this.service = service;
+		this.userDetailsService = userDetailsService;
+		this.jwtService = jwtService;
+		this.authenticationManager = authenticationManager;
+		this.refreshTokenService = refreshTokenService;
+	}
 
-	@Autowired
-	private AuthenticationManager authenticationManager; 
-	
-	@Autowired
-	private RefreshTokenService refreshTokenService;
-	
 	/**
 	 * Méthode qui retourne les infos du user authentifié
 	*/
@@ -145,21 +149,21 @@ public class UserController {
 	                        .build();
 	                return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
 	            } else {
-	                log.severe("L'utilisateur " + user.getUEmail() + " est inactif");
+	                log.error("L'utilisateur " + user.getUEmail() + " est inactif");
 	                // Return a specific response when the user is inactive
 	                return new ResponseEntity<>("L'utilisateur est inactif", HttpStatus.UNAUTHORIZED);
 	            }
 	        } else {
-	            log.severe("Requête utilisateur invalide");
+	            log.error("Requête utilisateur invalide");
 	            throw new UsernameNotFoundException("Requête utilisateur invalide");
 	        }
 
 	    } catch (DisabledException e) {
 	        // Handle DisabledException separately to return a specific message
-	        log.severe("L'utilisateur est inactif");
+	        log.error("L'utilisateur est inactif");
 	        return new ResponseEntity<>("L'utilisateur est inactif", HttpStatus.UNAUTHORIZED);
 	    } catch (AuthenticationException e) {
-	        log.severe("Requête utilisateur invalide pour l'identifiant '" + authRequest.getEmail());
+	        log.error("Requête utilisateur invalide pour l'identifiant '" + authRequest.getEmail());
 	        throw new BadCredentialsException("Identifiants invalides");
 	    }
 	}
@@ -186,11 +190,11 @@ public class UserController {
 	             log.info("Token refreshed avec succès");
 	             return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
 	         } else {
-	        	 log.severe("Refresh token invalide");
+	        	 log.error("Refresh token invalide");
 	             throw new GeneralException("Refresh token invalide");
 	         }
 	     } catch (GeneralException e) {
-	    	 log.severe(e.toString());
+	    	 log.error(e.toString());
 	         throw e;
 	     }
 	 }
@@ -224,7 +228,7 @@ public class UserController {
 
  			errors.put(fieldName, errorMessage);
  		});
- 		log.severe(errors.toString());
+ 		log.error(errors.toString());
  		return errors;
  	}
 }
