@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.dto.SendMailDTO;
 import com.example.demo.entity.SendMail;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.SendMailMapper;
@@ -38,18 +40,18 @@ public class SendMailServiceImpl implements SendMailService {
 
 	private final JavaMailSender mailSender;
 
-	// private final ResourceLoader resourceLoader;
 
 	@Autowired
 	private ResourceLoader resourceLoader;
 
 	@Override
-	public String saveAndSendMail(String to, String subject, String body, String sender, List<MultipartFile> files)
+	public String saveAndSendMail(SendMailDTO mailDTO, List<MultipartFile> files)
 			throws MessagingException, GeneralException {
 
 		MimeMessage message = getMimeMessage();
 		try {
 
+			mailDTO.setMsCreationsDate(LocalDateTime.now());
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 			
 			String signature = loadSignature();
@@ -57,32 +59,23 @@ public class SendMailServiceImpl implements SendMailService {
 			//System.err.println(body);
 
 			helper.setPriority(1);
-			helper.setFrom("jesuisuneAdressMail@test.fr");
-			helper.setTo(to);
-			helper.setSubject(subject);
-			helper.setText(body + "<br><br>" + signature, true);
-			// helper.setReplyTo(to);
+			helper.setTo(mailDTO.getMsTo());
+			helper.setSubject(mailDTO.getMsSubject());
+			helper.setText(mailDTO.getMsBody() + "<br><br>" + signature, true);
+		    helper.setReplyTo(mailDTO.getMsSender());
 
 			if (files != null && !files.isEmpty()) {
 
 				for (MultipartFile file : files) {
-					
-					
-		                    if (file.getSize() > DataSize.ofMegabytes(5).toBytes()) {
-		                    	System.err.println("trop lourd");
-		                        throw new GeneralException("La taille du fichier " + file.getOriginalFilename() + " dépasse la limite autorisée.");
-		                    }
 
 		                    Resource resource = new ByteArrayResource(file.getBytes());
 		                    helper.addAttachment(file.getOriginalFilename(), resource);
-		                    
 		                } 
-					 
 				}
 			
 
-			System.err.println("errrrr");
 			mailSender.send(message);
+			mailMapper.saveMailAndSend(mailDTO);
 
 			return "le mail a ete envoyer avec succes";
 		} catch (MailException | IOException e) {

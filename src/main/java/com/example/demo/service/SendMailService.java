@@ -17,7 +17,7 @@ import jakarta.mail.MessagingException;
 
 public interface SendMailService {
 	
-	String saveAndSendMail (String to, String subject, String body, String sender,  List<MultipartFile> file)  throws  MessagingException, GeneralException ;
+	String saveAndSendMail (SendMailDTO mailDTO,  List<MultipartFile> file)  throws  MessagingException, GeneralException ;
 
 	 
 }

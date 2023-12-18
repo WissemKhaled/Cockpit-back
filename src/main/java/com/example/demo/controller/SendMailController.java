@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.dto.SendMailDTO;
 import com.example.demo.entity.SendMail;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.exception.MessageModelNotFoundException;
@@ -47,8 +48,8 @@ public class SendMailController {
 //	            System.out.println("Sujet : " + subject);
 	            System.out.println("Corps du message : " + body);
 			
-			
-			return new ResponseEntity<>(mailService.saveAndSendMail(to, subject, body, sender, file), HttpStatus.OK);
+			SendMailDTO mailDTO = new SendMailDTO(0, sender, to, null, subject, body, null, 1, null);
+			return new ResponseEntity<>(mailService.saveAndSendMail(mailDTO, file), HttpStatus.OK);
 
 		} catch (MessagingException e) {
 

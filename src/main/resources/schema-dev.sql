@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS gst_log (
     log_email VARCHAR(255) NOT NULL,
     log_value VARCHAR(45),
     log_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE IF NOT EXISTS gst_message_model (
     mm_id SERIAL PRIMARY KEY,
@@ -73,7 +74,5 @@ CREATE TABLE IF NOT EXISTS message_send (
     ms_body TEXT NOT NULL,
     ms_error varchar(250),
     ms_status SMALLINT,
-    ms_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    ms_fk_model_email_id SMALLINT NOT NULL,
-    FOREIGN KEY (ms_fk_model_email_id) REFERENCES gst_message_model(mm_id)
+    ms_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
