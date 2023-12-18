@@ -77,10 +77,11 @@ public class SendMailServiceImpl implements SendMailService {
 			mailSender.send(message);
 			mailMapper.saveMailAndSend(mailDTO);
 
-			return "le mail a ete envoyer avec succes";
+			return "Le courrier a été envoyé avec succès !";
 		} catch (MailException | IOException e) {
 
-		 throw new GeneralException("une erreur est survenue");
+		 throw new GeneralException("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer.\r\n"
+		 		+ "");
 		}
 
 		
