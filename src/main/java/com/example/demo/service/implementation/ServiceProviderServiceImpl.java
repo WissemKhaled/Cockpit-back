@@ -143,26 +143,26 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	public List<ServiceProvider> getServiceProvidersBySubcontractorSName(String sName, String sorting, int pageNumber,
 			int pageSize) {
 		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findServiceProvidersBySubcontractorSName(sName.toUpperCase(), sorting, offset,
+		return serviceProviderMapper.findServiceProvidersBySubcontractorName(sName.toUpperCase(), sorting, offset,
 				pageSize);
 	}
 
 	@Override
 	public Integer getNumberOfAllServiceProvidersBySubcontractorSName(String sName) {
-		return serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorSName(sName.toUpperCase());
+		return serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorName(sName.toUpperCase());
 	}
 
 	@Override
 	public Integer getNumberOfAllServiceProvidersBySubcontractorSNameAndFiltredByStatus(String sName, int statusId) {
 		return serviceProviderMapper
-				.findNumberOfAllServiceProvidersBySubcontractorSNameAndFiltredByStatus(sName.toUpperCase(), statusId);
+				.findNumberOfAllServiceProvidersBySubcontractorNameAndFiltredByStatus(sName.toUpperCase(), statusId);
 	}
 
 	@Override
 	public List<ServiceProvider> getServiceProvidersBySubcontractorSNameAndStatus(String sName, int pageNumber,
 			int pageSize, int statusId) {
 		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findAllServiceProvidersBySubcontractorSNameAndStatus(sName.toUpperCase(), offset,
+		return serviceProviderMapper.findAllServiceProvidersBySubcontractorNameAndStatus(sName.toUpperCase(), offset,
 				pageSize, statusId);
 	}
 
