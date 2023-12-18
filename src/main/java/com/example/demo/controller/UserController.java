@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.builder.JwtResponseDTOBuilder;
 import com.example.demo.dto.CreateUserDTO;
 import com.example.demo.dto.JwtResponseDTO;
 import com.example.demo.dto.RefreshTokenRequestDTO;
@@ -84,7 +85,6 @@ public class UserController {
             String email = jwtService.extractUsername(token);
             // Charge les détails du user en se basant sur l'email
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-            
             UUserDTO foundUser = service.findUserByEmail(email);
             return new ResponseEntity<>(foundUser, HttpStatus.OK);
         
@@ -131,12 +131,12 @@ public class UserController {
 	                // on supprime la clé de refresh token associée à l'utilisateur s'il y en a déjà une en bdd avant d'en créer une
 	                refreshTokenService.deleteTokenByUserId(userId);
 
-	                RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getEmail());
-	                JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
-	                        .accessToken(jwtService.generateToken(authRequest.getEmail()))
-	                        .token(refreshToken.getRtToken())
-	                        .build();
-	                return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
+				RefreshToken refreshToken = refreshTokenService.createRefreshToken(authRequest.getEmail());
+				JwtResponseDTO jwtResponseDTO = new JwtResponseDTOBuilder()
+						.withAccessToken(jwtService.generateToken(authRequest.getEmail()))
+						.withToken(refreshToken.getRtToken())
+						.build();
+				return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
 	            } else {
 	                log.error("L'utilisateur " + user.getUEmail() + " est inactif");
 	                // Return a specific response when the user is inactive
@@ -146,7 +146,6 @@ public class UserController {
 	            log.error("Requête utilisateur invalide");
 	            throw new UsernameNotFoundException("Requête utilisateur invalide");
 	        }
-
 	    } catch (DisabledException e) {
 	        // Handle DisabledException separately to return a specific message
 	        log.error("L'utilisateur est inactif");
@@ -165,17 +164,15 @@ public class UserController {
 	 public ResponseEntity<JwtResponseDTO> refreshToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequest) throws GeneralException {
 		 try {
 			 Optional<RefreshToken> optionalToken = refreshTokenService.findByToken(refreshTokenRequest.getToken());
-
-	         if (optionalToken.isPresent()) {
-	             RefreshToken token = optionalToken.get();
-	             refreshTokenService.verifyExpiration(token);
-	             UUser userInfo = token.getUUser();
-
-	             String accessToken = jwtService.generateToken(userInfo.getUEmail());
-	             JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
-	                     .accessToken(accessToken)
-	                     .token(refreshTokenRequest.getToken())
-	                     .build();
+			if (optionalToken.isPresent()) {
+				RefreshToken token = optionalToken.get();
+				refreshTokenService.verifyExpiration(token);
+				UUser userInfo = token.getUUser();
+				String accessToken = jwtService.generateToken(userInfo.getUEmail());
+				JwtResponseDTO jwtResponseDTO = new JwtResponseDTOBuilder()
+						.withAccessToken(accessToken)
+						.withToken(refreshTokenRequest.getToken())
+						.build();
 	             log.info("Token refreshed avec succès");
 	             return new ResponseEntity<>(jwtResponseDTO, HttpStatus.OK);
 	         } else {
