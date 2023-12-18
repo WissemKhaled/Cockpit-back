@@ -8,10 +8,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import lombok.Builder;
 
-//j'ai laissé builder pour la personne qui va s'occuper du ticket d'ajout de builer
-@Builder
 public class SendMail {
 
 	@JsonProperty("msId")
