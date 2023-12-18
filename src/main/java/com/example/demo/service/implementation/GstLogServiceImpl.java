@@ -171,12 +171,9 @@ public class GstLogServiceImpl implements GstLogService{
 
 	    try {
 	        List<GstLog> gstLogs = gstLogMapper.getThreeLatestLogs(email);
-	        log.info("liste des 3 derniers logs = " + gstLogs.toString());
-
-	        // If the list is empty, password is considered available
+	        // Si la liste est vide, le password est considéré comme étant disponible
 	        if (gstLogs == null || gstLogs.isEmpty()) {
 	            Optional<UUser> currentUser = userMapper.findByEmail(email);
-	            log.info("Current user mdp = " + currentUser.get().getUPassword());
 	            if (encoder.matches(newPwd, currentUser.get().getUPassword())) {
 	                log.error("Votre nouveau mot de passe doit être différent du mot de passe actuel");
 	                throw new PasswordAvailabilityException("Votre nouveau mot de passe doit être différent du mot de passe actuel");
@@ -185,7 +182,6 @@ public class GstLogServiceImpl implements GstLogService{
 	        }
 	        
 	        for (GstLog gstLog : gstLogs) {
-	            log.info("password décodé = " + newPwd + " password de la bdd = " + gstLog.getLogPassword());
 	            if (encoder.matches(newPwd, gstLog.getLogPassword())) {
 	                // If the password matches any of the three latest passwords, return false (not available)
 	                log.error("Votre nouveau mot de passe doit être différent de vos 3 derniers");
@@ -255,8 +251,6 @@ public class GstLogServiceImpl implements GstLogService{
 	    			    	String decodedPwd = new String(decodedBytes);
 	    			    	
 		        			if (this.checkNewPasswordAvailability(decodedPwd, user.getUEmail())) {
-		        				log.info("newPassword = " + newPassword);
-		    			    	
 		        				userInfoService.resetPassword(encoder.encode(decodedPwd), user.getUEmail());
 				        		
 				        		// Maj du log pour ajouter le nouveau mdp
