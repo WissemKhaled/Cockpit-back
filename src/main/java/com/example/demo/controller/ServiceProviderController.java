@@ -109,7 +109,6 @@ public class ServiceProviderController {
 		}
 	}
 	
-	
 	@GetMapping("/all-service-providers")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProviders() {
 		try {
@@ -133,20 +132,20 @@ public class ServiceProviderController {
 					.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList(), HttpStatus.OK);    
 	}
 	
-	@GetMapping("/count-all-non-archived-service-providers")
-	public ResponseEntity<Integer> countAllNonArchivedServiceProviders() {
-			return new ResponseEntity<>(serviceProviderService.countAllNonArchivedServiceProviders(), HttpStatus.OK);    
-	}
-	
 	@GetMapping("/all-service-providers-filtred-by-status")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersFiltredByStatus(
 			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
 			@RequestParam(name = "statusId", required = false) int statusId
-	) {
-			return new ResponseEntity<>(serviceProviderService.getAllServiceProvidersFiltredByStatus(sortingMethod, pageNumber, pageSize, statusId)
-					.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList(), HttpStatus.OK);    
+			) {
+		return new ResponseEntity<>(serviceProviderService.getAllServiceProvidersFiltredByStatus(sortingMethod, pageNumber, pageSize, statusId)
+				.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList(), HttpStatus.OK);    
+	}
+	
+	@GetMapping("/count-all-non-archived-service-providers")
+	public ResponseEntity<Integer> countAllNonArchivedServiceProviders() {
+			return new ResponseEntity<>(serviceProviderService.countAllNonArchivedServiceProviders(), HttpStatus.OK);    
 	}
 	
 	@GetMapping("/count-all-service-providers-filtred-by-status")
@@ -163,7 +162,7 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("/all-service-providers/by-status/search")
+	@GetMapping("/all-service-providers/search")
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySearchingAndFilteeringByStatus(
 			@RequestParam(name = "strForSearch") String strForSearch,
 			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
@@ -182,7 +181,7 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("/count-all-service-providers/by-status/search")
+	@GetMapping("/count-all-service-providers/search")
 	public ResponseEntity<Integer> getTheNumberOfAllServiceProvidersBySearchingAndFiltredByStatus(
 			@RequestParam(name = "strForSearch") String strForSearch,
 			@RequestParam(name = "statusId") int statusId,
