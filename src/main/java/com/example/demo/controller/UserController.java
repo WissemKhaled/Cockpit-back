@@ -79,26 +79,15 @@ public class UserController {
 	    String authorizationHeader = request.getHeader("Authorization");
 	    
 	    try {
-	    	if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	            String token = authorizationHeader.substring(7);
-	            // Récupère les infos de l'utilisateur à partir du token
-	            String email = jwtService.extractUsername(token);
-	            // Charge les détails du user en se basant sur l'email
-	            UserDetails userDetails = userDetailsService.loadUserByUsername(email);            
-	            // Validation du token
-	            if (jwtService.validateToken(token, userDetails)) {
-	            	if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	    	            UUserDTO foundUser = service.findUserByEmail(email);
-	    	            return new ResponseEntity<>(foundUser, HttpStatus.OK);
-	    	        } else {
-	    	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-	    	        }
-	            } else {
-		            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		        }
-			} else {
-	            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-	        }        
+            String token = authorizationHeader.substring(7);
+            // Récupère les infos de l'utilisateur à partir du token
+            String email = jwtService.extractUsername(token);
+            // Charge les détails du user en se basant sur l'email
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            
+            UUserDTO foundUser = service.findUserByEmail(email);
+            return new ResponseEntity<>(foundUser, HttpStatus.OK);
+        
 	    } catch (UsernameNotFoundException e) {
 	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	    } catch (IllegalArgumentException e) {
