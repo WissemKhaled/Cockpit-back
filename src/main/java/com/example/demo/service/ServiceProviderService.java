@@ -81,4 +81,17 @@ public interface ServiceProviderService {
 
 	Integer getNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(String spFirstName, int statusId);
 
+	
+	
+	List<ServiceProvider> getAllServiceProvidersBySearching(String strForSearch, int pageNumber, int pageSize,
+			String attributForSearch);
+
+	Integer getNumberOfAllServiceProvidersBySearching(String strForSearch, String attributForSearch);
+
+	List<ServiceProvider> getAllServiceProvidersBySearchingAndWithOrWithoutStatus(String strForSearch, int pageNumber,
+			int pageSize, int statusId, String attributForSearch);
+
+	Integer getNumberOfAllServiceProvidersBySearchingAndFiltredWithOrWithoutStatus(String spNamestrForSearch, int statusId,
+			String attributForSearch);
+
 }

@@ -143,7 +143,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	public List<ServiceProvider> getServiceProvidersBySubcontractorSName(String sName, String sorting, int pageNumber,
 			int pageSize) {
 		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findServiceProvidersBySubcontractorName(sName.toUpperCase(), sorting, offset,
+		return serviceProviderMapper.findServiceProvidersBySubcontractorName(sName.toUpperCase(), offset,
 				pageSize);
 	}
 
@@ -247,4 +247,90 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 				.findNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(spFirstName, statusId);
 	}
 
+	@Override
+	public List<ServiceProvider> getAllServiceProvidersBySearching(String strForSearch, int pageNumber, int pageSize,
+			String attributForSearch) {
+		int offset = (pageNumber - 1) * pageSize;
+		if (attributForSearch.equals("name")) return serviceProviderMapper.findAllServiceProvidersByServiceProviderName(strForSearch, offset,
+				pageSize);
+		if (attributForSearch.equals("email")) return serviceProviderMapper.findAllServiceProvidersByServiceProviderFirstName(strForSearch, offset,
+				pageSize);
+		if (attributForSearch.equals("firstName")) return serviceProviderMapper.findAllServiceProvidersByServiceProviderEmail(strForSearch, offset,
+				pageSize);
+		else throw new RuntimeException("erreur");
+	}
+	
+	@Override
+	public Integer getNumberOfAllServiceProvidersBySearching(String strForSearch, String attributForSearch) {
+		if (attributForSearch.equals("name")) return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderName(strForSearch);
+		if (attributForSearch.equals("email")) return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderFirstName(strForSearch);
+		if (attributForSearch.equals("firstName")) return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderEmail(strForSearch);
+		else throw new RuntimeException("erreur");
+	}
+	
+	@Override
+	public List<ServiceProvider> getAllServiceProvidersBySearchingAndWithOrWithoutStatus(String strForSearch, int pageNumber,
+	        int pageSize, int statusId, String attributForSearch) {
+	    int offset = (pageNumber - 1) * pageSize;
+
+	    if (attributForSearch.equals("name")) {
+	        if (statusId == 0) {
+	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderName(strForSearch, offset, pageSize);
+	        } else {
+	            return serviceProviderMapper.findAllServiceProvidersByNameAndFiltredStatus(strForSearch, offset, pageSize, statusId);
+	        }
+	    } else if (attributForSearch.equals("email")) {
+	        if (statusId == 0) {
+	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderFirstName(strForSearch, offset, pageSize);
+	        } else {
+	            return serviceProviderMapper.findAllServiceProvidersByFirstNameAndFiltredStatus(strForSearch, offset, pageSize, statusId);
+	        }
+	    } else if (attributForSearch.equals("firstName")) {
+	        if (statusId == 0) {
+	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderEmail(strForSearch, offset, pageSize);
+	        } else {
+	            return serviceProviderMapper.findAllServiceProvidersByEmailAndStatus(strForSearch, offset, pageSize, statusId);
+	        }
+	    } else if (attributForSearch.equals("subcontractorName")) {
+	        if (statusId == 0) {
+	            return serviceProviderMapper.findServiceProvidersBySubcontractorName(strForSearch, offset, pageSize);
+	        } else {
+	            return serviceProviderMapper.findAllServiceProvidersBySubcontractorNameAndStatus(strForSearch, offset, pageSize, statusId);
+	        }
+	    } else {
+	        throw new RuntimeException("erreur");
+	    }
+	}
+
+	@Override
+	public Integer getNumberOfAllServiceProvidersBySearchingAndFiltredWithOrWithoutStatus(String strForSearch, int statusId,
+			String attributForSearch) {
+	    if (attributForSearch.equals("name")) {
+	        if (statusId == 0) {
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderName(strForSearch);
+	        } else {
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByNameAndFiltredByStatus(strForSearch,statusId);
+	        }
+	    } else if (attributForSearch.equals("email")) {
+	        if (statusId == 0) {
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderFirstName(strForSearch);
+	        } else {
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByEmailAndFiltredByStatus(strForSearch,statusId);
+	        }
+	    } else if (attributForSearch.equals("firstName")) {
+	        if (statusId == 0) {
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderEmail(strForSearch);
+	        } else {
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(strForSearch,statusId);
+	        }
+	    } else if (attributForSearch.equals("subcontractorName")) {
+	        if (statusId == 0) {
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorName(strForSearch);
+	        } else {
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorNameAndFiltredByStatus(strForSearch,statusId);
+	        }
+	    } else {
+	        throw new RuntimeException("erreur");
+	    }
+	}
 }

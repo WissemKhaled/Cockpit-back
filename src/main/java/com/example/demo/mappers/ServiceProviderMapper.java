@@ -205,8 +205,10 @@ public interface ServiceProviderMapper {
 	@Result(property = "spStatus.stName", column = "status_stName")
 	@Result(property = "subcontractor.sId", column = "subcontractor_sId")
 	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
-	List<ServiceProvider> findServiceProvidersBySubcontractorName(String sName,@Param("sorting") String sorting,
-			@Param("pageSize") int offset, @Param("offset") int pageSize);
+	List<ServiceProvider> findServiceProvidersBySubcontractorName(
+			@Param("sName") String sName,
+			@Param("pageSize") int offset,
+			@Param("offset") int pageSize);
 	
 	
 	@Select("SELECT COUNT(*) " 
