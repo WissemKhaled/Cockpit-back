@@ -15,7 +15,7 @@ public interface SendMailMapper {
 	
 	
 	@Insert("INSERT INTO message_send (ms_sender, ms_to, ms_cc, ms_subject, ms_body, ms_error, ms_status, ms_creation_date) "
-			+ "VALUES (#{msSender}, #{msTo}, #{msCc}, #{msSubject}, #{msBody}, #{msError}, #{msStatus}, #{msCreationsDate}")
+			+ "VALUES (#{msSender}, #{msTo}, #{msCc}, #{msSubject}, #{msBody}, #{msError}, #{msStatus}, #{msCreationsDate})")
 	@Options(useGeneratedKeys = true, keyProperty = "msId", keyColumn = "ms_id")
 	@Result(property = "msId", column = "ms_id")
 	@Result(property = "msSender", column = "ms_sender")
