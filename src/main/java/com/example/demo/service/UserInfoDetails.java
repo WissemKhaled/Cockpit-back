@@ -10,47 +10,47 @@ import com.example.demo.entity.UUser;
 
 public class UserInfoDetails implements UserDetails {
 
-	private String name; 
-	private String password; 
-	private List<GrantedAuthority> authorities; 
+	private String name;
+	private String password;
+	private List<GrantedAuthority> authorities;
 
-	public UserInfoDetails(UUser userInfo) { 
-		name = userInfo.getUEmail(); 
+	public UserInfoDetails(UUser userInfo) {
+		name = userInfo.getUEmail();
 		password = userInfo.getUPassword();
-	} 
+	}
 
 	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() { 
-		return authorities; 
-	} 
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return authorities;
+	}
 
 	@Override
-	public String getPassword() { 
-		return password; 
-	} 
+	public String getPassword() {
+		return password;
+	}
 
 	@Override
-	public String getUsername() { 
-		return name; 
-	} 
+	public String getUsername() {
+		return name;
+	}
 
 	@Override
-	public boolean isAccountNonExpired() { 
-		return true; 
-	} 
+	public boolean isAccountNonExpired() {
+		return true;
+	}
 
 	@Override
-	public boolean isAccountNonLocked() { 
-		return true; 
-	} 
+	public boolean isAccountNonLocked() {
+		return true;
+	}
 
 	@Override
-	public boolean isCredentialsNonExpired() { 
-		return true; 
-	} 
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
 
 	@Override
-	public boolean isEnabled() { 
-		return true; 
+	public boolean isEnabled() {
+		return true;
 	}
 }
