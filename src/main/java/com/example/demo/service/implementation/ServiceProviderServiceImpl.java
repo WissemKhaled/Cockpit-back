@@ -25,21 +25,38 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
+	public ServiceProvider getServiceProviderById(int serviceProviderId) {
+		ServiceProvider foundedServiceProviderById = serviceProviderMapper
+				.findServiceProviderWithSubcontractorBySpId(serviceProviderId);
+		if (foundedServiceProviderById == null) {
+			throw new EntityNotFoundException("le prestataire avec l'id: " + serviceProviderId + " n'existe pas!!");
+		}
+		return foundedServiceProviderById;
+	}
+	
+	@Override
 	public int saveServiceProvider(ServiceProvider serviceProviderToSave) {
+	    // Définition de la date de création
 		serviceProviderToSave.setSpCreationDate(LocalDateTime.now());
+		
+	    // Insertion du prestataire dans la base de données
 		int isServiceProviderInserted = serviceProviderMapper.insertServiceProvider(serviceProviderToSave);
+		
+	    // Vérification si l'enregistrement a réussi
 		if (isServiceProviderInserted == 0) {
 			return 0;
 		}
-		// remarque: qu'on persiste le prestataire, on génere l'id automatiquement et
-		// comme ça on peut retourner le correct sans prendre en considération l'id
-		// saisi par l'utilisateur
+	    // Remarque: L'ID du prestataire est généré automatiquement lors de l'enregistrement,
+	    // permettant de le retourner sans prendre en compte l'ID saisi par l'utilisateur.
 		return serviceProviderToSave.getSpId();
 	}
 
 	@Override
 	public int updateServiceProvider(ServiceProvider serviceProviderToUpdate) {
+	    // Mise à jour de la date de dernière modification
 		serviceProviderToUpdate.setSpLastUpdateDate(LocalDateTime.now());
+		
+	    // Exécution de la mise à jour dans la base de données
 		return serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate);
 	}
 
@@ -49,23 +66,17 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 	
 	@Override
-	public ServiceProvider getServiceProviderById(int serviceProviderId) {
-		ServiceProvider foundedServiceProviderById = serviceProviderMapper
-				.findServiceProviderWithSubcontractorBySpId(serviceProviderId);
-		if (foundedServiceProviderById == null) {
-			throw new EntityNotFoundException("le prestataire avec l'id: " + serviceProviderId + " n'existe pas!!");
-		}
-		return foundedServiceProviderById;
-	}
-
-	@Override
 	public List<ServiceProviderDto> getServiceProvidersBySubcontractorId(int subcontractorId) {
-		return serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	}
+	    // Récupération des prestataires associés au sous-traitant par son ID
+	    List<ServiceProvider> serviceProviders = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId);
 
+	    // Conversion des prestataires en DTO
+	    return serviceProviders.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();	
+	}
 
 	@Override
 	public boolean checkIfServiceProviderExistById(int serviceProviderId) {
+	    // Recherche du prestataire par son ID
 		ServiceProvider foundServiceProviderById = serviceProviderMapper.findServiceProviderById(serviceProviderId);
 		Boolean isServiceProviderExists = false;
 		if (foundServiceProviderById != null) {
@@ -85,7 +96,10 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	@Override
 	public void handleServiceProviderUpdating(ServiceProviderDto serviceProviderDto) {
+	    // Vérification de l'existence d'un autre prestataire avec le même email
 		int isServiceProviderExistBySpEmail = checkIfSubcontractorExistBySpEmail(serviceProviderDto.getSpEmail());
+		
+	    // Si un autre prestataire avec le même email existe et n'est pas le prestataire actuel en cours de mise à jour
 		if (isServiceProviderExistBySpEmail != 0 && serviceProviderDto.getSpId() != isServiceProviderExistBySpEmail) {
 			throw new EntityDuplicateDataException("l'émail du préstataire saisi existe déjà");
 		}
@@ -93,7 +107,10 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	@Override
 	public void handleServiceProviderSaving(ServiceProviderDto serviceProviderDto) {
+	    // Vérification de l'existence d'un autre prestataire avec le même email
 		int isServiceProviderExistBySpEmail = checkIfSubcontractorExistBySpEmail(serviceProviderDto.getSpEmail());
+		
+	    // Si un autre prestataire avec le même email existe
 		if (isServiceProviderExistBySpEmail != 0) {
 			throw new EntityDuplicateDataException("l'émail du préstataire saisi existe déjà");
 		}
@@ -101,23 +118,30 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	@Override
 	public String firstNameAndEmailFormatter(String name) throws GeneralException {
+	    // Vérification de la validité du prénom ou de l'email
 		if (name == null || name.trim().isEmpty()) {
 			throw new GeneralException("le nom est necessaire");
 		}
+		
+	    // Formatage de la chaîne en mettant la première lettre en majuscule et le reste en minuscules
 		return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
 	}
 
 	@Override
 	public String nameFormatter(String name) throws GeneralException {
+	    // Vérification de la validité du nom
 		if (name == null || name.trim().isEmpty()) {
 			throw new GeneralException("le nom est necessaire");
 		}
+		
+	    // Formatage de la chaîne en mettant toutes les lettres en majuscules
 		return name.toUpperCase();
 	}
 
 
 	@Override
 	public int countAllServiceProvidersWithOrWithoutStatus(int statusId) {
+	    // Vérification du statut et comptage des prestataires en conséquence
 		if (statusId == 0 ) {
 			return serviceProviderMapper.countAllNonArchivedServiceProviders();
 		} else if (statusId>=1 && statusId<=4) {
@@ -130,7 +154,10 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	@Override
 	public List<ServiceProviderDto> getAllServiceProvidersWithOrWithoutStatus(String sortingMethod, int pageNumber,
 			int pageSize, int statusId) {
+	    // Calcul de l'offset pour la pagination
 		int offset = (pageNumber - 1) * pageSize;
+		
+	    // Vérification du statut et récupération des prestataires en conséquence
 		if (statusId == 0 ) {
 			return serviceProviderMapper.findAllNonArchivedServiceProviders(sortingMethod, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 		} else if (statusId>=1 && statusId<=4) {
@@ -144,8 +171,10 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	@Override
 	public List<ServiceProviderDto> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
 	        int pageSize, int statusId, String searchAttribute) throws GeneralException {
+	    // Calcul de l'offset pour la pagination
 	    int offset = (pageNumber - 1) * pageSize;
 
+	    // Vérification de l'attribut de recherche et récupération des prestataires en conséquence
 	    if (searchAttribute.equals("name")) {
 	        if (statusId == 0) {
 	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderName(searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
@@ -179,6 +208,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	public int getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
 			String searchAttribute) throws GeneralException {
 	    if (searchAttribute.equals("name")) {
+	        // Vérification de l'attribut de recherche et récupération du nombre de prestataires de services en conséquence
 	        if (statusId == 0) {
 	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderName(searchTerms);
 	        } else {
