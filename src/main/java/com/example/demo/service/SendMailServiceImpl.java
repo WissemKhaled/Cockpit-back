@@ -56,7 +56,6 @@ public class SendMailServiceImpl implements SendMailService {
 			
 			String signature = loadSignature();
 			signature = signature.replace("[[nom]]", "et ouiassss mumu");
-			//System.err.println(body);
 
 			helper.setPriority(1);
 			helper.setTo(mailDTO.getMsTo());
@@ -80,7 +79,7 @@ public class SendMailServiceImpl implements SendMailService {
 			return "Le courrier a été envoyé avec succès !";
 		} catch (MailException | IOException e) {
 
-		 throw new GeneralException("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer.\r\n"
+		 throw new GeneralException("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer."
 		 		+ "");
 		}
 

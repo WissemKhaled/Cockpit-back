@@ -29,7 +29,6 @@ import lombok.AllArgsConstructor;
 @CrossOrigin(origins = "http://localhost:4200")
 public class SendMailController {
 
-	//les lignes commentées sont en cours de developpement 
 	private final SendMailService mailService;
 
 	@PostMapping("/saveAndSendMail")
@@ -39,20 +38,10 @@ public class SendMailController {
 			                                 @RequestParam("msBody") String body,
 			                                 @RequestParam("msSender") String sender
 			                                   ) throws MessagingException {
-		
 		try {
-//			for (MultipartFile fil : file) {
-//				System.err.println(fil.getOriginalFilename());
-//			}
-//	            System.out.println("Destinataire : " + to);
-//	            System.out.println("Sujet : " + subject);
-	            System.out.println("Corps du message : " + body);
-			
 			SendMailDTO mailDTO = new SendMailDTO(0, sender, to, null, subject, body, null, 1, null);
 			return new ResponseEntity<>(mailService.saveAndSendMail(mailDTO, file), HttpStatus.OK);
-
 		} catch (MessagingException e) {
-
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (GeneralException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

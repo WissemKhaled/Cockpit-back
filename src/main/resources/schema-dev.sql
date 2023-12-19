@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS gst_message_model (
 
 CREATE TABLE IF NOT EXISTS message_send (
     ms_id SERIAL PRIMARY KEY,
-    ms_sender VARCHAR(55) Not NULL,
+    ms_sender VARCHAR(55) NOT NULL,
     ms_to VARCHAR(55) DEFAULT NULL,
     ms_cc VARCHAR(255) DEFAULT NULL,
     ms_subject VARCHAR(255) NOT NULL,
