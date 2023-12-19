@@ -7,7 +7,9 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.dto.mapper.StatusDtoMapper;
 import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Status;
@@ -24,50 +26,55 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	private final SubcontractorDtoMapper subcontractorDtoMapper;
 	private final SubcontractorMapper subcontractorMapper;
 	private final StatusMapper statusMapper;
+	private final StatusDtoMapper statusDtoMapper;
 	private final ServiceProviderMapper serviceProviderMapper;
 
 	public SubcontractorServiceImpl(SubcontractorDtoMapper subcontractorDtoMapper,
-			SubcontractorMapper subcontractorMapper, StatusMapper statusMapper,
+			SubcontractorMapper subcontractorMapper, StatusMapper statusMapper, StatusDtoMapper statusDtoMapper,
 			ServiceProviderMapper serviceProviderMapper) {
 		this.subcontractorDtoMapper = subcontractorDtoMapper;
 		this.subcontractorMapper = subcontractorMapper;
 		this.statusMapper = statusMapper;
+		this.statusDtoMapper = statusDtoMapper;
 		this.serviceProviderMapper = serviceProviderMapper;
 	}
 
 	@Override
-	public Subcontractor getSubcontractorWithStatus(int sId) {
-		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusById(sId);
-		if (subcontractor == null) {
+	public SubcontractorDto getSubcontractorWithStatus(int sId) {
+		SubcontractorDto foundedSubcontractor = subcontractorDtoMapper.subcontractorToDto(subcontractorMapper.findSubcontractorWithStatusById(sId));
+		
+		if (foundedSubcontractor == null) {
 			throw new EntityNotFoundException("le sous-traitant avec l'id: " + sId + " n'existe pas!!");
 		}
-		return subcontractor;
+		return foundedSubcontractor;
 	}
 
 	@Override
-	public int saveSubcontractor(Subcontractor subcontractor) {
-		subcontractor.setSCreationDate(LocalDateTime.now());
-		int isSubcontractorInserted = subcontractorMapper.insertSubcontractor(subcontractor);
+	public int saveSubcontractor(SubcontractorDto subcontractorDto) {
+		Subcontractor subcontractorDtoForSaving = subcontractorDtoMapper.dtoToSubcontractor(subcontractorDto);
+		subcontractorDtoForSaving.setSCreationDate(LocalDateTime.now());
+		int isSubcontractorInserted = subcontractorMapper.insertSubcontractor(subcontractorDtoForSaving);
 		if (isSubcontractorInserted == 0) {
 			return isSubcontractorInserted;
 		}
 		// remarque qu'on persiste le sous-traitant, on génere l'id automatiquement et
 		// comme ça on peut retourner le correct sans prendre en cpnsidération l'id
 		// saisi par l'utilisateur (subcontractDto)
-		return subcontractor.getSId();
+		return subcontractorDtoForSaving.getSId();
 	}
 
 	@Override
-	public int updateSubcontractor(Subcontractor subcontractor) {
-		subcontractor.setSLastUpdateDate(LocalDateTime.now());
-		return subcontractorMapper.updateSubcontractor(subcontractor);
+	public int updateSubcontractor(SubcontractorDto subcontractorDto) {
+		Subcontractor subcontractorDtoForUpdated = subcontractorDtoMapper.dtoToSubcontractor(subcontractorDto);
+		subcontractorDtoForUpdated.setSLastUpdateDate(LocalDateTime.now());
+		return subcontractorMapper.updateSubcontractor(subcontractorDtoForUpdated);
 	}
 
 	@Override
-	public int archiveSubcontractor(Subcontractor subcontractorToArchive) {
+	public int archiveSubcontractor(SubcontractorDto subcontractorDtoToArchive) {
+		Subcontractor subcontractorToArchive = subcontractorDtoMapper.dtoToSubcontractor(subcontractorDtoToArchive);
 		int isArchivedSubcontractor = subcontractorMapper.archiveSubcontractor(subcontractorToArchive);
-		List<ServiceProvider> foundedServiceProvidersBySubcontractorId = serviceProviderMapper
-				.findServiceProvidersBySubcontractorId(subcontractorToArchive.getSId());
+		List<ServiceProvider> foundedServiceProvidersBySubcontractorId = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorDtoToArchive.getSId());
 		if (!foundedServiceProvidersBySubcontractorId.isEmpty()) {
 			for (ServiceProvider serviceProvider : foundedServiceProvidersBySubcontractorId) {
 				serviceProviderMapper.archiveServiceProvider(serviceProvider);
@@ -76,8 +83,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		return isArchivedSubcontractor;
 	}
 
-	// debut hamza : ce code permet de retoruner le nombre max de page qu'il y a
-	public Integer getNumbersOfSubContractor() {
+	public Integer getNumberOfAllSubcontractors() {
 		return subcontractorMapper.countTotalItems();
 	}
 
@@ -92,18 +98,13 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	// pour le tri le nom de la colonne et le type de tri et pour la pagination le
 	// nombre déelement a aficcher et la page en question
 	@Override
-	public List<SubcontractorDto> getAllSubcontractor(String nameColonne, String sorting, int page, int pageSize) {
-		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
+	public List<SubcontractorDto> getAllSubcontractors(String nameColonne, String sorting, int page, int pageSize) {
 		int offset = (page - 1) * pageSize;
-		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset,
-				pageSize);
-		if (!subContarcList.isEmpty()) {
-			for (Subcontractor subcontractor : subContarcList) {
-				subcontractorDtosList.add(subcontractorDtoMapper.subcontractorToDto(subcontractor));
-			}
-			return subcontractorDtosList;
-		} else
-			throw new RuntimeException("Il n'y a pas de sous-traitans");
+		List<SubcontractorDto> foundedSubcontractors = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset,pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+		if (foundedSubcontractors.isEmpty()) {
+			throw new EntityNotFoundException("Il n'y a pas de sous-traitans");
+		}
+		return foundedSubcontractors;
 	}
 
 	// ce code permet de retoruner le nombre max de page qu'il y a
@@ -112,8 +113,12 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 
 	@Override
-	public List<Status> getAllStatus() {
-		return statusMapper.getAllStatus();
+	public List<StatusDto> getAllStatus() {
+		List<StatusDto> foundedStatus = statusMapper.getAllStatus().stream().map(statusDtoMapper::statusToDto).toList();
+		if (foundedStatus.isEmpty()) {
+			throw new EntityNotFoundException("Il n'y a pas de status enregistré");
+		}
+		return foundedStatus;
 	}
 
 	@Override
@@ -194,8 +199,9 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 
 	@Override
-	public List<Subcontractor> getAllSubcontractors() {
-		List<Subcontractor> subcontractors = subcontractorMapper.findAllSubcontractors();
+	public List<SubcontractorDto> getAllSubcontractors() {
+		List<SubcontractorDto> subcontractors = subcontractorMapper.findAllSubcontractors().stream()
+				.map(subcontractorDtoMapper::subcontractorToDto).toList();
 		if (subcontractors.isEmpty())
 			throw new EntityNotFoundException("Il n'y a pas de sous-traiatns enregistrés");
 		return subcontractors;

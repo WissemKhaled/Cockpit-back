@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.builder.SubcontractorBuilder;
-import com.example.demo.builder.SubcontractorDtoBuilder;
+import com.example.demo.builder.dto.SubcontractorDtoBuilder;
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.entity.Subcontractor;

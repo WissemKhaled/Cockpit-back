@@ -2,34 +2,34 @@ package com.example.demo.service;
 
 import java.util.List;
 
+import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
-import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 
 public interface SubcontractorService {
 
-	List<SubcontractorDto> getAllSubcontractor(String nameColonne, String sorting, int pageSize, int page);
+	List<SubcontractorDto> getAllSubcontractors(String nameColonne, String sorting, int pageSize, int page);
 
 	List<SubcontractorDto> getAllSubcontractorWhitStatus(String nameColonne, String sorting, int pageSize, int page,
 			int statusId);
 
-	List<Status> getAllStatus();
+	List<StatusDto> getAllStatus();
 
-	List<Subcontractor> getAllSubcontractors();
+	List<SubcontractorDto> getAllSubcontractors();
 
 	int getNumbersOfPages();
 
-	Integer getNumbersOfSubContractor();
+	Integer getNumberOfAllSubcontractors();
 
 	Integer countTotalItemWhitStatus(Integer statusId);
 
-	Subcontractor getSubcontractorWithStatus(int sId);
+	SubcontractorDto getSubcontractorWithStatus(int sId);
 
-	int saveSubcontractor(Subcontractor subcontractor);
+	int saveSubcontractor(SubcontractorDto subcontractorDtoToUpdate);
 
-	int updateSubcontractor(Subcontractor subcontractor);
+	int updateSubcontractor(SubcontractorDto subcontractorDtoToSave);
 
-	int archiveSubcontractor(Subcontractor subcontractortoArchive);
+	int archiveSubcontractor(SubcontractorDto subcontractortoArchive);
 
 	boolean checkIfSubcontractorExist(int sId);
 

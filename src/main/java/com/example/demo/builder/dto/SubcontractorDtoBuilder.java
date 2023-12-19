@@ -1,4 +1,4 @@
-package com.example.demo.builder;
+package com.example.demo.builder.dto;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
