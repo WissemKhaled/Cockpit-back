@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
@@ -17,6 +18,7 @@ import com.example.demo.service.ServiceProviderService;
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	private ServiceProviderMapper serviceProviderMapper;
+	private ServiceProviderDtoMapper serviceProviderDtoMapper;
 
 	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper) {
 		this.serviceProviderMapper = serviceProviderMapper;
@@ -57,8 +59,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public List<ServiceProvider> getServiceProvidersBySubcontractorId(int subcontractorId) {
-		return serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId);
+	public List<ServiceProviderDto> getServiceProvidersBySubcontractorId(int subcontractorId) {
+		return serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	}
 
 
@@ -115,7 +117,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 
 	@Override
-	public int countAllServiceProvidersFiltredByStatus(int statusId) {
+	public int countAllServiceProvidersWithOrWithoutStatus(int statusId) {
 		if (statusId == 0 ) {
 			return serviceProviderMapper.countAllNonArchivedServiceProviders();
 		} else if (statusId>=1 && statusId<=4) {
@@ -126,13 +128,13 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public List<ServiceProvider> getAllServiceProvidersFiltredByStatus(String sortingMethod, int pageNumber,
+	public List<ServiceProviderDto> getAllServiceProvidersWithOrWithoutStatus(String sortingMethod, int pageNumber,
 			int pageSize, int statusId) {
 		int offset = (pageNumber - 1) * pageSize;
 		if (statusId == 0 ) {
-			return serviceProviderMapper.findAllNonArchivedServiceProviders(sortingMethod, offset, pageSize);
+			return serviceProviderMapper.findAllNonArchivedServiceProviders(sortingMethod, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 		} else if (statusId>=1 && statusId<=4) {
-			return serviceProviderMapper.findAllServiceProvidersFlitredByStatus(sortingMethod, offset, pageSize, statusId);
+			return serviceProviderMapper.findAllServiceProvidersFlitredByStatus(sortingMethod, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 		} else {
 			throw new EntityNotFoundException(String.format("le statut avec l'id: %d n'existe pas", statusId));
 		}
@@ -140,33 +142,33 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	
 	@Override
-	public List<ServiceProvider> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
+	public List<ServiceProviderDto> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
 	        int pageSize, int statusId, String searchAttribute) throws GeneralException {
 	    int offset = (pageNumber - 1) * pageSize;
 
 	    if (searchAttribute.equals("name")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderName(searchTerms, offset, pageSize);
+	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderName(searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersByNameAndFiltredStatus(searchTerms, offset, pageSize, statusId);
+	            return serviceProviderMapper.findAllServiceProvidersByNameAndFiltredStatus(searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        }
 	    } else if (searchAttribute.equals("email")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderFirstName(searchTerms, offset, pageSize);
+	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderFirstName(searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersByFirstNameAndFiltredStatus(searchTerms, offset, pageSize, statusId);
+	            return serviceProviderMapper.findAllServiceProvidersByFirstNameAndFiltredStatus(searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        }
 	    } else if (searchAttribute.equals("firstName")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderEmail(searchTerms, offset, pageSize);
+	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderEmail(searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersByEmailAndStatus(searchTerms, offset, pageSize, statusId);
+	            return serviceProviderMapper.findAllServiceProvidersByEmailAndStatus(searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        }
 	    } else if (searchAttribute.equals("subcontractorName")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findServiceProvidersBySubcontractorName(searchTerms, offset, pageSize);
+	            return serviceProviderMapper.findServiceProvidersBySubcontractorName(searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersBySubcontractorNameAndStatus(searchTerms, offset, pageSize, statusId);
+	            return serviceProviderMapper.findAllServiceProvidersBySubcontractorNameAndStatus(searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        }
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", searchAttribute));

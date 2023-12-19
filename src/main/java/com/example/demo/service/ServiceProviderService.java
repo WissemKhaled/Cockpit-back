@@ -16,7 +16,7 @@ public interface ServiceProviderService {
 	
 	ServiceProvider getServiceProviderById(int serviceProviderId);
 
-	List<ServiceProvider> getServiceProvidersBySubcontractorId(int subcontractorId);
+	List<ServiceProviderDto> getServiceProvidersBySubcontractorId(int subcontractorId);
 
 	boolean checkIfServiceProviderExistById(int serviceProviderId);
 
@@ -30,13 +30,13 @@ public interface ServiceProviderService {
 
 	String nameFormatter(String name) throws GeneralException;
 
-	List<ServiceProvider> getAllServiceProvidersFiltredByStatus(String sortingMethod, int pageNumber, int pageSize,
+	List<ServiceProviderDto> getAllServiceProvidersWithOrWithoutStatus(String sortingMethod, int pageNumber, int pageSize,
 			int statusId);
 
-	List<ServiceProvider> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
+	List<ServiceProviderDto> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
 			int pageSize, int statusId, String searchAttribute) throws GeneralException;
 		
-	int countAllServiceProvidersFiltredByStatus(int statusId);
+	int countAllServiceProvidersWithOrWithoutStatus(int statusId);
 
 	int getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
 			String searchAttribute) throws GeneralException;
