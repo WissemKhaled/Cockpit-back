@@ -1,10 +1,10 @@
 package com.example.demo.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.entity.ServiceProvider;
+import com.example.demo.exception.GeneralException;
 
 public interface ServiceProviderService {
 
@@ -12,14 +12,11 @@ public interface ServiceProviderService {
 
 	int updateServiceProvider(ServiceProvider serviceProviderToUpdate);
 
+	int archiveServiceProvider(ServiceProvider serviceProviderToArchive);
+	
 	ServiceProvider getServiceProviderById(int serviceProviderId);
 
 	List<ServiceProvider> getServiceProvidersBySubcontractorId(int subcontractorId);
-
-	List<ServiceProvider> getServiceProvidersBySubcontractorSName(String sName, String sorting, int pageNumber,
-			int pageSize);
-
-	Integer getNumberOfAllServiceProvidersBySubcontractorSName(String sName);
 
 	boolean checkIfServiceProviderExistById(int serviceProviderId);
 
@@ -29,69 +26,19 @@ public interface ServiceProviderService {
 
 	int checkIfSubcontractorExistBySpEmail(String serviceProviderSpEmail);
 
-	String firstNameAndEmailFormatter(String name);
+	String firstNameAndEmailFormatter(String name) throws GeneralException;
 
-	String nameFormatter(String name);
-
-	List<ServiceProvider> getAllServiceProviders();
-
-	int archiveServiceProvider(ServiceProvider serviceProviderToArchive);
-
-	List<ServiceProvider> getAllNonArchivedServiceProviders(String sorting, int page, int pageSize);
-
-	int countAllNonArchivedServiceProviders();
-
-	int countAllServiceProvidersFiltredByStatus(int statusId);
+	String nameFormatter(String name) throws GeneralException;
 
 	List<ServiceProvider> getAllServiceProvidersFiltredByStatus(String sortingMethod, int pageNumber, int pageSize,
 			int statusId);
 
-	Integer getNumberOfAllServiceProvidersBySubcontractorSNameAndFiltredByStatus(String sName, int statusId);
+	List<ServiceProvider> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
+			int pageSize, int statusId, String searchAttribute) throws GeneralException;
+		
+	int countAllServiceProvidersFiltredByStatus(int statusId);
 
-	List<ServiceProvider> getServiceProvidersBySubcontractorSNameAndStatus(String sName, int pageNumber, int pageSize,
-			int statusId);
-
-	List<ServiceProvider> getServiceProvidersByServiceProviderEmail(String spEmail,
-			int pageNumber, int pageSize);
-
-	Integer getNumberOfAllServiceProvidersByServiceProviderEmail(String spEmail);
-
-	List<ServiceProvider> getAllServiceProvidersByServiceProviderName(String spName, int pageNumber,
-			int pageSize);
-
-	Integer getNumberOfAllServiceProvidersByServiceProviderName(String spName);
-
-	List<ServiceProvider> getAllServiceProvidersByServiceProviderFirstName(String spFirstName, int pageNumber,
-			int pageSize);
-
-	Integer getNumberOfAllServiceProvidersByServiceProviderFirstName(String spFirstName);
-
-	List<ServiceProvider> getAllServiceProvidersByNameAndStatus(String spName, int pageNumber, int pageSize,
-			int statusId);
-
-	Integer getNumberOfAllServiceProvidersByNameAndFiltredByStatus(String spName, int statusId);
-
-	List<ServiceProvider> getAllServiceProvidersByEmailAndStatus(String spEmail, int pageNumber, int pageSize,
-			int statusId);
-
-	Integer getNumberOfAllServiceProvidersByEmailAndFiltredByStatus(String spEmail, int statusId);
-
-	List<ServiceProvider> getAllServiceProvidersByFirstNameAndStatus(String spFirstName, int pageNumber,
-			int pageSize, int statusId);
-
-	Integer getNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(String spFirstName, int statusId);
-
-	
-	
-	List<ServiceProvider> getAllServiceProvidersBySearching(String strForSearch, int pageNumber, int pageSize,
-			String attributForSearch);
-
-	Integer getNumberOfAllServiceProvidersBySearching(String strForSearch, String attributForSearch);
-
-	List<ServiceProvider> getAllServiceProvidersBySearchingAndWithOrWithoutStatus(String strForSearch, int pageNumber,
-			int pageSize, int statusId, String attributForSearch);
-
-	Integer getNumberOfAllServiceProvidersBySearchingAndFiltredWithOrWithoutStatus(String spNamestrForSearch, int statusId,
-			String attributForSearch);
+	int getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
+			String searchAttribute) throws GeneralException;
 
 }

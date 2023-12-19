@@ -109,31 +109,8 @@ public class ServiceProviderController {
 		}
 	}
 	
-	@GetMapping("/all-service-providers")
-	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProviders() {
-		try {
-			List<ServiceProviderDto> serviceProviders = serviceProviderService.getAllServiceProviders().stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-			if (serviceProviders.isEmpty()) throw new EntityNotFoundException("Il n'y a pas de prestataires enregistrés.");
-			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
-		} catch (EntityNotFoundException e) {
-			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
-	@GetMapping("/all-non-archived-service-providers")
-	public ResponseEntity<List<ServiceProviderDto>> getAllNonArchivedServiceProviders(
-			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
-			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
-			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize
-	) {
-			return new ResponseEntity<>(serviceProviderService.getAllNonArchivedServiceProviders(sortingMethod, pageNumber, pageSize)
-					.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList(), HttpStatus.OK);    
-	}
-	
-	@GetMapping("/all-service-providers-filtred-by-status")
-	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersFiltredByStatus(
+	@GetMapping("/all-service-providers-with-or-without-status")
+	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersWithOrWithoutStatus(
 			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
@@ -143,18 +120,10 @@ public class ServiceProviderController {
 				.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList(), HttpStatus.OK);    
 	}
 	
-	@GetMapping("/count-all-non-archived-service-providers")
-	public ResponseEntity<Integer> countAllNonArchivedServiceProviders() {
-			return new ResponseEntity<>(serviceProviderService.countAllNonArchivedServiceProviders(), HttpStatus.OK);    
-	}
-	
-	@GetMapping("/count-all-service-providers-filtred-by-status")
+	@GetMapping("/count-all-service-providers-with-or-without-status")
 	public ResponseEntity<Integer> countAllServiceProvidersFiltredByStatus(@RequestParam int statusId) {
 		try {
-			if (1 <= statusId  && statusId <= 4) {
 				return new ResponseEntity<>(serviceProviderService.countAllServiceProvidersFiltredByStatus(statusId), HttpStatus.OK);    			
-			}
-			throw new EntityNotFoundException("l'id du statut n'existe pas.");			
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
@@ -163,17 +132,17 @@ public class ServiceProviderController {
 	}
 	
 	@GetMapping("/all-service-providers/search")
-	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySearchingAndFilteeringByStatus(
-			@RequestParam(name = "strForSearch") String strForSearch,
+	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersBySearchAndStatus(
+			@RequestParam(name = "searchTerms") String searchTerms,
 			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
 			@RequestParam(name = "statusId") int statusId,
-			@RequestParam(name = "attributForSearch") String attributForSearch) {
+			@RequestParam(name = "searchAttribute") String searchAttribute) {
 		try {
-			List<ServiceProviderDto> serviceProviders= serviceProviderService.getAllServiceProvidersBySearchingAndWithOrWithoutStatus(strForSearch, pageNumber, pageSize,statusId,attributForSearch).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-			if (serviceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le prestataire avec le nom: %s n'existe pas", strForSearch));
-			return new ResponseEntity<>(serviceProviders, HttpStatus.OK);
+			List<ServiceProviderDto> filtredServiceProviders= serviceProviderService.getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(searchTerms, pageNumber, pageSize,statusId,searchAttribute).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+			if (filtredServiceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le prestataire avec le nom: %s n'existe pas", searchTerms));
+			return new ResponseEntity<>(filtredServiceProviders, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
@@ -182,14 +151,14 @@ public class ServiceProviderController {
 	}
 	
 	@GetMapping("/count-all-service-providers/search")
-	public ResponseEntity<Integer> getTheNumberOfAllServiceProvidersBySearchingAndFiltredByStatus(
-			@RequestParam(name = "strForSearch") String strForSearch,
+	public ResponseEntity<Integer> getNumberOfServiceProvidersBySearchAndStatus(
+			@RequestParam(name = "searchTerms") String searchTerms,
 			@RequestParam(name = "statusId") int statusId,
-			@RequestParam(name = "attributForSearch") String attributForSearch) {
+			@RequestParam(name = "searchAttribute") String searchAttribute) {
 		try {
-			Integer numberOfAllServiceProvidersByNameAndFiltredByStatus= serviceProviderService.getNumberOfAllServiceProvidersBySearchingAndFiltredWithOrWithoutStatus(strForSearch,statusId, attributForSearch);
-			if (numberOfAllServiceProvidersByNameAndFiltredByStatus == 0) throw new EntityNotFoundException(String.format("Le prestataire avec le nom: %s et le statusId: %d n'existe pas", strForSearch, statusId));
-			return new ResponseEntity<>(numberOfAllServiceProvidersByNameAndFiltredByStatus, HttpStatus.OK);
+			Integer numberOfServiceProviders= serviceProviderService.getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(searchTerms,statusId, searchAttribute);
+			if (numberOfServiceProviders == 0) throw new EntityNotFoundException(String.format("Le prestataire avec le nom: %s et le statusId: %d n'existe pas", searchTerms, statusId));
+			return new ResponseEntity<>(numberOfServiceProviders, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
 		} catch (Exception e) {

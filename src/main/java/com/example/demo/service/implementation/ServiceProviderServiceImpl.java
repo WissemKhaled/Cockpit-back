@@ -9,6 +9,7 @@ import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.ServiceProviderService;
 
@@ -41,6 +42,11 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
+	public int archiveServiceProvider(ServiceProvider serviceProviderIdToArchive) {
+		return serviceProviderMapper.archiveServiceProvider(serviceProviderIdToArchive);
+	}
+	
+	@Override
 	public ServiceProvider getServiceProviderById(int serviceProviderId) {
 		ServiceProvider foundedServiceProviderById = serviceProviderMapper
 				.findServiceProviderWithSubcontractorBySpId(serviceProviderId);
@@ -55,10 +61,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		return serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId);
 	}
 
-	@Override
-	public List<ServiceProvider> getAllServiceProviders() {
-		return serviceProviderMapper.findAllServiceProviders();
-	}
 
 	@Override
 	public boolean checkIfServiceProviderExistById(int serviceProviderId) {
@@ -96,241 +98,111 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public String firstNameAndEmailFormatter(String name) {
+	public String firstNameAndEmailFormatter(String name) throws GeneralException {
 		if (name == null || name.trim().isEmpty()) {
-			throw new RuntimeException("le nom est necessaire");
+			throw new GeneralException("le nom est necessaire");
 		}
 		return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
 	}
 
 	@Override
-	public String nameFormatter(String name) {
+	public String nameFormatter(String name) throws GeneralException {
 		if (name == null || name.trim().isEmpty()) {
-			throw new RuntimeException("le nom est necessaire");
+			throw new GeneralException("le nom est necessaire");
 		}
 		return name.toUpperCase();
 	}
 
-	@Override
-	public int archiveServiceProvider(ServiceProvider serviceProviderIdToArchive) {
-		return serviceProviderMapper.archiveServiceProvider(serviceProviderIdToArchive);
-	}
-
-	@Override
-	public List<ServiceProvider> getAllNonArchivedServiceProviders(String sortingMethod, int pageNumber, int pageSize) {
-		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findAllNonArchivedServiceProviders(sortingMethod, offset, pageSize);
-	}
-
-	@Override
-	public int countAllNonArchivedServiceProviders() {
-		return serviceProviderMapper.countAllNonArchivedServiceProviders();
-	}
 
 	@Override
 	public int countAllServiceProvidersFiltredByStatus(int statusId) {
-		return serviceProviderMapper.countAllServiceProvidersFiltredByStatus(statusId);
+		if (statusId == 0 ) {
+			return serviceProviderMapper.countAllNonArchivedServiceProviders();
+		} else if (statusId>=1 && statusId<=4) {
+			return serviceProviderMapper.countAllServiceProvidersFiltredByStatus(statusId);			
+		} else {
+			throw new EntityNotFoundException(String.format("le statut avec l'id: %d n'existe pas", statusId));
+		}
 	}
 
 	@Override
 	public List<ServiceProvider> getAllServiceProvidersFiltredByStatus(String sortingMethod, int pageNumber,
 			int pageSize, int statusId) {
 		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findAllServiceProvidersFlitredByStatus(sortingMethod, offset, pageSize, statusId);
+		if (statusId == 0 ) {
+			return serviceProviderMapper.findAllNonArchivedServiceProviders(sortingMethod, offset, pageSize);
+		} else if (statusId>=1 && statusId<=4) {
+			return serviceProviderMapper.findAllServiceProvidersFlitredByStatus(sortingMethod, offset, pageSize, statusId);
+		} else {
+			throw new EntityNotFoundException(String.format("le statut avec l'id: %d n'existe pas", statusId));
+		}
 	}
 
-	@Override
-	public List<ServiceProvider> getServiceProvidersBySubcontractorSName(String sName, String sorting, int pageNumber,
-			int pageSize) {
-		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findServiceProvidersBySubcontractorName(sName.toUpperCase(), offset,
-				pageSize);
-	}
-
-	@Override
-	public Integer getNumberOfAllServiceProvidersBySubcontractorSName(String sName) {
-		return serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorName(sName.toUpperCase());
-	}
-
-	@Override
-	public Integer getNumberOfAllServiceProvidersBySubcontractorSNameAndFiltredByStatus(String sName, int statusId) {
-		return serviceProviderMapper
-				.findNumberOfAllServiceProvidersBySubcontractorNameAndFiltredByStatus(sName.toUpperCase(), statusId);
-	}
-
-	@Override
-	public List<ServiceProvider> getServiceProvidersBySubcontractorSNameAndStatus(String sName, int pageNumber,
-			int pageSize, int statusId) {
-		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findAllServiceProvidersBySubcontractorNameAndStatus(sName.toUpperCase(), offset,
-				pageSize, statusId);
-	}
-
-	@Override
-	public List<ServiceProvider> getServiceProvidersByServiceProviderEmail(String spEmail,
-			int pageNumber, int pageSize) {
-		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findAllServiceProvidersByServiceProviderEmail(spEmail, offset,
-				pageSize);
-	}
-
-	@Override
-	public Integer getNumberOfAllServiceProvidersByServiceProviderEmail(String spEmail) {
-		return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderEmail(spEmail);
-	}
-
-	@Override
-	public List<ServiceProvider> getAllServiceProvidersByServiceProviderName(String spName, int pageNumber, int pageSize) {
-		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findAllServiceProvidersByServiceProviderName(spName, offset,
-				pageSize);
-	}
-
-	@Override
-	public Integer getNumberOfAllServiceProvidersByServiceProviderName(String spName) {
-		return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderName(spName);
-
-	}
-
-	@Override
-	public List<ServiceProvider> getAllServiceProvidersByServiceProviderFirstName(String spFirstName, int pageNumber,
-			int pageSize) {
-		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findAllServiceProvidersByServiceProviderFirstName(spFirstName, offset,
-				pageSize);
-	}
-
-	@Override
-	public Integer getNumberOfAllServiceProvidersByServiceProviderFirstName(String spFirstName) {
-		return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderFirstName(spFirstName);
-	}
-
-	@Override
-	public List<ServiceProvider> getAllServiceProvidersByNameAndStatus(String spName, int pageNumber, int pageSize,
-			int statusId) {
-		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findAllServiceProvidersByNameAndFiltredStatus(spName.toUpperCase(), offset,
-				pageSize, statusId);
-	}
-
-	@Override
-	public Integer getNumberOfAllServiceProvidersByNameAndFiltredByStatus(String spName, int statusId) {
-		return serviceProviderMapper
-				.findNumberOfAllServiceProvidersByNameAndFiltredByStatus(spName.toUpperCase(), statusId);
-	}
-
-	@Override
-	public List<ServiceProvider> getAllServiceProvidersByEmailAndStatus(String spEmail, int pageNumber, int pageSize,
-			int statusId) {
-		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findAllServiceProvidersByEmailAndStatus(spEmail, offset,
-				pageSize, statusId);
-	}
-
-	@Override
-	public Integer getNumberOfAllServiceProvidersByEmailAndFiltredByStatus(String spEmail, int statusId) {
-		return serviceProviderMapper
-				.findNumberOfAllServiceProvidersByEmailAndFiltredByStatus(spEmail, statusId);
-	}
-
-	@Override
-	public List<ServiceProvider> getAllServiceProvidersByFirstNameAndStatus(String spFirstName, int pageNumber,
-			int pageSize, int statusId) {
-		int offset = (pageNumber - 1) * pageSize;
-		return serviceProviderMapper.findAllServiceProvidersByFirstNameAndFiltredStatus(spFirstName, offset,
-				pageSize, statusId);
-	}
-
-	@Override
-	public Integer getNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(String spFirstName, int statusId) {
-		return serviceProviderMapper
-				.findNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(spFirstName, statusId);
-	}
-
-	@Override
-	public List<ServiceProvider> getAllServiceProvidersBySearching(String strForSearch, int pageNumber, int pageSize,
-			String attributForSearch) {
-		int offset = (pageNumber - 1) * pageSize;
-		if (attributForSearch.equals("name")) return serviceProviderMapper.findAllServiceProvidersByServiceProviderName(strForSearch, offset,
-				pageSize);
-		if (attributForSearch.equals("email")) return serviceProviderMapper.findAllServiceProvidersByServiceProviderFirstName(strForSearch, offset,
-				pageSize);
-		if (attributForSearch.equals("firstName")) return serviceProviderMapper.findAllServiceProvidersByServiceProviderEmail(strForSearch, offset,
-				pageSize);
-		else throw new RuntimeException("erreur");
-	}
 	
 	@Override
-	public Integer getNumberOfAllServiceProvidersBySearching(String strForSearch, String attributForSearch) {
-		if (attributForSearch.equals("name")) return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderName(strForSearch);
-		if (attributForSearch.equals("email")) return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderFirstName(strForSearch);
-		if (attributForSearch.equals("firstName")) return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderEmail(strForSearch);
-		else throw new RuntimeException("erreur");
-	}
-	
-	@Override
-	public List<ServiceProvider> getAllServiceProvidersBySearchingAndWithOrWithoutStatus(String strForSearch, int pageNumber,
-	        int pageSize, int statusId, String attributForSearch) {
+	public List<ServiceProvider> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
+	        int pageSize, int statusId, String searchAttribute) throws GeneralException {
 	    int offset = (pageNumber - 1) * pageSize;
 
-	    if (attributForSearch.equals("name")) {
+	    if (searchAttribute.equals("name")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderName(strForSearch, offset, pageSize);
+	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderName(searchTerms, offset, pageSize);
 	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersByNameAndFiltredStatus(strForSearch, offset, pageSize, statusId);
+	            return serviceProviderMapper.findAllServiceProvidersByNameAndFiltredStatus(searchTerms, offset, pageSize, statusId);
 	        }
-	    } else if (attributForSearch.equals("email")) {
+	    } else if (searchAttribute.equals("email")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderFirstName(strForSearch, offset, pageSize);
+	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderFirstName(searchTerms, offset, pageSize);
 	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersByFirstNameAndFiltredStatus(strForSearch, offset, pageSize, statusId);
+	            return serviceProviderMapper.findAllServiceProvidersByFirstNameAndFiltredStatus(searchTerms, offset, pageSize, statusId);
 	        }
-	    } else if (attributForSearch.equals("firstName")) {
+	    } else if (searchAttribute.equals("firstName")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderEmail(strForSearch, offset, pageSize);
+	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderEmail(searchTerms, offset, pageSize);
 	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersByEmailAndStatus(strForSearch, offset, pageSize, statusId);
+	            return serviceProviderMapper.findAllServiceProvidersByEmailAndStatus(searchTerms, offset, pageSize, statusId);
 	        }
-	    } else if (attributForSearch.equals("subcontractorName")) {
+	    } else if (searchAttribute.equals("subcontractorName")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findServiceProvidersBySubcontractorName(strForSearch, offset, pageSize);
+	            return serviceProviderMapper.findServiceProvidersBySubcontractorName(searchTerms, offset, pageSize);
 	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersBySubcontractorNameAndStatus(strForSearch, offset, pageSize, statusId);
+	            return serviceProviderMapper.findAllServiceProvidersBySubcontractorNameAndStatus(searchTerms, offset, pageSize, statusId);
 	        }
 	    } else {
-	        throw new RuntimeException("erreur");
+	        throw new GeneralException(String.format("le champs %s n'existe pas", searchAttribute));
 	    }
 	}
 
 	@Override
-	public Integer getNumberOfAllServiceProvidersBySearchingAndFiltredWithOrWithoutStatus(String strForSearch, int statusId,
-			String attributForSearch) {
-	    if (attributForSearch.equals("name")) {
+	public int getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
+			String searchAttribute) throws GeneralException {
+	    if (searchAttribute.equals("name")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderName(strForSearch);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderName(searchTerms);
 	        } else {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByNameAndFiltredByStatus(strForSearch,statusId);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByNameAndFiltredByStatus(searchTerms,statusId);
 	        }
-	    } else if (attributForSearch.equals("email")) {
+	    } else if (searchAttribute.equals("email")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderFirstName(strForSearch);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderFirstName(searchTerms);
 	        } else {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByEmailAndFiltredByStatus(strForSearch,statusId);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByEmailAndFiltredByStatus(searchTerms,statusId);
 	        }
-	    } else if (attributForSearch.equals("firstName")) {
+	    } else if (searchAttribute.equals("firstName")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderEmail(strForSearch);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderEmail(searchTerms);
 	        } else {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(strForSearch,statusId);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(searchTerms,statusId);
 	        }
-	    } else if (attributForSearch.equals("subcontractorName")) {
+	    } else if (searchAttribute.equals("subcontractorName")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorName(strForSearch);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorName(searchTerms);
 	        } else {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorNameAndFiltredByStatus(strForSearch,statusId);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorNameAndFiltredByStatus(searchTerms,statusId);
 	        }
 	    } else {
-	        throw new RuntimeException("erreur");
+	        throw new GeneralException(String.format("le champs %s n'existe pas", searchAttribute));
 	    }
 	}
+	
 }
