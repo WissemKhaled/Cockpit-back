@@ -1,14 +1,14 @@
-package com.example.demo.service;
+package com.example.demo.service.implementation;
 
-import java.io.File;
+import static org.slf4j.LoggerFactory.getLogger;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -18,45 +18,44 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.ResourceUtils;
-import org.springframework.util.unit.DataSize;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.SendMailDTO;
-import com.example.demo.entity.SendMail;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.SendMailMapper;
+import com.example.demo.service.SendMailService;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
 public class SendMailServiceImpl implements SendMailService {
 
 	private final SendMailMapper mailMapper;
 
 	private final JavaMailSender mailSender;
-
-
-	@Autowired
-	private ResourceLoader resourceLoader;
+	
+	private final ResourceLoader resourceLoader;
+	
+	private static final Logger LOG = getLogger(SendMailServiceImpl.class);
+	
+	public SendMailServiceImpl(SendMailMapper mailMapper, JavaMailSender mailSender, ResourceLoader resourceLoader) {
+		this.mailMapper = mailMapper;
+		this.mailSender = mailSender;
+		this.resourceLoader = resourceLoader;
+	}
 
 	@Override
-	public String saveAndSendMail(SendMailDTO mailDTO, List<MultipartFile> files)
-			throws MessagingException, GeneralException {
+	public String saveAndSendMail(SendMailDTO mailDTO, List<MultipartFile> files) throws MessagingException, GeneralException {
 
 		MimeMessage message = getMimeMessage();
 		try {
-
 			mailDTO.setMsCreationsDate(LocalDateTime.now());
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 			
+			//signature du mail recuperé a partir des ressources en HTML
 			String signature = loadSignature();
-			signature = signature.replace("[[nom]]", "et ouiassss mumu");
-
+			
 			helper.setPriority(1);
 			helper.setTo(mailDTO.getMsTo());
 			helper.setSubject(mailDTO.getMsSubject());
@@ -71,20 +70,18 @@ public class SendMailServiceImpl implements SendMailService {
 		                    helper.addAttachment(file.getOriginalFilename(), resource);
 		                } 
 				}
-			
-
 			mailSender.send(message);
 			mailMapper.saveMailAndSend(mailDTO);
 
+			LOG.info("Le courrier a été envoyé avec succès !");
 			return "Le courrier a été envoyé avec succès !";
 		} catch (MailException | IOException e) {
 
-		 throw new GeneralException("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer."
-		 		+ "");
-		}
-
+		 LOG.error("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer.");
+		 throw new GeneralException("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer.");
 		
 	}
+}
 
 	private MimeMessage getMimeMessage() {
 		return mailSender.createMimeMessage();

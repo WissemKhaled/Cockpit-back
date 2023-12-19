@@ -3,6 +3,8 @@ package com.example.demo.service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,17 +14,15 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.CreateUserDTO;
 import com.example.demo.dto.UUserDTO;
-import com.example.demo.dto.UUserMapperEntityDTO;
 import com.example.demo.dto.mapper.CreateUserMapperEntityDTO;
+import com.example.demo.dto.mapper.UUserMapperEntityDTO;
 import com.example.demo.entity.UUser;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.UUserMapper;
 
-import lombok.extern.java.Log;
-
-@Log
 @Service
 public class UserInfoService implements UserDetailsService {
+
 	@Autowired
 	private PasswordEncoder encoder;
 
@@ -34,8 +34,9 @@ public class UserInfoService implements UserDetailsService {
 	
 	@Autowired
 	private CreateUserMapperEntityDTO createUserMapperEntityDTO;
-
 	
+	private static final Logger log = LoggerFactory.getLogger(UserInfoService.class);
+
 	/**
 	 * Méthode de sprig security qui sert à lier l'urtilisateur à ses infos
 	*/
@@ -60,11 +61,11 @@ public class UserInfoService implements UserDetailsService {
 				
 				return userInfoDTO;
 			} else {
-				log.severe(String.format("Email invalide %s" + email));
+				log.error(String.format("Email invalide %s" + email));
 				throw new IllegalArgumentException("Email invalide");
 			}
 		} catch (UsernameNotFoundException e) {
-			log.severe(String.format("Utilisateur non trouvé : %o", e.getMessage(), e));
+			log.error(String.format("Utilisateur non trouvé : %o", e.getMessage(), e));
 			e.printStackTrace();
 			return null;
 		}
@@ -89,7 +90,7 @@ public class UserInfoService implements UserDetailsService {
 	    // Check if the user with the given email already exists
 	    Optional<UUser> existingUser = userMapper.findByEmail(userDTO.getUEmail());
 	    if (existingUser.isPresent()) {
-	        log.warning("Utilisateur avec l'email '" + userDTO.getUEmail() + "' existe déjà");
+	        log.warn("Utilisateur avec l'email '" + userDTO.getUEmail() + "' existe déjà");
 	        throw new GeneralException("Un utilisateur avec cet email existe déjà");
 	    }
 
@@ -103,7 +104,7 @@ public class UserInfoService implements UserDetailsService {
 	        log.info("Utilisateur '" + user.getUEmail() + "' ajouté avec succès");
 	        return "Utilisateur '" + user.getUEmail() + "' ajouté avec succès";
 	    } catch (Exception ex) {
-	        log.severe("Erreur d'ajout d'utilisateur: " + ex.getMessage());
+	        log.error("Erreur d'ajout d'utilisateur: " + ex.getMessage());
 	        throw new GeneralException("Erreur d'ajout d'utilisateur. Veuillez réessayer plus tard");
 	    }
 	}
@@ -118,15 +119,14 @@ public class UserInfoService implements UserDetailsService {
 	        int isPasswordUpdated = userMapper.updatePassword(user);
 
 	        if (isPasswordUpdated == 0) {
-	            log.severe("Échec de mise à jour du mot de passe dans la base de données");
+	            log.error("Échec de mise à jour du mot de passe dans la base de données");
 	            throw new GeneralException("Échec de mise à jour du mot de passe dans la base de données");
 	        } else {
 	            log.info("mot de passe mis à jour pour l'utilisateur : " + email);
 	        }
 	    } else {
-	        log.warning("Utilisateur non trouvé avec l'email : " + email);
+	        log.warn("Utilisateur non trouvé avec l'email : " + email);
 	        throw new GeneralException("Utilisateur non trouvé avec l'email : " + email);
 	    }
 	}
-
 }

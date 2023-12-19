@@ -7,14 +7,16 @@ import com.example.demo.entity.ServiceProvider;
 import com.example.demo.service.StatusService;
 import com.example.demo.service.SubcontractorService;
 
-import lombok.AllArgsConstructor;
-
 @Component
-@AllArgsConstructor
 public class ServiceProviderDtoMapper {
 	
 	private final StatusService statusService;
 	private final SubcontractorService subcontractorService;
+	
+	public ServiceProviderDtoMapper(StatusService statusService, SubcontractorService subcontractorService) {
+		this.statusService = statusService;
+		this.subcontractorService = subcontractorService;
+	}
 
 	public ServiceProviderDto serviceProviderToDto(ServiceProvider serviceProvider) {
 		ServiceProviderDto serviceProviderDto = new ServiceProviderDto();

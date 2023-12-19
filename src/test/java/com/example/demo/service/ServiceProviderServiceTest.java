@@ -25,6 +25,7 @@ import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.mappers.ServiceProviderMapper;
+import com.example.demo.service.implementation.ServiceProviderServiceImpl;
 
 @SpringBootTest
 @Transactional

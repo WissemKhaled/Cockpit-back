@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.service.implementation;
 
 import java.security.Key;
 import java.util.Date;
@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.example.demo.service.JwtService;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -20,7 +22,7 @@ import io.jsonwebtoken.security.Keys;
 public class JwtServiceImplementation implements JwtService {
 
 	@Value("${jwt.secret}")
-    private String SECRET;
+    private String secret;
 	
 	@Value("${token.expiration.duration}")
 	private int tokenExpirationDuration;
@@ -40,7 +42,7 @@ public class JwtServiceImplementation implements JwtService {
 	} 
 
 	private Key getSignKey() { 
-		byte[] keyBytes= Decoders.BASE64.decode(SECRET); 
+		byte[] keyBytes= Decoders.BASE64.decode(secret); 
 		return Keys.hmacShaKeyFor(keyBytes); 
 	} 
 

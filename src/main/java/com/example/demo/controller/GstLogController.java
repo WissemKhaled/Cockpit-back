@@ -6,10 +6,8 @@ import java.util.Map;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,23 +26,23 @@ import com.example.demo.dto.GstLogDTO;
 import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.ResetPasswordResponseDTO;
 import com.example.demo.dto.ResetPwdExpirationResponseDTO;
-import com.example.demo.exception.GeneralException;
-import com.example.demo.service.GstLogServiceImpl;
-import com.example.demo.utility.JsonFileLoader;
+import com.example.demo.exception.PasswordAvailabilityException;
+import com.example.demo.exception.PasswordClaimExpirationException;
+import com.example.demo.service.implementation.GstLogServiceImpl;
 
 import jakarta.validation.Valid;
-import lombok.extern.java.Log;
 
 @RestController
 @CrossOrigin("http://localhost:4200")
-@RequestMapping("/gstlogs") 
+@RequestMapping("/gstlogs")
 public class GstLogController {
-	
-	@Autowired
-	private GstLogServiceImpl gstLogServiceImpl;
-	
-	private static final Logger log = LoggerFactory.getLogger(JsonFileLoader.class);
-	
+	private static final Logger log = LoggerFactory.getLogger(GstLogController.class);
+	private final GstLogServiceImpl gstLogServiceImpl;
+
+	public GstLogController(GstLogServiceImpl gstLogServiceImpl) {
+		this.gstLogServiceImpl = gstLogServiceImpl;
+	}
+
 	/**
 	 * Méthode qui créé et insère un log en base de donnée
 	 */
@@ -85,6 +83,9 @@ public class GstLogController {
         }
     }
 	
+	/**
+     * Methode qui vérifie l'expiration de la demande de changement de mdp
+     */
 	@GetMapping("/checkResetPasswordExpiration")
 	public ResponseEntity<ResetPwdExpirationResponseDTO> checkResetPasswordExpiration(@RequestParam String logValue) {
 	    try {
@@ -103,9 +104,24 @@ public class GstLogController {
 	        return new ResponseEntity<>(new ResetPwdExpirationResponseDTO("error", "Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
-
-
-
+	
+	/**
+     * Methode qui vérifie la disponibilité d'un mot de passe
+     */
+	@GetMapping("/checkNewPasswordAvailability")
+    public ResponseEntity<?> checkNewPasswordAvailability(@RequestParam String newPwd, @RequestParam String email) {
+        try {
+            boolean isAvailable = gstLogServiceImpl.checkNewPasswordAvailability(newPwd, email);
+            // Return a success response if the password is available
+            return new ResponseEntity<>("Le mot de passe est disponible", HttpStatus.OK);
+        } catch (PasswordAvailabilityException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            // Handle other exceptions or log them if needed
+            log.error(e.getMessage());
+            return new ResponseEntity<>("Une erreur innatendue est survenue", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 	
 	 /**
      * Methode pour redéfinir le mot de passe
@@ -125,6 +141,8 @@ public class GstLogController {
 	        return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.BAD_REQUEST);
 	    } catch (NotFoundException e) {
 	        return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.NOT_FOUND);
+	    }	catch (PasswordClaimExpirationException e) {
+	    	return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.GONE);
 	    } catch (Exception e) {
 	        return new ResponseEntity<>(new ResetPasswordResponseDTO("error", e.getMessage()), HttpStatus.BAD_REQUEST);
 	    }
