@@ -13,14 +13,29 @@ public class GstLog {
 
 	@JsonProperty("logEmail")
 	private String logEmail;
-
+	
+	@JsonProperty("logPassword")
+	private String logPassword;
+	
 	@JsonProperty("logValue")
 	private String logValue;
 
 	@JsonProperty("logCreationDate")
 	private LocalDateTime logCreationDate;
+	
+	@JsonProperty("logLastUpdate")
+	private LocalDateTime logLastUpdate;
 
 	public GstLog() {
+	}
+
+	public GstLog(int logId, String logType, String logEmail, String password, String logValue, LocalDateTime logCreationDate, LocalDateTime logLastUpdate) {
+		this.logId = logId;
+		this.logType = logType;
+		this.logEmail = logEmail;
+		this.logValue = logValue;
+		this.logCreationDate = logCreationDate;
+		this.logLastUpdate = logLastUpdate;
 	}
 
 	public GstLog(int logId, String logType, String logEmail, String logValue, LocalDateTime logCreationDate) {
@@ -55,6 +70,14 @@ public class GstLog {
 		this.logEmail = logEmail;
 	}
 
+	public String getLogPassword() {
+		return logPassword;
+	}
+
+	public void setLogPassword(String logPassword) {
+		this.logPassword = logPassword;
+	}
+
 	public String getLogValue() {
 		return logValue;
 	}
@@ -71,10 +94,18 @@ public class GstLog {
 		this.logCreationDate = logCreationDate;
 	}
 
-	@Override
-	public String toString() {
-		return "GstLog [logId=" + logId + ", logType=" + logType + ", logEmail=" + logEmail + ", logValue=" + logValue
-				+ ", logCreationDate=" + logCreationDate + "]";
+	public LocalDateTime getLogLastUpdate() {
+		return logLastUpdate;
 	}
 
+	public void setLogLastUpdate(LocalDateTime logLastUpdate) {
+		this.logLastUpdate = logLastUpdate;
+	}
+
+	@Override
+	public String toString() {
+		return "GstLog [logId=" + logId + ", logType=" + logType + ", logEmail=" + logEmail + ", logPassword="
+				+ logPassword + ", logValue=" + logValue + ", logCreationDate=" + logCreationDate + ", logLastUpdate="
+				+ logLastUpdate + "]";
+	}
 }
