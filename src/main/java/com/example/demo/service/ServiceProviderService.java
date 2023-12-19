@@ -7,7 +7,6 @@ import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.GeneralException;
 
 public interface ServiceProviderService {
-
 	/**
 	 * Récupère un prestataire par son ID, en incluant les informations sur le sous-traitant associé.
 	 *
@@ -15,7 +14,7 @@ public interface ServiceProviderService {
 	 * @return Le prestataire trouvé avec les informations sur le sous-traitant, s'il existe.
 	 * @throws EntityNotFoundException Si aucun prestataire n'est trouvé avec l'ID spécifié.
 	 */
-	ServiceProvider getServiceProviderById(int serviceProviderId);
+	ServiceProviderDto getServiceProviderById(int serviceProviderId);
 	
 	/**
 	 * Enregistre un nouveau prestataire dans la base de données.
@@ -23,7 +22,7 @@ public interface ServiceProviderService {
 	 * @param serviceProviderToSave Le prestataire à enregistrer.
 	 * @return L'ID du prestataire enregistré, ou 0 si l'enregistrement a échoué.
 	 */
-	int saveServiceProvider(ServiceProvider serviceProviderToSave);
+	int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave);
 
 	/**
 	 * Met à jour les informations d'un prestataire dans la base de données.
@@ -31,7 +30,7 @@ public interface ServiceProviderService {
 	 * @param serviceProviderToUpdate Le prestataire avec les informations à mettre à jour.
 	 * @return Le nombre d'enregistrements affectés par la mise à jour.
 	 */
-	int updateServiceProvider(ServiceProvider serviceProviderToUpdate);
+	int updateServiceProvider(ServiceProviderDto serviceProviderDtoToUpdate);
 
 	/**
 	 * Archive un prestataire en mettant à jour son statut dans la base de données.
@@ -41,7 +40,7 @@ public interface ServiceProviderService {
 	 * @throws AlreadyArchivedEntity Si le prestataire est déjà archivé.
 	 * @throws EntityNotFoundException Si le prestataire n'est pas trouvé.
 	 */
-	int archiveServiceProvider(ServiceProvider serviceProviderToArchive);
+	int archiveServiceProvider(ServiceProviderDto serviceProviderDtoToArchive);
 
 	/**
 	 * Récupère la liste des prestataires associés à un sous-traitant spécifié.

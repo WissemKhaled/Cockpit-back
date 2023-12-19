@@ -30,12 +30,9 @@ import jakarta.validation.Valid;
 public class ServiceProviderController {
 
 	private final ServiceProviderService serviceProviderService;
-	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
 	
-	public ServiceProviderController(ServiceProviderService serviceProviderService,
-			ServiceProviderDtoMapper serviceProviderDtoMapper) {
+	public ServiceProviderController(ServiceProviderService serviceProviderService) {
 		this.serviceProviderService = serviceProviderService;
-		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
 	}
 	
 	/**
@@ -49,7 +46,7 @@ public class ServiceProviderController {
 	@GetMapping("/{spId}")
 	public ResponseEntity<ServiceProviderDto> getServiceProviderById(@PathVariable int spId) {
 		try {
-			return new ResponseEntity<>(serviceProviderDtoMapper.serviceProviderToDto(serviceProviderService.getServiceProviderById(spId)), HttpStatus.OK);
+			return new ResponseEntity<ServiceProviderDto>(serviceProviderService.getServiceProviderById(spId), HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
@@ -80,15 +77,14 @@ public class ServiceProviderController {
 	        if (isServiceProviderExist) {
 	            // Mise à jour du prestataire
 	            serviceProviderService.handleServiceProviderUpdating(serviceProviderDto);
-	            int updateServiceProviderId = serviceProviderService.updateServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
-	            ServiceProvider updatedServiceProvider = serviceProviderService.getServiceProviderById(updateServiceProviderId);
-	            return new ResponseEntity<>(serviceProviderDtoMapper.serviceProviderToDto(updatedServiceProvider), HttpStatus.OK);
+	            int updateServiceProviderId = serviceProviderService.updateServiceProvider(serviceProviderDto);
+	            return new ResponseEntity<>(serviceProviderService.getServiceProviderById(updateServiceProviderId), HttpStatus.OK);
 	        } else {
 	            if (serviceProviderDto.getSpId() > 0) {
 	                // Enregistrement d'un nouveau prestataire
 	                serviceProviderService.handleServiceProviderSaving(serviceProviderDto);
-	                int savedServiceProviderId = serviceProviderService.saveServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
-	                return new ResponseEntity<>(serviceProviderDtoMapper.serviceProviderToDto(serviceProviderService.getServiceProviderById(savedServiceProviderId)), HttpStatus.CREATED);
+	                int savedServiceProviderId = serviceProviderService.saveServiceProvider(serviceProviderDto);
+	                return new ResponseEntity<>(serviceProviderService.getServiceProviderById(savedServiceProviderId), HttpStatus.CREATED);
 	            } else {
 	                return new ResponseEntity("Invalid Id", HttpStatus.BAD_REQUEST);
 	            }
@@ -116,14 +112,14 @@ public class ServiceProviderController {
 	public ResponseEntity<String> archiveServiceProvider(@PathVariable int serviceProviderId) {
 	    try {
 	        // Récupération du prestataire par ID
-	        ServiceProvider serviceProviderToArchive = serviceProviderService.getServiceProviderById(serviceProviderId);
+	        ServiceProviderDto serviceProviderDtoToArchive = serviceProviderService.getServiceProviderById(serviceProviderId);
 
 	        // Vérification si le prestataire est déjà archivé
-	        if (serviceProviderToArchive.getSpStatus().getStId() == 4) {
+	        if (serviceProviderDtoToArchive.getSpStatus().getStId() == 4) {
 	            throw new AlreadyArchivedEntity(String.format("Erreur: le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
 	        }
 
-	        serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
+	        serviceProviderService.archiveServiceProvider(serviceProviderDtoToArchive);
 	        return new ResponseEntity<>(String.format("Le prestataire avec l'id: %d a été archivé avec succès", serviceProviderId), HttpStatus.OK);
 	    } catch (AlreadyArchivedEntity e) {
 	        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

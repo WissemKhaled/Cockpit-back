@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.SubcontractorDto;
@@ -20,7 +21,6 @@ import com.example.demo.service.SubcontractorService;
 
 @Service
 public class SubcontractorServiceImpl implements SubcontractorService {
-
 	private final SubcontractorDtoMapper subcontractorDtoMapper;
 	private final SubcontractorMapper subcontractorMapper;
 	private final StatusMapper statusMapper;

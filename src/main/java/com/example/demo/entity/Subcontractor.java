@@ -42,7 +42,6 @@ public class Subcontractor {
 
 	public Subcontractor(int sId, String sName, String sEmail, LocalDateTime sCreationDate,
 			LocalDateTime sLastUpdateDate, Status status, List<ServiceProvider> serviceProviders) {
-		super();
 		this.sId = sId;
 		this.sName = sName;
 		this.sEmail = sEmail;

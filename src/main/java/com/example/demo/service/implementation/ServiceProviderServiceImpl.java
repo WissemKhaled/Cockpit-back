@@ -16,18 +16,19 @@ import com.example.demo.service.ServiceProviderService;
 
 @Service
 public class ServiceProviderServiceImpl implements ServiceProviderService {
+	private final ServiceProviderMapper serviceProviderMapper;
+	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
 
-	private ServiceProviderMapper serviceProviderMapper;
-	private ServiceProviderDtoMapper serviceProviderDtoMapper;
-
-	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper) {
+	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper,
+			ServiceProviderDtoMapper serviceProviderDtoMapper) {
 		this.serviceProviderMapper = serviceProviderMapper;
+		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
 	}
 
 	@Override
-	public ServiceProvider getServiceProviderById(int serviceProviderId) {
-		ServiceProvider foundedServiceProviderById = serviceProviderMapper
-				.findServiceProviderWithSubcontractorBySpId(serviceProviderId);
+	public ServiceProviderDto getServiceProviderById(int serviceProviderId) {
+		ServiceProviderDto foundedServiceProviderById = serviceProviderDtoMapper.serviceProviderToDto(serviceProviderMapper
+				.findServiceProviderWithSubcontractorBySpId(serviceProviderId));
 		if (foundedServiceProviderById == null) {
 			throw new EntityNotFoundException("le prestataire avec l'id: " + serviceProviderId + " n'existe pas!!");
 		}
@@ -35,12 +36,12 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 	
 	@Override
-	public int saveServiceProvider(ServiceProvider serviceProviderToSave) {
+	public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) {
 	    // Définition de la date de création
-		serviceProviderToSave.setSpCreationDate(LocalDateTime.now());
+		serviceProviderDtoToSave.setSpCreationDate(LocalDateTime.now());
 		
 	    // Insertion du prestataire dans la base de données
-		int isServiceProviderInserted = serviceProviderMapper.insertServiceProvider(serviceProviderToSave);
+		int isServiceProviderInserted = serviceProviderMapper.insertServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToSave));
 		
 	    // Vérification si l'enregistrement a réussi
 		if (isServiceProviderInserted == 0) {
@@ -48,21 +49,21 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		}
 	    // Remarque: L'ID du prestataire est généré automatiquement lors de l'enregistrement,
 	    // permettant de le retourner sans prendre en compte l'ID saisi par l'utilisateur.
-		return serviceProviderToSave.getSpId();
+		return serviceProviderDtoToSave.getSpId();
 	}
 
 	@Override
-	public int updateServiceProvider(ServiceProvider serviceProviderToUpdate) {
+	public int updateServiceProvider(ServiceProviderDto serviceProviderDtoToUpdate) {
 	    // Mise à jour de la date de dernière modification
-		serviceProviderToUpdate.setSpLastUpdateDate(LocalDateTime.now());
+		serviceProviderDtoToUpdate.setSpLastUpdateDate(LocalDateTime.now());
 		
 	    // Exécution de la mise à jour dans la base de données
-		return serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate);
+		return serviceProviderMapper.updateServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToUpdate));
 	}
 
 	@Override
-	public int archiveServiceProvider(ServiceProvider serviceProviderIdToArchive) {
-		return serviceProviderMapper.archiveServiceProvider(serviceProviderIdToArchive);
+	public int archiveServiceProvider(ServiceProviderDto serviceProviderDtoToArchive) {
+		return serviceProviderMapper.archiveServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToArchive));
 	}
 	
 	@Override
