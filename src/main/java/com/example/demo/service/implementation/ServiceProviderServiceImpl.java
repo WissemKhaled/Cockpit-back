@@ -217,7 +217,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	        }
 	    } else if (searchAttribute.equals("email")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderFirstName(searchTerms);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderEmail(searchTerms);
 	        } else {
 	            return serviceProviderMapper.findNumberOfAllServiceProvidersByEmailAndFiltredByStatus(searchTerms,statusId);
 	        }

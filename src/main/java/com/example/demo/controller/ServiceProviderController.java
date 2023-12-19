@@ -203,7 +203,11 @@ public class ServiceProviderController {
 	 * @param pageNumber       Le numéro de la page à récupérer (par défaut : 1).
 	 * @param pageSize         Le nombre d'éléments par page (par défaut : 20).
 	 * @param statusId         L'ID du statut pour filtrer les prestataires. Si null, le filtrage par statut est ignoré et les prestataires avec un statut archivé ne sont pas comptés.
-	 * @param searchAttribute  L'attribut de recherche spécifié, par exemple "name" ou "email".
+	 * @param searchAttribute  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
+	 *                         - "subcontractorName" : Nom du sous-traitant affilié.
+	 *                         - "firstName" : Prénom du prestataire.
+	 *                         - "name" : Nom du prestataire.
+	 *                         - "email" : Email du prestataire.
 	 * @return ResponseEntity contenant la liste des ServiceProviderDto filtrés par recherche et statut avec le statut OK,
 	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
 	 *         ResponseEntity avec un message d'erreur et le statut INTERNAL_SERVER_ERROR en cas d'erreur.
@@ -233,7 +237,11 @@ public class ServiceProviderController {
 	 *
 	 * @param searchTerms      Les termes de recherche pour filtrer les prestataires.
 	 * @param statusId         L'ID du statut pour filtrer les prestataires. Si null, le filtrage par statut est ignoré et les prestataires avec un statut archivé ne sont pas comptés.
-	 * @param searchAttribute  L'attribut de recherche spécifié, par exemple "name" ou "email".
+	 * @param searchAttribute  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
+	 *                         - "subcontractorName" : Nom du sous-traitant affilié.
+	 *                         - "firstName" : Prénom du prestataire.
+	 *                         - "name" : Nom du prestataire.
+	 *                         - "email" : Email du prestataire.
 	 * @return ResponseEntity contenant le nombre de prestataires filtrés par recherche et statut avec le statut OK,
 	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
 	 *         ResponseEntity avec un message d'erreur et le statut INTERNAL_SERVER_ERROR en cas d'erreur.

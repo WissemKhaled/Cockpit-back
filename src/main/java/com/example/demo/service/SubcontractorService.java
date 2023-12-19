@@ -5,6 +5,7 @@ import java.util.List;
 import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.entity.Subcontractor;
+import com.example.demo.exception.GeneralException;
 
 public interface SubcontractorService {
 
@@ -42,5 +43,35 @@ public interface SubcontractorService {
 	void handleSubcontractorUpdate(SubcontractorDto subcontractorDto);
 
 	Subcontractor getSubcontractorBySName(String sName);
+
+	/**
+	 * Récupère la liste des sous-traitants filtrée par recherche, statut, attribut de recherche, avec prise en compte de la pagination.
+	 *
+	 * @param searchTerms      Les termes de recherche pour filtrer les sous-traitants.
+	 * @param pageNumber       Le numéro de la page à récupérer.
+	 * @param pageSize         Le nombre d'éléments par page.
+	 * @param statusId      L'ID du statut pour filtrer les sous-traitants (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
+	 * @param searchAttribute  L'attribut de recherche spécifié parmi la liste suivante : "name", et "email".
+	 *                         - "name" : Nom du sous-traitant.
+	 *                         - "email" : Email du sous-traitant.
+	 * @return Liste des DTO des sous-traitants filtrés par recherche, statut et attribut de recherche, paginés.
+	 * @throws GeneralException Si l'attribut de recherche spécifié n'est pas pris en charge.
+	 */
+	List<SubcontractorDto> getAllSubcontractorsBySearchAndWithOrWithoutStatusFiltring(String searchTerms,
+			int pageNumber, int pageSize, int statusId, String searchAttribute) throws GeneralException;
+
+	/**
+	 * Récupère le nombre de sous-traitants filtré par recherche, statut et attribut de recherche.
+	 *
+	 * @param searchTerms      Les termes de recherche pour filtrer les sous-traitants.
+	 * @param statusId         L'ID du statut pour filtrer les sous-traitants (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
+	 * @param searchAttribute  L'attribut de recherche spécifié parmi la liste suivante : "name", et "email".
+	 *                         - "name" : Nom du sous-traitant.
+	 *                         - "email" : Email du sous-traitant.
+	 * @return Le nombre de sous-traitants selon la recherche, le statut et l'attribut spécifiés.
+	 * @throws GeneralException Si l'attribut de recherche spécifié n'est pas pris en charge.
+	 */
+	Integer getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
+			String searchAttribute) throws GeneralException;
 
 }

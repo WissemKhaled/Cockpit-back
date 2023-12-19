@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.SubcontractorDtoMapper;
@@ -209,6 +210,69 @@ public class SubcontractorController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	/**
+	 * Récupère la liste des sous-traitants filtrée par recherche et statut (si l'ID du statut est non null) ou par recherche seule.
+	 *
+	 * @param searchTerms      Les termes de recherche pour filtrer les sous-traitants.
+	 * @param sortingMethod    La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
+	 * @param pageNumber       Le numéro de la page à récupérer (par défaut : 1).
+	 * @param pageSize         Le nombre d'éléments par page (par défaut : 20).
+	 * @param statusId         L'ID du statut pour filtrer les sous-traitants. Si null, le filtrage par statut est ignoré et les sous-traitants avec un statut archivé ne sont pas comptés.
+	 * @param searchAttribute  L'attribut de recherche spécifié parmi la liste suivante : "name", et "email".
+	 *                         - "name" : Nom du sous-traitant.
+	 *                         - "email" : Email du sous-traitant.
+	 * @return ResponseEntity contenant la liste des ServiceProviderDto filtrés par recherche et statut avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si aucun sous-traitants n'est trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur et le statut INTERNAL_SERVER_ERROR en cas d'erreur.
+	 */
+	@GetMapping("/all-subcontractors/search")
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorsBySearchAndStatus(
+			@RequestParam(name = "searchTerms") String searchTerms,
+			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
+			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
+			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
+			@RequestParam(name = "statusId") int statusId,
+			@RequestParam(name = "searchAttribute") String searchAttribute) {
+		try {
+	        // Récupération les sous-traitants filtré par recherche et (facultativement) statut
+			List<SubcontractorDto> filtredSubcontractors= subcontractorService.getAllSubcontractorsBySearchAndWithOrWithoutStatusFiltring(searchTerms, pageNumber, pageSize,statusId,searchAttribute);
+			if (filtredSubcontractors.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec le %s n'existe pas", searchTerms));
+			return new ResponseEntity<>(filtredSubcontractors, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	/**
+	 * Récupère le nombre de sous-traitants filtré par recherche et statut (si l'ID du statut est non null) ou par recherche seule.
+	 *
+	 * @param searchTerms      Les termes de recherche pour filtrer les sous-traitants.
+	 * @param statusId         L'ID du statut pour filtrer les sous-traitants. Si null, le filtrage par statut est ignoré et les sous-traitants avec un statut archivé ne sont pas comptés.
+	 * @param searchAttribute  L'attribut de recherche spécifié parmi la liste suivante : "name", et "email".
+	 *                         - "name" : Nom du sous-traitant.
+	 *                         - "email" : Email du sous-traitant.
+     * @return ResponseEntity contenant le nombre de sous-traitants filtrés par recherche et statut avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur et le statut INTERNAL_SERVER_ERROR en cas d'erreur.
+	 */
+	@GetMapping("/count-all-subcontractors/search")
+	public ResponseEntity<Integer> getNumberOfSubcontractorsBySearchAndStatus(
+			@RequestParam(name = "searchTerms") String searchTerms,
+			@RequestParam(name = "statusId") int statusId,
+			@RequestParam(name = "searchAttribute") String searchAttribute) {
+		try {
+	        // Récupération du nombre de prestataires filtré par recherche et (facultativement) statut
+			Integer numberOfSubcontractors= subcontractorService.getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(searchTerms,statusId, searchAttribute);
+			if (numberOfSubcontractors == 0) throw new EntityNotFoundException(String.format("Le sous-traitant avec le %s et le statusId: %d n'existe pas", searchTerms, statusId));
+			return new ResponseEntity<>(numberOfSubcontractors, HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

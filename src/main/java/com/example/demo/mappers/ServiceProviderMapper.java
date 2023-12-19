@@ -386,15 +386,7 @@ public interface ServiceProviderMapper {
 			+ "AND sp.sp_fk_status_id != 4 ")
 	int findNumberOfAllServiceProvidersByServiceProviderName(@Param("spName") String spName);
 	
-	
-	@Select("SELECT COUNT(*) " 
-			+ "FROM service_provider sp "
-			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
-			+ "WHERE sp.sp_first_name ILIKE #{spFirstName} || '%' "
-			+ "AND sp.sp_fk_status_id != 4 ")
-	int findNumberOfAllServiceProvidersByServiceProviderFirstName(@Param("spFirstName") String spFirstName);
-	
-	
+
 	@Select("SELECT COUNT(*) " 
 			+ "FROM service_provider sp "
 			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
