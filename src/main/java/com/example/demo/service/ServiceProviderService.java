@@ -120,7 +120,7 @@ public interface ServiceProviderService {
 	 * @param pageNumber       Le numéro de la page à récupérer.
 	 * @param pageSize         Le nombre d'éléments par page.
 	 * @param statusId      L'ID du statut pour filtrer les prestataires (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
-	 * @param searchAttribute  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
+	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
 	 *                         - "subcontractorName" : Nom du sous-traitant affilié.
 	 *                         - "firstName" : Prénom du prestataire.
 	 *                         - "name" : Nom du prestataire.
@@ -129,7 +129,7 @@ public interface ServiceProviderService {
 	 * @throws GeneralException Si l'attribut de recherche spécifié n'est pas pris en charge.
 	 */
 	List<ServiceProviderDto> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
-			int pageSize, int statusId, String searchAttribute) throws GeneralException;
+			int pageSize, int statusId, String columnName) throws GeneralException;
 	
 	/**
 	 * Compte le nombre de prestataires filtré par statut.
@@ -145,7 +145,7 @@ public interface ServiceProviderService {
 	 *
 	 * @param searchTerms      Les termes de recherche pour filtrer les prestataires.
 	 * @param statusId         L'ID du statut pour filtrer les prestataires (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
-	 * @param searchAttribute  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
+	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
 	 *                         - "subcontractorName" : Nom du sous-traitant affilié.
 	 *                         - "firstName" : Prénom du prestataire.
 	 *                         - "name" : Nom du prestataire.
@@ -154,6 +154,6 @@ public interface ServiceProviderService {
 	 * @throws GeneralException Si l'attribut de recherche spécifié n'est pas pris en charge.
 	 */
 	int getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
-			String searchAttribute) throws GeneralException;
+			String columnName) throws GeneralException;
 
 }

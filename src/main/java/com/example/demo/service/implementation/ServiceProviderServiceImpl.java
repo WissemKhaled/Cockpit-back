@@ -171,70 +171,70 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	
 	@Override
 	public List<ServiceProviderDto> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
-	        int pageSize, int statusId, String searchAttribute) throws GeneralException {
+	        int pageSize, int statusId, String columnName) throws GeneralException {
 	    // Calcul de l'offset pour la pagination
 	    int offset = (pageNumber - 1) * pageSize;
 
 	    // Vérification de l'attribut de recherche et récupération des prestataires en conséquence
-	    if (searchAttribute.equals("name")) {
+	    if (columnName.equals("name")) {
 	        if (statusId == 0) {
 	            return serviceProviderMapper.findServiceProvidersByCriteria("sp.sp_name",searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        } else {
 	            return serviceProviderMapper.findAllServiceProvidersByCriteriaAndFiltredByStatus("sp.sp_name",searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        }
-	    } else if (searchAttribute.equals("firstName")) {
+	    } else if (columnName.equals("firstName")) {
 	        if (statusId == 0) {
 	            return serviceProviderMapper.findServiceProvidersByCriteria("sp.sp_first_name",searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        } else {
 	            return serviceProviderMapper.findAllServiceProvidersByCriteriaAndFiltredByStatus("sp.sp_first_name",searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        }
-	    } else if (searchAttribute.equals("email")) {
+	    } else if (columnName.equals("email")) {
 	    	if (statusId == 0) {
 	    		return serviceProviderMapper.findServiceProvidersByCriteria("sp.sp_email",searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	    	} else {
 	    		return serviceProviderMapper.findAllServiceProvidersByCriteriaAndFiltredByStatus("sp.sp_email",searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	    	}
-	    } else if (searchAttribute.equals("subcontractorName")) {
+	    } else if (columnName.equals("subcontractorName")) {
 	        if (statusId == 0) {
 	            return serviceProviderMapper.findServiceProvidersByCriteria("s.s_name",searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        } else {
 	            return serviceProviderMapper.findAllServiceProvidersByCriteriaAndFiltredByStatus("s.s_name",searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        }
 	    } else {
-	        throw new GeneralException(String.format("le champs %s n'existe pas", searchAttribute));
+	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
 	    }
 	}
 
 	@Override
 	public int getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
-			String searchAttribute) throws GeneralException {
-	    if (searchAttribute.equals("name")) {
+			String columnName) throws GeneralException {
+	    if (columnName.equals("name")) {
 	        // Vérification de l'attribut de recherche et récupération du nombre de prestataires de services en conséquence
 	        if (statusId == 0) {
 	            return serviceProviderMapper.findNumberOfAllServiceProvidersByCriteria("sp.sp_name",searchTerms);
 	        } else {
 	            return serviceProviderMapper.findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus("sp.sp_name",searchTerms,statusId);
 	        }
-	    } else if (searchAttribute.equals("firstName")) {
+	    } else if (columnName.equals("firstName")) {
 	        if (statusId == 0) {
 	            return serviceProviderMapper.findNumberOfAllServiceProvidersByCriteria("sp.sp_first_name",searchTerms);
 	        } else {
 	            return serviceProviderMapper.findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus("sp.sp_first_name",searchTerms,statusId);
 	        }
-	    } else if (searchAttribute.equals("email")) {
+	    } else if (columnName.equals("email")) {
 	        if (statusId == 0) {
 	            return serviceProviderMapper.findNumberOfAllServiceProvidersByCriteria("sp.sp_email",searchTerms);
 	        } else {
 	            return serviceProviderMapper.findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus("sp.sp_email",searchTerms,statusId);
 	        }
-	    } else if (searchAttribute.equals("subcontractorName")) {
+	    } else if (columnName.equals("subcontractorName")) {
 	        if (statusId == 0) {
 	            return serviceProviderMapper.findNumberOfAllServiceProvidersByCriteria("s.s_name",searchTerms);
 	        } else {
 	            return serviceProviderMapper.findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus("s.s_name",searchTerms,statusId);
 	        }
 	    } else {
-	        throw new GeneralException(String.format("le champs %s n'existe pas", searchAttribute));
+	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
 	    }
 	}
 	

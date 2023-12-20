@@ -215,46 +215,46 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	@Override
 	public List<SubcontractorDto> getAllSubcontractorsBySearchAndWithOrWithoutStatusFiltring(String searchTerms,
-			int pageNumber, int pageSize, int statusId, String searchAttribute) throws GeneralException {
+			int pageNumber, int pageSize, int statusId, String columnName) throws GeneralException {
 	    // Calcul de l'offset pour la pagination
 	    int offset = (pageNumber - 1) * pageSize;
 
 	    // Vérification de l'attribut de recherche et récupération des prestataires en conséquence
-	    if (searchAttribute.equals("name")) {
+	    if (columnName.equals("name")) {
 	        if (statusId == 0) {
 	            return subcontractorMapper.findAllSubcontractorsByCriteria("s.s_name", searchTerms, offset, pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	        } else {
 	            return subcontractorMapper.findAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_name", searchTerms, offset, pageSize, statusId).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	        }
-	    } else if (searchAttribute.equals("email")) {
+	    } else if (columnName.equals("email")) {
 	        if (statusId == 0) {
 	            return subcontractorMapper.findAllSubcontractorsByCriteria("s.s_email", searchTerms, offset, pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	        } else {
 	            return subcontractorMapper.findAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_email",searchTerms, offset, pageSize, statusId).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	        }
 	    } else {
-	        throw new GeneralException(String.format("le champs %s n'existe pas", searchAttribute));
+	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
 	    }
 	}
 
 	@Override
 	public Integer getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
-			String searchAttribute) throws GeneralException {
-	    if (searchAttribute.equals("name")) {
+			String columnName) throws GeneralException {
+	    if (columnName.equals("name")) {
 	        // Vérification de l'attribut de recherche et récupération du nombre de prestataires de services en conséquence
 	        if (statusId == 0) {
 	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteria("s.s_name",searchTerms);
 	        } else {
 	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_name",searchTerms,statusId);
 	        }
-	    } else if (searchAttribute.equals("email")) {
+	    } else if (columnName.equals("email")) {
 	        if (statusId == 0) {
 	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteria("s.s_email",searchTerms);
 	        } else {
 	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_email",searchTerms,statusId);
 	        }
 	    } else {
-	        throw new GeneralException(String.format("le champs %s n'existe pas", searchAttribute));
+	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
 	    }
 	}
 

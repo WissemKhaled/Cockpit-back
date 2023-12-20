@@ -225,7 +225,7 @@ public class SubcontractorController {
 	 * @param pageNumber       Le numéro de la page à récupérer (par défaut : 1).
 	 * @param pageSize         Le nombre d'éléments par page (par défaut : 20).
 	 * @param statusId         L'ID du statut pour filtrer les sous-traitants. Si null, le filtrage par statut est ignoré et les sous-traitants avec un statut archivé ne sont pas comptés.
-	 * @param searchAttribute  L'attribut de recherche spécifié parmi la liste suivante : "name", et "email".
+	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "name", et "email".
 	 *                         - "name" : Nom du sous-traitant.
 	 *                         - "email" : Email du sous-traitant.
 	 * @return ResponseEntity contenant la liste des ServiceProviderDto filtrés par recherche et statut avec le statut OK,
@@ -239,10 +239,10 @@ public class SubcontractorController {
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
 			@RequestParam(name = "statusId") int statusId,
-			@RequestParam(name = "searchAttribute") String searchAttribute) {
+			@RequestParam(name = "columnName") String columnName) {
 		try {
 	        // Récupération les sous-traitants filtré par recherche et (facultativement) statut
-			List<SubcontractorDto> filtredSubcontractors= subcontractorService.getAllSubcontractorsBySearchAndWithOrWithoutStatusFiltring(searchTerms, pageNumber, pageSize,statusId,searchAttribute);
+			List<SubcontractorDto> filtredSubcontractors= subcontractorService.getAllSubcontractorsBySearchAndWithOrWithoutStatusFiltring(searchTerms, pageNumber, pageSize,statusId,columnName);
 			if (filtredSubcontractors.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec le %s n'existe pas", searchTerms));
 			return new ResponseEntity<>(filtredSubcontractors, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
@@ -257,7 +257,7 @@ public class SubcontractorController {
 	 *
 	 * @param searchTerms      Les termes de recherche pour filtrer les sous-traitants.
 	 * @param statusId         L'ID du statut pour filtrer les sous-traitants. Si null, le filtrage par statut est ignoré et les sous-traitants avec un statut archivé ne sont pas comptés.
-	 * @param searchAttribute  L'attribut de recherche spécifié parmi la liste suivante : "name", et "email".
+	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "name", et "email".
 	 *                         - "name" : Nom du sous-traitant.
 	 *                         - "email" : Email du sous-traitant.
      * @return ResponseEntity contenant le nombre de sous-traitants filtrés par recherche et statut avec le statut OK,
@@ -268,10 +268,10 @@ public class SubcontractorController {
 	public ResponseEntity<Integer> getNumberOfSubcontractorsBySearchAndStatus(
 			@RequestParam(name = "searchTerms") String searchTerms,
 			@RequestParam(name = "statusId") int statusId,
-			@RequestParam(name = "searchAttribute") String searchAttribute) {
+			@RequestParam(name = "columnName") String columnName) {
 		try {
 	        // Récupération du nombre de prestataires filtré par recherche et (facultativement) statut
-			Integer numberOfSubcontractors= subcontractorService.getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(searchTerms,statusId, searchAttribute);
+			Integer numberOfSubcontractors= subcontractorService.getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(searchTerms,statusId, columnName);
 			if (numberOfSubcontractors == 0) throw new EntityNotFoundException(String.format("Le sous-traitant avec le %s et le statusId: %d n'existe pas", searchTerms, statusId));
 			return new ResponseEntity<>(numberOfSubcontractors, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
