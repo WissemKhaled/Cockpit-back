@@ -85,13 +85,20 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 
 	public Integer getNumberOfAllSubcontractors() {
-		return subcontractorMapper.countTotalItems();
+		Integer numberOfFoundSubcontractors = subcontractorMapper.countTotalItems();
+		if (numberOfFoundSubcontractors == 0) {
+			throw new EntityNotFoundException("il n'y a pas de sous-traiatant trouvé");
+		}
+		return numberOfFoundSubcontractors;
 	}
 
 	@Override
 	public Integer countTotalItemWhitStatus(Integer statusId) {
-
-		return subcontractorMapper.countTotalItemsWithStatus(statusId);
+		Integer numberOfFoundSubcontractorsWithStatus = subcontractorMapper.countTotalItemsWithStatus(statusId);
+		if (numberOfFoundSubcontractorsWithStatus == 0) {
+			throw new EntityNotFoundException("il n'y a pas de sous-traiatant trouvé");
+		}
+		return numberOfFoundSubcontractorsWithStatus;
 
 	}
 
