@@ -172,3 +172,17 @@ INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date
 
 -- Prestataire 49
 INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Charlotte', 'GIRARD' ,'CharlotteGirard-5@email.com', '2023-01-01 12:00:00', NULL, 5 , 3);
+
+-- Pour la table gst_status_model_service_provider
+INSERT INTO gst_status_model_service_provider (status_msp_fk_service_provider_id, status_msp_fk_message_model_id, status_msp_fk_status_id)
+SELECT sp.sp_id, mm.mm_id, s.st_id
+FROM service_provider sp
+CROSS JOIN gst_message_model mm
+CROSS JOIN status s;
+
+-- Pour la table gst_status_model_subcontractor
+INSERT INTO gst_status_model_subcontractor (status_ms_fk_subcontractor_id, status_ms_fk_message_model_id, status_ms_fk_status_id)
+SELECT sub.s_id, mm.mm_id, s.st_id
+FROM subcontractor sub
+CROSS JOIN gst_message_model mm
+CROSS JOIN status s;
