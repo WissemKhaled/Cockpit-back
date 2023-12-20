@@ -217,7 +217,6 @@ public interface SubcontractorMapper {
 	
 	@Select("SELECT COUNT(*) " 
 			+ "FROM subcontractor s "
-			+ "INNER JOIN subcontractor s ON s.s_fk_subcontractor_id = s.s_id "
 			+ "WHERE s.s_name ILIKE #{searchTerms} || '%' "
 			+ "AND s.s_fk_status_id != 4 ")
 	Integer findNumberOfAllSubcontractorsBySubcontractorName(@Param("searchTerms") String searchTerms);
@@ -225,7 +224,6 @@ public interface SubcontractorMapper {
 	
 	@Select("SELECT COUNT(*) " 
 			+ "FROM subcontractor s "
-			+ "INNER JOIN subcontractor s ON s.s_fk_subcontractor_id = s.s_id "
 			+ "WHERE s.s_name ILIKE #{searchTerms} || '%' "
 			+ "AND s.s_fk_status_id = ${statusId} ")
 	Integer findNumberOfAllSubcontractorsBySubcontractorNameAndFiltredByStatus(
@@ -235,7 +233,6 @@ public interface SubcontractorMapper {
 	
 	@Select("SELECT COUNT(*) " 
 			+ "FROM subcontractor s "
-			+ "INNER JOIN subcontractor s ON s.s_fk_subcontractor_id = s.s_id "
 			+ "WHERE s.s_email ILIKE #{searchTerms} || '%' "
 			+ "AND s.s_fk_status_id != 4 ")
 	Integer findNumberOfAllSubcontractorsBySubcontractorEmail(@Param("searchTerms") String searchTerms);
@@ -243,7 +240,6 @@ public interface SubcontractorMapper {
 	
 	@Select("SELECT COUNT(*) " 
 			+ "FROM subcontractor s "
-			+ "INNER JOIN subcontractor s ON s.s_fk_subcontractor_id = s.s_id "
 			+ "WHERE s.s_email ILIKE #{searchTerms} || '%' "
 			+ "AND s.s_fk_status_id = ${statusId} ")
 	Integer findNumberOfAllSubcontractorsBySubcontractorEmailAndFiltredByStatus(
