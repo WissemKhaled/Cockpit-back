@@ -178,27 +178,27 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    // Vérification de l'attribut de recherche et récupération des prestataires en conséquence
 	    if (searchAttribute.equals("name")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderName(searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	            return serviceProviderMapper.findServiceProvidersByCriteria("sp.sp_name",searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersByNameAndFiltredStatus(searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	        }
-	    } else if (searchAttribute.equals("email")) {
-	        if (statusId == 0) {
-	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderFirstName(searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersByFirstNameAndFiltredStatus(searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	            return serviceProviderMapper.findAllServiceProvidersByCriteriaAndFiltredByStatus("sp.sp_name",searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        }
 	    } else if (searchAttribute.equals("firstName")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findAllServiceProvidersByServiceProviderEmail(searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	            return serviceProviderMapper.findServiceProvidersByCriteria("sp.sp_first_name",searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersByEmailAndStatus(searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	            return serviceProviderMapper.findAllServiceProvidersByCriteriaAndFiltredByStatus("sp.sp_first_name",searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        }
+	    } else if (searchAttribute.equals("email")) {
+	    	if (statusId == 0) {
+	    		return serviceProviderMapper.findServiceProvidersByCriteria("sp.sp_email",searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    	} else {
+	    		return serviceProviderMapper.findAllServiceProvidersByCriteriaAndFiltredByStatus("sp.sp_email",searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    	}
 	    } else if (searchAttribute.equals("subcontractorName")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findServiceProvidersBySubcontractorName(searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	            return serviceProviderMapper.findServiceProvidersByCriteria("s.s_name",searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersBySubcontractorNameAndStatus(searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	            return serviceProviderMapper.findAllServiceProvidersByCriteriaAndFiltredByStatus("s.s_name",searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 	        }
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", searchAttribute));
@@ -211,27 +211,27 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    if (searchAttribute.equals("name")) {
 	        // Vérification de l'attribut de recherche et récupération du nombre de prestataires de services en conséquence
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderName(searchTerms);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByCriteria("sp.sp_name",searchTerms);
 	        } else {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByNameAndFiltredByStatus(searchTerms,statusId);
-	        }
-	    } else if (searchAttribute.equals("email")) {
-	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderEmail(searchTerms);
-	        } else {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByEmailAndFiltredByStatus(searchTerms,statusId);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus("sp.sp_name",searchTerms,statusId);
 	        }
 	    } else if (searchAttribute.equals("firstName")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByServiceProviderEmail(searchTerms);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByCriteria("sp.sp_first_name",searchTerms);
 	        } else {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByFirstNameAndFiltredByStatus(searchTerms,statusId);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus("sp.sp_first_name",searchTerms,statusId);
+	        }
+	    } else if (searchAttribute.equals("email")) {
+	        if (statusId == 0) {
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByCriteria("sp.sp_email",searchTerms);
+	        } else {
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus("sp.sp_email",searchTerms,statusId);
 	        }
 	    } else if (searchAttribute.equals("subcontractorName")) {
 	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorName(searchTerms);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByCriteria("s.s_name",searchTerms);
 	        } else {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersBySubcontractorNameAndFiltredByStatus(searchTerms,statusId);
+	            return serviceProviderMapper.findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus("s.s_name",searchTerms,statusId);
 	        }
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", searchAttribute));

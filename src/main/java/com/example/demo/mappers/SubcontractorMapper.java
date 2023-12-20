@@ -196,6 +196,7 @@ public interface SubcontractorMapper {
 			@Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms);
 	
+	
 	@Select("SELECT COUNT(*) " 
 			+ "FROM subcontractor s "
 			+ "WHERE ${columnName} ILIKE #{searchTerms} || '%' "

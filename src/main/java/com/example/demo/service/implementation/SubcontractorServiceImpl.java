@@ -249,9 +249,9 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	        }
 	    } else if (searchAttribute.equals("email")) {
 	        if (statusId == 0) {
-	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteria("s.s_name",searchTerms);
+	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteria("s.s_email",searchTerms);
 	        } else {
-	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_name",searchTerms,statusId);
+	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_email",searchTerms,statusId);
 	        }
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", searchAttribute));
