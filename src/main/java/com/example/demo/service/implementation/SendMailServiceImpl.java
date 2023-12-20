@@ -2,18 +2,26 @@ package com.example.demo.service.implementation;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.entity.SendMail;
+import com.example.demo.dto.SendMailDTO;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.SendMailMapper;
 import com.example.demo.service.SendMailService;
 
@@ -26,50 +34,67 @@ public class SendMailServiceImpl implements SendMailService {
 	private final SendMailMapper mailMapper;
 
 	private final JavaMailSender mailSender;
-
+	
+	private final ResourceLoader resourceLoader;
+	
 	private static final Logger LOG = getLogger(SendMailServiceImpl.class);
-
-	public SendMailServiceImpl(SendMailMapper mailMapper, JavaMailSender mailSender) {
+	
+	public SendMailServiceImpl(SendMailMapper mailMapper, JavaMailSender mailSender, ResourceLoader resourceLoader) {
 		this.mailMapper = mailMapper;
 		this.mailSender = mailSender;
+		this.resourceLoader = resourceLoader;
 	}
 
 	@Override
-	public SendMail saveAndSendMail(String to, String subject, String body, String sender, List<MultipartFile> files)
-			throws MessagingException {
-
-		LOG.error("err");
+	public String saveAndSendMail(SendMailDTO mailDTO, List<MultipartFile> files) throws MessagingException, GeneralException {
 
 		MimeMessage message = getMimeMessage();
 		try {
-
-			MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
+			mailDTO.setMsCreationsDate(LocalDateTime.now());
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+			
+			//signature du mail recuperé a partir des ressources en HTML
+			String signature = loadSignature();
+			
 			helper.setPriority(1);
-			helper.setFrom("jesuisuneAdressMail@test.fr");
-			helper.setTo(to);
-			helper.setSubject(subject);
-			helper.setText(body);
+			helper.setTo(mailDTO.getMsTo());
+			helper.setSubject(mailDTO.getMsSubject());
+			helper.setText(mailDTO.getMsBody() + "<br><br>" + signature, true);
+		    helper.setReplyTo(mailDTO.getMsSender());
 
-			for (MultipartFile file : files) {
+			if (files != null && !files.isEmpty()) {
 
-				Resource resource = new ByteArrayResource(file.getBytes());
+				for (MultipartFile file : files) {
 
-				helper.addAttachment(file.getOriginalFilename(), resource);
-
-			}
-
+		                    Resource resource = new ByteArrayResource(file.getBytes());
+		                    helper.addAttachment(file.getOriginalFilename(), resource);
+		                } 
+				}
 			mailSender.send(message);
+			mailMapper.saveMailAndSend(mailDTO);
 
-		} catch (MailException | java.io.IOException e) {
-			LOG.error(e.getMessage());
-		}
+			LOG.info("Le courrier a été envoyé avec succès !");
+			return "Le courrier a été envoyé avec succès !";
+		} catch (MailException | IOException e) {
 
-		return null;
+		 LOG.error("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer.");
+		 throw new GeneralException("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer.");
+		
 	}
+}
 
 	private MimeMessage getMimeMessage() {
 		return mailSender.createMimeMessage();
+	}
+
+	public String loadSignature() throws IOException {
+		String signaturePath = "signature.html";
+
+		Resource resource = new ClassPathResource(signaturePath);
+
+		try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
+			return FileCopyUtils.copyToString(reader);
+		}
 	}
 
 }

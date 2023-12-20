@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.dto.SendMailDTO;
+import com.example.demo.entity.SendMail;
+import com.example.demo.exception.GeneralException;
+
 import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.service.SendMailService;
 
@@ -23,7 +27,7 @@ import jakarta.mail.MessagingException;
 @CrossOrigin(origins = "http://localhost:4200")
 public class SendMailController {
 
-	private static final Logger log = LoggerFactory.getLogger(SendMailController.class);
+
 
 	private final SendMailService mailService;
 
@@ -32,23 +36,19 @@ public class SendMailController {
 	}
 
 	@PostMapping("/saveAndSendMail")
-	public ResponseEntity<?> saveAndSendMail(@RequestParam("files") List<MultipartFile> file,
-			@RequestParam("msTo") String to, @RequestParam("msSubject") String subject,
-			@RequestParam("msBody") String body, @RequestParam("msSender") String sender) throws MessagingException {
-
+	public ResponseEntity<?> saveAndSendMail(@RequestParam(value="files", required = false) List<MultipartFile> file,
+			                                 @RequestParam("msTo") String to,
+			                                 @RequestParam("msSubject") String subject,
+			                                 @RequestParam("msBody") String body,
+			                                 @RequestParam("msSender") String sender
+			                                   ) throws MessagingException {
 		try {
-			for (MultipartFile fil : file) {
-				System.err.println(fil.getOriginalFilename());
-			}
-			log.info("Destinataire : " + to);
-			log.info("Sujet : " + subject);
-			log.info("Corps du message : " + body);
-
-			return new ResponseEntity<>(mailService.saveAndSendMail(to, subject, body, sender, file), HttpStatus.OK);
-
+			SendMailDTO mailDTO = new SendMailDTO(0, sender, to, null, subject, body, null, 1, null);
+			return new ResponseEntity<>(mailService.saveAndSendMail(mailDTO, file), HttpStatus.OK);
 		} catch (MessageModelNotFoundException e) {
-
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (GeneralException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
