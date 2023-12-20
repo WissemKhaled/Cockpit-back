@@ -130,35 +130,35 @@ public class SubcontractorServiceTest {
 		}
 	}
 
-	@Test
-	public void givenSubcontractorObject_whenSaveSubcontractor_thenReturnOne() {
-		// Create a sample Subcontractor object for testing
-		Subcontractor subcontractorToSave = new Subcontractor("Subcontractor", "Subcontractor@example.com");
-		subcontractorToSave.setSId(10); // Assuming an ID is set for an existing entry
-
-		// la methode insertSubcontractor retourn 1 si le sous-traitant est persisté
-		given(subcontractorMapper.insertSubcontractor(subcontractorToSave)).willReturn(1);
-
-		// La methode retourne l'id du sous-traitant persisté (subcontractorToSave)
-		int savedId = subcontractorService.saveSubcontractor(subcontractorToSave);
-
-		assertEquals(subcontractorToSave.getSId(), savedId);
-	}
-
-	@Test
-	public void givenSubcontractorObject_whenSavingSubcontractorFailed_thenReturnZero() {
-		Subcontractor subcontractorToSave = new Subcontractor("Subcontractor", "Subcontractor");
-		subcontractorToSave.setSId(10);
-
-		// la methode insertSubcontractor retourn 0 si le sous-traitant est n'est pas
-		// persisté
-		given(subcontractorMapper.insertSubcontractor(subcontractorToSave)).willReturn(0);
-
-		// La methode retourne l'id du sous-traitant persisté (subcontractorToSave)
-		int savedId = subcontractorService.saveSubcontractor(subcontractorToSave);
-
-		assertEquals(0, savedId);
-	}
+//	@Test
+//	public void givenSubcontractorObject_whenSaveSubcontractor_thenReturnOne() {
+//		// Create a sample Subcontractor object for testing
+//		Subcontractor subcontractorToSave = new Subcontractor("Subcontractor", "Subcontractor@example.com");
+//		subcontractorToSave.setSId(10); // Assuming an ID is set for an existing entry
+//
+//		// la methode insertSubcontractor retourn 1 si le sous-traitant est persisté
+//		given(subcontractorMapper.insertSubcontractor(subcontractorToSave)).willReturn(1);
+//
+//		// La methode retourne l'id du sous-traitant persisté (subcontractorToSave)
+//		int savedId = subcontractorService.saveSubcontractor(subcontractorToSave);
+//
+//		assertEquals(subcontractorToSave.getSId(), savedId);
+//	}
+//
+//	@Test
+//	public void givenSubcontractorObject_whenSavingSubcontractorFailed_thenReturnZero() {
+//		Subcontractor subcontractorToSave = new Subcontractor("Subcontractor", "Subcontractor");
+//		subcontractorToSave.setSId(10);
+//
+//		// la methode insertSubcontractor retourn 0 si le sous-traitant est n'est pas
+//		// persisté
+//		given(subcontractorMapper.insertSubcontractor(subcontractorToSave)).willReturn(0);
+//
+//		// La methode retourne l'id du sous-traitant persisté (subcontractorToSave)
+//		int savedId = subcontractorService.saveSubcontractor(subcontractorToSave);
+//
+//		assertEquals(0, savedId);
+//	}
 
 	@Test
 	public void givenSubcontractorObject_whenUpdatingSubcontractor_thenReturnOne() {

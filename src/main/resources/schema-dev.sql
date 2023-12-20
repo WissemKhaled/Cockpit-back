@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS gst_log (
     log_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     log_last_update TIMESTAMP
 );
+
 CREATE TABLE IF NOT EXISTS gst_message_model (
     mm_id SERIAL PRIMARY KEY,
     mm_type VARCHAR(45) NOT NULL,
@@ -78,4 +79,26 @@ CREATE TABLE IF NOT EXISTS message_send (
     ms_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ms_fk_model_email_id SMALLINT NOT NULL,
     FOREIGN KEY (ms_fk_model_email_id) REFERENCES gst_message_model(mm_id)
+);
+
+CREATE TABLE IF NOT EXISTS gst_status_model_service_provider (
+    status_msp_id SERIAL PRIMARY KEY,
+    status_msp_fk_service_provider_id SERIAL NOT NULL,
+    status_msp_fk_message_model_id SERIAL NOT NULL,
+    status_msp_fk_status_id SERIAL NOT NULL,
+    
+    FOREIGN KEY (status_msp_fk_service_provider_id) REFERENCES service_provider(sp_id),
+    FOREIGN KEY (status_msp_fk_message_model_id) REFERENCES gst_message_model(mm_id),
+    FOREIGN KEY (status_msp_fk_status_id) REFERENCES status(st_id)
+);
+
+CREATE TABLE IF NOT EXISTS gst_status_model_subcontractor (
+    status_ms_id SERIAL PRIMARY KEY,
+    status_ms_fk_subcontractor_id SERIAL NOT NULL,
+    status_ms_fk_message_model_id SERIAL NOT NULL,
+    status_ms_fk_status_id SERIAL NOT NULL,
+    
+    FOREIGN KEY (status_ms_fk_subcontractor_id) REFERENCES subcontractor(s_id),
+    FOREIGN KEY (status_ms_fk_message_model_id) REFERENCES gst_message_model(mm_id),
+    FOREIGN KEY (status_ms_fk_status_id) REFERENCES status(st_id)
 );

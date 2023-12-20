@@ -5,6 +5,7 @@ import java.util.List;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
+import com.example.demo.exception.GeneralException;
 
 public interface SubcontractorService {
 
@@ -25,7 +26,7 @@ public interface SubcontractorService {
 
 	Subcontractor getSubcontractorWithStatus(int sId);
 
-	int saveSubcontractor(Subcontractor subcontractor);
+	int saveSubcontractor(Subcontractor subcontractor) throws GeneralException;
 
 	int updateSubcontractor(Subcontractor subcontractor);
 

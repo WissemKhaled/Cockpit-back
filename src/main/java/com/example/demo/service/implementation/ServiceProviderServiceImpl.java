@@ -3,12 +3,18 @@ package com.example.demo.service.implementation;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.GstStatusModelServiceProviderDTO;
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.entity.GstStatusModelServiceProvider;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.ServiceProviderService;
 
@@ -16,13 +22,15 @@ import com.example.demo.service.ServiceProviderService;
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	private ServiceProviderMapper serviceProviderMapper;
+	
+	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
 
 	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper) {
 		this.serviceProviderMapper = serviceProviderMapper;
 	}
 
 	@Override
-	public int saveServiceProvider(ServiceProvider serviceProviderToSave) {
+	public int saveServiceProvider(ServiceProvider serviceProviderToSave) throws GeneralException {
 		serviceProviderToSave.setSpCreationDate(LocalDateTime.now());
 		int isServiceProviderInserted = serviceProviderMapper.insertServiceProvider(serviceProviderToSave);
 		if (isServiceProviderInserted == 0) {
@@ -31,7 +39,37 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		// remarque: qu'on persiste le prestataire, on génere l'id automatiquement et
 		// comme ça on peut retourner le correct sans prendre en considération l'id
 		// saisi par l'utilisateur
-		return serviceProviderToSave.getSpId();
+		
+		// Si l'insertion du nouveau sous-traitant en bdd se passe bien, on alimente la table intermédiaire qui va service pour les relances d'emails
+		int mmId = 1; // message modèle
+		
+		GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = new GstStatusModelServiceProviderDTO();
+		
+		gstStatusModelServiceProviderDTO.setStatusMspFkServiceProviderId(serviceProviderToSave.getSpId());
+		gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(mmId);
+		gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(serviceProviderToSave.getSpStatus().getStId());
+		
+		log.info("serviceProviderToSave.getSpId() = " + serviceProviderToSave.getSpId());
+
+		GstStatusModelServiceProvider gstStatusModelServiceProvider = new GstStatusModelServiceProvider();
+		
+		try {
+			int isGstStatusModelServiceProviderInserted = serviceProviderMapper.insertGstStatusModelServiceProvider(gstStatusModelServiceProvider);
+		
+			if (isGstStatusModelServiceProviderInserted == 0) {
+				throw new GeneralException("Erreur lors de l'insertion des données dans la table intermédiaire des prestataires");
+			}
+			
+			log.info("Données dans la table intermédiaire des prestataires insérées avec succès");
+			
+			return serviceProviderToSave.getSpId();
+		} catch(PersistenceException e) {
+			log.error("Erreur MyBatis lors de l'insertion des données dans la table intermédiaire des prestatires", e);
+	        throw new GeneralException("Erreur MyBatis lors de l'insertion des données dans la table intermédiaire des prestatires : " + e);
+		} catch(Exception e) {
+			log.error("Erreur lors du traitement de saveServiceprovider", e);
+	        throw new GeneralException("Erreur lors du traitement de saveServiceprovider : " + e);
+		}
 	}
 
 	@Override

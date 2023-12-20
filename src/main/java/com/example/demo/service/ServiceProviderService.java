@@ -4,10 +4,11 @@ import java.util.List;
 
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.entity.ServiceProvider;
+import com.example.demo.exception.GeneralException;
 
 public interface ServiceProviderService {
 
-	int saveServiceProvider(ServiceProvider serviceProviderToSave);
+	int saveServiceProvider(ServiceProvider serviceProviderToSave) throws GeneralException;
 
 	int updateServiceProvider(ServiceProvider serviceProviderToUpdate);
 

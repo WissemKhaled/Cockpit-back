@@ -23,6 +23,7 @@ import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.AlreadyArchivedEntity;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.service.SubcontractorService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -153,46 +154,50 @@ public class SubcontractorController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
-	// méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on
-	// le modifie
+	
+	/**
+	 * méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on le modifie
+	 * Après l'insertion du sous-traitant, on alimente la table intermédiaire gst_status_model_subcontractor 
+	 	servant à effectuer les relances d'email
+	*/
 	@PostMapping("/save")
-	public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
-		try {
-			if (subcontractorDto.getSId() > 0) {
-				boolean isSubcontractorExist = subcontractorService
-						.checkIfSubcontractorExist(subcontractorDto.getSId());
-				if (isSubcontractorExist) {
-					// si le sous-traitant existe, update
-					this.subcontractorService.handleSubcontractorUpdate(subcontractorDto);
-					Subcontractor subcontractorToSaveOrUpdate = subcontractorDtoMapper
-							.dtoToSubcontractor(subcontractorDto);
-					subcontractorService.updateSubcontractor(subcontractorToSaveOrUpdate);
-					Subcontractor updatedSubcontractor = subcontractorService
-							.getSubcontractorWithStatus(subcontractorToSaveOrUpdate.getSId());
-					SubcontractorDto updatedSubcontractorDto = subcontractorDtoMapper
-							.subcontractorToDto(updatedSubcontractor);
-					return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
-				} else {
-					// si le sous-traitant n'existe pas, save
-					this.subcontractorService.handleSubcontractorSave(subcontractorDto);
-					Subcontractor subcontractorToSaveOrUpdate = subcontractorDtoMapper
-							.dtoToSubcontractor(subcontractorDto);
-					int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorToSaveOrUpdate);
-					Subcontractor savedSubcontractor = subcontractorService
-							.getSubcontractorWithStatus(savedSubcontractorId);
-					SubcontractorDto savedSubcontractorDto = subcontractorDtoMapper
-							.subcontractorToDto(savedSubcontractor);
-					return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
-				}
-			} else {
-				return new ResponseEntity<>("Invalid Id", HttpStatus.BAD_REQUEST);
-			}
-		} catch (EntityDuplicateDataException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-		} catch (Exception e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+    public ResponseEntity<?> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
+        try {
+            if (subcontractorDto.getSId() > 0) {
+                boolean isSubcontractorExist = subcontractorService.checkIfSubcontractorExist(subcontractorDto.getSId());
+
+                // si le sous-traitant existe, update
+                if (isSubcontractorExist) {
+                    this.subcontractorService.handleSubcontractorUpdate(subcontractorDto);
+                    Subcontractor subcontractorToSaveOrUpdate = subcontractorDtoMapper.dtoToSubcontractor(subcontractorDto);
+                    subcontractorService.updateSubcontractor(subcontractorToSaveOrUpdate);
+                    Subcontractor updatedSubcontractor = subcontractorService.getSubcontractorWithStatus(subcontractorToSaveOrUpdate.getSId());
+                    SubcontractorDto updatedSubcontractorDto = subcontractorDtoMapper.subcontractorToDto(updatedSubcontractor);
+                    return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
+                } else {
+                    subcontractorService.handleSubcontractorSave(subcontractorDto);
+                    Subcontractor subcontractorToSaveOrUpdate = subcontractorDtoMapper.dtoToSubcontractor(subcontractorDto);
+
+                    try {
+                        int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorToSaveOrUpdate);
+                        Subcontractor savedSubcontractor = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
+                        SubcontractorDto savedSubcontractorDto = subcontractorDtoMapper.subcontractorToDto(savedSubcontractor);
+                        return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
+                    } catch (GeneralException e) {
+                        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+                    }
+                }
+            } else {
+                // ID de sous-traitant non valide
+                return new ResponseEntity<>("ID non valide", HttpStatus.BAD_REQUEST);
+            }
+        } catch (EntityDuplicateDataException e) {
+            // Gérez l'exception pour les données en double
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            // Gérez les autres exceptions
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 	}
 
 	// methode pour archiver le sous-traitant

@@ -20,6 +20,7 @@ import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.AlreadyArchivedEntity;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.service.ServiceProviderService;
 
 import jakarta.validation.Valid;
@@ -51,33 +52,35 @@ public class ServiceProviderController {
 
 	@PostMapping("/save")
 	public ResponseEntity<ServiceProviderDto> saveServiceProvider(@Valid @RequestBody ServiceProviderDto serviceProviderDto) {
-		try {
-			serviceProviderDto.setSpFirstName(serviceProviderService.firstNameAndEmailFormatter(serviceProviderDto.getSpFirstName()));
-			serviceProviderDto.setSpName(serviceProviderService.nameFormatter(serviceProviderDto.getSpName()));
-			serviceProviderDto.setSpEmail(serviceProviderService.firstNameAndEmailFormatter(serviceProviderDto.getSpEmail()));
-			boolean isServiceProviderExist = serviceProviderService.checkIfServiceProviderExistById(serviceProviderDto.getSpId());
-			if (isServiceProviderExist) {
-				serviceProviderService.handleServiceProviderUpdating(serviceProviderDto);
-				int updateServiceProviderId = serviceProviderService.updateServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
-				ServiceProvider updatedServiceProvider = serviceProviderService.getServiceProviderById(updateServiceProviderId);
-				return new ResponseEntity<>(
-						serviceProviderDtoMapper.serviceProviderToDto(updatedServiceProvider), HttpStatus.OK);
-			} else {
-				if (serviceProviderDto.getSpId() > 0) {
-					serviceProviderService.handleServiceProviderSaving(serviceProviderDto);
-					int savedServiceProviderId = serviceProviderService.saveServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
-					return new ResponseEntity<>(serviceProviderDtoMapper.serviceProviderToDto(serviceProviderService.getServiceProviderById(savedServiceProviderId)),HttpStatus.CREATED);
-				} else {
-					return new ResponseEntity("Invalid Id", HttpStatus.BAD_REQUEST);
-				}
-			}
-		} catch (EntityNotFoundException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-		} catch (EntityDuplicateDataException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
-		} catch (Exception e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
+	    try {
+	        serviceProviderDto.setSpFirstName(serviceProviderService.firstNameAndEmailFormatter(serviceProviderDto.getSpFirstName()));
+	        serviceProviderDto.setSpName(serviceProviderService.nameFormatter(serviceProviderDto.getSpName()));
+	        serviceProviderDto.setSpEmail(serviceProviderService.firstNameAndEmailFormatter(serviceProviderDto.getSpEmail()));
+	        boolean isServiceProviderExist = serviceProviderService.checkIfServiceProviderExistById(serviceProviderDto.getSpId());
+	        if (isServiceProviderExist) {
+	            serviceProviderService.handleServiceProviderUpdating(serviceProviderDto);
+	            int updateServiceProviderId = serviceProviderService.updateServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
+	            ServiceProvider updatedServiceProvider = serviceProviderService.getServiceProviderById(updateServiceProviderId);
+	            return new ResponseEntity<>(
+	                    serviceProviderDtoMapper.serviceProviderToDto(updatedServiceProvider), HttpStatus.OK);
+	        } else {
+	            if (serviceProviderDto.getSpId() > 0) {
+	                serviceProviderService.handleServiceProviderSaving(serviceProviderDto);
+	                int savedServiceProviderId = serviceProviderService.saveServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDto));
+	                return new ResponseEntity<>(serviceProviderDtoMapper.serviceProviderToDto(serviceProviderService.getServiceProviderById(savedServiceProviderId)), HttpStatus.CREATED);
+	            } else {
+	                return new ResponseEntity("Invalid Id", HttpStatus.BAD_REQUEST);
+	            }
+	        }
+	    } catch (EntityNotFoundException e) {
+	        return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+	    } catch (EntityDuplicateDataException e) {
+	        return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+	    } catch (GeneralException e) {
+	        return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    } catch (Exception e) {
+	        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+	    }
 	}
 
 	@PutMapping("/archive/{serviceProviderId}")

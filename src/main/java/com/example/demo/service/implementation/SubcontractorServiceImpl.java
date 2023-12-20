@@ -4,15 +4,23 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.GstStatusModelSubcontractorDTO;
 import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.dto.mapper.GstStatusModelSubcontractorDtoMapper;
 import com.example.demo.dto.mapper.SubcontractorDtoMapper;
+import com.example.demo.entity.GstLog;
+import com.example.demo.entity.GstStatusModelSubcontractor;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.mappers.StatusMapper;
 import com.example.demo.mappers.SubcontractorMapper;
@@ -25,14 +33,21 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	private final SubcontractorMapper subcontractorMapper;
 	private final StatusMapper statusMapper;
 	private final ServiceProviderMapper serviceProviderMapper;
+	private final GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper;
+	
+	private static final Logger log = LoggerFactory.getLogger(SubcontractorServiceImpl.class);
 
-	public SubcontractorServiceImpl(SubcontractorDtoMapper subcontractorDtoMapper,
+	public SubcontractorServiceImpl(
+			SubcontractorDtoMapper subcontractorDtoMapper,
 			SubcontractorMapper subcontractorMapper, StatusMapper statusMapper,
-			ServiceProviderMapper serviceProviderMapper) {
+			ServiceProviderMapper serviceProviderMapper,
+			GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper
+	) {
 		this.subcontractorDtoMapper = subcontractorDtoMapper;
 		this.subcontractorMapper = subcontractorMapper;
 		this.statusMapper = statusMapper;
 		this.serviceProviderMapper = serviceProviderMapper;
+		this.gstStatusModelSubcontractorDtoMapper = gstStatusModelSubcontractorDtoMapper;
 	}
 
 	@Override
@@ -43,18 +58,47 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		}
 		return subcontractor;
 	}
-
+	
 	@Override
-	public int saveSubcontractor(Subcontractor subcontractor) {
-		subcontractor.setSCreationDate(LocalDateTime.now());
-		int isSubcontractorInserted = subcontractorMapper.insertSubcontractor(subcontractor);
-		if (isSubcontractorInserted == 0) {
-			return isSubcontractorInserted;
-		}
-		// remarque qu'on persiste le sous-traitant, on génere l'id automatiquement et
-		// comme ça on peut retourner le correct sans prendre en cpnsidération l'id
-		// saisi par l'utilisateur (subcontractDto)
-		return subcontractor.getSId();
+	public int saveSubcontractor(Subcontractor subcontractor) throws GeneralException {
+	    subcontractor.setSCreationDate(LocalDateTime.now());
+	    int isSubcontractorInserted = subcontractorMapper.insertSubcontractor(subcontractor);
+	    if (isSubcontractorInserted == 0) {
+	        return isSubcontractorInserted;
+	    }
+
+	    // remarque qu'on persiste le sous-traitant, on génère l'id automatiquement et
+	    // comme ça on peut retourner le correct sans prendre en considération l'id
+	    // saisi par l'utilisateur (subcontractDto)
+
+	    // Si l'insertion du nouveau sous-traitant en bdd se passe bien, on alimente la table intermédiaire qui va service pour les relances d'emails
+	    int mmId = 1; // message model
+	    
+	    GstStatusModelSubcontractorDTO gstStatusModelSubcontractorDTO = new GstStatusModelSubcontractorDTO();
+	    
+	    gstStatusModelSubcontractorDTO.setStatusMsFkSubcontractorId(subcontractor.getSId());
+	    gstStatusModelSubcontractorDTO.setStatusMsFkMessageModelId(mmId);
+	    gstStatusModelSubcontractorDTO.setStatusMsFkStatusId(subcontractor.getStatus().getStId());
+	    
+	    GstStatusModelSubcontractor gstStatusModelSubcontractor = gstStatusModelSubcontractorDtoMapper.toGstStatusModelSubcontractor(gstStatusModelSubcontractorDTO);
+
+	    try {
+	        int isGstStatusModelSubcontractorInserted = subcontractorMapper.insertGstStatusModelSubcontractor(gstStatusModelSubcontractor);
+
+	        if (isGstStatusModelSubcontractorInserted == 0) {
+	            throw new GeneralException("Erreur lors de l'insertion des données dans la table intermédiaire des sous-traitants");
+	        }
+
+	        log.info("Données dans la table intermédiaire des sous-traitants insérées avec succès");
+
+	        return subcontractor.getSId();
+	    } catch (PersistenceException e) {
+	        log.error("Erreur MyBatis lors de l'insertion des données dans la table intermédiaire des sous-traitants", e);
+	        throw new GeneralException("Erreur MyBatis lors de l'insertion des données dans la table intermédiaire des sous-traitants : " + e);
+	    } catch (Exception e) {
+	        log.error("Erreur lors du traitement de saveSubcontractor", e);
+	        throw new GeneralException("Erreur lors du traitement de saveSubcontractor : " + e);
+	    }
 	}
 
 	@Override
