@@ -202,7 +202,7 @@ public class SubcontractorController {
 			int parsedId = Integer.parseInt(id);
 			if (parsedId > 0) {
 				Subcontractor subcontractortoArchive = subcontractorService.getSubcontractorWithStatus(parsedId);
-				if (subcontractortoArchive.getStatus().getStName().equals("Archivé")) {
+				if (subcontractortoArchive.getStatus().getStname().equals("Archivé")) {
 					throw new AlreadyArchivedEntity(
 							String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
 				}
