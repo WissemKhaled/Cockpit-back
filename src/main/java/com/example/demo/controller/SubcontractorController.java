@@ -50,7 +50,7 @@ public class SubcontractorController {
 	// getAllSubcontractor prend en paramettre pour le tri le nom de la colonne et
 	// le type de tri et pour la pagination le nombre d'élement a aficcher et la
 	// page en question
-	@GetMapping("/getAll")
+	@GetMapping("/all-subcontractors")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractors(
 			@RequestParam(name = "nameColonne", defaultValue = "s_fk_status_id", required = false) String nameColonne,
 			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
@@ -64,19 +64,22 @@ public class SubcontractorController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-
-	@GetMapping("/getAllSubcontractors")
-	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractors() {
+	
+	// ce code permet de renvoyer le nombre max de sous-traitans
+	@GetMapping("/count-all-subcontractors")
+	public ResponseEntity<Integer> getNumberOfAllSubcontractors() {
 		try {
-			return new ResponseEntity<>(subcontractorService.getAllSubcontractors(), HttpStatus.OK);
+			return new ResponseEntity<>(subcontractorService.getNumberOfAllSubcontractors(), HttpStatus.OK);
+			
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
+		
 	}
 
-	@GetMapping("/getAllSubcontractorsWithStatus")
+	@GetMapping("/all-subcontractors/status")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWhitStatus(
 			@RequestParam(name = "nameColonne", defaultValue = "s_name", required = false) String nameColonne,
 			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
@@ -91,8 +94,21 @@ public class SubcontractorController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@GetMapping("/count-all-subcontractors/status")
+	public ResponseEntity<Integer> getNumberOfAllSubcontractorsWithStatus(
+			@RequestParam(name = "statusId") Integer statusId) {
+		try {
+			return new ResponseEntity<>(subcontractorService.countTotalItemWhitStatus(statusId), HttpStatus.OK);
+			
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
 
-	@GetMapping("/getAllStatus")
+	@GetMapping("/all-status")
 	public ResponseEntity<List<StatusDto>> getAllSubcontractor() {
 		try {
 			return new ResponseEntity<>(subcontractorService.getAllStatus(), HttpStatus.OK);
@@ -101,44 +117,6 @@ public class SubcontractorController {
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
-	}
-
-	// ce code permet de renvoyer le nombre max de page en fonction de l'affichage
-	@GetMapping("/getAllPages")
-	public ResponseEntity<Integer> getAllPages() {
-		try {
-			return new ResponseEntity<>(subcontractorService.getNumbersOfPages(), HttpStatus.OK);
-		} catch (RuntimeException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
-	}
-
-	// ce code permet de renvoyer le nombre max de sous-traitans
-	@GetMapping("/countAllSubcontractors")
-	public ResponseEntity<Integer> getCountAll() {
-		try {
-			return new ResponseEntity<>(subcontractorService.getNumberOfAllSubcontractors(), HttpStatus.OK);
-
-		} catch (EntityNotFoundException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-		} catch (RuntimeException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
-
-	}
-
-	@GetMapping("/countAllSubcontractorsWithStatus")
-	public ResponseEntity<Integer> getNumberOfAllSubcontractorsWithStatus(
-			@RequestParam(name = "statusId") Integer statusId) {
-		try {
-			return new ResponseEntity<>(subcontractorService.countTotalItemWhitStatus(statusId), HttpStatus.OK);
-
-		} catch (EntityNotFoundException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-		} catch (RuntimeException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
-
 	}
 
 	// méthode pour récuperer un sous-traitant s'il existe, sinon elle retourn un

@@ -16,8 +16,6 @@ public interface SubcontractorService {
 
 	List<StatusDto> getAllStatus();
 
-	List<SubcontractorDto> getAllSubcontractors();
-
 	int getNumbersOfPages();
 
 	Integer getNumberOfAllSubcontractors();

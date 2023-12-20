@@ -205,15 +205,6 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 
 	@Override
-	public List<SubcontractorDto> getAllSubcontractors() {
-		List<SubcontractorDto> subcontractors = subcontractorMapper.findAllSubcontractors().stream()
-				.map(subcontractorDtoMapper::subcontractorToDto).toList();
-		if (subcontractors.isEmpty())
-			throw new EntityNotFoundException("Il n'y a pas de sous-traiatns enregistrés");
-		return subcontractors;
-	}
-
-	@Override
 	public List<SubcontractorDto> getAllSubcontractorsBySearchAndWithOrWithoutStatusFiltring(String searchTerms,
 			int pageNumber, int pageSize, int statusId, String columnName) throws GeneralException {
 	    // Calcul de l'offset pour la pagination

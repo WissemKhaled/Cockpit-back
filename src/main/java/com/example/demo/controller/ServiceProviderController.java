@@ -204,10 +204,12 @@ public class ServiceProviderController {
 	 * @param pageSize         Le nombre d'éléments par page (par défaut : 20).
 	 * @param statusId         L'ID du statut pour filtrer les prestataires. Si null, le filtrage par statut est ignoré et les prestataires avec un statut archivé ne sont pas comptés.
 	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
-	 *                         - "subcontractorName" : Nom du sous-traitant affilié.
-	 *                         - "firstName" : Prénom du prestataire.
-	 *                         - "name" : Nom du prestataire.
-	 *                         - "email" : Email du prestataire.
+	 *                   <ul>
+	 *                      <li>"subcontractorName": Nom du sous-traitant affilié.</li>
+	 *                      <li>"firstName": Prénom du prestataire.</li>
+	 *                      <li>"name": Nom du prestataire.</li>
+	 *                      <li>"email": Email du prestataire.</li>
+	 *                   </ul>
 	 * @return ResponseEntity contenant la liste des ServiceProviderDto filtrés par recherche et statut avec le statut OK,
 	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
 	 *         ResponseEntity avec un message d'erreur et le statut INTERNAL_SERVER_ERROR en cas d'erreur.
@@ -238,10 +240,12 @@ public class ServiceProviderController {
 	 * @param searchTerms      Les termes de recherche pour filtrer les prestataires.
 	 * @param statusId         L'ID du statut pour filtrer les prestataires. Si null, le filtrage par statut est ignoré et les prestataires avec un statut archivé ne sont pas comptés.
 	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
-	 *                         - "subcontractorName" : Nom du sous-traitant affilié.
-	 *                         - "firstName" : Prénom du prestataire.
-	 *                         - "name" : Nom du prestataire.
-	 *                         - "email" : Email du prestataire.
+	 *                   <ul>
+	 *                      <li>"subcontractorName": Nom du sous-traitant affilié.</li>
+	 *                      <li>"firstName": Prénom du prestataire.</li>
+	 *                      <li>"name": Nom du prestataire.</li>
+	 *                      <li>"email": Email du prestataire.</li>
+	 *                   </ul>
 	 * @return ResponseEntity contenant le nombre de prestataires filtrés par recherche et statut avec le statut OK,
 	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
 	 *         ResponseEntity avec un message d'erreur et le statut INTERNAL_SERVER_ERROR en cas d'erreur.
