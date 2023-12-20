@@ -46,10 +46,18 @@ public class SubcontractorController {
 		this.userDetailsService = userDetailsService;
 	}
 
-	// ce code permet de renvoyer la liste des sous-traitants la methode
-	// getAllSubcontractor prend en paramettre pour le tri le nom de la colonne et
-	// le type de tri et pour la pagination le nombre d'élement a aficcher et la
-	// page en question
+	
+	/**
+	 * Récupère la liste de tous les sous-traitants avec pagination et tri.
+	 *
+	 * @param nameColonne Le nom de la colonne à utiliser pour le tri (par défaut :  l'ID du statut "s_fk_status_id").
+	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
+	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
+	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
+	 * @return ResponseEntity contenant la liste des DTO des sous-traitants avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si aucun sous-traitant n'est trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
+	 */
 	@GetMapping("/all-subcontractors")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractors(
 			@RequestParam(name = "nameColonne", defaultValue = "s_fk_status_id", required = false) String nameColonne,
@@ -65,7 +73,14 @@ public class SubcontractorController {
 		}
 	}
 	
-	// ce code permet de renvoyer le nombre max de sous-traitans
+	
+	/**
+	 * Récupère le nombre total de sous-traitants.
+	 *
+	 * @return ResponseEntity contenant le nombre total de sous-traitants avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si aucun sous-traitant n'est trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
+	 */
 	@GetMapping("/count-all-subcontractors")
 	public ResponseEntity<Integer> getNumberOfAllSubcontractors() {
 		try {
@@ -76,9 +91,20 @@ public class SubcontractorController {
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
-		
 	}
 
+	
+	/**
+	 * Récupère la liste des sous-traitants avec un statut spécifié, avec pagination et tri.
+	 *
+	 * @param nameColonne Le nom de la colonne à utiliser pour le tri (par défaut : "s_name").
+	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
+	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
+	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
+	 * @param statusId    L'ID du statut pour filtrer les sous-traitants.
+	 * @return ResponseEntity contenant la liste des DTO des sous-traitants avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
+	 */
 	@GetMapping("/all-subcontractors/status")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWhitStatus(
 			@RequestParam(name = "nameColonne", defaultValue = "s_name", required = false) String nameColonne,
@@ -95,6 +121,15 @@ public class SubcontractorController {
 		}
 	}
 	
+	
+	/**
+	 * Récupère le nombre total de sous-traitants avec un statut spécifié.
+	 *
+	 * @param statusId    L'ID du statut pour filtrer les sous-traitants.
+	 * @return ResponseEntity contenant le nombre total de sous-traitants avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si aucun sous-traitant n'est trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
+	 */
 	@GetMapping("/count-all-subcontractors/status")
 	public ResponseEntity<Integer> getNumberOfAllSubcontractorsWithStatus(
 			@RequestParam(name = "statusId") Integer statusId) {
@@ -107,7 +142,15 @@ public class SubcontractorController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-
+	
+	
+	/**
+	 * Récupère la liste de tous les statuts des sous-traitants.
+	 *
+	 * @return ResponseEntity contenant la liste des DTO des statuts avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si aucun statut n'est trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
+	 */
 	@GetMapping("/all-status")
 	public ResponseEntity<List<StatusDto>> getAllSubcontractor() {
 		try {
@@ -119,8 +162,16 @@ public class SubcontractorController {
 		}
 	}
 
-	// méthode pour récuperer un sous-traitant s'il existe, sinon elle retourn un
-	// error 404
+	
+	/**
+	 * Récupère les informations d'un sous-traitant en fonction de son ID.
+	 *
+	 * @param id L'ID du sous-traitant à récupérer.
+	 * @return ResponseEntity contenant le DTO du sous-traitant avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si l'ID n'est pas valide et le statut BAD_REQUEST,
+	 *         ResponseEntity avec un message d'erreur si le sous-traitant n'est pas trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
+	 */
 	@GetMapping("/{id}")
 	public ResponseEntity<SubcontractorDto> getSubcontractor(@PathVariable String id) {
 		try {
@@ -139,8 +190,16 @@ public class SubcontractorController {
 		}
 	}
 
-	// méthode pour inserer un sous-traitant s'il n'existe pas dans la BDD, sinon on
-	// le modifie
+	
+	/**
+	 * Enregistre ou met à jour un sous-traitant.
+	 *
+	 * @param subcontractorDto DTO représentant le sous-traitant à enregistrer ou mettre à jour.
+	 * @return ResponseEntity contenant le DTO du sous-traitant enregistré ou mis à jour avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si l'ID est invalide et le statut BAD_REQUEST,
+	 *         ResponseEntity avec un message d'erreur si le sous-traitant existe déjà et le statut CONFLICT,
+	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
+	 */
 	@PostMapping("/save")
 	public ResponseEntity<SubcontractorDto> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
 		try {
@@ -169,7 +228,17 @@ public class SubcontractorController {
 		}
 	}
 
-	// methode pour archiver le sous-traitant
+	
+	/**
+	 * Archive un sous-traitant en fonction de son ID.
+	 *
+	 * @param id L'ID du sous-traitant à archiver.
+	 * @return ResponseEntity contenant le DTO du sous-traitant archivé avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si le sous-traitant est déjà archivé et le statut BAD_REQUEST,
+	 *         ResponseEntity avec un message d'erreur si le format de l'ID est invalide et le statut NOT_ACCEPTABLE,
+	 *         ResponseEntity avec un message d'erreur si le sous-traitant n'est pas trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
+	 */
 	@PutMapping("/archive/{id}")
 	public ResponseEntity<SubcontractorDto> archiveSubcontractor(@PathVariable String id) {
 		try {
@@ -195,6 +264,8 @@ public class SubcontractorController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
 	/**
 	 * Récupère la liste des sous-traitants filtrée par recherche et statut (si l'ID du statut est non null) ou par recherche seule.
 	 *
@@ -229,6 +300,7 @@ public class SubcontractorController {
 			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
 	
 	/**
 	 * Récupère le nombre de sous-traitants filtré par recherche et statut (si l'ID du statut est non null) ou par recherche seule.
