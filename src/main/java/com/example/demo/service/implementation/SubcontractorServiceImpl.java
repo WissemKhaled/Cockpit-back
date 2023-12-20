@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.StatusDto;
@@ -12,7 +11,6 @@ import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.StatusDtoMapper;
 import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.ServiceProvider;
-import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
@@ -224,15 +222,15 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	    // Vérification de l'attribut de recherche et récupération des prestataires en conséquence
 	    if (searchAttribute.equals("name")) {
 	        if (statusId == 0) {
-	            return subcontractorMapper.findAllSubcontractorsBySubcontractorName(searchTerms, offset, pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	            return subcontractorMapper.findAllSubcontractorsByCriteria("s.s_name", searchTerms, offset, pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	        } else {
-	            return subcontractorMapper.findAllSubcontractorsBySubcontractorNameAndFiltredStatus(searchTerms, offset, pageSize, statusId).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	            return subcontractorMapper.findAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_name", searchTerms, offset, pageSize, statusId).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	        }
 	    } else if (searchAttribute.equals("email")) {
 	        if (statusId == 0) {
-	            return subcontractorMapper.findAllSubcontractorsBySubcontractorEmail(searchTerms, offset, pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	            return subcontractorMapper.findAllSubcontractorsByCriteria("s.s_email", searchTerms, offset, pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	        } else {
-	            return subcontractorMapper.findAllSubcontractorsBySubcontractorEmailAndFiltredStatus(searchTerms, offset, pageSize, statusId).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	            return subcontractorMapper.findAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_email",searchTerms, offset, pageSize, statusId).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	        }
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", searchAttribute));
@@ -245,15 +243,15 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	    if (searchAttribute.equals("name")) {
 	        // Vérification de l'attribut de recherche et récupération du nombre de prestataires de services en conséquence
 	        if (statusId == 0) {
-	            return subcontractorMapper.findNumberOfAllSubcontractorsBySubcontractorName(searchTerms);
+	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteria("s.s_name",searchTerms);
 	        } else {
-	            return subcontractorMapper.findNumberOfAllSubcontractorsBySubcontractorNameAndFiltredByStatus(searchTerms,statusId);
+	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_name",searchTerms,statusId);
 	        }
 	    } else if (searchAttribute.equals("email")) {
 	        if (statusId == 0) {
-	            return subcontractorMapper.findNumberOfAllSubcontractorsBySubcontractorEmail(searchTerms);
+	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteria("s.s_name",searchTerms);
 	        } else {
-	            return subcontractorMapper.findNumberOfAllSubcontractorsBySubcontractorEmailAndFiltredByStatus(searchTerms,statusId);
+	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_name",searchTerms,statusId);
 	        }
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", searchAttribute));

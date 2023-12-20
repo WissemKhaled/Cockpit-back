@@ -19,10 +19,10 @@ public interface SubcontractorMapper {
 	@Select("SELECT COUNT(*) FROM subcontractor WHERE s_fk_status_id != 4")
 	Integer countTotalItems();
 
+	
 	// fin
 	@Select("SELECT COUNT(*) FROM subcontractor WHERE s_fk_status_id = ${idStatus} ")
 	Integer countTotalItemsWithStatus(@Param("idStatus") Integer idStatus);
-
 
 
 	// ce code permet de renvoyer une liste de sous-traitans avec la
@@ -43,6 +43,7 @@ public interface SubcontractorMapper {
 			@Param("pageSize") int offset, @Param("offset") int pageSize);
 	// fin
 
+	
 	// ce code permet de renvoyer une liste de sous-traitans avec la
 	// pagination est le tri grave à la requette SQL
 	@Select("SELECT s.s_id, s.s_name, s.s_email, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
@@ -60,6 +61,7 @@ public interface SubcontractorMapper {
 			@Param("sorting") String sorting, @Param("pageSize") int offset, @Param("offset") int pageSize,
 			@Param("statusId") int statusId);
 
+	
 	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
 			+ "FROM subcontractor s " 
 			+ "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
@@ -74,6 +76,7 @@ public interface SubcontractorMapper {
 	@Result(property = "status.stDescription", column = "status_stDescription")
 	Subcontractor findSubcontractorWithStatusById(int sId);
 
+	
 	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
 			+ "FROM subcontractor s " 
 			+ "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
@@ -88,6 +91,7 @@ public interface SubcontractorMapper {
 	@Result(property = "status.stDescription", column = "status_stDescription")
 	Subcontractor findSubcontractorWithStatusBySName(String sName);
 
+	
 	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
 			+ "FROM subcontractor s " 
 			+ "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
@@ -102,6 +106,7 @@ public interface SubcontractorMapper {
 	@Result(property = "status.stDescription", column = "status_stDescription")
 	Subcontractor findSubcontractorWithStatusBySEmail(String sEmail);
 
+	
 	@Insert("INSERT INTO subcontractor (s_name, s_email, s_creation_date, s_lastUpdate_date, s_fk_status_id) "
 			+ "VALUES (#{sName}, #{sEmail}, #{sCreationDate},#{sLastUpdateDate}, #{status.stId})")
 	@Options(useGeneratedKeys = true, keyProperty = "sId", keyColumn = "s_id")
@@ -113,6 +118,7 @@ public interface SubcontractorMapper {
 	@Result(property = "status.stId", column = "s_fk_status_id")
 	int insertSubcontractor(Subcontractor subcontractor);
 
+	
 	@Update("UPDATE subcontractor "
 			+ "SET s_name = #{sName}, s_email = #{sEmail}, s_lastUpdate_date = #{sLastUpdateDate}, s_fk_status_id = #{status.stId} "
 			+ "WHERE s_id = #{sId}")
@@ -123,11 +129,13 @@ public interface SubcontractorMapper {
 	@Result(property = "status.stId", column = "s_fk_status_id")
 	int updateSubcontractor(Subcontractor subcontractor);
 
+	
 	@Update("Update subcontractor SET s_fk_status_id = 4 WHERE s_id = #{sId}")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "status.stId", column = "s_fk_status_id")
 	int archiveSubcontractor(Subcontractor subcontractortoArchive);
 
+	
 	@Select("SELECT s.s_id, s.s_name, s.s_email "
 			+ "FROM subcontractor s "
 			+ "ORDER BY s_name")
@@ -138,11 +146,11 @@ public interface SubcontractorMapper {
 	@Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
 	List<Subcontractor> findAllSubcontractors();
 
-	
+
 	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
-			+ "FROM subcontractor s " 
+			+ "FROM subcontractor s "
 			+ "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
-			+ "WHERE s.s_name ILIKE #{searchTerms} || '%' "
+			+ "WHERE ${columnName} ILIKE #{searchTerms} || '%' "
 			+ "AND s.s_fk_status_id != 4")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "sName", column = "s_name")
@@ -152,97 +160,50 @@ public interface SubcontractorMapper {
 	@Result(property = "status.stId", column = "status_stId")
 	@Result(property = "status.stName", column = "status_stName")
 	@Result(property = "status.stDescription", column = "status_stDescription")
-	List<Subcontractor> findAllSubcontractorsBySubcontractorName(
+	List<Subcontractor> findAllSubcontractorsByCriteria(
+	        @Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms, 
 			@Param("pageSize")int offset,
 			@Param("offset") int pageSize);
-
+	
 	
 	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
-			+ "FROM subcontractor s "
-			+ "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
-			+ "WHERE s.s_name ILIKE #{searchTerms} || '%' "
-			+ "AND st.st_id = ${statusId}")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
-	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "sCreationDate", column = "s_creation_date")
-	@Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
-	@Result(property = "status.stDescription", column = "status_stDescription")
-	List<Subcontractor> findAllSubcontractorsBySubcontractorNameAndFiltredStatus(
-			@Param("searchTerms") String searchTerms, 
-			@Param("pageSize")int offset,
-			@Param("offset") int pageSize,
-			@Param("statusId") int statusId);
-	
-	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
-			+ "FROM subcontractor s "
-			+ "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
-			+ "WHERE s.s_email ILIKE #{searchTerms} || '%' "
-			+ "AND s.s_fk_status_id != 4")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
-	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "sCreationDate", column = "s_creation_date")
-	@Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
-	@Result(property = "status.stDescription", column = "status_stDescription")
-	List<Subcontractor> findAllSubcontractorsBySubcontractorEmail(
-			@Param("searchTerms") String searchTerms, 
-			@Param("pageSize")int offset,
-			@Param("offset") int pageSize);
+	        + "FROM subcontractor s "
+	        + "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
+	        + "WHERE ${columnName} ILIKE #{searchTerms} || '%' "
+	        + "AND st.st_id = #{statusId}")
+	        @Result(property = "sId", column = "s_id")
+	        @Result(property = "sName", column = "s_name")
+	        @Result(property = "sEmail", column = "s_email")
+	        @Result(property = "sCreationDate", column = "s_creation_date")
+	        @Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
+	        @Result(property = "status.stId", column = "status_stId")
+	        @Result(property = "status.stName", column = "status_stName")
+	        @Result(property = "status.stDescription", column = "status_stDescription")
+	List<Subcontractor> findAllSubcontractorsByCriteriaAndFiltredByStatus(
+	        @Param("columnName") String columnName,
+	        @Param("searchTerms") String searchTerms,
+	        @Param("pageSize") int offset,
+	        @Param("offset") int pageSize,
+	        @Param("statusId") int statusId);
 
-	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
-			+ "FROM subcontractor s "
-			+ "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
-			+ "WHERE s.s_email ILIKE #{searchTerms} || '%' "
-			+ "AND st.st_id = ${statusId}")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
-	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "sCreationDate", column = "s_creation_date")
-	@Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
-	@Result(property = "status.stDescription", column = "status_stDescription")
-	List<Subcontractor> findAllSubcontractorsBySubcontractorEmailAndFiltredStatus(
-			@Param("searchTerms") String searchTerms, 
-			@Param("pageSize")int offset,
-			@Param("offset") int pageSize,
-			@Param("statusId") int statusId);
 
-	
 	@Select("SELECT COUNT(*) " 
 			+ "FROM subcontractor s "
-			+ "WHERE s.s_name ILIKE #{searchTerms} || '%' "
+			+ "WHERE ${columnName} ILIKE #{searchTerms} || '%' "
 			+ "AND s.s_fk_status_id != 4 ")
-	Integer findNumberOfAllSubcontractorsBySubcontractorName(@Param("searchTerms") String searchTerms);
-
+	Integer findNumberOfAllSubcontractorsByCriteria(
+			@Param("columnName") String columnName,
+			@Param("searchTerms") String searchTerms);
 	
 	@Select("SELECT COUNT(*) " 
 			+ "FROM subcontractor s "
-			+ "WHERE s.s_name ILIKE #{searchTerms} || '%' "
+			+ "WHERE ${columnName} ILIKE #{searchTerms} || '%' "
 			+ "AND s.s_fk_status_id = ${statusId} ")
-	Integer findNumberOfAllSubcontractorsBySubcontractorNameAndFiltredByStatus(
+	Integer findNumberOfAllSubcontractorsByCriteriaAndFiltredByStatus(
+			@Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms, 
 			@Param("statusId") int statusId);
 	
 	
-	@Select("SELECT COUNT(*) " 
-			+ "FROM subcontractor s "
-			+ "WHERE s.s_email ILIKE #{searchTerms} || '%' "
-			+ "AND s.s_fk_status_id != 4 ")
-	Integer findNumberOfAllSubcontractorsBySubcontractorEmail(@Param("searchTerms") String searchTerms);
-	
-	
-	@Select("SELECT COUNT(*) " 
-			+ "FROM subcontractor s "
-			+ "WHERE s.s_email ILIKE #{searchTerms} || '%' "
-			+ "AND s.s_fk_status_id = ${statusId} ")
-	Integer findNumberOfAllSubcontractorsBySubcontractorEmailAndFiltredByStatus(
-			@Param("searchTerms") String searchTerms, 
-			@Param("statusId") int statusId);
 }
