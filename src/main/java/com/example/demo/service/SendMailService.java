@@ -4,13 +4,17 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.entity.SendMail;
+import com.example.demo.dto.SendMailDTO;
+import com.example.demo.exception.GeneralException;
 
 import jakarta.mail.MessagingException;
 
 public interface SendMailService {
+	
+	String saveAndSendMail (SendMailDTO mailDTO,  List<MultipartFile> file)  throws  MessagingException, GeneralException ;
 
-	SendMail saveAndSendMail(String to, String subject, String body, String sender, List<MultipartFile> file)
-			throws MessagingException;
 
+
+	 
 }
+
