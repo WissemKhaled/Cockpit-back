@@ -16,14 +16,16 @@ public interface ServiceProviderService {
 	 */
 	ServiceProviderDto getServiceProviderById(int serviceProviderId);
 	
+	
 	/**
 	 * Enregistre un nouveau prestataire dans la base de données.
 	 *
-	 * @param serviceProviderToSave Le prestataire à enregistrer.
+	 * @param serviceProviderDtoToSave Le prestataire à enregistrer.
 	 * @return L'ID du prestataire enregistré, ou 0 si l'enregistrement a échoué.
 	 */
-	int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave);
-
+	int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException;
+	
+	
 	/**
 	 * Met à jour les informations d'un prestataire dans la base de données.
 	 *
@@ -32,6 +34,7 @@ public interface ServiceProviderService {
 	 */
 	int updateServiceProvider(ServiceProviderDto serviceProviderDtoToUpdate);
 
+	
 	/**
 	 * Archive un prestataire en mettant à jour son statut dans la base de données.
 	 *
@@ -42,6 +45,7 @@ public interface ServiceProviderService {
 	 */
 	int archiveServiceProvider(ServiceProviderDto serviceProviderDtoToArchive);
 
+	
 	/**
 	 * Récupère la liste des prestataires associés à un sous-traitant spécifié.
 	 *
@@ -50,6 +54,7 @@ public interface ServiceProviderService {
 	 */
 	List<ServiceProviderDto> getServiceProvidersBySubcontractorId(int subcontractorId);
 
+	
 	/**
 	 * Vérifie l'existence d'un prestataire en utilisant son ID.
 	 *
@@ -58,6 +63,7 @@ public interface ServiceProviderService {
 	 */
 	boolean checkIfServiceProviderExistById(int serviceProviderId);
 
+	
 	/**
 	 * Gère la mise à jour d'un prestataire, vérifiant la duplication des données basée sur l'email.
 	 *
@@ -66,6 +72,7 @@ public interface ServiceProviderService {
 	 */
 	void handleServiceProviderUpdating(ServiceProviderDto serviceProviderDto);
 
+	
 	/**
 	 * Gère l'enregistrement d'un nouveau prestataire, vérifiant la duplication des données basée sur l'email.
 	 *
@@ -74,6 +81,7 @@ public interface ServiceProviderService {
 	 */
 	void handleServiceProviderSaving(ServiceProviderDto serviceProviderDto);
 
+	
 	/**
 	 * Vérifie l'existence d'un prestataire en utilisant son email.
 	 *
@@ -82,6 +90,7 @@ public interface ServiceProviderService {
 	 */
 	int checkIfSubcontractorExistBySpEmail(String serviceProviderSpEmail);
 
+	
 	/**
 	 * Formate le prénom ou l'email en mettant la première lettre en majuscule et le reste en minuscules.
 	 *
@@ -91,6 +100,7 @@ public interface ServiceProviderService {
 	 */
 	String firstNameAndEmailFormatter(String name) throws GeneralException;
 
+	
 	/**
 	 * Formate le nom en mettant toutes les lettres en majuscules.
 	 *
@@ -100,6 +110,7 @@ public interface ServiceProviderService {
 	 */
 	String nameFormatter(String name) throws GeneralException;
 
+	
 	/**
 	 *Récupère la liste des prestataires filtrée par recherche et statut (si l'ID du statut est non null) ou par recherche seule, avec prise en compte de la pagination.
 	 *
@@ -113,6 +124,7 @@ public interface ServiceProviderService {
 	List<ServiceProviderDto> getAllServiceProvidersWithOrWithoutStatus(String sortingMethod, int pageNumber, int pageSize,
 			int statusId);
 
+	
 	/**
 	 * Récupère la liste des prestataires filtrée par recherche, statut, attribut de recherche, avec prise en compte de la pagination.
 	 *
@@ -133,6 +145,7 @@ public interface ServiceProviderService {
 	List<ServiceProviderDto> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
 			int pageSize, int statusId, String columnName) throws GeneralException;
 	
+	
 	/**
 	 * Compte le nombre de prestataires filtré par statut.
 	 *
@@ -142,6 +155,7 @@ public interface ServiceProviderService {
 	 */
 	int countAllServiceProvidersWithOrWithoutStatus(int statusId);
 
+	
 	/**
 	 * Récupère le nombre de prestataires filtré par recherche, statut et attribut de recherche.
 	 *

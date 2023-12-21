@@ -3,17 +3,15 @@ package com.example.demo.mappers;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.entity.GstStatusModelServiceProvider;
 import com.example.demo.entity.ServiceProvider;
-import com.example.demo.entity.Subcontractor;
 
 @Mapper
 public interface ServiceProviderMapper {
@@ -230,5 +228,14 @@ public interface ServiceProviderMapper {
 			@Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms, 
 			@Param("statusId") int statusId);
+	
+	@Insert("INSERT INTO gst_status_model_service_provider (status_msp_fk_service_provider_id, status_msp_fk_message_model_id, status_msp_fk_status_id) "
+			+ "VALUES (#{statusMspFkServiceProviderId}, #{statusMspFkMessageModelId}, #{statusMspFkStatusId})")
+	@Options(useGeneratedKeys = true, keyProperty = "statusMspId", keyColumn = "status_msp_id")
+	@Result(property = "statusMspId", column = "status_msp_id")
+	@Result(property = "statusMspFkServiceProviderId", column = "status_msp_fk_service_provider_id")
+	@Result(property = "statusMspFkMessageModelId", column = "status_msp_fk_message_model_id")
+	@Result(property = "statusMspFkStatusId", column = "status_msp_fk_status_id")
+	int insertGstStatusModelServiceProvider(GstStatusModelServiceProvider gstStatusModelServiceProvider);
 	
 }

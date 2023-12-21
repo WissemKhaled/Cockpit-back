@@ -27,6 +27,7 @@ import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.AlreadyArchivedEntity;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.service.SubcontractorService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -189,10 +190,11 @@ public class SubcontractorController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
 	
+
 	/**
-	 * Enregistre ou met à jour un sous-traitant.
+	 * Enregistre ou met à jour un sous-traitant. Après l'insertion du sous-traitant, on alimente la table intermédiaire gst_status_model_subcontractor 
+	 	servant à effectuer les relances d'email
 	 *
 	 * @param subcontractorDto DTO représentant le sous-traitant à enregistrer ou mettre à jour.
 	 * @return ResponseEntity contenant le DTO du sous-traitant enregistré ou mis à jour avec le statut OK,
@@ -212,11 +214,16 @@ public class SubcontractorController {
 					SubcontractorDto updatedSubcontractorDto = subcontractorService.getSubcontractorWithStatus(subcontractorDto.getSId());
 					return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
 				} else {
-					// si le sous-traitant n'existe pas, save
-					this.subcontractorService.handleSubcontractorSave(subcontractorDto);
-					int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorDto);
-					SubcontractorDto savedSubcontractorDto = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
-					return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
+					try {
+				
+					 // si le sous-traitant n'existe pas, save
+					 this.subcontractorService.handleSubcontractorSave(subcontractorDto);
+					 int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorDto);
+					 SubcontractorDto savedSubcontractorDto = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
+					 return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
+	                } catch (GeneralException e) {
+	                    return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+	                }
 				}
 			} else {
 				return new ResponseEntity("Invalid Id", HttpStatus.BAD_REQUEST);

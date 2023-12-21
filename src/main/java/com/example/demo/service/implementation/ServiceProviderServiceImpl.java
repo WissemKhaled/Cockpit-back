@@ -3,9 +3,15 @@ package com.example.demo.service.implementation;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.GstStatusModelServiceProviderDTO;
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.dto.mapper.GstStatusModelServiceProviderDtoMapper;
+import com.example.demo.entity.GstStatusModelServiceProvider;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityDuplicateDataException;
@@ -18,11 +24,57 @@ import com.example.demo.service.ServiceProviderService;
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final ServiceProviderMapper serviceProviderMapper;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
+	private final GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper;
+	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
 
 	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper,
-			ServiceProviderDtoMapper serviceProviderDtoMapper) {
+			ServiceProviderDtoMapper serviceProviderDtoMapper,
+			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper) {
 		this.serviceProviderMapper = serviceProviderMapper;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
+		this.gstStatusModelServiceProviderDtoMapper = gstStatusModelServiceProviderDtoMapper;
+	}
+
+	@Override
+	public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException {
+		ServiceProvider serviceProviderToSave = serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToSave);
+		serviceProviderToSave.setSpCreationDate(LocalDateTime.now());
+		int isServiceProviderInserted = serviceProviderMapper.insertServiceProvider(serviceProviderToSave);
+		if (isServiceProviderInserted == 0) {
+			return 0;
+		}
+		// remarque: qu'on persiste le prestataire, on génere l'id automatiquement et
+		// comme ça on peut retourner le correct sans prendre en considération l'id
+		// saisi par l'utilisateur
+		
+		// Si l'insertion du nouveau sous-traitant en bdd se passe bien, on alimente la table intermédiaire qui va service pour les relances d'emails
+		int mmId = 1; // message modèle
+		
+		GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = new GstStatusModelServiceProviderDTO();
+		
+		gstStatusModelServiceProviderDTO.setStatusMspFkServiceProviderId(serviceProviderToSave.getSpId());
+		gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(mmId);
+		gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(serviceProviderToSave.getSpStatus().getStId());
+		
+		GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelSubcontractor(gstStatusModelServiceProviderDTO);
+		
+		try {
+			int isGstStatusModelServiceProviderInserted = serviceProviderMapper.insertGstStatusModelServiceProvider(gstStatusModelServiceProvider);
+			
+			if (isGstStatusModelServiceProviderInserted == 0) {
+				throw new GeneralException("Erreur lors de l'insertion des données dans la table intermédiaire des prestataires");
+			}
+			
+			log.info("Données dans la table intermédiaire des prestataires insérées avec succès");
+			
+			return serviceProviderToSave.getSpId();
+		} catch(PersistenceException e) {
+			log.error("Erreur MyBatis lors de l'insertion des données dans la table intermédiaire des prestatires", e);
+	        throw new GeneralException("Erreur MyBatis lors de l'insertion des données dans la table intermédiaire des prestatires : " + e);
+		} catch(Exception e) {
+			log.error("Erreur lors du traitement de saveServiceprovider", e);
+	        throw new GeneralException("Erreur lors du traitement de saveServiceprovider : " + e);
+		}
 	}
 
 	@Override
@@ -33,23 +85,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 			throw new EntityNotFoundException("le prestataire avec l'id: " + serviceProviderId + " n'existe pas!!");
 		}
 		return foundedServiceProviderById;
-	}
-	
-	@Override
-	public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) {
-	    // Définition de la date de création
-		serviceProviderDtoToSave.setSpCreationDate(LocalDateTime.now());
-		
-	    // Insertion du prestataire dans la base de données
-		int isServiceProviderInserted = serviceProviderMapper.insertServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToSave));
-		
-	    // Vérification si l'enregistrement a réussi
-		if (isServiceProviderInserted == 0) {
-			return 0;
-		}
-	    // Remarque: L'ID du prestataire est généré automatiquement lors de l'enregistrement,
-	    // permettant de le retourner sans prendre en compte l'ID saisi par l'utilisateur.
-		return serviceProviderDtoToSave.getSpId();
 	}
 
 	@Override

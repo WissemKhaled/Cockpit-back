@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import com.example.demo.entity.GstStatusModelSubcontractor;
 import com.example.demo.entity.Subcontractor;
 
 @Mapper
@@ -195,5 +196,14 @@ public interface SubcontractorMapper {
 			@Param("searchTerms") String searchTerms, 
 			@Param("statusId") int statusId);
 	
+	
+	@Insert("INSERT INTO gst_status_model_subcontractor (status_ms_fk_subcontractor_id, status_ms_fk_message_model_id, status_ms_fk_status_id) "
+			+ "VALUES (#{statusMsFkSubcontractorId}, #{statusMsFkMessageModelId}, #{statusMsFkStatusId})")
+	@Options(useGeneratedKeys = true, keyProperty = "statusMsId", keyColumn = "status_ms_id")
+	@Result(property = "statusMsId", column = "status_ms_id")
+	@Result(property = "statusMsFkSubcontractorId", column = "status_ms_fk_subcontractor_id")
+	@Result(property = "statusMsFkMessageModelId", column = "status_ms_fk_message_model_id")
+	@Result(property = "statusMsFkStatusId", column = "status_ms_fk_status_id")
+	int insertGstStatusModelSubcontractor(GstStatusModelSubcontractor gstStatusModelSubcontractor);
 	
 }

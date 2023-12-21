@@ -15,11 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ServiceProviderDto;
-import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
-import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.AlreadyArchivedEntity;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.GeneralException;
 import com.example.demo.service.ServiceProviderService;
 
 import jakarta.validation.Valid;
@@ -93,6 +92,8 @@ public class ServiceProviderController {
 	        return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 	    } catch (EntityDuplicateDataException e) {
 	        return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+	    } catch (GeneralException e) {
+	        return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    } catch (Exception e) {
 	        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 	    }
