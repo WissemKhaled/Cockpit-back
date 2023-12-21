@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.GstStatusModelServiceProviderDTO;
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.dto.mapper.GstStatusModelServiceProviderDtoMapper;
 import com.example.demo.entity.GstStatusModelServiceProvider;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityDuplicateDataException;
@@ -22,11 +23,14 @@ import com.example.demo.service.ServiceProviderService;
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	private ServiceProviderMapper serviceProviderMapper;
+	private GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper;
 	
 	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
 
-	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper) {
+	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper,
+			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper) {
 		this.serviceProviderMapper = serviceProviderMapper;
+		this.gstStatusModelServiceProviderDtoMapper = gstStatusModelServiceProviderDtoMapper;
 	}
 
 	@Override
@@ -51,11 +55,11 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		
 		log.info("serviceProviderToSave.getSpId() = " + serviceProviderToSave.getSpId());
 
-		GstStatusModelServiceProvider gstStatusModelServiceProvider = new GstStatusModelServiceProvider();
+		GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelSubcontractor(gstStatusModelServiceProviderDTO);
 		
 		try {
 			int isGstStatusModelServiceProviderInserted = serviceProviderMapper.insertGstStatusModelServiceProvider(gstStatusModelServiceProvider);
-		
+			
 			if (isGstStatusModelServiceProviderInserted == 0) {
 				throw new GeneralException("Erreur lors de l'insertion des données dans la table intermédiaire des prestataires");
 			}
