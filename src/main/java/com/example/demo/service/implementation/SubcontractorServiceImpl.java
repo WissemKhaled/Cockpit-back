@@ -52,7 +52,8 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	@Override
 	public int saveSubcontractor(SubcontractorDto subcontractorDtoTosave) throws GeneralException {
 		subcontractorDtoTosave.setSCreationDate(LocalDateTime.now());
-	    int isSubcontractorInserted = subcontractorMapper.insertSubcontractor(subcontractorDtoMapper.dtoToSubcontractor(subcontractorDtoTosave));
+		Subcontractor subcontractorToSave = subcontractorDtoMapper.dtoToSubcontractor(subcontractorDtoTosave);
+	    int isSubcontractorInserted = subcontractorMapper.insertSubcontractor(subcontractorToSave);
 	    if (isSubcontractorInserted == 0) {
 	        return isSubcontractorInserted;
 	    }
@@ -66,22 +67,18 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	    
 	    GstStatusModelSubcontractorDTO gstStatusModelSubcontractorDTO = new GstStatusModelSubcontractorDTO();
 	    
-	    gstStatusModelSubcontractorDTO.setStatusMsFkSubcontractorId(subcontractorDtoTosave.getSId());
+	    gstStatusModelSubcontractorDTO.setStatusMsFkSubcontractorId(subcontractorToSave.getSId());
 	    gstStatusModelSubcontractorDTO.setStatusMsFkMessageModelId(mmId);
-	    gstStatusModelSubcontractorDTO.setStatusMsFkStatusId(subcontractorDtoTosave.getStatus().getStId());
+	    gstStatusModelSubcontractorDTO.setStatusMsFkStatusId(subcontractorToSave.getStatus().getStId());
 	    
 	    GstStatusModelSubcontractor gstStatusModelSubcontractor = gstStatusModelSubcontractorDtoMapper.toGstStatusModelSubcontractor(gstStatusModelSubcontractorDTO);
-
 	    try {
 	        int isGstStatusModelSubcontractorInserted = subcontractorMapper.insertGstStatusModelSubcontractor(gstStatusModelSubcontractor);
-
 	        if (isGstStatusModelSubcontractorInserted == 0) {
 	            throw new GeneralException("Erreur lors de l'insertion des données dans la table intermédiaire des sous-traitants");
 	        }
-
 	        log.info("Données dans la table intermédiaire des sous-traitants insérées avec succès");
-
-	        return subcontractorDtoTosave.getSId();
+	        return subcontractorToSave.getSId();
 	    } catch (PersistenceException e) {
 	        log.error("Erreur MyBatis lors de l'insertion des données dans la table intermédiaire des sous-traitants", e);
 	        throw new GeneralException("Erreur MyBatis lors de l'insertion des données dans la table intermédiaire des sous-traitants : " + e);

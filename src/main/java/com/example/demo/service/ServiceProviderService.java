@@ -20,10 +20,10 @@ public interface ServiceProviderService {
 	/**
 	 * Enregistre un nouveau prestataire dans la base de données.
 	 *
-	 * @param serviceProviderToSave Le prestataire à enregistrer.
+	 * @param serviceProviderDtoToSave Le prestataire à enregistrer.
 	 * @return L'ID du prestataire enregistré, ou 0 si l'enregistrement a échoué.
 	 */
-	int saveServiceProvider(ServiceProvider serviceProviderToSave) throws GeneralException;
+	int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException;
 	
 	
 	/**

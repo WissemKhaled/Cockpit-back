@@ -36,7 +36,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public int saveServiceProvider(ServiceProvider serviceProviderToSave) throws GeneralException {
+	public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException {
+		ServiceProvider serviceProviderToSave = serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToSave);
 		serviceProviderToSave.setSpCreationDate(LocalDateTime.now());
 		int isServiceProviderInserted = serviceProviderMapper.insertServiceProvider(serviceProviderToSave);
 		if (isServiceProviderInserted == 0) {
