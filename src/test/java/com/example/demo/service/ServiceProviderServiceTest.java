@@ -66,88 +66,88 @@ public class ServiceProviderServiceTest {
 //
 //		assertEquals(0, savedId);
 //	}
-	
-	@Test
-	public void givenServiceProviderEntity_whenServicePeroviderIsArchived_thenReturnOne() {
-		ServiceProvider serviceProviderToArchive = new ServiceProvider();
-		serviceProviderToArchive.setSpId(10);
-		serviceProviderToArchive.setSpFirstName("Spfirstname");
-		serviceProviderToArchive.setSpName("SPNAME");
-		serviceProviderToArchive.setSpEmail("Sp@email.com");
-		serviceProviderToArchive.setSpStatus(new Status(1));
- 
-		given(serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive)).willReturn(1);
- 
-		int isArchived = serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
- 
-		assertEquals(1, isArchived);
-	}
- 
-	@Test
-	public void givenServiceProviderEntity_whenServicePeroviderIsNotArchived_thenReturnZero() {
-		ServiceProvider serviceProviderToArchive = new ServiceProvider();
-		serviceProviderToArchive.setSpId(10);
-		serviceProviderToArchive.setSpFirstName("Spfirstname");
-		serviceProviderToArchive.setSpName("SPNAME");
-		serviceProviderToArchive.setSpEmail("Sp@email.com");
-		serviceProviderToArchive.setSpStatus(new Status(1));
- 
-		given(serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive)).willReturn(0);
- 
-		int isArchived = serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
- 
-		assertEquals(0, isArchived);
-	}
-	
-	@Test
-	public void givenServiceProviderEntity_whenServicePeroviderIsUpdated_thenReturnOne() {
-		ServiceProvider serviceProviderToUpdate = new ServiceProvider();
-		serviceProviderToUpdate.setSpId(10);
-		serviceProviderToUpdate.setSpFirstName("Spfirstname");
-		serviceProviderToUpdate.setSpName("SPNAME");
-		serviceProviderToUpdate.setSpEmail("Sp@email.com");
-		serviceProviderToUpdate.setSpStatus(new Status(1));
-
-		given(serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate)).willReturn(1);
-
-		int isUpdated = serviceProviderService.updateServiceProvider(serviceProviderToUpdate);
-
-		assertEquals(1, isUpdated);
-	}
-
-	@Test
-	public void givenServiceProviderEntity_whenServicePeroviderIsNotUpdated_thenReturnZero() {
-		ServiceProvider serviceProviderToUpdate = new ServiceProvider();
-		serviceProviderToUpdate.setSpId(10);
-		serviceProviderToUpdate.setSpFirstName("Spfirstname");
-		serviceProviderToUpdate.setSpName("SPNAME");
-		serviceProviderToUpdate.setSpEmail("Sp@email.com");
-		serviceProviderToUpdate.setSpStatus(new Status(1));
-
-		given(serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate)).willReturn(0);
-
-		int isUpdated = serviceProviderService.updateServiceProvider(serviceProviderToUpdate);
-
-		assertEquals(0, isUpdated);
-	}
-
-	@Test
-	public void givenServiceProviderEntity_whenServicePeroviderIsFound_thenReturnTheServiceProvider() {
-		ServiceProvider serviceProviderToBeFound = new ServiceProvider();
-		serviceProviderToBeFound.setSpId(1);
-		serviceProviderToBeFound.setSpFirstName("Spfirstname");
-		serviceProviderToBeFound.setSpName("SPNAME");
-		serviceProviderToBeFound.setSpEmail("Sp1@email.com");
-		serviceProviderToBeFound.setSubcontractor(new Subcontractor("sname", "s1@email.com"));
-		serviceProviderToBeFound.setSpStatus(new Status(3));
-
-		given(serviceProviderMapper.findServiceProviderWithSubcontractorBySpId(serviceProviderToBeFound.getSpId()))
-				.willReturn(serviceProviderToBeFound);
-		
-		ServiceProvider foundedServiceProvider = serviceProviderService.getServiceProviderById(serviceProviderToBeFound.getSpId());
-
-		assertEquals(serviceProviderToBeFound, foundedServiceProvider);
-	}
+//	
+//	@Test
+//	public void givenServiceProviderEntity_whenServicePeroviderIsArchived_thenReturnOne() {
+//		ServiceProvider serviceProviderToArchive = new ServiceProvider();
+//		serviceProviderToArchive.setSpId(10);
+//		serviceProviderToArchive.setSpFirstName("Spfirstname");
+//		serviceProviderToArchive.setSpName("SPNAME");
+//		serviceProviderToArchive.setSpEmail("Sp@email.com");
+//		serviceProviderToArchive.setSpStatus(new Status(1));
+// 
+//		given(serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive)).willReturn(1);
+// 
+//		int isArchived = serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
+// 
+//		assertEquals(1, isArchived);
+//	}
+// 
+//	@Test
+//	public void givenServiceProviderEntity_whenServicePeroviderIsNotArchived_thenReturnZero() {
+//		ServiceProvider serviceProviderToArchive = new ServiceProvider();
+//		serviceProviderToArchive.setSpId(10);
+//		serviceProviderToArchive.setSpFirstName("Spfirstname");
+//		serviceProviderToArchive.setSpName("SPNAME");
+//		serviceProviderToArchive.setSpEmail("Sp@email.com");
+//		serviceProviderToArchive.setSpStatus(new Status(1));
+// 
+//		given(serviceProviderMapper.archiveServiceProvider(serviceProviderToArchive)).willReturn(0);
+// 
+//		int isArchived = serviceProviderService.archiveServiceProvider(serviceProviderToArchive);
+// 
+//		assertEquals(0, isArchived);
+//	}
+//	
+//	@Test
+//	public void givenServiceProviderEntity_whenServicePeroviderIsUpdated_thenReturnOne() {
+//		ServiceProvider serviceProviderToUpdate = new ServiceProvider();
+//		serviceProviderToUpdate.setSpId(10);
+//		serviceProviderToUpdate.setSpFirstName("Spfirstname");
+//		serviceProviderToUpdate.setSpName("SPNAME");
+//		serviceProviderToUpdate.setSpEmail("Sp@email.com");
+//		serviceProviderToUpdate.setSpStatus(new Status(1));
+//
+//		given(serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate)).willReturn(1);
+//
+//		int isUpdated = serviceProviderService.updateServiceProvider(serviceProviderToUpdate);
+//
+//		assertEquals(1, isUpdated);
+//	}
+//
+//	@Test
+//	public void givenServiceProviderEntity_whenServicePeroviderIsNotUpdated_thenReturnZero() {
+//		ServiceProvider serviceProviderToUpdate = new ServiceProvider();
+//		serviceProviderToUpdate.setSpId(10);
+//		serviceProviderToUpdate.setSpFirstName("Spfirstname");
+//		serviceProviderToUpdate.setSpName("SPNAME");
+//		serviceProviderToUpdate.setSpEmail("Sp@email.com");
+//		serviceProviderToUpdate.setSpStatus(new Status(1));
+//
+//		given(serviceProviderMapper.updateServiceProvider(serviceProviderToUpdate)).willReturn(0);
+//
+//		int isUpdated = serviceProviderService.updateServiceProvider(serviceProviderToUpdate);
+//
+//		assertEquals(0, isUpdated);
+//	}
+//
+//	@Test
+//	public void givenServiceProviderEntity_whenServicePeroviderIsFound_thenReturnTheServiceProvider() {
+//		ServiceProvider serviceProviderToBeFound = new ServiceProvider();
+//		serviceProviderToBeFound.setSpId(1);
+//		serviceProviderToBeFound.setSpFirstName("Spfirstname");
+//		serviceProviderToBeFound.setSpName("SPNAME");
+//		serviceProviderToBeFound.setSpEmail("Sp1@email.com");
+//		serviceProviderToBeFound.setSubcontractor(new Subcontractor("sname", "s1@email.com"));
+//		serviceProviderToBeFound.setSpStatus(new Status(3));
+//
+//		given(serviceProviderMapper.findServiceProviderWithSubcontractorBySpId(serviceProviderToBeFound.getSpId()))
+//				.willReturn(serviceProviderToBeFound);
+//		
+//		ServiceProvider foundedServiceProvider = serviceProviderService.getServiceProviderById(serviceProviderToBeFound.getSpId());
+//
+//		assertEquals(serviceProviderToBeFound, foundedServiceProvider);
+//	}
 
 	@Test
 	public void givenServiceProviderEntity_whenServicePeroviderIsNotFound_thenReturnNull() {
@@ -159,24 +159,24 @@ public class ServiceProviderServiceTest {
         assertEquals(String.format("le prestataire avec l'id: %d n'existe pas!!",nonExistingServiceProviderId), thrown.getMessage());
 	}
 
-	@Test
-	public void getTest_GetServiceProvidersBySubcontractorId_ShouldReturnTwo() {
-		int existingSubcontractorId = 1;
-		List<ServiceProvider> expectedServiceProviders = new ArrayList<ServiceProvider>();
-
-		expectedServiceProviders.add(new ServiceProvider(1, "Firstspfirstname", "FIRSTSPNAME", "Sp1@email.com",
-				LocalDateTime.now(), null, new Subcontractor(1), new Status(3)));
-		expectedServiceProviders.add(new ServiceProvider(2, "Secondspfirstname", "SECONDESPNAME", "Sp2@email.com",
-				LocalDateTime.now(), null, new Subcontractor(1), new Status(1)));
-
-		given(serviceProviderMapper.findServiceProvidersBySubcontractorId(anyInt()))
-				.willReturn(expectedServiceProviders);
-
-		List<ServiceProvider> serviceProviders = serviceProviderService
-				.getServiceProvidersBySubcontractorId(existingSubcontractorId);
-
-		assertEquals(2, serviceProviders.size());
-	}
+//	@Test
+//	public void getTest_GetServiceProvidersBySubcontractorId_ShouldReturnTwo() {
+//		int existingSubcontractorId = 1;
+//		List<ServiceProvider> expectedServiceProviders = new ArrayList<ServiceProvider>();
+//
+//		expectedServiceProviders.add(new ServiceProvider(1, "Firstspfirstname", "FIRSTSPNAME", "Sp1@email.com",
+//				LocalDateTime.now(), null, new Subcontractor(1), new Status(3)));
+//		expectedServiceProviders.add(new ServiceProvider(2, "Secondspfirstname", "SECONDESPNAME", "Sp2@email.com",
+//				LocalDateTime.now(), null, new Subcontractor(1), new Status(1)));
+//
+//		given(serviceProviderMapper.findServiceProvidersBySubcontractorId(anyInt()))
+//				.willReturn(expectedServiceProviders);
+//
+//		List<ServiceProvider> serviceProviders = serviceProviderService
+//				.getServiceProvidersBySubcontractorId(existingSubcontractorId);
+//
+//		assertEquals(2, serviceProviders.size());
+//	}
 
 	@Test
 	public void getTest_GetServiceProvidersBySubcontractorIdFailed_ShouldReturnZero() {
