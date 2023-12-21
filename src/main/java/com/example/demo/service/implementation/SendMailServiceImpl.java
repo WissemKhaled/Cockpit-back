@@ -34,11 +34,11 @@ public class SendMailServiceImpl implements SendMailService {
 	private final SendMailMapper mailMapper;
 
 	private final JavaMailSender mailSender;
-	
+
 	private final ResourceLoader resourceLoader;
-	
+
 	private static final Logger LOG = getLogger(SendMailServiceImpl.class);
-	
+
 	public SendMailServiceImpl(SendMailMapper mailMapper, JavaMailSender mailSender, ResourceLoader resourceLoader) {
 		this.mailMapper = mailMapper;
 		this.mailSender = mailSender;
@@ -46,42 +46,55 @@ public class SendMailServiceImpl implements SendMailService {
 	}
 
 	@Override
-	public String saveAndSendMail(SendMailDTO mailDTO, List<MultipartFile> files) throws MessagingException, GeneralException {
+	public String saveAndSendMail(SendMailDTO mailDTO, List<MultipartFile> files)
+			throws MessagingException, GeneralException {
 
 		MimeMessage message = getMimeMessage();
 		try {
+
 			mailDTO.setMsCreationsDate(LocalDateTime.now());
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-			
-			//signature du mail recuperé a partir des ressources en HTML
+
+			// signature du mail recuperé a partir des ressources en HTML
 			String signature = loadSignature();
-			
+
 			helper.setPriority(1);
 			helper.setTo(mailDTO.getMsTo());
 			helper.setSubject(mailDTO.getMsSubject());
 			helper.setText(mailDTO.getMsBody() + "<br><br>" + signature, true);
-		    helper.setReplyTo(mailDTO.getMsSender());
+			helper.setReplyTo(mailDTO.getMsSender());
 
 			if (files != null && !files.isEmpty()) {
 
 				for (MultipartFile file : files) {
 
-		                    Resource resource = new ByteArrayResource(file.getBytes());
-		                    helper.addAttachment(file.getOriginalFilename(), resource);
-		                } 
+					Resource resource = new ByteArrayResource(file.getBytes());
+					helper.addAttachment(file.getOriginalFilename(), resource);
 				}
-			mailSender.send(message);
+			}
+
+			// ajoute des contactes en copy si il y en a
+			if (mailDTO.getMsCc() != "") {
+
+				String[] adressesCopy = mailDTO.getMsCc().split(";");
+
+				for (String adresse : adressesCopy) {
+					helper.addCc(adresse);
+				}
+			}
+			// mailSender.send(message);
 			mailMapper.saveMailAndSend(mailDTO);
 
 			LOG.info("Le courrier a été envoyé avec succès !");
 			return "Le courrier a été envoyé avec succès !";
+
 		} catch (MailException | IOException e) {
 
-		 LOG.error("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer.");
-		 throw new GeneralException("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer.");
-		
+			LOG.error("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer.");
+			throw new GeneralException("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer.");
+
+		}
 	}
-}
 
 	private MimeMessage getMimeMessage() {
 		return mailSender.createMimeMessage();

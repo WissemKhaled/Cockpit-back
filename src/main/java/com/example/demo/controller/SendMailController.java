@@ -39,11 +39,13 @@ public class SendMailController {
 	public ResponseEntity<?> saveAndSendMail(@RequestParam(value="files", required = false) List<MultipartFile> file,
 			                                 @RequestParam("msTo") String to,
 			                                 @RequestParam("msSubject") String subject,
+			                                 @RequestParam("msCc") String cc,
 			                                 @RequestParam("msBody") String body,
 			                                 @RequestParam("msSender") String sender
 			                                   ) throws MessagingException {
 		try {
-			SendMailDTO mailDTO = new SendMailDTO(0, sender, to, null, subject, body, null, 1, null);
+			System.err.println(cc);
+			SendMailDTO mailDTO = new SendMailDTO(0, sender, to, cc, subject, body, null, 1, null);
 			return new ResponseEntity<>(mailService.saveAndSendMail(mailDTO, file), HttpStatus.OK);
 		} catch (MessageModelNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
