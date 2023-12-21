@@ -178,11 +178,11 @@ INSERT INTO gst_status_model_service_provider (status_msp_fk_service_provider_id
 SELECT sp.sp_id, mm.mm_id, s.st_id
 FROM service_provider sp
 CROSS JOIN gst_message_model mm
-CROSS JOIN status s;
+CROSS JOIN status s WHERE sp.sp_fk_status_id = s.st_id;
 
 -- Pour la table gst_status_model_subcontractor
 INSERT INTO gst_status_model_subcontractor (status_ms_fk_subcontractor_id, status_ms_fk_message_model_id, status_ms_fk_status_id)
 SELECT sub.s_id, mm.mm_id, s.st_id
 FROM subcontractor sub
 CROSS JOIN gst_message_model mm
-CROSS JOIN status s;
+CROSS JOIN status s  WHERE sub.s_fk_status_id = s.st_id;
