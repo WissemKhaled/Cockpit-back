@@ -1,4 +1,4 @@
-package com.example.demo.builder;
+package com.example.demo.builder.dto;
 
 import com.example.demo.dto.JwtResponseDTO;
 

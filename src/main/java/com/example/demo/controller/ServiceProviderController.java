@@ -203,7 +203,13 @@ public class ServiceProviderController {
 	 * @param pageNumber       Le numéro de la page à récupérer (par défaut : 1).
 	 * @param pageSize         Le nombre d'éléments par page (par défaut : 20).
 	 * @param statusId         L'ID du statut pour filtrer les prestataires. Si null, le filtrage par statut est ignoré et les prestataires avec un statut archivé ne sont pas comptés.
-	 * @param searchAttribute  L'attribut de recherche spécifié, par exemple "name" ou "email".
+	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
+	 *                   <ul>
+	 *                      <li>"subcontractorName": Nom du sous-traitant affilié.</li>
+	 *                      <li>"firstName": Prénom du prestataire.</li>
+	 *                      <li>"name": Nom du prestataire.</li>
+	 *                      <li>"email": Email du prestataire.</li>
+	 *                   </ul>
 	 * @return ResponseEntity contenant la liste des ServiceProviderDto filtrés par recherche et statut avec le statut OK,
 	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
 	 *         ResponseEntity avec un message d'erreur et le statut INTERNAL_SERVER_ERROR en cas d'erreur.
@@ -215,10 +221,10 @@ public class ServiceProviderController {
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
 			@RequestParam(name = "statusId") int statusId,
-			@RequestParam(name = "searchAttribute") String searchAttribute) {
+			@RequestParam(name = "columnName") String columnName) {
 		try {
 	        // Récupération les prestataires filtré par recherche et (facultativement) statut
-			List<ServiceProviderDto> filtredServiceProviders= serviceProviderService.getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(searchTerms, pageNumber, pageSize,statusId,searchAttribute);
+			List<ServiceProviderDto> filtredServiceProviders= serviceProviderService.getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(searchTerms, pageNumber, pageSize,statusId,columnName);
 			if (filtredServiceProviders.isEmpty()) throw new EntityNotFoundException(String.format("Le prestataire avec le nom: %s n'existe pas", searchTerms));
 			return new ResponseEntity<>(filtredServiceProviders, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
@@ -233,7 +239,13 @@ public class ServiceProviderController {
 	 *
 	 * @param searchTerms      Les termes de recherche pour filtrer les prestataires.
 	 * @param statusId         L'ID du statut pour filtrer les prestataires. Si null, le filtrage par statut est ignoré et les prestataires avec un statut archivé ne sont pas comptés.
-	 * @param searchAttribute  L'attribut de recherche spécifié, par exemple "name" ou "email".
+	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
+	 *                   <ul>
+	 *                      <li>"subcontractorName": Nom du sous-traitant affilié.</li>
+	 *                      <li>"firstName": Prénom du prestataire.</li>
+	 *                      <li>"name": Nom du prestataire.</li>
+	 *                      <li>"email": Email du prestataire.</li>
+	 *                   </ul>
 	 * @return ResponseEntity contenant le nombre de prestataires filtrés par recherche et statut avec le statut OK,
 	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
 	 *         ResponseEntity avec un message d'erreur et le statut INTERNAL_SERVER_ERROR en cas d'erreur.
@@ -242,10 +254,10 @@ public class ServiceProviderController {
 	public ResponseEntity<Integer> getNumberOfServiceProvidersBySearchAndStatus(
 			@RequestParam(name = "searchTerms") String searchTerms,
 			@RequestParam(name = "statusId") int statusId,
-			@RequestParam(name = "searchAttribute") String searchAttribute) {
+			@RequestParam(name = "columnName") String columnName) {
 		try {
 	        // Récupération du nombre de prestataires filtré par recherche et (facultativement) statut
-			Integer numberOfServiceProviders= serviceProviderService.getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(searchTerms,statusId, searchAttribute);
+			Integer numberOfServiceProviders= serviceProviderService.getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(searchTerms,statusId, columnName);
 			if (numberOfServiceProviders == 0) throw new EntityNotFoundException(String.format("Le prestataire avec le nom: %s et le statusId: %d n'existe pas", searchTerms, statusId));
 			return new ResponseEntity<>(numberOfServiceProviders, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
