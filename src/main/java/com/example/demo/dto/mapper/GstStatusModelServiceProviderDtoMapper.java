@@ -9,11 +9,13 @@ import com.example.demo.entity.GstStatusModelServiceProvider;
 public class GstStatusModelServiceProviderDtoMapper {
 	public GstStatusModelServiceProviderDTO toDto(GstStatusModelServiceProvider gstStatusModelServiceProvider) {
 		return new GstStatusModelServiceProviderDTO(gstStatusModelServiceProvider.getStatusMspId(), gstStatusModelServiceProvider.getStatusMspFkServiceProviderId(),
-				gstStatusModelServiceProvider.getStatusMspFkMessageModelId(), gstStatusModelServiceProvider.getStatusMspFkStatusId());
+				gstStatusModelServiceProvider.getStatusMspFkMessageModelId(), gstStatusModelServiceProvider.getStatusMspFkStatusId(),
+				gstStatusModelServiceProvider.getStatusMspSentDate(), gstStatusModelServiceProvider.getStatusMspValidationDate());
 	}
 	
-	public GstStatusModelServiceProvider toGstStatusModelSubcontractor(GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO) {
+	public GstStatusModelServiceProvider toGstStatusModelServiceProvider(GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO) {
 		return new GstStatusModelServiceProvider(gstStatusModelServiceProviderDTO.getStatusMspId(), gstStatusModelServiceProviderDTO.getStatusMspFkServiceProviderId(),
-				gstStatusModelServiceProviderDTO.getStatusMspFkMessageModelId(), gstStatusModelServiceProviderDTO.getStatusMspFkStatusId());
+				gstStatusModelServiceProviderDTO.getStatusMspFkMessageModelId(), gstStatusModelServiceProviderDTO.getStatusMspFkStatusId(),
+				gstStatusModelServiceProviderDTO.getStatusMspSentDate(), gstStatusModelServiceProviderDTO.getStatusMspValidationDate());
 	}
 }

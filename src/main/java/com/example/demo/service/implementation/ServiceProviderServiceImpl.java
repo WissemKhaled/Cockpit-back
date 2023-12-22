@@ -17,20 +17,23 @@ import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
+import com.example.demo.mappers.EmailReminderMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.ServiceProviderService;
 
 @Service
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final ServiceProviderMapper serviceProviderMapper;
+	private final EmailReminderMapper emailReminderMapper;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
 	private final GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper;
 	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
 
 	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper,
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
-			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper) {
+			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper, EmailReminderMapper emailReminderMapper) {
 		this.serviceProviderMapper = serviceProviderMapper;
+		this.emailReminderMapper = emailReminderMapper;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
 		this.gstStatusModelServiceProviderDtoMapper = gstStatusModelServiceProviderDtoMapper;
 	}
@@ -56,10 +59,10 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(mmId);
 		gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(serviceProviderToSave.getSpStatus().getStId());
 		
-		GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelSubcontractor(gstStatusModelServiceProviderDTO);
+		GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelServiceProvider(gstStatusModelServiceProviderDTO);
 		
 		try {
-			int isGstStatusModelServiceProviderInserted = serviceProviderMapper.insertGstStatusModelServiceProvider(gstStatusModelServiceProvider);
+			int isGstStatusModelServiceProviderInserted = emailReminderMapper.insertGstStatusModelServiceProvider(gstStatusModelServiceProvider);
 			
 			if (isGstStatusModelServiceProviderInserted == 0) {
 				throw new GeneralException("Erreur lors de l'insertion des données dans la table intermédiaire des prestataires");

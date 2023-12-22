@@ -14,9 +14,17 @@ VALUES (3, 'Validé', NULL);
 INSERT INTO status (st_id, st_name, st_description)
 VALUES (4, 'Archivé', NULL);
 
---model de message 
+--model de message 1
 INSERT INTO gst_message_model (mm_type, mm_subject, mm_body, mm_fk_status_id)
 VALUES ('En_cour', 'Recueil Info Admin | Référencement fournisseur sous-traitant', 'je suis le body du mail',1);
+
+--model de message 2
+INSERT INTO gst_message_model (mm_type, mm_subject, mm_body, mm_fk_status_id)
+VALUES ('En_validation', 'Recueil Info Admin | Référencement fournisseur sous-traitant', 'je suis le body du mail',2);
+
+--model de message 3
+INSERT INTO gst_message_model (mm_type, mm_subject, mm_body, mm_fk_status_id)
+VALUES ('Validé', 'Recueil Info Admin | Référencement fournisseur sous-traitant', 'je suis le body du mail',3);
 
 -- Subcontractor 1
 INSERT INTO subcontractor (s_name, s_email, s_fk_status_id)
@@ -177,12 +185,14 @@ INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date
 INSERT INTO gst_status_model_service_provider (status_msp_fk_service_provider_id, status_msp_fk_message_model_id, status_msp_fk_status_id)
 SELECT sp.sp_id, mm.mm_id, s.st_id
 FROM service_provider sp
-CROSS JOIN gst_message_model mm
-CROSS JOIN status s WHERE sp.sp_fk_status_id = s.st_id;
+JOIN gst_message_model mm ON sp.sp_fk_status_id = mm.mm_fk_status_id
+JOIN status s ON sp.sp_fk_status_id = s.st_id
+ORDER BY sp.sp_id;
 
 -- Pour la table gst_status_model_subcontractor
 INSERT INTO gst_status_model_subcontractor (status_ms_fk_subcontractor_id, status_ms_fk_message_model_id, status_ms_fk_status_id)
 SELECT sub.s_id, mm.mm_id, s.st_id
 FROM subcontractor sub
-CROSS JOIN gst_message_model mm
-CROSS JOIN status s  WHERE sub.s_fk_status_id = s.st_id;
+JOIN gst_message_model mm ON sub.s_fk_status_id = mm.mm_fk_status_id
+JOIN status s ON sub.s_fk_status_id = s.st_id
+ORDER BY sub.s_id;
