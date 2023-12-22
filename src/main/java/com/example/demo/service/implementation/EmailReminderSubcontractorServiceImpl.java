@@ -8,10 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.GstStatusModelServiceProviderDTO;
 import com.example.demo.dto.GstStatusModelSubcontractorDTO;
 import com.example.demo.dto.mapper.GstStatusModelSubcontractorDtoMapper;
 import com.example.demo.entity.GstStatusModelSubcontractor;
+import com.example.demo.entity.ServiceProvider;
+import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.DatabaseQueryFailureException;
+import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.mappers.EmailReminderMapper;
 import com.example.demo.mappers.SubcontractorMapper;
 import com.example.demo.service.EmailReminderSubcontractorService;
@@ -21,11 +25,13 @@ public class EmailReminderSubcontractorServiceImpl implements EmailReminderSubco
 	
 	private final EmailReminderMapper emailReminderMapper;
 	private final GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper;
+	private final SubcontractorMapper subcontractorMapper;
 	private static final Logger log = LoggerFactory.getLogger(EmailReminderSubcontractorServiceImpl.class);
 	
-	public EmailReminderSubcontractorServiceImpl(EmailReminderMapper emailReminderMapper, GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper) {
+	public EmailReminderSubcontractorServiceImpl(EmailReminderMapper emailReminderMapper, GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper, SubcontractorMapper subcontractorMapper) {
 		this.emailReminderMapper = emailReminderMapper;
 		this.gstStatusModelSubcontractorDtoMapper = gstStatusModelSubcontractorDtoMapper;
+		this.subcontractorMapper = subcontractorMapper;
 	}
 
 	/**
@@ -63,5 +69,18 @@ public class EmailReminderSubcontractorServiceImpl implements EmailReminderSubco
 	    }
 	    log.info("Table intermédiaire des sous-traitants mise à jour avec succès");
 	    return "Table intermédiaire des sous-traitants mise à jour avec succès";
+	}
+
+	@Override
+	public GstStatusModelSubcontractorDTO getSubcontractorReminderInfoBySId(int subcontractorId) {
+		Subcontractor isFoundSubcontractor = subcontractorMapper.findSubcontractorWithStatusById(subcontractorId);
+		
+		if (isFoundSubcontractor == null) {
+			throw new EntityNotFoundException("Aucun sous-traitant trouvé avec l'id " + subcontractorId);
+		}
+		
+		GstStatusModelSubcontractorDTO gstStatusModelSubcontractorDTO = emailReminderMapper.findSubcontractorReminderInfo(subcontractorId);
+		
+		return gstStatusModelSubcontractorDTO;
 	}
 }

@@ -4,14 +4,17 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import com.example.demo.dto.GstStatusModelServiceProviderDTO;
+import com.example.demo.dto.GstStatusModelSubcontractorDTO;
 import com.example.demo.entity.GstStatusModelServiceProvider;
 import com.example.demo.entity.GstStatusModelSubcontractor;
 
 @Mapper
 public interface EmailReminderMapper {
-	// subcontractor 
+// subcontractor 
 	@Insert("INSERT INTO gst_status_model_subcontractor (status_ms_fk_subcontractor_id, status_ms_fk_message_model_id, status_ms_fk_status_id, status_ms_sent_date, status_ms_validation_date) "
 			+ "VALUES (#{statusMsFkSubcontractorId}, #{statusMsFkMessageModelId}, #{statusMsFkStatusId}, #{statusMsSentDate}, #{statusMsValidationDate})")
 	@Options(useGeneratedKeys = true, keyProperty = "statusMsId", keyColumn = "status_ms_id")
@@ -39,7 +42,18 @@ public interface EmailReminderMapper {
 	@Result(property = "statusMsValidationDate", column = "status_ms_validation_date")
 	int updateGstStatusModelSubcontractor(GstStatusModelSubcontractor gstStatusModelSubcontractor);
 	
-	// serviceProvider
+	@Select("SELECT " +
+	        "ms.status_ms_id AS statusMsId, " +
+	        "ms.status_ms_fk_subcontractor_id AS statusMsFkSubcontractorId, " +
+	        "ms.status_ms_fk_message_model_id AS statusMsFkMessageModelId, " +
+	        "ms.status_ms_fk_status_id AS statusMsFkStatusId, " +
+	        "ms.status_ms_sent_date AS statusMsSentDate, " +
+	        "ms.status_ms_validation_date AS statusMsValidationDate " +
+	        "FROM gst_status_model_subcontractor ms " +
+	        "WHERE ms.status_ms_fk_subcontractor_id = #{subcontractorId}")
+	GstStatusModelSubcontractorDTO findSubcontractorReminderInfo(int subcontractorId);
+	
+// serviceProvider
 	@Insert("INSERT INTO gst_status_model_service_provider (status_msp_fk_service_provider_id, status_msp_fk_message_model_id, status_msp_fk_status_id, status_msp_sent_date, status_msp_validation_date) "
 			+ "VALUES (#{statusMspFkServiceProviderId}, #{statusMspFkMessageModelId}, #{statusMspFkStatusId}, #{statusMspSentDate}, #{statusMspValidationDate})")
 	@Options(useGeneratedKeys = true, keyProperty = "statusMspId", keyColumn = "status_msp_id")
@@ -65,4 +79,16 @@ public interface EmailReminderMapper {
 	@Result(property = "statusMspSentDate", column = "status_msp_sent_date")
 	@Result(property = "statusMspValidationDate", column = "status_msp_validation_date")
 	int updateGstStatusModelServiceProvider(GstStatusModelServiceProvider gstStatusModelServiceProvider);
+
+	@Select("SELECT " +
+            "msp.status_msp_id AS statusMspId, " +
+            "msp.status_msp_fk_service_provider_id AS statusMspFkServiceProviderId, " +
+            "msp.status_msp_fk_message_model_id AS statusMspFkMessageModelId, " +
+            "msp.status_msp_fk_status_id AS statusMspFkStatusId, " +
+            "msp.status_msp_sent_date AS statusMspSentDate, " +
+            "msp.status_msp_validation_date AS statusMspValidationDate " +
+            "FROM gst_status_model_service_provider msp " +
+            "WHERE msp.status_msp_fk_service_provider_id = #{serviceProviderId}")
+    GstStatusModelServiceProviderDTO findServiceProviderReminderInfo(int serviceProviderId);
+
 }

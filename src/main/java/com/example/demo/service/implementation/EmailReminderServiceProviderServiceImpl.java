@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.GstStatusModelServiceProviderDTO;
 import com.example.demo.dto.mapper.GstStatusModelServiceProviderDtoMapper;
 import com.example.demo.entity.GstStatusModelServiceProvider;
+import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.DatabaseQueryFailureException;
+import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.mappers.EmailReminderMapper;
+import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.EmailReminderServiceProviderService;
 
 @Service
@@ -20,12 +23,14 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 	
 	private final EmailReminderMapper emailReminderMapper;
 	private final GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper;
+	private final ServiceProviderMapper serviceProviderMapper;
 	private static final Logger log = LoggerFactory.getLogger(EmailReminderServiceProviderServiceImpl.class);
 	
 	public EmailReminderServiceProviderServiceImpl(EmailReminderMapper emailReminderMapper,
-			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper) {
+			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper, ServiceProviderMapper serviceProviderMapper) {
 		this.emailReminderMapper = emailReminderMapper;
 		this.gstStatusModelServiceProviderDtoMapper = gstStatusModelServiceProviderDtoMapper;
+		this.serviceProviderMapper = serviceProviderMapper;
 	}
 
 	/**
@@ -63,5 +68,18 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 	    }
 	    log.info("Table intermédiaire des prestataires mise à jour avec succès");
 	    return "Table intermédiaire des prestataires mise à jour avec succès";
+	}
+
+	@Override
+	public GstStatusModelServiceProviderDTO getServiceProviderReminderInfoBySpId(int serviceProviderId) {
+		ServiceProvider isFoundServiceProvider = serviceProviderMapper.findServiceProviderById(serviceProviderId);
+		
+		if (isFoundServiceProvider == null) {
+			throw new EntityNotFoundException("Aucun prestataire trouvé avec l'id " + serviceProviderId);
+		}
+		
+		GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = emailReminderMapper.findServiceProviderReminderInfo(serviceProviderId);
+		
+		return gstStatusModelServiceProviderDTO;
 	}
 }
