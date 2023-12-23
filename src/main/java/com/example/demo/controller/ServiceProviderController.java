@@ -2,6 +2,9 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -29,6 +32,8 @@ import jakarta.validation.Valid;
 public class ServiceProviderController {
 
 	private final ServiceProviderService serviceProviderService;
+	private static final Logger log = LoggerFactory.getLogger(ServiceProviderController.class);
+
 	
 	public ServiceProviderController(ServiceProviderService serviceProviderService) {
 		this.serviceProviderService = serviceProviderService;
@@ -83,7 +88,25 @@ public class ServiceProviderController {
 	                // Enregistrement d'un nouveau prestataire
 	                serviceProviderService.handleServiceProviderSaving(serviceProviderDto);
 	                int savedServiceProviderId = serviceProviderService.saveServiceProvider(serviceProviderDto);
-	                return new ResponseEntity<>(serviceProviderService.getServiceProviderById(savedServiceProviderId), HttpStatus.CREATED);
+	                int countAllNonArchivedServiceProviders = serviceProviderService.countAllServiceProvidersWithOrWithoutStatus(0);
+	                List<ServiceProviderDto> sortedServiceProviders = serviceProviderService.getAllServiceProvidersWithOrWithoutStatus(null, 1, countAllNonArchivedServiceProviders, 0);
+	                int newIndex = -1;
+	                for (int i = 0; i < sortedServiceProviders.size(); i++) {
+	                    if (sortedServiceProviders.get(i).getSpId() == savedServiceProviderId) {
+	                        newIndex = i;
+	                        break;
+	                    }
+	                }
+	                ServiceProviderDto savedServiceProvider = serviceProviderService.getServiceProviderById(savedServiceProviderId);
+	                if (newIndex != -1) {
+	                    // Calculate the page number based on index and items per page
+	                    int itemsPerPage = 60;// specify your items per page
+	                    int newPage = (int) Math.ceil((double) (newIndex + 1) / itemsPerPage);
+	                    log.info("New service provider is on page: " + newPage);
+	                    savedServiceProvider.setNewPage(newPage);
+	                }
+	                
+	                return new ResponseEntity<>(savedServiceProvider ,HttpStatus.CREATED);
 	            } else {
 	                return new ResponseEntity("Invalid Id", HttpStatus.BAD_REQUEST);
 	            }
