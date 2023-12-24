@@ -66,7 +66,7 @@ public class SubcontractorController {
 			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
 		try {
-			return new ResponseEntity<>(subcontractorService.getAllSubcontractors(nameColonne, sorting, page, pageSize),HttpStatus.OK);
+			return new ResponseEntity<>(subcontractorService.getAllNonArchivedSubcontractors(nameColonne, sorting, page, pageSize),HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -203,7 +203,9 @@ public class SubcontractorController {
 	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
 	 */
 	@PostMapping("/save")
-	public ResponseEntity<SubcontractorDto> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
+	public ResponseEntity<SubcontractorDto> saveSubcontractor(
+			@Valid @RequestBody SubcontractorDto subcontractorDto,
+			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize) {
 		try {
 			if (subcontractorDto.getSId() > 0) {
 				boolean isSubcontractorExist = subcontractorService.checkIfSubcontractorExist(subcontractorDto.getSId());
@@ -215,10 +217,10 @@ public class SubcontractorController {
 					return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
 				} else {
 					try {
-				
 					 // si le sous-traitant n'existe pas, save
 					 this.subcontractorService.handleSubcontractorSave(subcontractorDto);
 					 int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorDto);
+		                int pageNumberOfNewlyAddedSubcontractor = subcontractorService.getPageNumberOfNewlyAddedOrUpdatedSubcontractor(savedSubcontractorId,pageSize);
 					 SubcontractorDto savedSubcontractorDto = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
 					 return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
 	                } catch (GeneralException e) {

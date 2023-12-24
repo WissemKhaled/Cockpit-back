@@ -10,17 +10,17 @@ import com.example.demo.exception.GeneralException;
 public interface SubcontractorService {
 
 	/**
-	 * Récupère la liste paginée et triée des sous-traitants en fonction des paramètres spécifiés.
+	 * Récupère la liste paginée et triée des sous-traitants non archivés en fonction des paramètres spécifiés.
 	 *
 	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
 	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
 	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
 	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
-	 * @return Liste des DTO des sous-traitants paginée et triée avec le statut OK,
+	 * @return Liste des DTO des sous-traitants non archivés paginée et triée avec le statut OK,
 	 *         ResponseEntity avec un message d'erreur si aucun sous-traitant n'est trouvé et le statut NOT_FOUND,
 	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
 	 */
-	List<SubcontractorDto> getAllSubcontractors(String nameColonne, String sorting, int pageSize, int page);
+	List<SubcontractorDto> getAllNonArchivedSubcontractors(String nameColonne, String sorting, int pageSize, int page);
 
 	
 	/**
@@ -202,5 +202,15 @@ public interface SubcontractorService {
 	 */
 	Integer getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
 			String columnName) throws GeneralException;
+
+
+	/**
+	 * Récupère le nombre de la page ou le nouveau sous-traitant est enregistré.
+	 *
+	 * @param savedSubcontractorId      l'id du nouveau sous-traitant enregistré.
+	 * @param pageSize         Le nombre d'éléments par page.
+	 * @return Le nombre de page ou le nouveau sous-traitant est enregistré, sinon elle retourne une valeur par défaut égale à 1.
+	 */
+	int getPageNumberOfNewlyAddedOrUpdatedSubcontractor(int savedSubcontractorId, int pageSize);
 
 }

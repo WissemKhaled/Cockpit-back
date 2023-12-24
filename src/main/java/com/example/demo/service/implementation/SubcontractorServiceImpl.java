@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.GstStatusModelSubcontractorDTO;
+import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.GstStatusModelSubcontractorDtoMapper;
@@ -90,9 +91,9 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 
 	@Override
-	public List<SubcontractorDto> getAllSubcontractors(String nameColonne, String sorting, int page, int pageSize) {
+	public List<SubcontractorDto> getAllNonArchivedSubcontractors(String nameColonne, String sorting, int page, int pageSize) {
 		int offset = (page - 1) * pageSize;
-		List<SubcontractorDto> foundedSubcontractors = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset,pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+		List<SubcontractorDto> foundedSubcontractors = subcontractorMapper.findAllNonArchivedSubcontractors(nameColonne, sorting, offset,pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 		if (foundedSubcontractors.isEmpty()) {
 			throw new EntityNotFoundException("Il n'y a pas de sous-traitans");
 		}
@@ -283,5 +284,24 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
 	    }
+	}
+
+	@Override
+	public int getPageNumberOfNewlyAddedOrUpdatedSubcontractor(int savedSubcontractorId, int pageSize) {
+        int newPage = 1;
+//        int newIndex = -1;
+//		int countAllNonArchivedServiceProviders = subcontractorMapper.fi();
+//        List<ServiceProviderDto> sortedServiceProviders = subcontractorMapper.findAllNonArchivedServiceProviders("asc", 0, countAllNonArchivedServiceProviders).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+//        for (int i = 0; i < sortedServiceProviders.size(); i++) {
+//            if (sortedServiceProviders.get(i).getSpId() == savedServiceProviderId) {
+//                newIndex = i;
+//                break;
+//            }
+//        }
+//        if (newIndex != -1) {
+//            // calculer le nombre de page en se basant sur l'indice et le nombre d'élément par page.
+//            newPage = (int) Math.ceil((double) (newIndex + 1) / pageSize);
+//        }
+        return newPage;
 	}
 }

@@ -59,10 +59,10 @@ public class ServiceProviderController {
 	}
 
 	/**
-	 * Enregistre ou met à jour un prestataire.
+	 * Enregistre ou met à jour un prestataire et renvoie le numéro de la page qui lui correspond.
 	 *
 	 * @param serviceProviderDto Les données du prestataire à enregistrer ou mettre à jour.
-	 * @return ResponseEntity contenant le ServiceProviderDto enregistré ou mis à jour avec le statut OK,
+	 * @return ResponseEntity contenant le ServiceProviderDto enregistré, ou mis à jour avec le statut OK et le numéro de la page qui lui correspond,
 	 *         ResponseEntity avec HttpStatus.NOT_FOUND si le prestataire n'est pas trouvé lors de la mise à jour,
 	 *         ResponseEntity avec HttpStatus.CONFLICT si des données en double sont détectées lors de l'enregistrement,
 	 *         ResponseEntity avec HttpStatus.BAD_REQUEST en cas d'erreur.
