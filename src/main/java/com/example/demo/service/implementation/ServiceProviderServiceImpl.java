@@ -272,5 +272,24 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
 	    }
 	}
+
+	@Override
+	public int getPageNumberOfNewlyAddedServiceProvider(int savedServiceProviderId, int pageSize) {
+        int newPage = 1;
+        int newIndex = -1;
+		int countAllNonArchivedServiceProviders = serviceProviderMapper.countAllNonArchivedServiceProviders();
+        List<ServiceProviderDto> sortedServiceProviders = serviceProviderMapper.findAllNonArchivedServiceProviders("asc", 0, countAllNonArchivedServiceProviders).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+        for (int i = 0; i < sortedServiceProviders.size(); i++) {
+            if (sortedServiceProviders.get(i).getSpId() == savedServiceProviderId) {
+                newIndex = i;
+                break;
+            }
+        }
+        if (newIndex != -1) {
+            // calculer le nombre de page en se basant sur l'indice et le nombre d'élément par page.
+            newPage = (int) Math.ceil((double) (newIndex + 1) / pageSize);
+        }
+        return newPage;
+	}
 	
 }

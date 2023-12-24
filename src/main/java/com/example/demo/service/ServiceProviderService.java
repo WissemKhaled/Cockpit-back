@@ -174,4 +174,14 @@ public interface ServiceProviderService {
 	int getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
 			String columnName) throws GeneralException;
 
+
+	/**
+	 * Récupère le nombre de la page ou le nouveau prestataire est enregistré.
+	 *
+	 * @param savedServiceProviderId      l'id du nouveau prestataire enregistré.
+	 * @param pageSize         Le nombre d'éléments par page.
+	 * @return Le nombre de page ou le nouveau prestataire est enregistré, sinon elle retourne une valeur par défaut égale à 1.
+	 */
+	int getPageNumberOfNewlyAddedServiceProvider(int savedServiceProviderId, int pageSize);
+
 }
