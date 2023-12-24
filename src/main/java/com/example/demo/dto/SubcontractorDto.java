@@ -38,6 +38,9 @@ public class SubcontractorDto {
 	@JsonProperty("serviceProvidersIds")
 	private List<Integer> serviceProvidersIds;
 
+	@JsonProperty("newPage")
+	private int newPage;
+
 	public SubcontractorDto() {
 	}
 
@@ -108,11 +111,19 @@ public class SubcontractorDto {
 		this.serviceProvidersIds = serviceProvidersIds;
 	}
 
+	public int getNewPage() {
+		return newPage;
+	}
+
+	public void setNewPage(int newPage) {
+		this.newPage = newPage;
+	}
+
 	@Override
 	public String toString() {
 		return "SubcontractorDto [sId=" + sId + ", sName=" + sName + ", sEmail=" + sEmail + ", sCreationDate="
 				+ sCreationDate + ", sLastUpdateDate=" + sLastUpdateDate + ", status=" + status
-				+ ", serviceProvidersIds=" + serviceProvidersIds + "]";
+				+ ", serviceProvidersIds=" + serviceProvidersIds + ", newPage=" + newPage + "]";
 	}
 
 }

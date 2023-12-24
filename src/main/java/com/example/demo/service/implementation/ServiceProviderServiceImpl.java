@@ -123,8 +123,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	@Override
 	public int checkIfSubcontractorExistBySpEmail(String serviceProviderSpEmail) {
-		ServiceProvider foundServiceProvider = serviceProviderMapper
-				.findServiceProviderBySpEmail(serviceProviderSpEmail);
+		ServiceProvider foundServiceProvider = serviceProviderMapper.findServiceProviderBySpEmail(serviceProviderSpEmail);
 		if (foundServiceProvider == null)
 			return 0;
 		return foundServiceProvider.getSpId();

@@ -101,11 +101,11 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 	
 	@Override
-	public List<SubcontractorDto> getAllSubcontractorWhitStatus(String nameColonne, String sorting, int pageSize,
+	public List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sorting, int pageSize,
 			int page, int statusId) {
 		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
 		int offset = (page - 1) * pageSize;
-		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractorsWhitStatus(nameColonne, sorting,
+		List<Subcontractor> subContarcList = subcontractorMapper.findAllSubcontractorsWithStatus(nameColonne, sorting,
 				offset, pageSize, statusId);
 
 		if (!subContarcList.isEmpty()) {
@@ -129,12 +129,12 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	@Override
 	public int getNumbersOfPages() {
-		return subcontractorMapper.countTotalItems();
+		return subcontractorMapper.countAllNonArchivedSubcontractors();
 	}
 	
 	@Override
 	public Integer getNumberOfAllSubcontractors() {
-		Integer numberOfFoundSubcontractors = subcontractorMapper.countTotalItems();
+		Integer numberOfFoundSubcontractors = subcontractorMapper.countAllNonArchivedSubcontractors();
 		if (numberOfFoundSubcontractors == 0) {
 			throw new EntityNotFoundException("il n'y a pas de sous-traiatant trouvé");
 		}
@@ -143,7 +143,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 	@Override
 	public Integer countTotalItemWhitStatus(Integer statusId) {
-		Integer numberOfFoundSubcontractorsWithStatus = subcontractorMapper.countTotalItemsWithStatus(statusId);
+		Integer numberOfFoundSubcontractorsWithStatus = subcontractorMapper.countAllNonArchivedSubcontractorsWithStatus(statusId);
 		if (numberOfFoundSubcontractorsWithStatus == 0) {
 			throw new EntityNotFoundException("il n'y a pas de sous-traiatant trouvé");
 		}
@@ -289,19 +289,19 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	@Override
 	public int getPageNumberOfNewlyAddedOrUpdatedSubcontractor(int savedSubcontractorId, int pageSize) {
         int newPage = 1;
-//        int newIndex = -1;
-//		int countAllNonArchivedServiceProviders = subcontractorMapper.fi();
-//        List<ServiceProviderDto> sortedServiceProviders = subcontractorMapper.findAllNonArchivedServiceProviders("asc", 0, countAllNonArchivedServiceProviders).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-//        for (int i = 0; i < sortedServiceProviders.size(); i++) {
-//            if (sortedServiceProviders.get(i).getSpId() == savedServiceProviderId) {
-//                newIndex = i;
-//                break;
-//            }
-//        }
-//        if (newIndex != -1) {
-//            // calculer le nombre de page en se basant sur l'indice et le nombre d'élément par page.
-//            newPage = (int) Math.ceil((double) (newIndex + 1) / pageSize);
-//        }
+        int newIndex = -1;
+		int countAllNonArchivedServiceProviders = subcontractorMapper.countAllNonArchivedSubcontractors();
+        List<SubcontractorDto> sortedSubcontractors = subcontractorMapper.findAllNonArchivedSubcontractors("s_fk_status_id","asc", 0, countAllNonArchivedServiceProviders).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+        for (int i = 0; i < sortedSubcontractors.size(); i++) {
+            if (sortedSubcontractors.get(i).getSId() == savedSubcontractorId) {
+                newIndex = i;
+                break;
+            }
+        }
+        if (newIndex != -1) {
+            // calculer le nombre de page en se basant sur l'indice et le nombre d'élément par page.
+            newPage = (int) Math.ceil((double) (newIndex + 1) / pageSize);
+        }
         return newPage;
 	}
 }

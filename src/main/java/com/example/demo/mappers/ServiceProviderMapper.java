@@ -69,17 +69,11 @@ public interface ServiceProviderMapper {
 	ServiceProvider findServiceProviderWithSubcontractorBySpId(int sId);
 	
 	
-	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, sp.sp_fk_subcontractor_id, sp.sp_fk_status_id "
+	@Select("SELECT sp.sp_id, sp.sp_email "
 			+ "FROM service_provider sp "
 			+ "WHERE sp.sp_email = #{spEmail}")
 	@Result(property = "spId", column = "sp_id")
-	@Result(property = "spFirstName", column = "sp_first_name")
-	@Result(property = "spName", column = "sp_name")
 	@Result(property = "spEmail", column = "sp_email")
-	@Result(property = "spCreationDate", column = "sp_creation_date")
-	@Result(property = "spLastUpdateDate", column = "sp_lastUpdate_date")
-	@Result(property = "subcontractor.sId", column = "sp_fk_subcontractor_id")
-	@Result(property = "spStatus.stId", column = "sp_fk_status_id")
 	ServiceProvider findServiceProviderBySpEmail(String spEmail);
 
 	
