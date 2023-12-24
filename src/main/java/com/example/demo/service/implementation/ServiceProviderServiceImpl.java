@@ -274,7 +274,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public int getPageNumberOfNewlyAddedServiceProvider(int savedServiceProviderId, int pageSize) {
+	public int getPageNumberOfNewlyAddedOrUpdatedServiceProvider(int savedServiceProviderId, int pageSize) {
         int newPage = 1;
         int newIndex = -1;
 		int countAllNonArchivedServiceProviders = serviceProviderMapper.countAllNonArchivedServiceProviders();

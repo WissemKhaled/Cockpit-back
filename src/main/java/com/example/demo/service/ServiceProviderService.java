@@ -182,6 +182,6 @@ public interface ServiceProviderService {
 	 * @param pageSize         Le nombre d'éléments par page.
 	 * @return Le nombre de page ou le nouveau prestataire est enregistré, sinon elle retourne une valeur par défaut égale à 1.
 	 */
-	int getPageNumberOfNewlyAddedServiceProvider(int savedServiceProviderId, int pageSize);
+	int getPageNumberOfNewlyAddedOrUpdatedServiceProvider(int savedServiceProviderId, int pageSize);
 
 }

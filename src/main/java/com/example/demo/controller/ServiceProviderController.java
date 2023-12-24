@@ -83,14 +83,17 @@ public class ServiceProviderController {
 	        if (isServiceProviderExist) {
 	            // Mise à jour du prestataire
 	            serviceProviderService.handleServiceProviderUpdating(serviceProviderDto);
-	            int updateServiceProviderId = serviceProviderService.updateServiceProvider(serviceProviderDto);
-	            return new ResponseEntity<>(serviceProviderService.getServiceProviderById(updateServiceProviderId), HttpStatus.OK);
+	            serviceProviderService.updateServiceProvider(serviceProviderDto);
+                int newPageNumberOfUpdatedServiceProvider = serviceProviderService.getPageNumberOfNewlyAddedOrUpdatedServiceProvider(serviceProviderDto.getSpId(),pageSize);
+                ServiceProviderDto updatedServiceProvider = serviceProviderService.getServiceProviderById(serviceProviderDto.getSpId());
+                updatedServiceProvider.setNewPage(newPageNumberOfUpdatedServiceProvider);
+                return new ResponseEntity<>(updatedServiceProvider, HttpStatus.OK);
 	        } else {
 	            if (serviceProviderDto.getSpId() > 0) {
 	                // Enregistrement d'un nouveau prestataire
 	                serviceProviderService.handleServiceProviderSaving(serviceProviderDto);
 	                int savedServiceProviderId = serviceProviderService.saveServiceProvider(serviceProviderDto);
-	                int pageNumberOfNewlyAddedServiceProvider = serviceProviderService.getPageNumberOfNewlyAddedServiceProvider(savedServiceProviderId,pageSize);
+	                int pageNumberOfNewlyAddedServiceProvider = serviceProviderService.getPageNumberOfNewlyAddedOrUpdatedServiceProvider(savedServiceProviderId,pageSize);
 	                ServiceProviderDto savedServiceProvider = serviceProviderService.getServiceProviderById(savedServiceProviderId);
 	                savedServiceProvider.setNewPage(pageNumberOfNewlyAddedServiceProvider);
 	                return new ResponseEntity<>(savedServiceProvider ,HttpStatus.CREATED);
