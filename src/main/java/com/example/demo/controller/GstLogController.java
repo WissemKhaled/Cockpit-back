@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogDTO;
-import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.ResetPasswordResponseDTO;
 import com.example.demo.dto.ResetPwdExpirationResponseDTO;
+import com.example.demo.exception.DatabaseQueryFailureException;
+import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.InactiveUserException;
 import com.example.demo.exception.PasswordAvailabilityException;
 import com.example.demo.exception.PasswordClaimExpirationException;
 import com.example.demo.service.implementation.GstLogServiceImpl;
@@ -49,16 +51,14 @@ public class GstLogController {
 	@PostMapping("/createGstLog")
 	public ResponseEntity<Object> createGstLog(@Valid @RequestBody CreateGstLogDTO createGstLogDTO) {
 	    try {
-	        GstLogResponseDTO responseDTO = gstLogServiceImpl.saveGstLog(createGstLogDTO);
-
-	        if ("success".equals(responseDTO.getStatus())) {
-	            return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
-	        } else {
-	            return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-	        }
+	        String response = gstLogServiceImpl.saveGstLog(createGstLogDTO);
+	        return new ResponseEntity<>(response, HttpStatus.CREATED);
+	    } catch (NullPointerException | EntityNotFoundException | InactiveUserException | DatabaseQueryFailureException e) {
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	    } catch (RuntimeException e) {
+	        return new ResponseEntity<>("Une erreur inattendue s'est produite", HttpStatus.INTERNAL_SERVER_ERROR);
 	    } catch (Exception e) {
-	        log.error(e.getMessage());
-	        return new ResponseEntity<>(new GstLogResponseDTO("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+	        return new ResponseEntity<>("Une erreur inattendue s'est produite", HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 
@@ -69,8 +69,8 @@ public class GstLogController {
 	@GetMapping("/getGstLogByValue")
     public ResponseEntity<?> getGstLogByValue(@RequestParam String logValue) {
         try {
-            GstLogDTO messageModelDTO = gstLogServiceImpl.getGstLogByValue(logValue);
-            return new ResponseEntity<>(messageModelDTO, HttpStatus.OK);
+            GstLogDTO gstLogDTO = gstLogServiceImpl.getGstLogByValue(logValue);
+            return new ResponseEntity<>(gstLogDTO, HttpStatus.OK);
         } catch (NotFoundException e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

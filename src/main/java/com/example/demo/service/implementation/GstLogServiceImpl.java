@@ -22,7 +22,10 @@ import com.example.demo.dto.mapper.CreateGstLogDtoMapper;
 import com.example.demo.dto.mapper.GstLogDtoMapper;
 import com.example.demo.entity.GstLog;
 import com.example.demo.entity.UUser;
+import com.example.demo.exception.DatabaseQueryFailureException;
+import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
+import com.example.demo.exception.InactiveUserException;
 import com.example.demo.exception.PasswordAvailabilityException;
 import com.example.demo.exception.PasswordClaimExpirationException;
 import com.example.demo.mappers.GstLogMapper;
@@ -79,22 +82,22 @@ public class GstLogServiceImpl implements GstLogService{
 		this.userMapper = userMapper;
 	}
 	
-	public GstLogResponseDTO saveGstLog(CreateGstLogDTO createGstLogDTO) {
+	public String saveGstLog(CreateGstLogDTO createGstLogDTO) throws Exception {
 	    if (createGstLogDTO == null) {
 	        log.error("Le paramètre createGstLogDTO ne peut être null");
-	        return new GstLogResponseDTO("error", "Le paramètre createGstLogDTO ne peut être null");
+	        throw new NullPointerException("Le paramètre createGstLogDTO ne peut être null");
 	    }
 
 	    try {
 	        UUserDTO user = userInfoService.findUserByEmail(createGstLogDTO.getLogEmail());
 	        if (user == null) {
 	            log.error("Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
-	            return new GstLogResponseDTO("error", "Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
+	            throw new EntityNotFoundException("Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
 	        }
-	        
+
 	        if (!user.isUStatus()) {
-	        	log.error("L'utilisateur " + user.getUEmail() + " est inactif");
-    			throw new GeneralException("L'utilisateur est inactif");
+	            log.error("L'utilisateur " + user.getUEmail() + " est inactif");
+	            throw new InactiveUserException("L'utilisateur est inactif");
 	        }
 
 	        GstLog gstLog = createGstLogDtoMapper.toGstLog(createGstLogDTO);
@@ -103,25 +106,23 @@ public class GstLogServiceImpl implements GstLogService{
 	        int isGstLogInserted = gstLogMapper.insertLog(gstLog);
 	        if (isGstLogInserted == 0) {
 	            log.error("Échec de l'insertion du gst log dans la base de données");
-	            return new GstLogResponseDTO("error", "Échec de l'insertion du gst log dans la base de données");
+	            throw new DatabaseQueryFailureException("Échec de l'insertion du gst log dans la base de données");
 	        }
+
 	        // Envoi d'email avec lien vers page de réinitialisation de mdp
 	        sendResetPwdLinkByEmail(createGstLogDTO);
-	        
+
 	        log.info("gst log créé avec succès");
-	        return new GstLogResponseDTO("success", "gst log créé avec succès");
-	    } catch (IllegalArgumentException e) {
-	    	log.error("Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
-	        return new GstLogResponseDTO("error", "Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
-	    } catch (MessagingException | UsernameNotFoundException e) {
-	        log.error("Erreur lors de l'envoi de l'email : " + e.getMessage());
-	        return new GstLogResponseDTO("error", "Erreur lors de l'envoi de l'email : " + e.getMessage());
+	        return "gst log créé avec succès";
+	    } catch (NullPointerException | EntityNotFoundException | InactiveUserException | DatabaseQueryFailureException e) {
+	        log.error("Une exception s'est produite : ", e);
+	        throw e;
 	    } catch (Exception e) {
-	        // Handle other exceptions or log them if needed
-	        log.error(e.getMessage());
-	        return new GstLogResponseDTO("error", e.getMessage());
+	        log.error("Une erreur inattendue s'est produite:", e);
+	        throw new RuntimeException("Une erreur inattendue s'est produite");
 	    }
 	}
+	
 	
 	/**
 	 * Méthode qui récupère un log par sa valeur (logValue)

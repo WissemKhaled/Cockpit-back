@@ -53,22 +53,22 @@ public class UserInfoService implements UserDetailsService {
 	 * Méthode qui retourne les informations de l'utilisateur en fonction de son email
 	*/
 	public UUserDTO findUserByEmail(String email) {
-		try {
-			if (email != null && !email.isBlank()) {
-				Optional<UUser> foundUser = userMapper.findByEmail(email);
-				UUser userInfo = foundUser.orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé " + email));
-				UUserDTO userInfoDTO = uUserMapperEntityDTO.toDto(userInfo);
-				
-				return userInfoDTO;
-			} else {
-				log.error(String.format("Email invalide %s" + email));
-				throw new IllegalArgumentException("Email invalide");
-			}
-		} catch (UsernameNotFoundException e) {
-			log.error(String.format("Utilisateur non trouvé : %o", e.getMessage(), e));
-			e.printStackTrace();
-			return null;
-		}
+	    try {
+	        if (email != null && !email.isBlank()) {
+	            Optional<UUser> foundUser = userMapper.findByEmail(email);
+	            UUser userInfo = foundUser.orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé " + email));
+	            UUserDTO userInfoDTO = uUserMapperEntityDTO.toDto(userInfo);
+
+	            return userInfoDTO;
+	        } else {
+	            log.error(String.format("Email invalide %s", email));
+	            throw new IllegalArgumentException("Email invalide");
+	        }
+	    } catch (UsernameNotFoundException e) {
+	        log.error(String.format("Utilisateur non trouvé : %s", e.getMessage()), e);
+	        e.printStackTrace();
+	        return null;
+	    }
 	}
 	
 	/**
