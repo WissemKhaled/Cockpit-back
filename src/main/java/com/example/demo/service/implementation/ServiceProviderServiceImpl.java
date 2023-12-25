@@ -102,12 +102,12 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 	
 	@Override
-	public List<ServiceProviderDto> getServiceProvidersBySubcontractorId(int subcontractorId) {
+	public List<ServiceProvider> getServiceProvidersBySubcontractorId(int subcontractorId) {
 	    // Récupération des prestataires associés au sous-traitant par son ID
 	    List<ServiceProvider> serviceProviders = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId);
 
 	    // Conversion des prestataires en DTO
-	    return serviceProviders.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();	
+	    return serviceProviders;	
 	}
 
 	@Override

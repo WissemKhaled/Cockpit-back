@@ -208,7 +208,7 @@ public class SubcontractorController {
 					 // si le sous-traitant n'existe pas, save
 					 this.subcontractorService.handleSubcontractorSave(subcontractorDto);
 					 int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorDto);
-		                int pageNumberOfNewlyAddedSubcontractor = subcontractorService.getPageNumberOfNewlyAddedOrUpdatedSubcontractor(savedSubcontractorId,pageSize);
+		             int pageNumberOfNewlyAddedSubcontractor = subcontractorService.getPageNumberOfNewlyAddedOrUpdatedSubcontractor(savedSubcontractorId,pageSize);
 					 SubcontractorDto savedSubcontractorDto = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
 					 savedSubcontractorDto.setNewPage(pageNumberOfNewlyAddedSubcontractor);
 					 return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
