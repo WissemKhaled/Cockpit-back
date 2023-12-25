@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogDTO;
-import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.UUserDTO;
 import com.example.demo.dto.mapper.CreateGstLogDtoMapper;
 import com.example.demo.dto.mapper.GstLogDtoMapper;
@@ -24,7 +23,6 @@ import com.example.demo.entity.GstLog;
 import com.example.demo.entity.UUser;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.exception.GeneralException;
 import com.example.demo.exception.InactiveUserException;
 import com.example.demo.exception.PasswordAvailabilityException;
 import com.example.demo.exception.PasswordClaimExpirationException;
@@ -236,7 +234,7 @@ public class GstLogServiceImpl implements GstLogService{
         }
     }
 	
-	public void manageResetUserPassword(String logValue, String newPassword) throws NotFoundException, GeneralException, PasswordAvailabilityException, PasswordClaimExpirationException {
+	public void manageResetUserPassword(String logValue, String newPassword) throws NotFoundException, PasswordAvailabilityException, PasswordClaimExpirationException, DatabaseQueryFailureException, InactiveUserException {
 		 if (logValue != null && !logValue.isEmpty()) {
 			 
 			 if (checkResetPasswordExpiration(logValue)) {
@@ -262,17 +260,18 @@ public class GstLogServiceImpl implements GstLogService{
 					        	
 					        	if (isGstLogUpdated == 0) {
 					        		log.error("Échec de mise à jour du gstLog dans la base de données");
-						            throw new GeneralException("Échec de mise à jour du gstLog dans la base de données");
+						            throw new DatabaseQueryFailureException("Échec de mise à jour du gstLog dans la base de données");
 					        	}  else {
 						            log.info("gstLog mis à jour pour le loogValue : " + logValue);
 						        }
 		        			} else {
 		        				log.error("Vous avez déjà utilisé ce mot de passe, veuillez en choisir un autre");
+		        				throw new PasswordAvailabilityException("Vous avez déjà utilisé ce mot de passe, veuillez en choisir un autre");
 		        			}
 		        			
 		        		} else {
 		        			log.error("L'utilisateur " + user.getUEmail() + " est inactif");
-		        			throw new GeneralException("L'utilisateur est inactif");
+		        			throw new InactiveUserException("L'utilisateur est inactif");
 		        		}
 		        	} else {
 		        		log.error("Utilisateur " + gstLog.getLogEmail() + " non trouvé.");
