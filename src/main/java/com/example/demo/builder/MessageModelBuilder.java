@@ -8,6 +8,7 @@ import com.example.demo.entity.Status;
 public class MessageModelBuilder {
 	private Integer mmId;
 	private String mmType;
+	private String mmCategory;
 	private String mmSubject;
 	private String mmBody;
 	private LocalDateTime mmCreationDate;
@@ -21,6 +22,11 @@ public class MessageModelBuilder {
 
 	public MessageModelBuilder withMmType(String mmType) {
 		this.mmType = mmType;
+		return this;
+	}
+
+	public MessageModelBuilder withMmCategory(String mmCategory) {
+		this.mmCategory = mmCategory;
 		return this;
 	}
 
@@ -50,7 +56,7 @@ public class MessageModelBuilder {
 	}
 
 	public MessageModel build() {
-		return new MessageModel(mmId, mmType, mmSubject, mmBody, mmCreationDate, mmLastUpdateDate, status);
+		return new MessageModel(mmId, mmCategory, mmType, mmSubject, mmBody, mmCreationDate, mmLastUpdateDate, status);
 	}
 
 }
