@@ -1,190 +1,113 @@
-
--- Table: public.gst_log
-
--- DROP TABLE IF EXISTS public.gst_log;
-CREATE SEQUENCE public.gst_log_log_id_seq
-    INCREMENT 1
-    START 1;
-
-ALTER SEQUENCE IF EXISTS public.gst_log_log_id_seq
-    OWNER to postgres;
-
-CREATE SEQUENCE public.u_user_u_id_seq
-    INCREMENT 1
-    START 1;
-ALTER SEQUENCE IF EXISTS public.u_user_u_id_seq
-    OWNER to postgres;
-
-CREATE TABLE IF NOT EXISTS public.gst_log
+CREATE TABLE IF NOT EXISTS status
 (
-    log_id            SERIAL PRIMARY KEY, -- Keeping SERIAL as it implicitly creates a sequence
-    log_type          VARCHAR(45)         NOT NULL,
-    log_email         VARCHAR(255)        NOT NULL,
-    log_password      VARCHAR(255)        DEFAULT NULL, -- Included from the first definition
+    st_id          SERIAL PRIMARY KEY,
+    st_name        VARCHAR(50) NOT NULL,
+    st_description VARCHAR(255) DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS subcontractor
+(
+    s_id              SERIAL PRIMARY KEY,
+    s_name            VARCHAR(250) NOT NULL,
+    s_email           VARCHAR(45)  NOT NULL,
+    s_creation_date   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    s_lastUpdate_date TIMESTAMP,
+    s_fk_status_id    SMALLINT     NOT NULL,
+    FOREIGN KEY (s_fk_status_id) REFERENCES status (st_id)
+);
+
+CREATE TABLE IF NOT EXISTS service_provider
+(
+    sp_id                  SERIAL PRIMARY KEY,
+    sp_first_name          VARCHAR(250) NOT NULL,
+    sp_name                VARCHAR(250) NOT NULL,
+    sp_email               VARCHAR(45)  NOT NULL,
+    sp_creation_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    sp_lastUpdate_date     TIMESTAMP,
+    sp_fk_subcontractor_id SMALLINT     NOT NULL,
+    FOREIGN KEY (sp_fk_subcontractor_id) REFERENCES subcontractor (s_id),
+    sp_fk_status_id        SMALLINT     NOT NULL,
+    FOREIGN KEY (sp_fk_status_id) REFERENCES status (st_id)
+);
+
+CREATE TABLE IF NOT EXISTS u_user
+(
+    u_id             SERIAL PRIMARY KEY,
+    u_email          VARCHAR(45)  NOT NULL,
+    u_password       VARCHAR(255) NOT NULL,
+    u_first_name     VARCHAR(45) DEFAULT NULL,
+    u_last_name      VARCHAR(45) DEFAULT NULL,
+    u_status         BOOLEAN     DEFAULT FALSE,
+    u_insertion_date TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
+    u_last_update    TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS refresh_token
+(
+    rt_id          SERIAL PRIMARY KEY,
+    rt_token       VARCHAR(255) NOT NULL,
+    rt_expiry_date TIMESTAMP    NOT NULL,
+    rt_fk_user_id  SMALLINT     NOT NULL,
+    FOREIGN KEY (rt_fk_user_id) REFERENCES u_user (u_id)
+);
+
+CREATE TABLE IF NOT EXISTS gst_log
+(
+    log_id            SERIAL PRIMARY KEY,
+    log_type          VARCHAR(45)  NOT NULL,
+    log_email         VARCHAR(255) NOT NULL,
+    log_password      VARCHAR(255) DEFAULT NULL,
     log_value         VARCHAR(45),
-    log_creation_date TIMESTAMP           DEFAULT CURRENT_TIMESTAMP,
-    log_last_update   TIMESTAMP           -- Included from the first definition
-    );
-
-
-ALTER TABLE IF EXISTS public.gst_log
-    OWNER to postgres;
-
-CREATE TYPE status_type AS ENUM ('En cours', 'En validation', 'Validé', 'Archivé');
-
-ALTER TYPE status_type OWNER TO postgres;
-
-
--- auto-generated definition
-create table status
-(
-    st_id          serial primary key,
-    type           status_type NOT NULL,
-    st_description varchar(255) default NULL::character varying
+    log_creation_date TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+    log_last_update   TIMESTAMP
 );
 
-alter table status
-    owner to postgres;
-
-
--- auto-generated definition
-create table service_provider
+CREATE TABLE IF NOT EXISTS gst_message_model
 (
-    sp_id              serial primary key,
-    sp_first_name      varchar(250) not null,
-    sp_name            varchar(250) not null,
-    sp_email           varchar(45)  not null,
-    sp_creation_date   timestamp default CURRENT_TIMESTAMP,
-    sp_lastupdate_date timestamp
+    mm_id            SERIAL PRIMARY KEY,
+    mm_Category          VARCHAR(45)  NOT NULL,
+    mm_type          VARCHAR(45)  NOT NULL,
+    mm_subject       VARCHAR(255) NOT NULL,
+    mm_body          TEXT         NOT NULL,
+    mm_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    mm_last_update   TIMESTAMP,
+    mm_fk_status_id  SMALLINT     NOT NULL,
+    FOREIGN KEY (mm_fk_status_id) REFERENCES status (st_id)
 );
 
-alter table service_provider
-    owner to postgres;
-
-
--- auto-generated definition
--- service_provider (one) -> subcontractor(many)
-create table subcontractor
+CREATE TABLE IF NOT EXISTS message_send
 (
-    s_id                serial primary key,
-    s_name              varchar(250) not null,
-    s_email             varchar(45)  not null,
-    s_creation_date     timestamp default CURRENT_TIMESTAMP,
-    s_lastupdate_date   timestamp,
-    service_provider_id INT          NOT NULL,
-    FOREIGN KEY (service_provider_id) REFERENCES service_provider (sp_id)
+    ms_id            SERIAL PRIMARY KEY,
+    ms_sender        VARCHAR(55)  NOT NULL,
+    ms_to            VARCHAR(55) DEFAULT NULL,
+    ms_cc            TEXT        DEFAULT NULL,
+    ms_subject       VARCHAR(255) NOT NULL,
+    ms_body          TEXT         NOT NULL,
+    ms_error         varchar(250),
+    ms_status        SMALLINT,
+    ms_creation_date TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
 );
-
-alter table subcontractor
-    owner to postgres;
-
-
--- gst_sc_message_model (one) -> mail(one)
--- gst_sc_message_model (one) -> status(one)
--- subcontractor(one) -> gst_sc_message_model(many)
--- gst_sp_message_model (one) -> mail(one)
--- gst_sp_message_model (one) -> status(one)
--- service_provider(one) -> gst_sp_message_model(many)
-create table gst_message_model
-(
-    mm_id               serial primary key,
---     mm_type             status_type NOT NULL,
-    mm_subject          varchar(255) not null,
-    mm_body             text         not null,
-    mm_creation_date    timestamp default CURRENT_TIMESTAMP,
-    mm_send_date        timestamp default CURRENT_TIMESTAMP,
-    mm_last_update      timestamp,
-    status_fk           INT          NOT NULL,
-    FOREIGN KEY (status_fk) REFERENCES status (st_id),
-    service_provider_fk INT          NOT NULL,
-    FOREIGN KEY (service_provider_fk) REFERENCES service_provider (sp_id),
-    subcontractor_fk INT          NOT NULL,
-    FOREIGN KEY (subcontractor_fk) REFERENCES subcontractor (s_id)
-);
-
-alter table gst_message_model
-    owner to postgres;
-
--- auto-generated definition
--- gst_sp_message_model (one) -> message_send(many)
--- gst_sc_message_model (one) -> message_send(many)
-create table message_send
-(
-    ms_id                   serial primary key,
-    ms_sender               varchar(55)  not null,
-    ms_to                   varchar(55)  default NULL::character varying,
-    ms_cc                   varchar(255) default NULL::character varying,
-    ms_subject              varchar(255) not null,
-    ms_body                 text         not null,
-    ms_error                varchar(250),
-    ms_status               smallint,
-    gst_message_model_fk INT          NOT NULL,
-    FOREIGN KEY (gst_message_model_fk) REFERENCES gst_message_model (mm_id)
-);
-
-alter table message_send
-    owner to postgres;
-
-
-CREATE TABLE IF NOT EXISTS public.u_user
-(
-    u_id             integer                                             NOT NULL DEFAULT nextval('u_user_u_id_seq'::regclass),
-    u_email          character varying(45) COLLATE pg_catalog."default"  NOT NULL,
-    u_password       character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    u_first_name     character varying(45) COLLATE pg_catalog."default"           DEFAULT NULL::character varying,
-    u_last_name      character varying(45) COLLATE pg_catalog."default"           DEFAULT NULL::character varying,
-    u_status         boolean                                                      DEFAULT false,
-    u_insertion_date timestamp without time zone                                  DEFAULT CURRENT_TIMESTAMP,
-    u_last_update    timestamp without time zone,
-    CONSTRAINT u_user_pkey PRIMARY KEY (u_id)
-    )
-    TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.u_user
-    OWNER to postgres;
-
-
--- auto-generated definition
-create table refresh_token
-(
-    rt_id          serial primary key,
-    rt_token       varchar(255) not null,
-    rt_expiry_date timestamp    not null,
-    rt_fk_user_id  smallint     not null
-        references u_user
-);
-
-alter table refresh_token
-    owner to postgres;
-
-
--- Table: public.u_user
-
--- DROP TABLE IF EXISTS public.u_user;
-
-
 
 CREATE TABLE IF NOT EXISTS gst_status_model_service_provider
 (
     status_msp_id                     SERIAL PRIMARY KEY,
     status_msp_fk_service_provider_id SERIAL NOT NULL,
-    status_msp_fk_sp_message_model_id    SERIAL NOT NULL,
+    status_msp_fk_message_model_id    SERIAL NOT NULL,
     status_msp_fk_status_id           SERIAL NOT NULL,
 
     FOREIGN KEY (status_msp_fk_service_provider_id) REFERENCES service_provider (sp_id),
-    FOREIGN KEY (status_msp_fk_sp_message_model_id) REFERENCES gst_message_model (mm_id),
+    FOREIGN KEY (status_msp_fk_message_model_id) REFERENCES gst_message_model (mm_id),
     FOREIGN KEY (status_msp_fk_status_id) REFERENCES status (st_id)
-    );
+);
 
 CREATE TABLE IF NOT EXISTS gst_status_model_subcontractor
 (
     status_ms_id                  SERIAL PRIMARY KEY,
     status_ms_fk_subcontractor_id SERIAL NOT NULL,
-    status_ms_fk_sc_message_model_id SERIAL NOT NULL,
+    status_ms_fk_message_model_id SERIAL NOT NULL,
     status_ms_fk_status_id        SERIAL NOT NULL,
 
     FOREIGN KEY (status_ms_fk_subcontractor_id) REFERENCES subcontractor (s_id),
-    FOREIGN KEY (status_ms_fk_sc_message_model_id) REFERENCES gst_message_model (mm_id),
+    FOREIGN KEY (status_ms_fk_message_model_id) REFERENCES gst_message_model (mm_id),
     FOREIGN KEY (status_ms_fk_status_id) REFERENCES status (st_id)
-    );
-
+);

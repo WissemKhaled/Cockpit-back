@@ -1,83 +1,200 @@
-INSERT INTO public.gst_log (log_type, log_email, log_password, log_value, log_last_update)
-VALUES
-    ('Type1', 'email1@example.com', 'password1', 'Value1', CURRENT_TIMESTAMP),
-    ('Type2', 'email2@example.com', 'password2', 'Value2', CURRENT_TIMESTAMP),
-    ('Type3', 'email3@example.com', 'password3', 'Value3', CURRENT_TIMESTAMP),
-    ('Type4', 'email4@example.com', 'password4', 'Value4', CURRENT_TIMESTAMP);
+-- Status 1
+INSERT INTO status (st_id, st_name, st_description)
+VALUES (1, 'En cours', NULL);
 
-INSERT INTO status (type, st_description)
-VALUES
-    ('En cours', 'Description 1'),
-    ('En validation', 'Description 2'),
-    ('Validé', 'Description 3'),
-    ('Archivé', 'Description 4');
+-- Status 2
+INSERT INTO status (st_id, st_name, st_description)
+VALUES (2, 'En validation', NULL);
 
+-- Status 3
+INSERT INTO status (st_id, st_name, st_description)
+VALUES (3, 'Validé', NULL);
 
-INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_lastupdate_date)
-VALUES
-    ('FirstName1', 'LastName1', 'provider1@example.com', CURRENT_TIMESTAMP),
-    ('FirstName2', 'LastName2', 'provider2@example.com', CURRENT_TIMESTAMP),
-    ('FirstName3', 'LastName3', 'provider3@example.com', CURRENT_TIMESTAMP),
-    ('FirstName4', 'LastName4', 'provider4@example.com', CURRENT_TIMESTAMP);
+-- Status 4
+INSERT INTO status (st_id, st_name, st_description)
+VALUES (4, 'Archivé', NULL);
 
+--model de message 
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Demande', 'Demande des documents administratifs du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Relance', 'Relance des documents administratifs du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Demande', 'Demande création à la comptabilité du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Relance', 'Relance création à la comptabilité du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Demande', 'Demande de signatures d''annexes du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Relance', 'Relance des signatures d''annexes du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Demande', 'Demande renouvellement des documents administratifs du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Relance', 'Relance renouvellement des documents administratif du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SC', 'Demande', 'Demande des documents de régularisation du sous-traitant', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SC', 'Relance', 'Relance des documents de régularisation du sous-traitant', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SC', 'Demande', 'Demande création à la comptabilité du sous-traitant', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SC', 'Relance', 'Relance de création à la comptabilité du sous-traitant', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SC', 'Demande', 'Demande de signatures de contrat du sous-traitant', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SC', 'Relance', 'Relance des signatures de contrat du sous-traitant', 'je suis le body du mail', 1);
 
-INSERT INTO subcontractor (s_name, s_email, service_provider_id, s_lastupdate_date)
-VALUES
-    ('Subcontractor1', 'sub1@example.com', 1, CURRENT_TIMESTAMP),
-    ('Subcontractor2', 'sub2@example.com', 2, CURRENT_TIMESTAMP),
-    ('Subcontractor3', 'sub3@example.com', 3, CURRENT_TIMESTAMP),
-    ('Subcontractor4', 'sub4@example.com', 4, CURRENT_TIMESTAMP);
+-- Subcontractor 1
+INSERT INTO subcontractor (s_name, s_email, s_fk_status_id)
+VALUES ('Orange', 'Orange@email.fr', 1);
 
+-- Subcontractor 2
+INSERT INTO subcontractor (s_name, s_email, s_fk_status_id)
+VALUES ('BPCE', 'BPCE@email.com', 2);
 
-INSERT INTO gst_message_model (mm_subject, mm_body, status_fk, service_provider_fk, subcontractor_fk, mm_last_update)
-VALUES
-    ('Subject1', 'Body1', 1, 1, 1, CURRENT_TIMESTAMP),
-    ('Subject2', 'Body2', 2, 2, 2, CURRENT_TIMESTAMP),
-    ('Subject3', 'Body3', 3, 3, 3, CURRENT_TIMESTAMP),
-    ('Subject4', 'Body4', 4, 4, 4, CURRENT_TIMESTAMP);
+-- Subcontractor 3
+INSERT INTO subcontractor (s_name, s_email, s_creation_date, s_fk_status_id)
+VALUES ('EDF', 'EDF@email.fr', '2023-01-01 12:00:00', 1);
 
-INSERT INTO gst_message_model (mm_subject, mm_body, status_fk, service_provider_fk, subcontractor_fk, mm_last_update)
-VALUES
-    ('Subject1', 'Body1', 1, 1, 1, CURRENT_TIMESTAMP),
-    ('Subject2', 'Body2', 2, 2, 2, CURRENT_TIMESTAMP),
-    ('Subject3', 'Body3', 3, 3, 3, CURRENT_TIMESTAMP),
-    ('Subject4', 'Body4', 4, 4, 4, CURRENT_TIMESTAMP);
+-- Subcontractor 4
+INSERT INTO subcontractor (s_name, s_email, s_creation_date, s_lastUpdate_date, s_fk_status_id)
+VALUES ('ENEDIS', 'ENDIS@email.fr', '2023-01-01 12:00:00', NULL, 3);
 
-INSERT INTO message_send (ms_sender, ms_subject, ms_body, gst_message_model_fk, ms_status)
-VALUES
-    ('Sender1', 'Subject1', 'Body1', 1, 1),
-    ('Sender2', 'Subject2', 'Body2', 2, 2),
-    ('Sender3', 'Subject3', 'Body3', 3, 3),
-    ('Sender4', 'Subject4', 'Body4', 4, 4);
+-- Subcontractor 5
+INSERT INTO subcontractor (s_name, s_email, s_fk_status_id)
+VALUES ('LYON', 'LYON@email.fr', 2);
 
+-- Prestataire 01
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Lea', 'DUBOIS' ,'LeaDubois-1@email.com', '2023-01-01 12:00:00', NULL, 1 , 1);
 
-INSERT INTO public.u_user (u_email, u_password, u_first_name, u_last_name, u_status, u_last_update)
-VALUES
-    ('user1@example.com', 'pass1', 'FirstName1', 'LastName1', true, CURRENT_TIMESTAMP),
-    ('user2@example.com', 'pass2', 'FirstName2', 'LastName2', false, CURRENT_TIMESTAMP),
-    ('user3@example.com', 'pass3', 'FirstName3', 'LastName3', true, CURRENT_TIMESTAMP),
-    ('user4@example.com', 'pass4', 'FirstName4', 'LastName4', false, CURRENT_TIMESTAMP);
+-- Prestataire 02
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Louis', 'LEFEVRE' ,'LouisLefevre-1@email.com', '2023-01-01 12:00:00', NULL, 1 , 2);
 
+-- Prestataire 03
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Emma', 'MARTIN' ,'EmmaMartin-1@email.com', '2023-01-01 12:00:00', NULL, 1 , 3);
 
-INSERT INTO refresh_token (rt_token, rt_expiry_date, rt_fk_user_id)
-VALUES
-    ('token1', CURRENT_TIMESTAMP + INTERVAL '1 day', 1),
-    ('token2', CURRENT_TIMESTAMP + INTERVAL '1 day', 2),
-    ('token3', CURRENT_TIMESTAMP + INTERVAL '1 day', 3),
-    ('token4', CURRENT_TIMESTAMP + INTERVAL '1 day', 4);
+-- Prestataire 04
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Lucas', 'BERNARD' ,'LucasBernard-1@email.com', '2023-01-01 12:00:00', NULL, 1 , 1);
 
+-- Prestataire 05
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Chloe', 'DURAND' ,'ChloeDurand-1@email.com', '2023-01-01 12:00:00', NULL, 1 , 2);
 
-INSERT INTO gst_status_model_service_provider (status_msp_fk_service_provider_id, status_msp_fk_sp_message_model_id, status_msp_fk_status_id)
-VALUES
-    (1, 1, 1),
-    (2, 2, 2),
-    (3, 3, 3),
-    (4, 4, 4);
+-- Prestataire 06
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Gabriel', 'LEROY' ,'GabrielLeroy-1@email.com', '2023-01-01 12:00:00', NULL, 1 , 3);
 
+-- Prestataire 07
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Manon', 'MOREAU' ,'ManonMoreau-1@email.com', '2023-01-01 12:00:00', NULL, 1 , 1);
 
-INSERT INTO gst_status_model_subcontractor (status_ms_fk_subcontractor_id, status_ms_fk_sc_message_model_id, status_ms_fk_status_id)
-VALUES
-    (1, 1, 1),
-    (2, 2, 2),
-    (3, 3, 3),
-    (4, 4, 4);
+-- Prestataire 08
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Jules', 'FOURNIER' ,'JulesFournier-1@email.com', '2023-01-01 12:00:00', NULL, 1 , 2);
+
+-- Prestataire 09
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Charlotte', 'GIRARD' ,'CharlotteGirard-1@email.com', '2023-01-01 12:00:00', NULL, 1 , 3);
+
+-- Prestataire 11
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Lea', 'DUBOIS' ,'LeaDubois-2@email.com', '2023-01-01 12:00:00', NULL, 2 , 1);
+
+-- Prestataire 12
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Louis', 'LEFEVRE' ,'LouisLefevre-2@email.com', '2023-01-01 12:00:00', NULL, 2 , 2);
+
+-- Prestataire 13
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Emma', 'MARTIN' ,'EmmaMartin-2@email.com', '2023-01-01 12:00:00', NULL, 2 , 3);
+
+-- Prestataire 14
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Lucas', 'BERNARD' ,'LucasBernard-2@email.com', '2023-01-01 12:00:00', NULL, 2 , 1);
+
+-- Prestataire 15
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Chloe', 'DURAND' ,'ChloeDurand-2@email.com', '2023-01-01 12:00:00', NULL, 2 , 2);
+
+-- Prestataire 16
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Gabriel', 'LEROY' ,'GabrielLeroy-2@email.com', '2023-01-01 12:00:00', NULL, 2 , 3);
+
+-- Prestataire 17
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Manon', 'MOREAU' ,'ManonMoreau-2@email.com', '2023-01-01 12:00:00', NULL, 2 , 1);
+
+-- Prestataire 18
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Jules', 'FOURNIER' ,'JulesFournier-2@email.com', '2023-01-01 12:00:00', NULL, 2 , 2);
+
+-- Prestataire 19
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Charlotte', 'GIRARD' ,'CharlotteGirard-2@email.com', '2023-01-01 12:00:00', NULL, 2 , 3);
+
+-- Prestataire 21
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Lea', 'DUBOIS' ,'LeaDubois-3@email.com', '2023-01-01 12:00:00', NULL, 3 , 1);
+
+-- Prestataire 22
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Louis', 'LEFEVRE' ,'LouisLefevre-3@email.com', '2023-01-01 12:00:00', NULL, 3 , 2);
+
+-- Prestataire 23
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Emma', 'MARTIN' ,'EmmaMartin-3@email.com', '2023-01-01 12:00:00', NULL, 3 , 3);
+
+-- Prestataire 24
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Lucas', 'BERNARD' ,'LucasBernard-3@email.com', '2023-01-01 12:00:00', NULL, 3 , 1);
+
+-- Prestataire 25
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Chloe', 'DURAND' ,'ChloeDurand-3@email.com', '2023-01-01 12:00:00', NULL, 3 , 2);
+
+-- Prestataire 26
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Gabriel', 'LEROY' ,'GabrielLeroy-3@email.com', '2023-01-01 12:00:00', NULL, 3 , 3);
+
+-- Prestataire 27
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Manon', 'MOREAU' ,'ManonMoreau-3@email.com', '2023-01-01 12:00:00', NULL, 3 , 1);
+
+-- Prestataire 28
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Jules', 'FOURNIER' ,'JulesFournier-3@email.com', '2023-01-01 12:00:00', NULL, 3 , 2);
+
+-- Prestataire 29
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Charlotte', 'GIRARD' ,'CharlotteGirard-3@email.com', '2023-01-01 12:00:00', NULL, 3 , 3);
+
+-- Prestataire 31
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Lea', 'DUBOIS' ,'LeaDubois-4@email.com', '2023-01-01 12:00:00', NULL, 4 , 1);
+
+-- Prestataire 32
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Louis', 'LEFEVRE' ,'LouisLefevre-4@email.com', '2023-01-01 12:00:00', NULL, 4 , 2);
+
+-- Prestataire 33
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Emma', 'MARTIN' ,'EmmaMartin-4@email.com', '2023-01-01 12:00:00', NULL, 4 , 3);
+
+-- Prestataire 34
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Lucas', 'BERNARD' ,'LucasBernard-4@email.com', '2023-01-01 12:00:00', NULL, 4 , 1);
+
+-- Prestataire 35
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Chloe', 'DURAND' ,'ChloeDurand-4@email.com', '2023-01-01 12:00:00', NULL, 4 , 2);
+
+-- Prestataire 36
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Gabriel', 'LEROY' ,'GabrielLeroy-4@email.com', '2023-01-01 12:00:00', NULL, 4 , 3);
+
+-- Prestataire 37
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Manon', 'MOREAU' ,'ManonMoreau-4@email.com', '2023-01-01 12:00:00', NULL, 4 , 1);
+
+-- Prestataire 38
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Jules', 'FOURNIER' ,'JulesFournier-4@email.com', '2023-01-01 12:00:00', NULL, 4 , 2);
+
+-- Prestataire 39
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Charlotte', 'GIRARD' ,'CharlotteGirard-4@email.com', '2023-01-01 12:00:00', NULL, 4 , 3);
+
+-- Prestataire 41
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Lea', 'DUBOIS' ,'LeaDubois-5@email.com', '2023-01-01 12:00:00', NULL, 5 , 1);
+
+-- Prestataire 42
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Louis', 'LEFEVRE' ,'LouisLefevre-5@email.com', '2023-01-01 12:00:00', NULL, 5 , 2);
+
+-- Prestataire 43
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Emma', 'MARTIN' ,'EmmaMartin-5@email.com', '2023-01-01 12:00:00', NULL, 5 , 3);
+
+-- Prestataire 44
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Lucas', 'BERNARD' ,'LucasBernard-5@email.com', '2023-01-01 12:00:00', NULL, 5 , 1);
+
+-- Prestataire 45
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Chloe', 'DURAND' ,'ChloeDurand-5@email.com', '2023-01-01 12:00:00', NULL, 5 , 2);
+
+-- Prestataire 46
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Gabriel', 'LEROY' ,'GabrielLeroy-5@email.com', '2023-01-01 12:00:00', NULL, 5 , 3);
+
+-- Prestataire 47
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Manon', 'MOREAU' ,'ManonMoreau-5@email.com', '2023-01-01 12:00:00', NULL, 5 , 1);
+
+-- Prestataire 48
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Jules', 'FOURNIER' ,'JulesFournier-5@email.com', '2023-01-01 12:00:00', NULL, 5 , 2);
+
+-- Prestataire 49
+INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Charlotte', 'GIRARD' ,'CharlotteGirard-5@email.com', '2023-01-01 12:00:00', NULL, 5 , 3);
+
+-- Pour la table gst_status_model_service_provider
+INSERT INTO gst_status_model_service_provider (status_msp_fk_service_provider_id, status_msp_fk_message_model_id, status_msp_fk_status_id)
+SELECT sp.sp_id, mm.mm_id, s.st_id
+FROM service_provider sp
+         CROSS JOIN gst_message_model mm
+         CROSS JOIN status s WHERE sp.sp_fk_status_id = s.st_id;
+
+-- Pour la table gst_status_model_subcontractor
+INSERT INTO gst_status_model_subcontractor (status_ms_fk_subcontractor_id, status_ms_fk_message_model_id, status_ms_fk_status_id)
+SELECT sub.s_id, mm.mm_id, s.st_id
+FROM subcontractor sub
+         CROSS JOIN gst_message_model mm
+         CROSS JOIN status s  WHERE sub.s_fk_status_id = s.st_id;

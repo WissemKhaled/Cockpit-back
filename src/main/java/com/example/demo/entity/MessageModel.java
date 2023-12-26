@@ -9,6 +9,9 @@ public class MessageModel {
 	@JsonProperty("mmId")
 	private Integer mmId;
 
+	@JsonProperty("mmCategory")
+	private String mmCategory;
+
 	@JsonProperty("mmType")
 	private String mmType;
 
@@ -31,14 +34,23 @@ public class MessageModel {
 	}
 
 	public MessageModel(Integer mmId, String mmType, String mmSubject, String mmBody, LocalDateTime mmCreationDate,
-			LocalDateTime mmLastUpdateDate, Status status) {
+			LocalDateTime mmLastUpdateDate, Status status, String mmCategory) {
 		this.mmId = mmId;
 		this.mmType = mmType;
 		this.mmSubject = mmSubject;
 		this.mmBody = mmBody;
 		this.mmCreationDate = mmCreationDate;
 		this.mmLastUpdateDate = mmLastUpdateDate;
+		this.mmCategory = mmCategory;
 		this.status = status;
+	}
+
+	public String getMmCategory() {
+		return mmCategory;
+	}
+
+	public void setMmCategory(String mmCategory) {
+		this.mmCategory = mmCategory;
 	}
 
 	public Integer getMmId() {

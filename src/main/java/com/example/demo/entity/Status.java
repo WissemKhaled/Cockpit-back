@@ -14,7 +14,7 @@ public class Status {
 	private int stId;
 
 	@JsonProperty("stName")
-	private String stname;
+	private String stName;
 
 	@JsonProperty("stDescription")
 	private String stDescription;
@@ -26,9 +26,9 @@ public class Status {
 		this.stId = stId;
 	}
 
-	public Status(int stId, String stname, String stDescription) {
+	public Status(int stId, String stName, String stDescription) {
 		this.stId = stId;
-		this.stname = stname;
+		this.stName = stName;
 		this.stDescription = stDescription;
 	}
 
@@ -41,11 +41,11 @@ public class Status {
 	}
 
 	public String getStname() {
-		return stname;
+		return stName;
 	}
 
 	public void setStname(String stname) {
-		this.stname = stname;
+		this.stName = stname;
 	}
 
 	public String getStDescription() {
@@ -58,7 +58,7 @@ public class Status {
 
 	@Override
 	public String toString() {
-		return "Status [stId=" + stId + ", stName=" + stname + ", stDescription=" + stDescription + "]";
+		return "Status [stId=" + stId + ", stName=" + stName + ", stDescription=" + stDescription + "]";
 	}
 
 }
