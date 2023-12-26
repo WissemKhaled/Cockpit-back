@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS gst_log (
 
 CREATE TABLE IF NOT EXISTS gst_message_model (
     mm_id SERIAL PRIMARY KEY,
+    mm_category VARCHAR(45) NOT NULL,
     mm_type VARCHAR(45) NOT NULL,
     mm_subject VARCHAR(255) NOT NULL,
     mm_body TEXT NOT NULL,
