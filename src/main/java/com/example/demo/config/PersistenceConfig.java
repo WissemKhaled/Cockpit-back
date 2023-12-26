@@ -35,9 +35,9 @@ public class PersistenceConfig {
 		} else if (chosenDBType.equals("postgres")) {
 //			// Configuration for PostgreSQL
 			dataSource.setDriverClassName("org.postgresql.Driver");
-			dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
+			dataSource.setUrl("jdbc:postgresql://localhost:5432/gst_db");
 			dataSource.setUsername("postgres");
-			dataSource.setPassword("0622178800-Yb");
+			dataSource.setPassword("root");
 		}
 		return dataSource;
   }
