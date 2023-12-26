@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,10 +28,12 @@ import com.example.demo.dto.GstLogDTO;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.InactiveUserException;
+import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.exception.PasswordAvailabilityException;
 import com.example.demo.exception.PasswordClaimExpirationException;
 import com.example.demo.service.implementation.GstLogServiceImpl;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 @RestController
@@ -77,6 +81,25 @@ public class GstLogController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+	
+	/**
+     * Méthode qui envoie un email de réinitialisation du mot de passe
+     */
+    @PostMapping("/sendEmail")
+    public ResponseEntity<String> sendEmail(@Valid @RequestBody CreateGstLogDTO createGstLogDTO) throws InactiveUserException {
+        try {
+            gstLogServiceImpl.sendResetPwdLinkByEmail(createGstLogDTO);
+            return new ResponseEntity<>("Email envoyé avec succès", HttpStatus.OK);
+        } catch (MessagingException | IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (MessageModelNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

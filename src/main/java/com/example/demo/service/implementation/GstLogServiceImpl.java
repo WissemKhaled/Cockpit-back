@@ -24,6 +24,7 @@ import com.example.demo.entity.UUser;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.InactiveUserException;
+import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.exception.PasswordAvailabilityException;
 import com.example.demo.exception.PasswordClaimExpirationException;
 import com.example.demo.mappers.GstLogMapper;
@@ -108,7 +109,7 @@ public class GstLogServiceImpl implements GstLogService{
 	        }
 
 	        // Envoi d'email avec lien vers page de réinitialisation de mdp
-	        sendResetPwdLinkByEmail(createGstLogDTO);
+	        // sendResetPwdLinkByEmail(createGstLogDTO);
 
 	        log.info("gst log créé avec succès");
 	        return "gst log créé avec succès";
@@ -195,44 +196,60 @@ public class GstLogServiceImpl implements GstLogService{
 	    }
 	}
 
-	public void sendResetPwdLinkByEmail(CreateGstLogDTO createGstLogDTO) throws MessagingException {
-        try {
-        	String jsonContent = jsonFileLoader.loadJsonFileContent("FR.json");
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(jsonContent);
+	public void sendResetPwdLinkByEmail(CreateGstLogDTO createGstLogDTO) throws MessagingException, IOException {
+	    try {
+	        String jsonContent = jsonFileLoader.loadJsonFileContent("FR.json");
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        JsonNode jsonNode = objectMapper.readTree(jsonContent);
 
-            if (createGstLogDTO != null && jsonNode.has("messageModel")) {
-            	JsonNode messageModel = jsonNode.get("messageModel");
-                JsonNode resetPasswordNode = messageModel.get("resetPassword");
+	        if (createGstLogDTO != null && jsonNode.has("messageModel")) {
+	            JsonNode messageModel = jsonNode.get("messageModel");
+	            JsonNode resetPasswordNode = messageModel.get("resetPassword");
 
-                // Proceed to send the reset password email
-                String email = createGstLogDTO.getLogEmail();
-                UUserDTO user = userInfoService.findUserByEmail(email);
+	            // Proceed to send the reset password email
+	            String email = createGstLogDTO.getLogEmail();
+	            UUserDTO user = userInfoService.findUserByEmail(email);
 
-                if (user != null && user.isUStatus() && resetPasswordNode != null) {
-                    String to = email;
-                    String subject = resetPasswordNode.get("mmSubject").asText();
-                    String firstName = user.getUFirstName();
-                    String lastName = user.getULastName();
-                    String resetPwdLink = "http://localhost:4200/#/renouveler_mdp?gstLogValue=" + createGstLogDTO.getLogValue();
+	            if (user != null) {
+	                if (user.isUStatus()) {
+	                    if (resetPasswordNode != null) {
+	                        String to = email;
+	                        String subject = resetPasswordNode.get("mmSubject").asText();
+	                        String firstName = user.getUFirstName();
+	                        String lastName = user.getULastName();
+	                        String resetPwdLink = "http://localhost:4200/#/renouveler_mdp?gstLogValue=" + createGstLogDTO.getLogValue();
 
-                    String body = resetPasswordNode.get("mmBody").asText();
-                    body = body.replace("[[firstName]]", firstName);
-                    body = body.replace("[[lastName]]", lastName);
-                    body = body.replace("[[resetPwdLink]]", resetPwdLink);
+	                        String body = resetPasswordNode.get("mmBody").asText();
+	                        body = body.replace("[[firstName]]", firstName);
+	                        body = body.replace("[[lastName]]", lastName);
+	                        body = body.replace("[[resetPwdLink]]", resetPwdLink);
 
-                    mailService.sendNewMail(to, subject, body);
-                } else {
-                	log.error("Utilisateur " + email + " non trouvé ou innactif. Email non envoyé");
-                    throw new UsernameNotFoundException("Utilisateur " + email + " non trouvé ou innactif. Email non envoyé");
-                }
-            }
-        } catch (IOException e) {
-            log.error("Error reading JSON file content : " + e.toString());
-        } catch (Exception e) {
-            log.error("An unexpected error occurred : " +  e.toString());
-        }
-    }
+	                        mailService.sendNewMail(to, subject, body);
+	                    } else {
+	                        log.error("Problème de chargement du modèle de message. Email non envoyé");
+	                        throw new MessageModelNotFoundException("Problème de chargement du modèle de message. Email non envoyé");
+	                    }
+	                } else {
+	                    log.error("Utilisateur " + email + " inactif. Email non envoyé");
+	                    throw new InactiveUserException("Utilisateur " + email + " inactif. Email non envoyé");
+	                }
+	            } else {
+	                log.error("Utilisateur " + email + " non trouvé. Email non envoyé");
+	                throw new UsernameNotFoundException("Utilisateur " + email + " non trouvé. Email non envoyé");
+	            }
+	        }
+	    } catch (IOException e) {
+	        log.error("Erreur de lecture du contenu du fichier JSON : " + e.toString());
+	        throw new IOException(e.getMessage());
+	    } catch (MessagingException e) {
+	        log.error("Erreur lors de l'envoi de l'email : " + e.toString());
+	        throw new MessagingException(e.getMessage());
+	    } catch (Exception e) {
+	        log.error(e.toString());
+	        throw new RuntimeException(e.getMessage());
+	    }
+	}
+
 	
 	public void manageResetUserPassword(String logValue, String newPassword) throws NotFoundException, PasswordAvailabilityException, PasswordClaimExpirationException, DatabaseQueryFailureException, InactiveUserException {
 		 if (logValue != null && !logValue.isEmpty()) {
