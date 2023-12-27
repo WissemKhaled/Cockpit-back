@@ -41,33 +41,54 @@ public class EmailReminderSubcontractorServiceImpl implements EmailReminderSubco
 	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH);
 	    return LocalDateTime.parse(dateString, formatter);
 	}
-
+	
+	/**
+	 * Méthode pour mettre à jour la table intermédiaire des sous-traitants
+	 * statusId queryparam non obligatoire (null quand on passe de statusId 2 à 3, quand validationDateString n'est pas null en param)
+	 * validationDateString non obligatoire (null quand on passe de statusId 1 à 2) 
+	 */
 	@Override
-	public String updateSubcontractorStatusFromInProgressToInValidation(String validationDateString, int mmId, int subcontractorId) throws DatabaseQueryFailureException {
-	    // Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
-	    validationDateString = "2023-12-15T12:30:45";
-	    String pattern = "yyyy-MM-dd'T'HH:mm:ss";
-	    LocalDateTime validationDate = convertStringToLocalDateTime(validationDateString, pattern);
-
-	    mmId = 2;
-	    int statusId = 2; // Le status id passe de 1 à 2 comme le modèle id
-
-	    GstStatusModelSubcontractorDTO gstStatusModelSubcontractorDTO = new GstStatusModelSubcontractorDTO();
-
+	public String updateSubcontractorStatusFromInProgressToInValidation(int mmId, int statusId, int subcontractorId, String validationDateString) throws DatabaseQueryFailureException {
+	    GstStatusModelSubcontractorDTO gstStatusModelSubcontractorDTO = emailReminderMapper.findSubcontractorReminderInfo(subcontractorId);
+	    
+	    if (gstStatusModelSubcontractorDTO == null) {
+	        log.error("Le sous-traitant avec l'ID " + subcontractorId + " n'a pas été trouvée");
+	        throw new EntityNotFoundException("Le sous-traitant avec l'ID " + subcontractorId + " n'a pas été trouvée");
+	    }
+	    
 	    gstStatusModelSubcontractorDTO.setStatusMsFkSubcontractorId(subcontractorId);
 	    gstStatusModelSubcontractorDTO.setStatusMsFkMessageModelId(mmId);
-	    gstStatusModelSubcontractorDTO.setStatusMsFkStatusId(statusId);
-	    gstStatusModelSubcontractorDTO.setStatusMsValidationDate(validationDate);
+	    
+	    // si l'ID du status reçu du front = 1, on l'update à 2 et on update le mmId à 2 également dans la table intermédiaire et on update la date d'envoi
+	    // si l'ID du status reçu du front = 2, on l'update à 3 et on update le mmId à 3 également dans la table intermédiaire et on update la date de validation
+	    if (statusId == 2) {
+		    gstStatusModelSubcontractorDTO.setStatusMsFkStatusId(statusId);
+		    gstStatusModelSubcontractorDTO.setStatusMsSentDate(LocalDateTime.now());
+		    gstStatusModelSubcontractorDTO.setStatusMsValidationDate(gstStatusModelSubcontractorDTO.getStatusMsValidationDate());
+		    
+		    // 7 jours après date envoie, relance
+	    } else if (validationDateString != null) {
+		    gstStatusModelSubcontractorDTO.setStatusMsFkStatusId(3);
+		    gstStatusModelSubcontractorDTO.setStatusMsSentDate(gstStatusModelSubcontractorDTO.getStatusMsSentDate());
+		    
+		 // Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
+		    String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+		    LocalDateTime validationDate = convertStringToLocalDateTime(validationDateString, pattern);
+	    	gstStatusModelSubcontractorDTO.setStatusMsValidationDate(validationDate);
+	    	
+	    	// après 7 jours date validation, relance
+	    	// passer la relance à en cours
+	    }
 
 	    GstStatusModelSubcontractor gstStatusModelSubcontractor = gstStatusModelSubcontractorDtoMapper.toGstStatusModelSubcontractor(gstStatusModelSubcontractorDTO);
 
 	    int isGstStatusModelSubcontractorUpdated = emailReminderMapper.updateGstStatusModelSubcontractor(gstStatusModelSubcontractor);
 
 	    if (isGstStatusModelSubcontractorUpdated == 0) {
-	        log.error("Erreur de mise à jour de la table intermédiaire des sous-traitants");
+	        log.error("Erreur de mise à jour de la table intermédiaire des sous-traitants pour le subcontractorId " + subcontractorId);
 	        throw new DatabaseQueryFailureException("Erreur de mise à jour de la table intermédiaire des sous-traitants");
 	    }
-	    log.info("Table intermédiaire des sous-traitants mise à jour avec succès");
+	    log.info("Table intermédiaire des sous-traitants mise à jour avec succès pour le subcontractorId " + subcontractorId);
 	    return "Table intermédiaire des sous-traitants mise à jour avec succès";
 	}
 

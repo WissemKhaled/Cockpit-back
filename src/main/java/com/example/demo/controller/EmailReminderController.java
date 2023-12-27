@@ -32,16 +32,20 @@ public class EmailReminderController {
 	
 	@PutMapping("/updateAlert/subcontractor")
 	public ResponseEntity<String> updateAlertSubcontractror(
-			@RequestParam String validationDateString,
-			@RequestParam int mmId,
-			@RequestParam int subcontractorId) {
-		
-		try {
-			String result = emailReminderSubcontractorService.updateSubcontractorStatusFromInProgressToInValidation(validationDateString, mmId, subcontractorId);
-			return ResponseEntity.ok(result);
-		} catch (DatabaseQueryFailureException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Echec de maj du subcontractor status: " + e.getMessage());
-		}
+	        @RequestParam int mmId,
+	        @RequestParam(required = false) Integer statusId,
+	        @RequestParam int subcontractorId,
+	        @RequestParam(required = false) String validationDate
+	) {
+	    try {
+	    	int actualStatusId = (statusId != null) ? statusId.intValue() : 0;
+	        String result = emailReminderSubcontractorService.updateSubcontractorStatusFromInProgressToInValidation(mmId, actualStatusId, subcontractorId, validationDate);
+	        return ResponseEntity.ok(result);
+	    } catch (EntityNotFoundException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+	    } catch (DatabaseQueryFailureException e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Échec de la mise à jour du subcontractor status : " + e.getMessage());
+	    }
 	}
 	
 	@GetMapping("/getAletInfo/subcontractor/{subcontractorId}")
@@ -56,16 +60,20 @@ public class EmailReminderController {
 	
 	@PutMapping("/updateAlert/serviceProvider")
 	public ResponseEntity<String> updateAlertServiceProvider(
-			@RequestParam String validationDateString,
-			@RequestParam int mmId,
-			@RequestParam int serviceProviderId) {
-		
-		try {
-			String result = emailReminderServiceProviderService.updateServiceProviderStatusFromInProgressToInValidation(validationDateString, mmId, serviceProviderId);
-			return ResponseEntity.ok(result);
-		} catch (DatabaseQueryFailureException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Echec de maj du serviceProvider status: " + e.getMessage());
-		}
+	    @RequestParam int mmId,
+	    @RequestParam(required = false) Integer statusId,
+	    @RequestParam int serviceProviderId,
+	    @RequestParam(required = false) String validationDate
+	) {
+	    try {
+	        int actualStatusId = (statusId != null) ? statusId.intValue() : 0;
+	        String result = emailReminderServiceProviderService.updateServiceProviderStatusFromInProgressToInValidation(mmId, actualStatusId, serviceProviderId, validationDate);
+	        return ResponseEntity.ok(result);
+	    } catch (EntityNotFoundException e) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+	    } catch (DatabaseQueryFailureException e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Échec de la mise à jour du serviceProvider status : " + e.getMessage());
+	    }
 	}
 	
 	@GetMapping("/getAletInfo/serviceProvider/{serviceProviderId}")

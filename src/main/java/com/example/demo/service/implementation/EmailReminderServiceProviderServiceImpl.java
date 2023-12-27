@@ -42,31 +42,46 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 	}
 	
 	@Override
-	public String updateServiceProviderStatusFromInProgressToInValidation(String validationDateString, int mmId, int serviceProviderId) throws DatabaseQueryFailureException {
-		// Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
-	    validationDateString = "2023-12-15T12:30:45";
-	    String pattern = "yyyy-MM-dd'T'HH:mm:ss";
-	    LocalDateTime validationDate = convertStringToLocalDateTime(validationDateString, pattern);
+	public String updateServiceProviderStatusFromInProgressToInValidation(int mmId, int statusId, int serviceProviderId, String validationDateString) throws DatabaseQueryFailureException {
+	    GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = emailReminderMapper.findServiceProviderReminderInfo(serviceProviderId);
 
-	    mmId = 2;
-	    int statusId = 2; // Le status id passe de 1 à 2 comme le modèle id
-
-	    GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = new GstStatusModelServiceProviderDTO();
+	    if (gstStatusModelServiceProviderDTO == null) {
+	        log.error("Le prestataire avec l'ID " + serviceProviderId + " n'a pas été trouvé");
+	        throw new EntityNotFoundException("Le prestataire avec l'ID " + serviceProviderId + " n'a pas été trouvé");
+	    }
 
 	    gstStatusModelServiceProviderDTO.setStatusMspFkServiceProviderId(serviceProviderId);
 	    gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(mmId);
-	    gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(statusId);
-	    gstStatusModelServiceProviderDTO.setStatusMspValidationDate(validationDate);
+
+	    // si l'ID du status reçu du front = 1, on l'update à 2 et on update le mmId à 2 également dans la table intermédiaire et on update la date d'envoi
+	    // si l'ID du status reçu du front = 2, on l'update à 3 et on update le mmId à 3 également dans la table intermédiaire et on update la date de validation
+	    if (statusId == 2) {
+	        gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(2);
+	        gstStatusModelServiceProviderDTO.setStatusMspSentDate(LocalDateTime.now());
+
+	        // 7 jours après date envoie, relance
+	    } else if (validationDateString != null) {
+	        gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(3);
+	        gstStatusModelServiceProviderDTO.setStatusMspSentDate(gstStatusModelServiceProviderDTO.getStatusMspSentDate());
+
+	        // Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
+	        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+	        LocalDateTime validationDate = convertStringToLocalDateTime(validationDateString, pattern);
+	        gstStatusModelServiceProviderDTO.setStatusMspValidationDate(validationDate);
+
+	        // après 7 jours date validation, relance
+	        // passer la relance à en cours
+	    }
 
 	    GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelServiceProvider(gstStatusModelServiceProviderDTO);
 
 	    int isGstStatusModelServiceProviderUpdated = emailReminderMapper.updateGstStatusModelServiceProvider(gstStatusModelServiceProvider);
 
 	    if (isGstStatusModelServiceProviderUpdated == 0) {
-	        log.error("Erreur de mise à jour de la table intermédiaire des prestataires");
+	        log.error("Erreur de mise à jour de la table intermédiaire des prestataires pour le serviceProviderId " + serviceProviderId);
 	        throw new DatabaseQueryFailureException("Erreur de mise à jour de la table intermédiaire des prestataires");
 	    }
-	    log.info("Table intermédiaire des prestataires mise à jour avec succès");
+	    log.info("Table intermédiaire des prestataires mise à jour avec succès pour le serviceProviderId " + serviceProviderId);
 	    return "Table intermédiaire des prestataires mise à jour avec succès";
 	}
 
