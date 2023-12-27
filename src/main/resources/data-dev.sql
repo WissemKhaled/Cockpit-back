@@ -14,9 +14,22 @@ VALUES (3, 'Validé', NULL);
 INSERT INTO status (st_id, st_name, st_description)
 VALUES (4, 'Archivé', NULL);
 
---model de message 
-INSERT INTO gst_message_model (mm_type, mm_subject, mm_body, mm_fk_status_id)
-VALUES ('En_cour', 'Recueil Info Admin | Référencement fournisseur sous-traitant', 'je suis le body du mail',1);
+
+--model de message modification
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Demande', 'Demande des documents administratifs du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Relance', 'Relance des documents administratifs du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Demande', 'Demande création à la comptabilité du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Relance', 'Relance création à la comptabilité du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Demande', 'Demande de signatures d''annexes du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Relance', 'Relance des signatures d''annexe du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Demande', 'Demande renouvellement des documents administratifs du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SP', 'Relance', 'Relance renouvellement des documents administratif du prestataire', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SC', 'Demande', 'Demande des documents de régularisation du sous-traitant', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SC', 'Relance', 'Relance des documents de régularisation du sous-traitant', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SC', 'Demande', 'Demande création à la comptabilité du sous-traitant', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SC', 'Relance', 'Relance de création à la comptabilité du sous-traitant', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SC', 'Demande', 'Demande de signatures de contrat du sous-traitant', 'je suis le body du mail', 1);
+INSERT INTO gst_message_model (mm_category, mm_type, mm_subject, mm_body, mm_fk_status_id) VALUES ('SC', 'Relance', 'Relance des signatures de contrat du sous-traitant', 'je suis le body du mail', 1);
 
 -- Subcontractor 1
 INSERT INTO subcontractor (s_name, s_email, s_fk_status_id)
