@@ -13,11 +13,12 @@ import com.example.demo.entity.MessageModel;
 public interface MessageModelMapper {
 
 
-	@Select("SELECT  gmm.mm_id, gmm.mm_type, gmm.mm_subject, gmm.mm_body, st.st_Id as status_stId,st.st_name as status_stName, st.st_description as status_stDescription "
+	@Select("SELECT  gmm.mm_id, gmm.mm_category, gmm.mm_type, gmm.mm_subject, gmm.mm_body, st.st_Id as status_stId,st.st_name as status_stName, st.st_description as status_stDescription "
             +"FROM gst_message_model gmm "
             +"INNER JOIN status st ON mm_fk_status_id = st.st_Id "
             +"WHERE mm_fk_status_id = ${statusId}")
 	@Result(property = "mmId", column = "mm_id")
+	@Result(property = "mmCategory", column = "mm_category")
 	@Result(property = "mmType", column = "mm_type")
 	@Result(property = "mmSubject", column = "mm_subject")
 	@Result(property = "mmBody", column = "mm_body")

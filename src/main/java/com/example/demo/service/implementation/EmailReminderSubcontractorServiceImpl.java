@@ -2,6 +2,7 @@ package com.example.demo.service.implementation;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -49,7 +50,7 @@ public class EmailReminderSubcontractorServiceImpl implements EmailReminderSubco
 	 */
 	@Override
 	public String updateSubcontractorStatusFromInProgressToInValidation(int mmId, int statusId, int subcontractorId, String validationDateString) throws DatabaseQueryFailureException {
-	    GstStatusModelSubcontractorDTO gstStatusModelSubcontractorDTO = emailReminderMapper.findSubcontractorReminderInfo(subcontractorId);
+	    GstStatusModelSubcontractorDTO gstStatusModelSubcontractorDTO = emailReminderMapper.findAlertBySubcontractorIdAndMmId(subcontractorId, mmId);
 	    
 	    if (gstStatusModelSubcontractorDTO == null) {
 	        log.error("Le sous-traitant avec l'ID " + subcontractorId + " n'a pas été trouvée");
@@ -93,14 +94,27 @@ public class EmailReminderSubcontractorServiceImpl implements EmailReminderSubco
 	}
 
 	@Override
-	public GstStatusModelSubcontractorDTO getSubcontractorReminderInfoBySId(int subcontractorId) {
+	public List<GstStatusModelSubcontractorDTO> getSubcontractorReminderInfoBySId(int subcontractorId) {
 		Subcontractor isFoundSubcontractor = subcontractorMapper.findSubcontractorWithStatusById(subcontractorId);
 		
 		if (isFoundSubcontractor == null) {
+			log.error("Aucun sous-traitant trouvé avec l'id " + subcontractorId);
 			throw new EntityNotFoundException("Aucun sous-traitant trouvé avec l'id " + subcontractorId);
 		}
 		
-		GstStatusModelSubcontractorDTO gstStatusModelSubcontractorDTO = emailReminderMapper.findSubcontractorReminderInfo(subcontractorId);
+		List<GstStatusModelSubcontractorDTO> gstStatusModelSubcontractorDTO = emailReminderMapper.findSubcontractorReminderInfo(subcontractorId);
+		
+		return gstStatusModelSubcontractorDTO;
+	}
+	
+	@Override
+	public GstStatusModelSubcontractorDTO getSubcontractorReminderInfoBySpIdAndMmId(int sId, int mmId) {
+		GstStatusModelSubcontractorDTO gstStatusModelSubcontractorDTO = emailReminderMapper.findAlertBySubcontractorIdAndMmId(sId, mmId);
+		
+		if (gstStatusModelSubcontractorDTO == null) {
+			log.error("Aucune info trouvé avec l'id sous-traitant " + sId + " et le message model ID " + mmId);
+			throw new EntityNotFoundException("Aucune info trouvé avec l'id sous-traitant " + sId + " et le message model ID " + mmId);
+		}
 		
 		return gstStatusModelSubcontractorDTO;
 	}

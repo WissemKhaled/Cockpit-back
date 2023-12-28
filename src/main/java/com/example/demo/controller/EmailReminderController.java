@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -51,7 +53,17 @@ public class EmailReminderController {
 	@GetMapping("/getAletInfo/subcontractor/{subcontractorId}")
     public ResponseEntity<?> getSubcontractorReminderInfo(@PathVariable int subcontractorId) {
         try {
-            GstStatusModelSubcontractorDTO result = emailReminderSubcontractorService.getSubcontractorReminderInfoBySId(subcontractorId);
+        	List<GstStatusModelSubcontractorDTO> result = emailReminderSubcontractorService.getSubcontractorReminderInfoBySId(subcontractorId);
+            return ResponseEntity.ok(result);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+	
+	@GetMapping("/getAlertInfo/subcontractor/{subcontractorId}/{mmId}")
+    public ResponseEntity<?> getAlerInfoBySIdAndMmId(@PathVariable int subcontractorId, @PathVariable int mmId) {
+        try {
+        	GstStatusModelSubcontractorDTO result = emailReminderSubcontractorService.getSubcontractorReminderInfoBySpIdAndMmId(subcontractorId, mmId);
             return ResponseEntity.ok(result);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -76,10 +88,20 @@ public class EmailReminderController {
 	    }
 	}
 	
-	@GetMapping("/getAletInfo/serviceProvider/{serviceProviderId}")
+	@GetMapping("/getAlertInfo/serviceProvider/{serviceProviderId}")
     public ResponseEntity<?> getServiceProviderReminderInfo(@PathVariable int serviceProviderId) {
         try {
-            GstStatusModelServiceProviderDTO result = emailReminderServiceProviderService.getServiceProviderReminderInfoBySpId(serviceProviderId);
+            List<GstStatusModelServiceProviderDTO> result = emailReminderServiceProviderService.getServiceProviderReminderInfoBySpId(serviceProviderId);
+            return ResponseEntity.ok(result);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+	
+	@GetMapping("/getAlertInfo/serviceProvider/{serviceProviderId}/{mmId}")
+    public ResponseEntity<?> getAlerInfoBySpIdAndMmId(@PathVariable int serviceProviderId, @PathVariable int mmId) {
+        try {
+            GstStatusModelServiceProviderDTO result = emailReminderServiceProviderService.getSpReminderInfoBySpIdAndMmId(serviceProviderId, mmId);
             return ResponseEntity.ok(result);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

@@ -2,6 +2,7 @@ package com.example.demo.service.implementation;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -43,8 +44,8 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 	
 	@Override
 	public String updateServiceProviderStatusFromInProgressToInValidation(int mmId, int statusId, int serviceProviderId, String validationDateString) throws DatabaseQueryFailureException {
-	    GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = emailReminderMapper.findServiceProviderReminderInfo(serviceProviderId);
-
+	    GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = emailReminderMapper.findAlertByServiceProviderIdAndMmId(serviceProviderId, mmId);
+	    
 	    if (gstStatusModelServiceProviderDTO == null) {
 	        log.error("Le prestataire avec l'ID " + serviceProviderId + " n'a pas été trouvé");
 	        throw new EntityNotFoundException("Le prestataire avec l'ID " + serviceProviderId + " n'a pas été trouvé");
@@ -56,11 +57,13 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 	    // si l'ID du status reçu du front = 1, on l'update à 2 et on update le mmId à 2 également dans la table intermédiaire et on update la date d'envoi
 	    // si l'ID du status reçu du front = 2, on l'update à 3 et on update le mmId à 3 également dans la table intermédiaire et on update la date de validation
 	    if (statusId == 2) {
+	    	// gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(2);
 	        gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(2);
 	        gstStatusModelServiceProviderDTO.setStatusMspSentDate(LocalDateTime.now());
 
 	        // 7 jours après date envoie, relance
 	    } else if (validationDateString != null) {
+	    	// gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(3);
 	        gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(3);
 	        gstStatusModelServiceProviderDTO.setStatusMspSentDate(gstStatusModelServiceProviderDTO.getStatusMspSentDate());
 
@@ -86,14 +89,27 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 	}
 
 	@Override
-	public GstStatusModelServiceProviderDTO getServiceProviderReminderInfoBySpId(int serviceProviderId) {
+	public List<GstStatusModelServiceProviderDTO> getServiceProviderReminderInfoBySpId(int serviceProviderId) {
 		ServiceProvider isFoundServiceProvider = serviceProviderMapper.findServiceProviderById(serviceProviderId);
 		
 		if (isFoundServiceProvider == null) {
+			log.error("Aucun prestataire trouvé avec l'id " + serviceProviderId);
 			throw new EntityNotFoundException("Aucun prestataire trouvé avec l'id " + serviceProviderId);
 		}
 		
-		GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = emailReminderMapper.findServiceProviderReminderInfo(serviceProviderId);
+		List<GstStatusModelServiceProviderDTO> gstStatusModelServiceProviderDTO = emailReminderMapper.findServiceProviderReminderInfo(serviceProviderId);
+		
+		return gstStatusModelServiceProviderDTO;
+	}
+	
+	@Override
+	public GstStatusModelServiceProviderDTO getSpReminderInfoBySpIdAndMmId(int serviceProviderId, int mmId) {
+		GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = emailReminderMapper.findAlertByServiceProviderIdAndMmId(serviceProviderId, mmId);
+		
+		if (gstStatusModelServiceProviderDTO == null) {
+			log.error("Aucune info trouvé avec l'id prestataire " + serviceProviderId + " et le message model ID " + mmId);
+			throw new EntityNotFoundException("Aucune info trouvé avec l'id prestataire " + serviceProviderId + " et le message model ID " + mmId);
+		}
 		
 		return gstStatusModelServiceProviderDTO;
 	}
