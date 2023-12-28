@@ -27,8 +27,9 @@ public class MessageModel {
 	@JsonProperty("mmLastUpdateDate")
 	private LocalDateTime mmLastUpdateDate;
 
-	@JsonProperty("status")
-	private Status status;
+	@JsonProperty("mmStatusId")
+	private Status mmStatusId;
+
 
 	public MessageModel() {
 	}
@@ -42,7 +43,7 @@ public class MessageModel {
 		this.mmBody = mmBody;
 		this.mmCreationDate = mmCreationDate;
 		this.mmLastUpdateDate = mmLastUpdateDate;
-		this.status = status;
+		this.mmStatusId = status;
 	}
 
 	public String getMmCategory() {
@@ -101,18 +102,18 @@ public class MessageModel {
 		this.mmLastUpdateDate = mmLastUpdateDate;
 	}
 
-	public Status getStatus() {
-		return status;
+	public Status getMmStatusId() {
+		return mmStatusId;
 	}
 
-	public void setStatus(Status status) {
-		this.status = status;
+	public void setMmStatusId(Status mmStatusId) {
+		this.mmStatusId = mmStatusId;
 	}
 
 	@Override
 	public String toString() {
 		return "MessageModel [mmId=" + mmId + ", mmCategory= " + mmCategory + ", mmType=" + mmType + ", mmSubject=" + mmSubject + ", mmBody=" + mmBody
-				+ ", mmCreationDate=" + mmCreationDate + ", mmLastUpdateDate=" + mmLastUpdateDate + ", status=" + status
+				+ ", mmCreationDate=" + mmCreationDate + ", mmLastUpdateDate=" + mmLastUpdateDate + ", status=" + mmStatusId
 				+ "]";
 	}
 
