@@ -44,6 +44,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/admin/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/subcontractor/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/service-providers/**").authenticated())
+				.authorizeHttpRequests(ar -> ar.requestMatchers("/emailReminder/**").authenticated())
 				.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.authenticationProvider(authenticationProvider())

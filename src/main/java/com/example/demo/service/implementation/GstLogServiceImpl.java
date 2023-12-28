@@ -16,13 +16,15 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogDTO;
-import com.example.demo.dto.GstLogResponseDTO;
 import com.example.demo.dto.UUserDTO;
 import com.example.demo.dto.mapper.CreateGstLogDtoMapper;
 import com.example.demo.dto.mapper.GstLogDtoMapper;
 import com.example.demo.entity.GstLog;
 import com.example.demo.entity.UUser;
-import com.example.demo.exception.GeneralException;
+import com.example.demo.exception.DatabaseQueryFailureException;
+import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.InactiveUserException;
+import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.exception.PasswordAvailabilityException;
 import com.example.demo.exception.PasswordClaimExpirationException;
 import com.example.demo.mappers.GstLogMapper;
@@ -79,22 +81,22 @@ public class GstLogServiceImpl implements GstLogService{
 		this.userMapper = userMapper;
 	}
 	
-	public GstLogResponseDTO saveGstLog(CreateGstLogDTO createGstLogDTO) {
+	public String saveGstLog(CreateGstLogDTO createGstLogDTO) throws Exception {
 	    if (createGstLogDTO == null) {
 	        log.error("Le paramètre createGstLogDTO ne peut être null");
-	        return new GstLogResponseDTO("error", "Le paramètre createGstLogDTO ne peut être null");
+	        throw new NullPointerException("Le paramètre createGstLogDTO ne peut être null");
 	    }
 
 	    try {
 	        UUserDTO user = userInfoService.findUserByEmail(createGstLogDTO.getLogEmail());
 	        if (user == null) {
 	            log.error("Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
-	            return new GstLogResponseDTO("error", "Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
+	            throw new EntityNotFoundException("Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
 	        }
-	        
+
 	        if (!user.isUStatus()) {
-	        	log.error("L'utilisateur " + user.getUEmail() + " est inactif");
-    			throw new GeneralException("L'utilisateur est inactif");
+	            log.error("L'utilisateur " + user.getUEmail() + " est inactif");
+	            throw new InactiveUserException("L'utilisateur est inactif");
 	        }
 
 	        GstLog gstLog = createGstLogDtoMapper.toGstLog(createGstLogDTO);
@@ -103,25 +105,23 @@ public class GstLogServiceImpl implements GstLogService{
 	        int isGstLogInserted = gstLogMapper.insertLog(gstLog);
 	        if (isGstLogInserted == 0) {
 	            log.error("Échec de l'insertion du gst log dans la base de données");
-	            return new GstLogResponseDTO("error", "Échec de l'insertion du gst log dans la base de données");
+	            throw new DatabaseQueryFailureException("Échec de l'insertion du gst log dans la base de données");
 	        }
+
 	        // Envoi d'email avec lien vers page de réinitialisation de mdp
-	        sendResetPwdLinkByEmail(createGstLogDTO);
-	        
+	        // sendResetPwdLinkByEmail(createGstLogDTO);
+
 	        log.info("gst log créé avec succès");
-	        return new GstLogResponseDTO("success", "gst log créé avec succès");
-	    } catch (IllegalArgumentException e) {
-	    	log.error("Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
-	        return new GstLogResponseDTO("error", "Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
-	    } catch (MessagingException | UsernameNotFoundException e) {
-	        log.error("Erreur lors de l'envoi de l'email : " + e.getMessage());
-	        return new GstLogResponseDTO("error", "Erreur lors de l'envoi de l'email : " + e.getMessage());
+	        return "gst log créé avec succès";
+	    } catch (NullPointerException | EntityNotFoundException | InactiveUserException | DatabaseQueryFailureException e) {
+	        log.error("Une exception s'est produite : ", e);
+	        throw e;
 	    } catch (Exception e) {
-	        // Handle other exceptions or log them if needed
-	        log.error(e.getMessage());
-	        return new GstLogResponseDTO("error", e.getMessage());
+	        log.error("Une erreur inattendue s'est produite:", e);
+	        throw new RuntimeException("Une erreur inattendue s'est produite");
 	    }
 	}
+	
 	
 	/**
 	 * Méthode qui récupère un log par sa valeur (logValue)
@@ -196,46 +196,62 @@ public class GstLogServiceImpl implements GstLogService{
 	    }
 	}
 
-	public void sendResetPwdLinkByEmail(CreateGstLogDTO createGstLogDTO) throws MessagingException {
-        try {
-        	String jsonContent = jsonFileLoader.loadJsonFileContent("FR.json");
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(jsonContent);
+	public void sendResetPwdLinkByEmail(CreateGstLogDTO createGstLogDTO) throws MessagingException, IOException {
+	    try {
+	        String jsonContent = jsonFileLoader.loadJsonFileContent("FR.json");
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        JsonNode jsonNode = objectMapper.readTree(jsonContent);
 
-            if (createGstLogDTO != null && jsonNode.has("messageModel")) {
-            	JsonNode messageModel = jsonNode.get("messageModel");
-                JsonNode resetPasswordNode = messageModel.get("resetPassword");
+	        if (createGstLogDTO != null && jsonNode.has("messageModel")) {
+	            JsonNode messageModel = jsonNode.get("messageModel");
+	            JsonNode resetPasswordNode = messageModel.get("resetPassword");
 
-                // Proceed to send the reset password email
-                String email = createGstLogDTO.getLogEmail();
-                UUserDTO user = userInfoService.findUserByEmail(email);
+	            // Proceed to send the reset password email
+	            String email = createGstLogDTO.getLogEmail();
+	            UUserDTO user = userInfoService.findUserByEmail(email);
 
-                if (user != null && user.isUStatus() && resetPasswordNode != null) {
-                    String to = email;
-                    String subject = resetPasswordNode.get("mmSubject").asText();
-                    String firstName = user.getUFirstName();
-                    String lastName = user.getULastName();
-                    String resetPwdLink = "http://localhost:4200/#/renouveler_mdp?gstLogValue=" + createGstLogDTO.getLogValue();
+	            if (user != null) {
+	                if (user.isUStatus()) {
+	                    if (resetPasswordNode != null) {
+	                        String to = email;
+	                        String subject = resetPasswordNode.get("mmSubject").asText();
+	                        String firstName = user.getUFirstName();
+	                        String lastName = user.getULastName();
+	                        String resetPwdLink = "http://localhost:4200/#/renouveler_mdp?gstLogValue=" + createGstLogDTO.getLogValue();
 
-                    String body = resetPasswordNode.get("mmBody").asText();
-                    body = body.replace("[[firstName]]", firstName);
-                    body = body.replace("[[lastName]]", lastName);
-                    body = body.replace("[[resetPwdLink]]", resetPwdLink);
+	                        String body = resetPasswordNode.get("mmBody").asText();
+	                        body = body.replace("[[firstName]]", firstName);
+	                        body = body.replace("[[lastName]]", lastName);
+	                        body = body.replace("[[resetPwdLink]]", resetPwdLink);
 
-                    mailService.sendNewMail(to, subject, body);
-                } else {
-                	log.error("Utilisateur " + email + " non trouvé ou innactif. Email non envoyé");
-                    throw new UsernameNotFoundException("Utilisateur " + email + " non trouvé ou innactif. Email non envoyé");
-                }
-            }
-        } catch (IOException e) {
-            log.error("Error reading JSON file content : " + e.toString());
-        } catch (Exception e) {
-            log.error("An unexpected error occurred : " +  e.toString());
-        }
-    }
+	                        mailService.sendNewMail(to, subject, body);
+	                    } else {
+	                        log.error("Problème de chargement du modèle de message. Email non envoyé");
+	                        throw new MessageModelNotFoundException("Problème de chargement du modèle de message. Email non envoyé");
+	                    }
+	                } else {
+	                    log.error("Utilisateur " + email + " inactif. Email non envoyé");
+	                    throw new InactiveUserException("Utilisateur " + email + " inactif. Email non envoyé");
+	                }
+	            } else {
+	                log.error("Utilisateur " + email + " non trouvé. Email non envoyé");
+	                throw new UsernameNotFoundException("Utilisateur " + email + " non trouvé. Email non envoyé");
+	            }
+	        }
+	    } catch (IOException e) {
+	        log.error("Erreur de lecture du contenu du fichier JSON : " + e.toString());
+	        throw new IOException(e.getMessage());
+	    } catch (MessagingException e) {
+	        log.error("Erreur lors de l'envoi de l'email : " + e.toString());
+	        throw new MessagingException(e.getMessage());
+	    } catch (Exception e) {
+	        log.error(e.toString());
+	        throw new RuntimeException(e.getMessage());
+	    }
+	}
+
 	
-	public void manageResetUserPassword(String logValue, String newPassword) throws NotFoundException, GeneralException, PasswordAvailabilityException, PasswordClaimExpirationException {
+	public void manageResetUserPassword(String logValue, String newPassword) throws NotFoundException, PasswordAvailabilityException, PasswordClaimExpirationException, DatabaseQueryFailureException, InactiveUserException {
 		 if (logValue != null && !logValue.isEmpty()) {
 			 
 			 if (checkResetPasswordExpiration(logValue)) {
@@ -261,17 +277,18 @@ public class GstLogServiceImpl implements GstLogService{
 					        	
 					        	if (isGstLogUpdated == 0) {
 					        		log.error("Échec de mise à jour du gstLog dans la base de données");
-						            throw new GeneralException("Échec de mise à jour du gstLog dans la base de données");
+						            throw new DatabaseQueryFailureException("Échec de mise à jour du gstLog dans la base de données");
 					        	}  else {
 						            log.info("gstLog mis à jour pour le loogValue : " + logValue);
 						        }
 		        			} else {
 		        				log.error("Vous avez déjà utilisé ce mot de passe, veuillez en choisir un autre");
+		        				throw new PasswordAvailabilityException("Vous avez déjà utilisé ce mot de passe, veuillez en choisir un autre");
 		        			}
 		        			
 		        		} else {
 		        			log.error("L'utilisateur " + user.getUEmail() + " est inactif");
-		        			throw new GeneralException("L'utilisateur est inactif");
+		        			throw new InactiveUserException("L'utilisateur est inactif");
 		        		}
 		        	} else {
 		        		log.error("Utilisateur " + gstLog.getLogEmail() + " non trouvé.");

@@ -42,8 +42,6 @@ import com.example.demo.mappers.UUserMapper;
 import com.example.demo.service.implementation.GstLogServiceImpl;
 import com.example.demo.utility.JsonFileLoader;
 
-import jakarta.mail.MessagingException;
-
 @ExtendWith(MockitoExtension.class)
 @TestPropertySource(properties = {"reset.password.claim.expiration.duration=15"})
 public class GstLogServiceTest {
@@ -82,7 +80,7 @@ public class GstLogServiceTest {
     private int ResetPasswordClaimExpirationDuration;
 
     @Test
-    public void testSaveGstLog_Success() throws MessagingException {
+    public void testSaveGstLog_Success() throws Exception {
     	// Données de test pour le nouvel utilisateur
     	int existingId = 1;
     	String email = "john@test.fr";
@@ -108,19 +106,18 @@ public class GstLogServiceTest {
         when(createGstLogDtoMapper.toGstLog(dummyGstLogDto)).thenReturn(dummyGstLog);
         when(gstLogMapper.insertLog(dummyGstLog)).thenReturn(1);
         
-        GstLogResponseDTO responseDTO = gstLogService.saveGstLog(dummyGstLogDto);
+        String response = gstLogService.saveGstLog(dummyGstLogDto);
 
         // Vérification que les méthodes nécessaires sont bien appellés
         verify(userInfoService, times(1)).findUserByEmail(email);
         verify(gstLogMapper, times(1)).insertLog(dummyGstLog);
 
         // Vérification que la réponse attendu est un succès
-        assertEquals("success", responseDTO.getStatus());
-        assertNotNull(responseDTO.getMessage());
+        equals(response);
     }
 
     @Test
-    public void testSaveGstLog_UserNotFound() throws MessagingException {
+    public void testSaveGstLog_UserNotFound() throws Exception {
         // Données de test pour le nouvel utilisateur
         int existingId = 1;
         String email = "john@test.fr";
@@ -131,7 +128,7 @@ public class GstLogServiceTest {
         // Données de test pour le nouveau log
         CreateGstLogDTO dummyGstLogDto = new CreateGstLogDTO(existingId, "RESET_PASSWORD", "john@test.fr", "IJIJ125JK12", LocalDateTime.now());
 
-        GstLogResponseDTO responseDTO = gstLogService.saveGstLog(dummyGstLogDto);
+        String response = gstLogService.saveGstLog(dummyGstLogDto);
 
         // Vérification que la méthode findUserByEmail a bien été appelée
         verify(userInfoService, times(1)).findUserByEmail(email);
@@ -140,9 +137,8 @@ public class GstLogServiceTest {
         verify(gstLogMapper, times(0)).insertLog(any());
 
         // Vérification que la réponse attendue est un échec
-        assertEquals("error", responseDTO.getStatus());
-        assertNotNull(responseDTO.getMessage());
-        assertEquals("Aucun utilisateur trouvé avec l'email " + email, responseDTO.getMessage());
+        equals(response);
+        assertEquals("Aucun utilisateur trouvé avec l'email " + email, response);
     }
     
     @Test
