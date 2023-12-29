@@ -2,12 +2,8 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,19 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
-import com.example.demo.dto.mapper.SubcontractorDtoMapper;
-import com.example.demo.entity.Status;
-import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.AlreadyArchivedEntity;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.service.SubcontractorService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -39,21 +30,16 @@ import jakarta.validation.Valid;
 public class SubcontractorController {
 	private final SubcontractorService subcontractorService;
 
-	@Qualifier("userDetailsService")
-	private final UserDetailsService userDetailsService;
-
-	public SubcontractorController(SubcontractorService subcontractorService, UserDetailsService userDetailsService) {
+	public SubcontractorController(SubcontractorService subcontractorService) {
 		this.subcontractorService = subcontractorService;
-		this.userDetailsService = userDetailsService;
 	}
 
-	
 	/**
 	 * Récupère la liste de tous les sous-traitants avec pagination et tri.
 	 *
 	 * @param nameColonne Le nom de la colonne à utiliser pour le tri (par défaut :  l'ID du statut "s_fk_status_id").
 	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
-	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
+	 * @param pageNumber        Le numéro de la page à récupérer (par défaut : 1).
 	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
 	 * @return ResponseEntity contenant la liste des DTO des sous-traitants avec le statut OK,
 	 *         ResponseEntity avec un message d'erreur si aucun sous-traitant n'est trouvé et le statut NOT_FOUND,
@@ -63,10 +49,10 @@ public class SubcontractorController {
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractors(
 			@RequestParam(name = "nameColonne", defaultValue = "s_fk_status_id", required = false) String nameColonne,
 			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
-			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
+			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
 		try {
-			return new ResponseEntity<>(subcontractorService.getAllSubcontractors(nameColonne, sorting, page, pageSize),HttpStatus.OK);
+			return new ResponseEntity<>(subcontractorService.getAllNonArchivedSubcontractors(nameColonne, sorting, pageNumber, pageSize),HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -115,7 +101,7 @@ public class SubcontractorController {
 			@RequestParam(name = "statusId") int statusId) {
 		try {
 			return new ResponseEntity<>(
-					subcontractorService.getAllSubcontractorWhitStatus(nameColonne, sorting, pageSize, page, statusId),
+					subcontractorService.getAllSubcontractorWithStatus(nameColonne, sorting, pageSize, page, statusId),
 					HttpStatus.OK);
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -203,7 +189,9 @@ public class SubcontractorController {
 	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
 	 */
 	@PostMapping("/save")
-	public ResponseEntity<SubcontractorDto> saveSubcontractor(@Valid @RequestBody SubcontractorDto subcontractorDto) {
+	public ResponseEntity<SubcontractorDto> saveSubcontractor(
+			@Valid @RequestBody SubcontractorDto subcontractorDto,
+			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize) {
 		try {
 			if (subcontractorDto.getSId() > 0) {
 				boolean isSubcontractorExist = subcontractorService.checkIfSubcontractorExist(subcontractorDto.getSId());
@@ -211,15 +199,18 @@ public class SubcontractorController {
 					// si le sous-traitant existe, update
 					this.subcontractorService.handleSubcontractorUpdate(subcontractorDto);
 					subcontractorService.updateSubcontractor(subcontractorDto);
+	                int newPageNumberOfUpdatedSubcontractor = subcontractorService.getPageNumberOfNewlyAddedOrUpdatedSubcontractor(subcontractorDto.getSId(),pageSize);
 					SubcontractorDto updatedSubcontractorDto = subcontractorService.getSubcontractorWithStatus(subcontractorDto.getSId());
+					updatedSubcontractorDto.setNewPage(newPageNumberOfUpdatedSubcontractor);
 					return new ResponseEntity<>(updatedSubcontractorDto, HttpStatus.OK);
 				} else {
 					try {
-				
 					 // si le sous-traitant n'existe pas, save
 					 this.subcontractorService.handleSubcontractorSave(subcontractorDto);
 					 int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorDto);
+		             int pageNumberOfNewlyAddedSubcontractor = subcontractorService.getPageNumberOfNewlyAddedOrUpdatedSubcontractor(savedSubcontractorId,pageSize);
 					 SubcontractorDto savedSubcontractorDto = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
+					 savedSubcontractorDto.setNewPage(pageNumberOfNewlyAddedSubcontractor);
 					 return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
 	                } catch (GeneralException e) {
 	                    return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);

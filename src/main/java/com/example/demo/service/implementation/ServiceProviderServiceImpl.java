@@ -107,10 +107,10 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	@Override
 	public List<ServiceProviderDto> getServiceProvidersBySubcontractorId(int subcontractorId) {
 	    // Récupération des prestataires associés au sous-traitant par son ID
-	    List<ServiceProvider> serviceProviders = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId);
+	    List<ServiceProviderDto> serviceProviders = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 
 	    // Conversion des prestataires en DTO
-	    return serviceProviders.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();	
+	    return serviceProviders;	
 	}
 
 	@Override
@@ -126,8 +126,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	@Override
 	public int checkIfSubcontractorExistBySpEmail(String serviceProviderSpEmail) {
-		ServiceProvider foundServiceProvider = serviceProviderMapper
-				.findServiceProviderBySpEmail(serviceProviderSpEmail);
+		ServiceProvider foundServiceProvider = serviceProviderMapper.findServiceProviderBySpEmail(serviceProviderSpEmail);
 		if (foundServiceProvider == null)
 			return 0;
 		return foundServiceProvider.getSpId();
@@ -274,6 +273,25 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
 	    }
+	}
+
+	@Override
+	public int getPageNumberOfNewlyAddedOrUpdatedServiceProvider(int savedServiceProviderId, int pageSize) {
+        int newPage = 1;
+        int newIndex = -1;
+		int countAllNonArchivedServiceProviders = serviceProviderMapper.countAllNonArchivedServiceProviders();
+        List<ServiceProviderDto> sortedServiceProviders = serviceProviderMapper.findAllNonArchivedServiceProviders("asc", 0, countAllNonArchivedServiceProviders).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+        for (int i = 0; i < sortedServiceProviders.size(); i++) {
+            if (sortedServiceProviders.get(i).getSpId() == savedServiceProviderId) {
+                newIndex = i;
+                break;
+            }
+        }
+        if (newIndex != -1) {
+            // calculer le nombre de page en se basant sur l'indice et le nombre d'élément par page.
+            newPage = (int) Math.ceil((double) (newIndex + 1) / pageSize);
+        }
+        return newPage;
 	}
 	
 }

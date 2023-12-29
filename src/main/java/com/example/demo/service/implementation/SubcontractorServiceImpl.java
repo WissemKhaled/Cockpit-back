@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.GstStatusModelSubcontractorDTO;
+import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.GstStatusModelSubcontractorDtoMapper;
@@ -92,9 +93,9 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 
 	@Override
-	public List<SubcontractorDto> getAllSubcontractors(String nameColonne, String sorting, int page, int pageSize) {
+	public List<SubcontractorDto> getAllNonArchivedSubcontractors(String nameColonne, String sorting, int page, int pageSize) {
 		int offset = (page - 1) * pageSize;
-		List<SubcontractorDto> foundedSubcontractors = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset,pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+		List<SubcontractorDto> foundedSubcontractors = subcontractorMapper.findAllNonArchivedSubcontractors(nameColonne, sorting, offset,pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 		if (foundedSubcontractors.isEmpty()) {
 			throw new EntityNotFoundException("Il n'y a pas de sous-traitans");
 		}
@@ -102,11 +103,11 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 	
 	@Override
-	public List<SubcontractorDto> getAllSubcontractorWhitStatus(String nameColonne, String sorting, int pageSize,
+	public List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sorting, int pageSize,
 			int page, int statusId) {
 		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
 		int offset = (page - 1) * pageSize;
-		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractorsWhitStatus(nameColonne, sorting,
+		List<Subcontractor> subContarcList = subcontractorMapper.findAllSubcontractorsWithStatus(nameColonne, sorting,
 				offset, pageSize, statusId);
 
 		if (!subContarcList.isEmpty()) {
@@ -130,12 +131,12 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	@Override
 	public int getNumbersOfPages() {
-		return subcontractorMapper.countTotalItems();
+		return subcontractorMapper.countAllNonArchivedSubcontractors();
 	}
 	
 	@Override
 	public Integer getNumberOfAllSubcontractors() {
-		Integer numberOfFoundSubcontractors = subcontractorMapper.countTotalItems();
+		Integer numberOfFoundSubcontractors = subcontractorMapper.countAllNonArchivedSubcontractors();
 		if (numberOfFoundSubcontractors == 0) {
 			throw new EntityNotFoundException("il n'y a pas de sous-traiatant trouvé");
 		}
@@ -144,7 +145,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 	@Override
 	public Integer countTotalItemWhitStatus(Integer statusId) {
-		Integer numberOfFoundSubcontractorsWithStatus = subcontractorMapper.countTotalItemsWithStatus(statusId);
+		Integer numberOfFoundSubcontractorsWithStatus = subcontractorMapper.countAllNonArchivedSubcontractorsWithStatus(statusId);
 		if (numberOfFoundSubcontractorsWithStatus == 0) {
 			throw new EntityNotFoundException("il n'y a pas de sous-traiatant trouvé");
 		}
@@ -285,5 +286,24 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
 	    }
+	}
+
+	@Override
+	public int getPageNumberOfNewlyAddedOrUpdatedSubcontractor(int savedSubcontractorId, int pageSize) {
+        int newPage = 1;
+        int newIndex = -1;
+		int countAllNonArchivedServiceProviders = subcontractorMapper.countAllNonArchivedSubcontractors();
+        List<SubcontractorDto> sortedSubcontractors = subcontractorMapper.findAllNonArchivedSubcontractors("s_fk_status_id","asc", 0, countAllNonArchivedServiceProviders).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+        for (int i = 0; i < sortedSubcontractors.size(); i++) {
+            if (sortedSubcontractors.get(i).getSId() == savedSubcontractorId) {
+                newIndex = i;
+                break;
+            }
+        }
+        if (newIndex != -1) {
+            // calculer le nombre de page en se basant sur l'indice et le nombre d'élément par page.
+            newPage = (int) Math.ceil((double) (newIndex + 1) / pageSize);
+        }
+        return newPage;
 	}
 }
