@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GstStatusModelServiceProvider {
@@ -15,18 +17,23 @@ public class GstStatusModelServiceProvider {
 	@JsonProperty("statusMspFkStatusId")
 	private int statusMspFkStatusId;
 	
-	public GstStatusModelServiceProvider() {}
+	@JsonProperty("statusMspSentDate")
+	private LocalDateTime statusMspSentDate;
 	
-	public GstStatusModelServiceProvider(
-		int statusMspId,
-		int statusMspFkServiceProviderId,
-		int statusMspFkMessageModelId,
-		int statusMspFkStatusId
-	) {
+	@JsonProperty("statusMspValidationDate")
+	private LocalDateTime statusMspValidationDate;
+	
+	public GstStatusModelServiceProvider() {}
+
+	public GstStatusModelServiceProvider(int statusMspId, int statusMspFkServiceProviderId,
+			int statusMspFkMessageModelId, int statusMspFkStatusId, LocalDateTime statusMspSentDate,
+			LocalDateTime statusMsValidationDate) {
 		this.statusMspId = statusMspId;
 		this.statusMspFkServiceProviderId = statusMspFkServiceProviderId;
 		this.statusMspFkMessageModelId = statusMspFkMessageModelId;
 		this.statusMspFkStatusId = statusMspFkStatusId;
+		this.statusMspSentDate = statusMspSentDate;
+		this.statusMspValidationDate = statusMsValidationDate;
 	}
 
 	public int getStatusMspId() {
@@ -61,10 +68,27 @@ public class GstStatusModelServiceProvider {
 		this.statusMspFkStatusId = statusMspFkStatusId;
 	}
 
+	public LocalDateTime getStatusMspSentDate() {
+		return statusMspSentDate;
+	}
+
+	public void setStatusMspSentDate(LocalDateTime statusMsSentDate) {
+		this.statusMspSentDate = statusMsSentDate;
+	}
+
+	public LocalDateTime getStatusMspValidationDate() {
+		return statusMspValidationDate;
+	}
+
+	public void setStatusMspValidationDate(LocalDateTime statusMsValidationDate) {
+		this.statusMspValidationDate = statusMsValidationDate;
+	}
+
 	@Override
 	public String toString() {
 		return "GstStatusModelServiceProvider [statusMspId=" + statusMspId + ", statusMspFkServiceProviderId="
 				+ statusMspFkServiceProviderId + ", statusMspFkMessageModelId=" + statusMspFkMessageModelId
-				+ ", statusMspFkStatusId=" + statusMspFkStatusId + "]";
+				+ ", statusMspFkStatusId=" + statusMspFkStatusId + ", statusMspSentDate=" + statusMspSentDate
+				+ ", statusMspValidationDate=" + statusMspValidationDate + "]";
 	}
 }

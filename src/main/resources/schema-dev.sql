@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS gst_log (
 
 CREATE TABLE IF NOT EXISTS gst_message_model (
     mm_id SERIAL PRIMARY KEY,
+    mm_category VARCHAR(45) NOT NULL,
     mm_type VARCHAR(45) NOT NULL,
     mm_subject VARCHAR(255) NOT NULL,
     mm_body TEXT NOT NULL,
@@ -84,6 +85,8 @@ CREATE TABLE IF NOT EXISTS gst_status_model_service_provider (
     status_msp_fk_service_provider_id SERIAL NOT NULL,
     status_msp_fk_message_model_id SERIAL NOT NULL,
     status_msp_fk_status_id SERIAL NOT NULL,
+    status_msp_sent_date TIMESTAMP,
+    status_msp_validation_date TIMESTAMP,
     
     FOREIGN KEY (status_msp_fk_service_provider_id) REFERENCES service_provider(sp_id),
     FOREIGN KEY (status_msp_fk_message_model_id) REFERENCES gst_message_model(mm_id),
@@ -95,6 +98,8 @@ CREATE TABLE IF NOT EXISTS gst_status_model_subcontractor (
     status_ms_fk_subcontractor_id SERIAL NOT NULL,
     status_ms_fk_message_model_id SERIAL NOT NULL,
     status_ms_fk_status_id SERIAL NOT NULL,
+    status_ms_sent_date TIMESTAMP,
+    status_ms_validation_date TIMESTAMP,
     
     FOREIGN KEY (status_ms_fk_subcontractor_id) REFERENCES subcontractor(s_id),
     FOREIGN KEY (status_ms_fk_message_model_id) REFERENCES gst_message_model(mm_id),

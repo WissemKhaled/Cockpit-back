@@ -4,11 +4,9 @@ import org.apache.ibatis.javassist.NotFoundException;
 
 import com.example.demo.dto.CreateGstLogDTO;
 import com.example.demo.dto.GstLogDTO;
-import com.example.demo.dto.GstLogResponseDTO;
-import com.example.demo.exception.GeneralException;
 
 public interface GstLogService {
-	GstLogResponseDTO saveGstLog(CreateGstLogDTO createGstLogDTO) throws GeneralException, NotFoundException;
+	String saveGstLog(CreateGstLogDTO createGstLogDTO) throws Exception;
 	
 	GstLogDTO getGstLogByValue(String logValue) throws NotFoundException;
 	

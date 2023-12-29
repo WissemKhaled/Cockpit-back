@@ -8,4 +8,6 @@ public interface MessageModelService {
 	
 	List<MessageModel> getAllMessageModelWhitStatus(Integer statusId);
 
+	List<MessageModel> getAllMessageModelsAndStatusBySubcontractorCategory(Integer subcontractorId);
+
 }

@@ -12,6 +12,9 @@ public class MessageModel {
 	@JsonProperty("mmType")
 	private String mmType;
 
+	@JsonProperty("mmCategory")
+	private String mmCategory;
+
 	@JsonProperty("mmSubject")
 	private String mmSubject;
 
@@ -24,21 +27,31 @@ public class MessageModel {
 	@JsonProperty("mmLastUpdateDate")
 	private LocalDateTime mmLastUpdateDate;
 
-	@JsonProperty("status")
-	private Status status;
+	@JsonProperty("mmStatusId")
+	private Status mmStatusId;
+
 
 	public MessageModel() {
 	}
 
-	public MessageModel(Integer mmId, String mmType, String mmSubject, String mmBody, LocalDateTime mmCreationDate,
+	public MessageModel(Integer mmId,String mmCategory, String mmType, String mmSubject, String mmBody, LocalDateTime mmCreationDate,
 			LocalDateTime mmLastUpdateDate, Status status) {
 		this.mmId = mmId;
+		this.mmCategory = mmCategory;
 		this.mmType = mmType;
 		this.mmSubject = mmSubject;
 		this.mmBody = mmBody;
 		this.mmCreationDate = mmCreationDate;
 		this.mmLastUpdateDate = mmLastUpdateDate;
-		this.status = status;
+		this.mmStatusId = status;
+	}
+
+	public String getMmCategory() {
+		return mmCategory;
+	}
+
+	public void setMmCategory(String mmCategory) {
+		this.mmCategory = mmCategory;
 	}
 
 	public Integer getMmId() {
@@ -89,18 +102,18 @@ public class MessageModel {
 		this.mmLastUpdateDate = mmLastUpdateDate;
 	}
 
-	public Status getStatus() {
-		return status;
+	public Status getMmStatusId() {
+		return mmStatusId;
 	}
 
-	public void setStatus(Status status) {
-		this.status = status;
+	public void setMmStatusId(Status mmStatusId) {
+		this.mmStatusId = mmStatusId;
 	}
 
 	@Override
 	public String toString() {
-		return "MessageModel [mmId=" + mmId + ", mmType=" + mmType + ", mmSubject=" + mmSubject + ", mmBody=" + mmBody
-				+ ", mmCreationDate=" + mmCreationDate + ", mmLastUpdateDate=" + mmLastUpdateDate + ", status=" + status
+		return "MessageModel [mmId=" + mmId + ", mmCategory= " + mmCategory + ", mmType=" + mmType + ", mmSubject=" + mmSubject + ", mmBody=" + mmBody
+				+ ", mmCreationDate=" + mmCreationDate + ", mmLastUpdateDate=" + mmLastUpdateDate + ", status=" + mmStatusId
 				+ "]";
 	}
 

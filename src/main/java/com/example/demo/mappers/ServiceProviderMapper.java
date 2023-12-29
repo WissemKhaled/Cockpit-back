@@ -220,13 +220,4 @@ public interface ServiceProviderMapper {
 			@Param("searchTerms") String searchTerms, 
 			@Param("statusId") int statusId);
 	
-	@Insert("INSERT INTO gst_status_model_service_provider (status_msp_fk_service_provider_id, status_msp_fk_message_model_id, status_msp_fk_status_id) "
-			+ "VALUES (#{statusMspFkServiceProviderId}, #{statusMspFkMessageModelId}, #{statusMspFkStatusId})")
-	@Options(useGeneratedKeys = true, keyProperty = "statusMspId", keyColumn = "status_msp_id")
-	@Result(property = "statusMspId", column = "status_msp_id")
-	@Result(property = "statusMspFkServiceProviderId", column = "status_msp_fk_service_provider_id")
-	@Result(property = "statusMspFkMessageModelId", column = "status_msp_fk_message_model_id")
-	@Result(property = "statusMspFkStatusId", column = "status_msp_fk_status_id")
-	int insertGstStatusModelServiceProvider(GstStatusModelServiceProvider gstStatusModelServiceProvider);
-	
 }
