@@ -52,7 +52,7 @@ public interface ServiceProviderService {
 	 * @param subcontractorId L'ID du sous-traitant pour lequel récupérer les prestataires.
 	 * @return Liste des DTO des prestataires associés au sous-traitant.
 	 */
-	List<ServiceProvider> getServiceProvidersBySubcontractorId(int subcontractorId);
+	List<ServiceProviderDto> getServiceProvidersBySubcontractorId(int subcontractorId);
 
 	
 	/**
