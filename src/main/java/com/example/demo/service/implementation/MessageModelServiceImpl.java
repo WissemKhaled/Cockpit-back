@@ -1,7 +1,6 @@
 package com.example.demo.service.implementation;
 
 import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.MessageModel;
@@ -26,6 +25,17 @@ public class MessageModelServiceImpl implements MessageModelService {
 			throw new MessageModelNotFoundException("aucun modèle de mail n'existe pour ce status !");
 		}
 		return messageModel;
+	}
+	
+	@Override
+	public List<MessageModel> getAllMessageModelsAndStatusByServiceProviderId(Integer serviceproviderId) {
+		
+		List<MessageModel> messageModels = messageModelMapper.getMessageModelsAndStatusByServiceProviderId(serviceproviderId);
+
+		if (messageModels.isEmpty()) {
+			throw new MessageModelNotFoundException("aucun modèle de mail n'existe pour ce status !");
+		}
+		return messageModels;
 	}
 
 }
