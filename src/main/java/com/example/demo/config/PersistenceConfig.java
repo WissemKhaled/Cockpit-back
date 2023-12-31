@@ -37,7 +37,7 @@ public class PersistenceConfig {
 			dataSource.setDriverClassName("org.postgresql.Driver");
 			dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
 			dataSource.setUsername("postgres");
-			dataSource.setPassword("root");
+			dataSource.setPassword("admin");
 		}
 		return dataSource;
   }
