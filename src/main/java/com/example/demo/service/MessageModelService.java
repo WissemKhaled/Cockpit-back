@@ -7,5 +7,9 @@ import com.example.demo.entity.MessageModel;
 public interface MessageModelService {
 	
 	List<MessageModel> getAllMessageModelWhitStatus(Integer statusId);
+	
+	List<MessageModel> getAllMessageModelsAndStatusByServiceProviderId(Integer serviceproviderId);
+
+	List<MessageModel> getAllMessageModelsAndStatusBySubcontractorCategory(Integer subcontractorId);
 
 }

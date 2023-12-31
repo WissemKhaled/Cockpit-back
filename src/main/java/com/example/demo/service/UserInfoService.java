@@ -17,6 +17,8 @@ import com.example.demo.dto.UUserDTO;
 import com.example.demo.dto.mapper.CreateUserMapperEntityDTO;
 import com.example.demo.dto.mapper.UUserMapperEntityDTO;
 import com.example.demo.entity.UUser;
+import com.example.demo.exception.DatabaseQueryFailureException;
+import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.UUserMapper;
 
@@ -53,22 +55,22 @@ public class UserInfoService implements UserDetailsService {
 	 * Méthode qui retourne les informations de l'utilisateur en fonction de son email
 	*/
 	public UUserDTO findUserByEmail(String email) {
-		try {
-			if (email != null && !email.isBlank()) {
-				Optional<UUser> foundUser = userMapper.findByEmail(email);
-				UUser userInfo = foundUser.orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé " + email));
-				UUserDTO userInfoDTO = uUserMapperEntityDTO.toDto(userInfo);
-				
-				return userInfoDTO;
-			} else {
-				log.error(String.format("Email invalide %s" + email));
-				throw new IllegalArgumentException("Email invalide");
-			}
-		} catch (UsernameNotFoundException e) {
-			log.error(String.format("Utilisateur non trouvé : %o", e.getMessage(), e));
-			e.printStackTrace();
-			return null;
-		}
+	    try {
+	        if (email != null && !email.isBlank()) {
+	            Optional<UUser> foundUser = userMapper.findByEmail(email);
+	            UUser userInfo = foundUser.orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé " + email));
+	            UUserDTO userInfoDTO = uUserMapperEntityDTO.toDto(userInfo);
+
+	            return userInfoDTO;
+	        } else {
+	            log.error(String.format("Email invalide %s", email));
+	            throw new IllegalArgumentException("Email invalide");
+	        }
+	    } catch (UsernameNotFoundException e) {
+	        log.error(String.format("Utilisateur non trouvé : %s", e.getMessage()), e);
+	        e.printStackTrace();
+	        return null;
+	    }
 	}
 	
 	/**
@@ -109,7 +111,7 @@ public class UserInfoService implements UserDetailsService {
 	    }
 	}
 	
-	public void resetPassword(String newPassword, String email) throws GeneralException {
+	public void resetPassword(String newPassword, String email) throws DatabaseQueryFailureException {
 	    Optional<UUser> userOptional = userMapper.findByEmail(email);
 	    if (userOptional.isPresent()) {
 	        UUser user = userOptional.get();
@@ -120,13 +122,13 @@ public class UserInfoService implements UserDetailsService {
 
 	        if (isPasswordUpdated == 0) {
 	            log.error("Échec de mise à jour du mot de passe dans la base de données");
-	            throw new GeneralException("Échec de mise à jour du mot de passe dans la base de données");
+	            throw new DatabaseQueryFailureException("Échec de mise à jour du mot de passe dans la base de données");
 	        } else {
 	            log.info("mot de passe mis à jour pour l'utilisateur : " + email);
 	        }
 	    } else {
 	        log.warn("Utilisateur non trouvé avec l'email : " + email);
-	        throw new GeneralException("Utilisateur non trouvé avec l'email : " + email);
+	        throw new EntityNotFoundException("Utilisateur non trouvé avec l'email : " + email);
 	    }
 	}
 }

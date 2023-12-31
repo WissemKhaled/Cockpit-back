@@ -17,20 +17,23 @@ import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
+import com.example.demo.mappers.EmailReminderMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.ServiceProviderService;
 
 @Service
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final ServiceProviderMapper serviceProviderMapper;
+	private final EmailReminderMapper emailReminderMapper;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
 	private final GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper;
 	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
 
 	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper,
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
-			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper) {
+			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper, EmailReminderMapper emailReminderMapper) {
 		this.serviceProviderMapper = serviceProviderMapper;
+		this.emailReminderMapper = emailReminderMapper;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
 		this.gstStatusModelServiceProviderDtoMapper = gstStatusModelServiceProviderDtoMapper;
 	}
@@ -56,10 +59,10 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(mmId);
 		gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(serviceProviderToSave.getSpStatus().getStId());
 		
-		GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelSubcontractor(gstStatusModelServiceProviderDTO);
+		GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelServiceProvider(gstStatusModelServiceProviderDTO);
 		
 		try {
-			int isGstStatusModelServiceProviderInserted = serviceProviderMapper.insertGstStatusModelServiceProvider(gstStatusModelServiceProvider);
+			int isGstStatusModelServiceProviderInserted = emailReminderMapper.insertGstStatusModelServiceProvider(gstStatusModelServiceProvider);
 			
 			if (isGstStatusModelServiceProviderInserted == 0) {
 				throw new GeneralException("Erreur lors de l'insertion des données dans la table intermédiaire des prestataires");
@@ -104,10 +107,10 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	@Override
 	public List<ServiceProviderDto> getServiceProvidersBySubcontractorId(int subcontractorId) {
 	    // Récupération des prestataires associés au sous-traitant par son ID
-	    List<ServiceProvider> serviceProviders = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId);
+	    List<ServiceProviderDto> serviceProviders = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 
 	    // Conversion des prestataires en DTO
-	    return serviceProviders.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();	
+	    return serviceProviders;	
 	}
 
 	@Override
@@ -123,8 +126,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	@Override
 	public int checkIfSubcontractorExistBySpEmail(String serviceProviderSpEmail) {
-		ServiceProvider foundServiceProvider = serviceProviderMapper
-				.findServiceProviderBySpEmail(serviceProviderSpEmail);
+		ServiceProvider foundServiceProvider = serviceProviderMapper.findServiceProviderBySpEmail(serviceProviderSpEmail);
 		if (foundServiceProvider == null)
 			return 0;
 		return foundServiceProvider.getSpId();
@@ -271,6 +273,25 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
 	    }
+	}
+
+	@Override
+	public int getPageNumberOfNewlyAddedOrUpdatedServiceProvider(int savedServiceProviderId, int pageSize) {
+        int newPage = 1;
+        int newIndex = -1;
+		int countAllNonArchivedServiceProviders = serviceProviderMapper.countAllNonArchivedServiceProviders();
+        List<ServiceProviderDto> sortedServiceProviders = serviceProviderMapper.findAllNonArchivedServiceProviders("asc", 0, countAllNonArchivedServiceProviders).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+        for (int i = 0; i < sortedServiceProviders.size(); i++) {
+            if (sortedServiceProviders.get(i).getSpId() == savedServiceProviderId) {
+                newIndex = i;
+                break;
+            }
+        }
+        if (newIndex != -1) {
+            // calculer le nombre de page en se basant sur l'indice et le nombre d'élément par page.
+            newPage = (int) Math.ceil((double) (newIndex + 1) / pageSize);
+        }
+        return newPage;
 	}
 	
 }

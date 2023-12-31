@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.GstStatusModelSubcontractorDTO;
+import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.GstStatusModelSubcontractorDtoMapper;
@@ -21,6 +22,7 @@ import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
+import com.example.demo.mappers.EmailReminderMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.mappers.StatusMapper;
 import com.example.demo.mappers.SubcontractorMapper;
@@ -33,19 +35,20 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	private final StatusDtoMapper statusDtoMapper;
 	private final StatusMapper statusMapper;
 	private final ServiceProviderMapper serviceProviderMapper;
+	private final EmailReminderMapper emailReminderMapper;
 	private final GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper;
 	private static final Logger log = LoggerFactory.getLogger(SubcontractorServiceImpl.class);
 
 	public SubcontractorServiceImpl(SubcontractorDtoMapper subcontractorDtoMapper,
 			SubcontractorMapper subcontractorMapper, StatusDtoMapper statusDtoMapper, StatusMapper statusMapper,
 			ServiceProviderMapper serviceProviderMapper,
-			GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper) {
-		super();
+			GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper, EmailReminderMapper emailReminderMapper) {
 		this.subcontractorDtoMapper = subcontractorDtoMapper;
 		this.subcontractorMapper = subcontractorMapper;
 		this.statusDtoMapper = statusDtoMapper;
 		this.statusMapper = statusMapper;
 		this.serviceProviderMapper = serviceProviderMapper;
+		this.emailReminderMapper = emailReminderMapper;
 		this.gstStatusModelSubcontractorDtoMapper = gstStatusModelSubcontractorDtoMapper;
 	}
 
@@ -73,7 +76,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	    
 	    GstStatusModelSubcontractor gstStatusModelSubcontractor = gstStatusModelSubcontractorDtoMapper.toGstStatusModelSubcontractor(gstStatusModelSubcontractorDTO);
 	    try {
-	        int isGstStatusModelSubcontractorInserted = subcontractorMapper.insertGstStatusModelSubcontractor(gstStatusModelSubcontractor);
+	        int isGstStatusModelSubcontractorInserted = emailReminderMapper.insertGstStatusModelSubcontractor(gstStatusModelSubcontractor);
 	        if (isGstStatusModelSubcontractorInserted == 0) {
 	            throw new GeneralException("Erreur lors de l'insertion des données dans la table intermédiaire des sous-traitants");
 	        }
@@ -90,9 +93,9 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 
 	@Override
-	public List<SubcontractorDto> getAllSubcontractors(String nameColonne, String sorting, int page, int pageSize) {
+	public List<SubcontractorDto> getAllNonArchivedSubcontractors(String nameColonne, String sorting, int page, int pageSize) {
 		int offset = (page - 1) * pageSize;
-		List<SubcontractorDto> foundedSubcontractors = subcontractorMapper.getAllSubcontractors(nameColonne, sorting, offset,pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+		List<SubcontractorDto> foundedSubcontractors = subcontractorMapper.findAllNonArchivedSubcontractors(nameColonne, sorting, offset,pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 		if (foundedSubcontractors.isEmpty()) {
 			throw new EntityNotFoundException("Il n'y a pas de sous-traitans");
 		}
@@ -100,11 +103,11 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 	
 	@Override
-	public List<SubcontractorDto> getAllSubcontractorWhitStatus(String nameColonne, String sorting, int pageSize,
+	public List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sorting, int pageSize,
 			int page, int statusId) {
 		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
 		int offset = (page - 1) * pageSize;
-		List<Subcontractor> subContarcList = subcontractorMapper.getAllSubcontractorsWhitStatus(nameColonne, sorting,
+		List<Subcontractor> subContarcList = subcontractorMapper.findAllSubcontractorsWithStatus(nameColonne, sorting,
 				offset, pageSize, statusId);
 
 		if (!subContarcList.isEmpty()) {
@@ -128,12 +131,12 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	@Override
 	public int getNumbersOfPages() {
-		return subcontractorMapper.countTotalItems();
+		return subcontractorMapper.countAllNonArchivedSubcontractors();
 	}
 	
 	@Override
 	public Integer getNumberOfAllSubcontractors() {
-		Integer numberOfFoundSubcontractors = subcontractorMapper.countTotalItems();
+		Integer numberOfFoundSubcontractors = subcontractorMapper.countAllNonArchivedSubcontractors();
 		if (numberOfFoundSubcontractors == 0) {
 			throw new EntityNotFoundException("il n'y a pas de sous-traiatant trouvé");
 		}
@@ -142,7 +145,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 	@Override
 	public Integer countTotalItemWhitStatus(Integer statusId) {
-		Integer numberOfFoundSubcontractorsWithStatus = subcontractorMapper.countTotalItemsWithStatus(statusId);
+		Integer numberOfFoundSubcontractorsWithStatus = subcontractorMapper.countAllNonArchivedSubcontractorsWithStatus(statusId);
 		if (numberOfFoundSubcontractorsWithStatus == 0) {
 			throw new EntityNotFoundException("il n'y a pas de sous-traiatant trouvé");
 		}
@@ -283,5 +286,24 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
 	    }
+	}
+
+	@Override
+	public int getPageNumberOfNewlyAddedOrUpdatedSubcontractor(int savedSubcontractorId, int pageSize) {
+        int newPage = 1;
+        int newIndex = -1;
+		int countAllNonArchivedServiceProviders = subcontractorMapper.countAllNonArchivedSubcontractors();
+        List<SubcontractorDto> sortedSubcontractors = subcontractorMapper.findAllNonArchivedSubcontractors("s_fk_status_id","asc", 0, countAllNonArchivedServiceProviders).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+        for (int i = 0; i < sortedSubcontractors.size(); i++) {
+            if (sortedSubcontractors.get(i).getSId() == savedSubcontractorId) {
+                newIndex = i;
+                break;
+            }
+        }
+        if (newIndex != -1) {
+            // calculer le nombre de page en se basant sur l'indice et le nombre d'élément par page.
+            newPage = (int) Math.ceil((double) (newIndex + 1) / pageSize);
+        }
+        return newPage;
 	}
 }

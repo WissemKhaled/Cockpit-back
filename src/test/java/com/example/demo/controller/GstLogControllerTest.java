@@ -54,7 +54,7 @@ public class GstLogControllerTest {
         createGstLogDTO.setLogEmail("cockpit.open@gmail.com");
         createGstLogDTO.setLogValue("123SDER56ZS");
         createGstLogDTO.setLogCreationDate(LocalDateTime.now());
-        GstLogResponseDTO successResponse = new GstLogResponseDTO("success", "Log created successfully");
+        String successResponse = "Log created successfully";
 
         when(gstLogService.saveGstLog(createGstLogDTO)).thenReturn(successResponse);
 
@@ -77,7 +77,7 @@ public class GstLogControllerTest {
     	createGstLogDTO.setLogEmail("sam@test.fr");
     	createGstLogDTO.setLogValue("856SDER56KJ");
     	createGstLogDTO.setLogCreationDate(LocalDateTime.now());
-        GstLogResponseDTO badRequestResponse = new GstLogResponseDTO("error", "L'utilisateur est inactif");
+        String badRequestResponse = "L'utilisateur est inactif";
 
         when(gstLogService.saveGstLog(createGstLogDTO)).thenReturn(badRequestResponse);
 
@@ -102,7 +102,7 @@ public class GstLogControllerTest {
         createGstLogDTO.setLogValue("993NDER56FV");
         createGstLogDTO.setLogCreationDate(LocalDateTime.now());
         
-        GstLogResponseDTO badRequestResponse = new GstLogResponseDTO("error", "Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail());
+        String badRequestResponse = "Aucun utilisateur trouvé avec l'email " + createGstLogDTO.getLogEmail();
 
         when(gstLogService.saveGstLog(createGstLogDTO)).thenReturn(badRequestResponse);
 
@@ -110,7 +110,7 @@ public class GstLogControllerTest {
                 .content(asJsonString(createGstLogDTO))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("error"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(badRequestResponse.getMessage()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(badRequestResponse))
                 .andExpect(status().isBadRequest());
     }
 

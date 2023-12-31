@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.example.demo.entity.MessageModel;
 import com.example.demo.entity.Status;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MessageModelBuilder {
 	private Integer mmId;
@@ -14,6 +15,12 @@ public class MessageModelBuilder {
 	private LocalDateTime mmCreationDate;
 	private LocalDateTime mmLastUpdateDate;
 	private Status status;
+	private Integer statusMspId;
+	private Integer statusMspFkServiceProviderId;
+	private Integer statusMspFkStatusId;
+//	private Status stName;
+//	private Integer spId;
+//	private Integer stId;
 
 	public MessageModelBuilder withMmId(Integer mmId) {
 		this.mmId = mmId;
@@ -50,13 +57,44 @@ public class MessageModelBuilder {
 		return this;
 	}
 
-	public MessageModelBuilder withStatus(Status status) {
-		this.status = status;
+	public MessageModelBuilder withStatusMspId(Integer statusMspId) {
+		this.statusMspId = statusMspId;
 		return this;
 	}
+	
+	public MessageModelBuilder withStatusMspFkServiceProviderId(Integer statusMspFkServiceProviderId) {
+		this.statusMspFkServiceProviderId = statusMspFkServiceProviderId;
+		return this;
+	}
+	
+	public MessageModelBuilder withStatusMspFkStatusId(Integer statusMspFkStatusId) {
+		this.statusMspFkStatusId = statusMspFkStatusId;
+		return this;
+	}
+	
+//	public MessageModelBuilder withStName(Status stName) {
+//		this.stName = stName;
+//		return this;
+//	}
+//	
+//	public MessageModelBuilder withSpId(Integer spId) {
+//		this.spId = spId;
+//		return this;
+//	}
+//	
+//	public MessageModelBuilder withStId(Integer stId) {
+//		this.stId = stId;
+//		return this;
+//	}
 
+//	public MessageModel build() {
+//		return new MessageModel(mmId, mmCategory, mmType, mmSubject, mmBody, mmCreationDate, mmLastUpdateDate, status, statusMspId, 
+//				statusMspFkServiceProviderId, statusMspFkStatusId, stName, spId, stId);
+//	}
+	
 	public MessageModel build() {
-		return new MessageModel(mmId, mmCategory, mmType, mmSubject, mmBody, mmCreationDate, mmLastUpdateDate, status);
+		return new MessageModel(mmId, mmCategory, mmType, mmSubject, mmBody, mmCreationDate, mmLastUpdateDate, status, statusMspId, 
+				statusMspFkServiceProviderId, statusMspFkStatusId);
 	}
 
 }
