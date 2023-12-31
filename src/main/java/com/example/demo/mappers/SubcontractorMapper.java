@@ -17,13 +17,17 @@ import com.example.demo.entity.Subcontractor;
 public interface SubcontractorMapper {
 	// ce code permet de renvoyer le nombre total de colonne de la
 	// table subcontractor
-	@Select("SELECT COUNT(*) FROM subcontractor WHERE s_fk_status_id != 4")
-	Integer countTotalItems();
+	@Select("SELECT COUNT(*) "
+			+ "FROM subcontractor "
+			+ "WHERE s_fk_status_id != 4")
+	Integer countAllNonArchivedSubcontractors();
 
 	
 	// fin
-	@Select("SELECT COUNT(*) FROM subcontractor WHERE s_fk_status_id = ${idStatus} ")
-	Integer countTotalItemsWithStatus(@Param("idStatus") Integer idStatus);
+	@Select("SELECT COUNT(*) "
+			+ "FROM subcontractor "
+			+ "WHERE s_fk_status_id = ${idStatus} ")
+	Integer countAllNonArchivedSubcontractorsWithStatus(@Param("idStatus") Integer idStatus);
 
 
 	// ce code permet de renvoyer une liste de sous-traitans avec la
@@ -31,7 +35,8 @@ public interface SubcontractorMapper {
 	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
 			+ "FROM subcontractor s " 
 			+ "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
-			+ " ORDER BY ${nameColonne}, s_name ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} ")
+			+ "WHERE s.s_fk_status_id != 4 "
+			+ "ORDER BY s.s_fk_status_id, s_name ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} ")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "sName", column = "s_name")
 	@Result(property = "sEmail", column = "s_email")
@@ -40,8 +45,11 @@ public interface SubcontractorMapper {
 	@Result(property = "status.stId", column = "status_stId")
 	@Result(property = "status.stName", column = "status_stName")
 	@Result(property = "status.stDescription", column = "status_stDescription")
-	List<Subcontractor> getAllSubcontractors(@Param("nameColonne") String nameColonne, @Param("sorting") String sorting,
-			@Param("pageSize") int offset, @Param("offset") int pageSize);
+	List<Subcontractor> findAllNonArchivedSubcontractors(
+			@Param("nameColonne") String nameColonne, 
+			@Param("sorting") String sorting,
+			@Param("pageSize") int offset, 
+			@Param("offset") int pageSize);
 	// fin
 
 	
@@ -58,7 +66,7 @@ public interface SubcontractorMapper {
 	@Result(property = "status.stId", column = "status_stId")
 	@Result(property = "status.stName", column = "status_stName")
 	@Result(property = "status.stDescription", column = "status_stDescription")
-	List<Subcontractor> getAllSubcontractorsWhitStatus(@Param("nameColonne") String nameColonne,
+	List<Subcontractor> findAllSubcontractorsWithStatus(@Param("nameColonne") String nameColonne,
 			@Param("sorting") String sorting, @Param("pageSize") int offset, @Param("offset") int pageSize,
 			@Param("statusId") int statusId);
 
@@ -78,33 +86,19 @@ public interface SubcontractorMapper {
 	Subcontractor findSubcontractorWithStatusById(int sId);
 
 	
-	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
+	@Select("SELECT s.s_id, s.s_name "
 			+ "FROM subcontractor s " 
-			+ "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
 			+ "WHERE s.s_name = #{sName}")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "sName", column = "s_name")
-	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "sCreationDate", column = "s_creation_date")
-	@Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
-	@Result(property = "status.stDescription", column = "status_stDescription")
 	Subcontractor findSubcontractorWithStatusBySName(String sName);
 
 	
-	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, st.st_description as status_stDescription "
+	@Select("SELECT s.s_id, s.s_email "
 			+ "FROM subcontractor s " 
-			+ "INNER JOIN status st ON s.s_fk_status_id = st.st_id "
 			+ "WHERE s.s_email = #{sEmail}")
 	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
 	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "sCreationDate", column = "s_creation_date")
-	@Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
-	@Result(property = "status.stDescription", column = "status_stDescription")
 	Subcontractor findSubcontractorWithStatusBySEmail(String sEmail);
 
 	
@@ -195,15 +189,5 @@ public interface SubcontractorMapper {
 			@Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms, 
 			@Param("statusId") int statusId);
-	
-	
-	@Insert("INSERT INTO gst_status_model_subcontractor (status_ms_fk_subcontractor_id, status_ms_fk_message_model_id, status_ms_fk_status_id) "
-			+ "VALUES (#{statusMsFkSubcontractorId}, #{statusMsFkMessageModelId}, #{statusMsFkStatusId})")
-	@Options(useGeneratedKeys = true, keyProperty = "statusMsId", keyColumn = "status_ms_id")
-	@Result(property = "statusMsId", column = "status_ms_id")
-	@Result(property = "statusMsFkSubcontractorId", column = "status_ms_fk_subcontractor_id")
-	@Result(property = "statusMsFkMessageModelId", column = "status_ms_fk_message_model_id")
-	@Result(property = "statusMsFkStatusId", column = "status_ms_fk_status_id")
-	int insertGstStatusModelSubcontractor(GstStatusModelSubcontractor gstStatusModelSubcontractor);
-	
+
 }

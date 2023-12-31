@@ -38,23 +38,16 @@ public class MessageModel {
 	
 	@JsonProperty("statusMspFkStatusId")
 	private Integer statusMspFkStatusId;
-	
-//	@JsonProperty("stName")
-//	private Status stName;
-//	
-//	@JsonProperty("spId")
-//	private Integer spId;
-//	
-//	@JsonProperty("stId")
-//	private Integer stId;
+
+	@JsonProperty("mmStatusId")
+	private Status mmStatusId;
 
 	public MessageModel() {
 	}
 
 	public MessageModel(Integer mmId, String mmType, String mmCategory, String mmSubject, String mmBody,
 			LocalDateTime mmCreationDate, LocalDateTime mmLastUpdateDate, Status status, Integer statusMspId,
-			Integer statusMspFkServiceProviderId, Integer statusMspFkStatusId/*, Status stName, Integer spId,
-			Integer stId*/) {
+			Integer statusMspFkServiceProviderId, Integer statusMspFkStatusId) {
 		super();
 		this.mmId = mmId;
 		this.mmType = mmType;
@@ -67,9 +60,8 @@ public class MessageModel {
 		this.statusMspId = statusMspId;
 		this.statusMspFkServiceProviderId = statusMspFkServiceProviderId;
 		this.statusMspFkStatusId = statusMspFkStatusId;
-//		this.stName = stName;
-//		this.spId = spId;
-//		this.stId = stId;
+		this.mmStatusId = status;
+
 	}
 
 
@@ -130,12 +122,12 @@ public class MessageModel {
 		this.mmLastUpdateDate = mmLastUpdateDate;
 	}
 
-	public Status getStatus() {
-		return status;
+	public Status getMmStatusId() {
+		return mmStatusId;
 	}
 
-	public void setStatus(Status status) {
-		this.status = status;
+	public void setMmStatusId(Status mmStatusId) {
+		this.mmStatusId = mmStatusId;
 	}
 	
 	public Integer getStatusMspId() {
@@ -161,30 +153,6 @@ public class MessageModel {
 	public void setStatusMspFkStatusId(Integer statusMspFkStatusId) {
 		this.statusMspFkStatusId = statusMspFkStatusId;
 	}
-	
-//	public Status getStName() {
-//		return stName;
-//	}
-//
-//	public void setStName(Status stName) {
-//		this.stName = stName;
-//	}
-//	
-//	public Integer getSpId() {
-//		return spId;
-//	}
-//
-//	public void setSpId(Integer spId) {
-//		this.spId = spId;
-//	}
-//	
-//	public Integer getStId() {
-//		return stId;
-//	}
-//
-//	public void setStId(Integer stId) {
-//		this.stId = stId;
-//	}
 
 	@Override
 	public String toString() {
@@ -192,7 +160,7 @@ public class MessageModel {
 				+ ", mmCreationDate=" + mmCreationDate + ", mmLastUpdateDate=" + mmLastUpdateDate + ", status=" + status 
 				+ ", statusMspId=" + statusMspId + ", statusMspFkServiceProviderId=" + statusMspFkServiceProviderId
 				+ ", statusMspFkStatusId=" + statusMspFkStatusId + ", statusMspFkStatusId=" + statusMspFkStatusId 
-				//+ ", stName=" + stName + ", spId=" + spId + ", stId=" + stId
+				+ ", mmCreationDate=" + mmCreationDate + ", mmLastUpdateDate=" + mmLastUpdateDate + ", status=" + mmStatusId
 				+ "]";
 	}
 

@@ -69,25 +69,18 @@ public interface ServiceProviderMapper {
 	ServiceProvider findServiceProviderWithSubcontractorBySpId(int sId);
 	
 	
-	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, sp.sp_fk_subcontractor_id, sp.sp_fk_status_id "
+	@Select("SELECT sp.sp_id, sp.sp_email "
 			+ "FROM service_provider sp "
 			+ "WHERE sp.sp_email = #{spEmail}")
 	@Result(property = "spId", column = "sp_id")
-	@Result(property = "spFirstName", column = "sp_first_name")
-	@Result(property = "spName", column = "sp_name")
 	@Result(property = "spEmail", column = "sp_email")
-	@Result(property = "spCreationDate", column = "sp_creation_date")
-	@Result(property = "spLastUpdateDate", column = "sp_lastUpdate_date")
-	@Result(property = "subcontractor.sId", column = "sp_fk_subcontractor_id")
-	@Result(property = "spStatus.stId", column = "sp_fk_status_id")
 	ServiceProvider findServiceProviderBySpEmail(String spEmail);
 
 	
-	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
+	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, "
 			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
 			+ "FROM service_provider sp "
 			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
-			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
 			+ "WHERE sp_fk_subcontractor_id = #{sId} "
 			+ "ORDER BY sp_id")
 	@Result(property = "spId", column = "sp_id")
@@ -96,8 +89,6 @@ public interface ServiceProviderMapper {
 	@Result(property = "spEmail", column = "sp_email")
 	@Result(property = "spCreationDate", column = "sp_creation_date")
 	@Result(property = "spLastUpdateDate", column = "sp_lastUpdate_date")
-	@Result(property = "spStatus.stId", column = "status_stId")
-	@Result(property = "spStatus.stName", column = "status_stName")
 	@Result(property = "subcontractor.sId", column = "subcontractor_sId")
 	@Result(property = "subcontractor.sName", column = "subcontractor_sName")
 	List<ServiceProvider> findServiceProvidersBySubcontractorId(int sId);
@@ -228,14 +219,5 @@ public interface ServiceProviderMapper {
 			@Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms, 
 			@Param("statusId") int statusId);
-	
-	@Insert("INSERT INTO gst_status_model_service_provider (status_msp_fk_service_provider_id, status_msp_fk_message_model_id, status_msp_fk_status_id) "
-			+ "VALUES (#{statusMspFkServiceProviderId}, #{statusMspFkMessageModelId}, #{statusMspFkStatusId})")
-	@Options(useGeneratedKeys = true, keyProperty = "statusMspId", keyColumn = "status_msp_id")
-	@Result(property = "statusMspId", column = "status_msp_id")
-	@Result(property = "statusMspFkServiceProviderId", column = "status_msp_fk_service_provider_id")
-	@Result(property = "statusMspFkMessageModelId", column = "status_msp_fk_message_model_id")
-	@Result(property = "statusMspFkStatusId", column = "status_msp_fk_status_id")
-	int insertGstStatusModelServiceProvider(GstStatusModelServiceProvider gstStatusModelServiceProvider);
 	
 }
