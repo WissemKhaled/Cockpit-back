@@ -27,24 +27,44 @@ public class MessageModel {
 	@JsonProperty("mmLastUpdateDate")
 	private LocalDateTime mmLastUpdateDate;
 
+	@JsonProperty("status")
+	private Status status;
+	
+	@JsonProperty("statusMspId")
+	private Integer statusMspId;
+	
+	@JsonProperty("statusMspFkServiceProviderId")
+	private Integer statusMspFkServiceProviderId;
+	
+	@JsonProperty("statusMspFkStatusId")
+	private Integer statusMspFkStatusId;
+
 	@JsonProperty("mmStatusId")
 	private Status mmStatusId;
-
 
 	public MessageModel() {
 	}
 
-	public MessageModel(Integer mmId,String mmCategory, String mmType, String mmSubject, String mmBody, LocalDateTime mmCreationDate,
-			LocalDateTime mmLastUpdateDate, Status status) {
+	public MessageModel(Integer mmId, String mmType, String mmCategory, String mmSubject, String mmBody,
+			LocalDateTime mmCreationDate, LocalDateTime mmLastUpdateDate, Status status, Integer statusMspId,
+			Integer statusMspFkServiceProviderId, Integer statusMspFkStatusId) {
+		super();
 		this.mmId = mmId;
-		this.mmCategory = mmCategory;
 		this.mmType = mmType;
+		this.mmCategory = mmCategory;
 		this.mmSubject = mmSubject;
 		this.mmBody = mmBody;
 		this.mmCreationDate = mmCreationDate;
 		this.mmLastUpdateDate = mmLastUpdateDate;
+		this.status = status;
+		this.statusMspId = statusMspId;
+		this.statusMspFkServiceProviderId = statusMspFkServiceProviderId;
+		this.statusMspFkStatusId = statusMspFkStatusId;
 		this.mmStatusId = status;
+
 	}
+
+
 
 	public String getMmCategory() {
 		return mmCategory;
@@ -109,10 +129,37 @@ public class MessageModel {
 	public void setMmStatusId(Status mmStatusId) {
 		this.mmStatusId = mmStatusId;
 	}
+	
+	public Integer getStatusMspId() {
+		return statusMspId;
+	}
+
+	public void setStatusMspId(Integer statusMspId) {
+		this.statusMspId = statusMspId;
+	}
+	
+	public Integer getStatusMspFkServiceProviderId() {
+		return statusMspFkServiceProviderId;
+	}
+
+	public void setStatusMspFkServiceProviderId(Integer statusMspFkServiceProviderId) {
+		this.statusMspFkServiceProviderId = statusMspFkServiceProviderId;
+	}
+	
+	public Integer getStatusMspFkStatusId() {
+		return statusMspFkStatusId;
+	}
+
+	public void setStatusMspFkStatusId(Integer statusMspFkStatusId) {
+		this.statusMspFkStatusId = statusMspFkStatusId;
+	}
 
 	@Override
 	public String toString() {
 		return "MessageModel [mmId=" + mmId + ", mmCategory= " + mmCategory + ", mmType=" + mmType + ", mmSubject=" + mmSubject + ", mmBody=" + mmBody
+				+ ", mmCreationDate=" + mmCreationDate + ", mmLastUpdateDate=" + mmLastUpdateDate + ", status=" + status 
+				+ ", statusMspId=" + statusMspId + ", statusMspFkServiceProviderId=" + statusMspFkServiceProviderId
+				+ ", statusMspFkStatusId=" + statusMspFkStatusId + ", statusMspFkStatusId=" + statusMspFkStatusId 
 				+ ", mmCreationDate=" + mmCreationDate + ", mmLastUpdateDate=" + mmLastUpdateDate + ", status=" + mmStatusId
 				+ "]";
 	}
