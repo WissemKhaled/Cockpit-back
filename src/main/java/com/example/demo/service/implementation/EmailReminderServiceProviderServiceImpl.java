@@ -97,10 +97,10 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 		List<GstStatusModelServiceProviderDTO> gstStatusModelServiceProviderDTOList = emailReminderMapper.findServiceProviderReminderInfo(serviceProviderId);
 		
 		for (MessageModel messageModel : messageModels) {
-			if (messageModel.getMmType().contains("Relance") && messageModel.getMmStatusId() == null) {
+			if (messageModel.getMmType().contains("Relance")) {
 				for (GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO : gstStatusModelServiceProviderDTOList) {
 					 // si la date de validation n'est pas null et date de 7 jours, on met à jour le status
-					if (gstStatusModelServiceProviderDTO.getStatusMspValidationDate() != null && gstStatusModelServiceProviderDTO.getStatusMspValidationDate().plusDays(7).isAfter(currentDate)) {
+					if (gstStatusModelServiceProviderDTO.getStatusMspValidationDate() != null && gstStatusModelServiceProviderDTO.getStatusMspValidationDate().plusDays(7).isBefore(currentDate)) {
 						// on met à jour le statusId de la table intermédiaire
 						gstStatusModelServiceProviderDTO.setStatusMspFkServiceProviderId(serviceProviderId);
 					    gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(gstStatusModelServiceProviderDTO.getStatusMspFkMessageModelId());

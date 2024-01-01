@@ -102,7 +102,7 @@ public class EmailReminderSubcontractorServiceImpl implements EmailReminderSubco
 			if (messageModel.getMmType().contains("Relance")) {
 				for (GstStatusModelSubcontractorDTO gstStatusModelSubcontractorDTO : gstStatusModelSubcontractorDTOList) {
 					 // si la date de validation n'est pas null et date de 7 jours, on met à jour le status
-					if (gstStatusModelSubcontractorDTO.getStatusMsValidationDate() != null && gstStatusModelSubcontractorDTO.getStatusMsValidationDate().plusDays(7).isAfter(currentDate)) {
+					if (gstStatusModelSubcontractorDTO.getStatusMsValidationDate() != null && gstStatusModelSubcontractorDTO.getStatusMsValidationDate().plusDays(7).isBefore(currentDate)) {
 						// on met à jour le statusId de la table intermédiaire
 						gstStatusModelSubcontractorDTO.setStatusMsFkSubcontractorId(gstStatusModelSubcontractorDTO.getStatusMsFkSubcontractorId());
 					    gstStatusModelSubcontractorDTO.setStatusMsFkMessageModelId(gstStatusModelSubcontractorDTO.getStatusMsFkMessageModelId());
