@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.entity.MessageModel;
 import com.example.demo.exception.MessageModelNotFoundException;
+import com.example.demo.service.EmailReminderSubcontractorService;
 import com.example.demo.service.MessageModelService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,9 +30,16 @@ import java.util.List;
 public class MessageModelController {
 
 	private final MessageModelService messageModelService;
+	private final EmailReminderSubcontractorService emailReminderSubcontractorService;
 
-	public MessageModelController(MessageModelService messageModelService) {
+	
+
+	public MessageModelController(
+		MessageModelService messageModelService,
+		EmailReminderSubcontractorService emailReminderSubcontractorService
+	) {
 		this.messageModelService = messageModelService;
+		this.emailReminderSubcontractorService = emailReminderSubcontractorService;
 	}
 
 	@GetMapping("/getAll")
@@ -75,6 +83,10 @@ public class MessageModelController {
 			List<MessageModel> messageModels = allMessages.subList(start, end);
 
 			Page<MessageModel> page = new PageImpl<>(messageModels, pageable, allMessages.size());
+			
+			// appel de la méthode qui gère les relances du sous-traitant
+			emailReminderSubcontractorService.checkRelaunchSubcontractor(page, subcontractorId);
+			
 			return ResponseEntity.ok(page);
 
 		} catch (MessageModelNotFoundException e) {
