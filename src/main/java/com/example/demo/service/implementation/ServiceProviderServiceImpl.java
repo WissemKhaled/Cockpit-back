@@ -10,15 +10,18 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.GstStatusModelServiceProviderDTO;
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.mapper.GstStatusModelServiceProviderDtoMapper;
 import com.example.demo.entity.GstStatusModelServiceProvider;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
+import com.example.demo.dto.mapper.StatusDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.EmailReminderMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
+import com.example.demo.mappers.StatusMapper;
 import com.example.demo.service.ServiceProviderService;
 
 @Service
@@ -26,16 +29,20 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final ServiceProviderMapper serviceProviderMapper;
 	private final EmailReminderMapper emailReminderMapper;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
+	private final StatusDtoMapper statusDtoMapper;
+	private final StatusMapper statusMapper;
 	private final GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper;
 	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
 
 	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper,
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
-			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper, EmailReminderMapper emailReminderMapper) {
+			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper, EmailReminderMapper emailReminderMapper, StatusDtoMapper statusDtoMapper, StatusMapper statusMapper) {
 		this.serviceProviderMapper = serviceProviderMapper;
 		this.emailReminderMapper = emailReminderMapper;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
 		this.gstStatusModelServiceProviderDtoMapper = gstStatusModelServiceProviderDtoMapper;
+		this.statusDtoMapper = statusDtoMapper;
+		this.statusMapper = statusMapper;
 	}
 
 	@Override
@@ -292,6 +299,15 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
             newPage = (int) Math.ceil((double) (newIndex + 1) / pageSize);
         }
         return newPage;
+	}
+	
+	@Override
+	public List<StatusDto> getAllStatus() {
+		List<StatusDto> foundedStatus = statusMapper.getAllStatus().stream().map(statusDtoMapper::statusToDto).toList();
+		if (foundedStatus.isEmpty()) {
+			throw new EntityNotFoundException("Il n'y a pas de status enregistré");
+		}
+		return foundedStatus;
 	}
 	
 }
