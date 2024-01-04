@@ -1,0 +1,53 @@
+jwt:
+  secret: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
+logging:
+  level:
+    com:
+      example:
+        demo: info
+  pattern:
+    console: '%clr(%d{dd-MM-yyyy HH:mm:ss.SSS}){yellow} %clr(${PID:-}){green} %magenta([%thread])
+      %highlight([%-5level]) %clr(%-40.40logger{39}){cyan} %msg%n'
+refresh:
+  token:
+    expiration:
+      duration: 1800
+reset:
+  password:
+    claim:
+      expiration:
+        duration: 15
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: root
+    url: jdbc:postgresql://localhost:5432/Cockpit-app?currentSchema=schema_test
+#   url: jdbc:postgresql://localhost:5432/Cockpit-app?currentSchema=schema_dev
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+  mail:
+    host: smtp.gmail.com
+    password: yuzo hnbp xvfl xxyt
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        transport:
+          protocol: smtp
+    username: hamza.h93290@gmail.com
+  sql:
+    init:
+#      data-locations: classpath:data-dev.sql
+      data-locations: classpath:data-test.sql
+      mode: always
+#      schema-locations: classpath:schema-dev.sql
+      schema-locations: classpath:schema-test.sql
+token:
+  expiration:
+    duration: 9000000

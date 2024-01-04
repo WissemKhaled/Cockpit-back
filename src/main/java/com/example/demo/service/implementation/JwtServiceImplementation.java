@@ -22,7 +22,7 @@ import io.jsonwebtoken.security.Keys;
 public class JwtServiceImplementation implements JwtService {
 
 	@Value("${jwt.secret}")
-    private String secret;
+    private String jwtSecret;
 	
 	@Value("${token.expiration.duration}")
 	private int tokenExpirationDuration;
@@ -42,7 +42,7 @@ public class JwtServiceImplementation implements JwtService {
 	} 
 
 	private Key getSignKey() { 
-		byte[] keyBytes= Decoders.BASE64.decode(secret); 
+		byte[] keyBytes= Decoders.BASE64.decode(jwtSecret); 
 		return Keys.hmacShaKeyFor(keyBytes); 
 	} 
 
