@@ -16,19 +16,19 @@ import com.example.demo.entity.ServiceProvider;
 @Mapper
 public interface ServiceProviderMapper {
 	
-	@Update("Update service_provider SET sp_fk_status_id = 4 WHERE sp_id = #{spId}")
+	@Update("Update gst_service_provider SET sp_fk_status_id = 4 WHERE sp_id = #{spId}")
 	@Result(property = "spId", column = "sp_id")
 	@Result(property = "spStatus.stId", column = "sp_fk_status_id")
 	int archiveServiceProvider(ServiceProvider serviceProvider);
 	
 	
-	@Insert("INSERT INTO service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date, sp_fk_subcontractor_id, sp_fk_status_id)"
+	@Insert("INSERT INTO gst_service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date, sp_fk_subcontractor_id, sp_fk_status_id)"
 			+ "VALUES (#{spFirstName}, #{spName}, #{spEmail}, #{spCreationDate}, #{spLastUpdateDate}, #{subcontractor.sId}, #{spStatus.stId})")
 	@Options(useGeneratedKeys = true, keyProperty = "spId", keyColumn = "sp_id")
 	int insertServiceProvider(ServiceProvider serviceProvider);
 	
 	
-	@Update("UPDATE service_provider SET sp_first_name = #{spFirstName}, sp_name = #{spName}, sp_email = #{spEmail}, sp_lastUpdate_date = #{spLastUpdateDate}, "
+	@Update("UPDATE gst_service_provider SET sp_first_name = #{spFirstName}, sp_name = #{spName}, sp_email = #{spEmail}, sp_lastUpdate_date = #{spLastUpdateDate}, "
 			+ "sp_fk_status_id = #{spStatus.stId}, sp_fk_subcontractor_id = #{subcontractor.sId} "
 			+ "WHERE sp_id = #{spId}")
 	@Options(useGeneratedKeys = true, keyProperty = "spId", keyColumn = "sp_id")
@@ -36,7 +36,7 @@ public interface ServiceProviderMapper {
 	
 	
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, sp.sp_fk_subcontractor_id, sp.sp_fk_status_id "
-			+ "FROM service_provider sp "
+			+ "FROM gst_service_provider sp "
 			+ "WHERE sp.sp_id = #{spId}")
 	@Result(property = "spId", column = "sp_id")
 	@Result(property = "spFirstName", column = "sp_first_name")
@@ -51,9 +51,9 @@ public interface ServiceProviderMapper {
 	
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
 			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName, s.s_email as subcontractor_sEmail " 
-			+ "FROM service_provider sp "
-			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
-			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
+			+ "FROM gst_service_provider sp "
+			+ "INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id "
 			+ "WHERE sp.sp_id = #{spId}")
 	@Result(property = "spId", column = "sp_id")
 	@Result(property = "spFirstName", column = "sp_first_name")
@@ -70,7 +70,7 @@ public interface ServiceProviderMapper {
 	
 	
 	@Select("SELECT sp.sp_id, sp.sp_email "
-			+ "FROM service_provider sp "
+			+ "FROM gst_service_provider sp "
 			+ "WHERE sp.sp_email = #{spEmail}")
 	@Result(property = "spId", column = "sp_id")
 	@Result(property = "spEmail", column = "sp_email")
@@ -79,8 +79,8 @@ public interface ServiceProviderMapper {
 	
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, "
 			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
-			+ "FROM service_provider sp "
-			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "FROM gst_service_provider sp "
+			+ "INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
 			+ "WHERE sp_fk_subcontractor_id = #{sId} "
 			+ "ORDER BY sp_id")
 	@Result(property = "spId", column = "sp_id")
@@ -97,9 +97,9 @@ public interface ServiceProviderMapper {
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, "
 			+ "st.st_id as status_stId, st.st_name as status_stName, "
 			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
-			+ "FROM service_provider sp "
-			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
-			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
+			+ "FROM gst_service_provider sp "
+			+ "INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id "
 			+ "WHERE st.st_id != 4 "
 			+ "ORDER BY subcontractor_sName, st.st_id, sp.sp_name ${sorting} LIMIT #{offset} OFFSET #{pageSize}")
 	@Result(property = "spId", column = "sp_id")
@@ -120,9 +120,9 @@ public interface ServiceProviderMapper {
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, "
 			+ "st.st_id as status_stId, st.st_name as status_stName, "
 			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
-			+ "FROM service_provider sp "
-			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
-			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
+			+ "FROM gst_service_provider sp "
+			+ "INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id "
 			+ "WHERE st.st_id = ${statusId} "
 			+ "ORDER BY subcontractor_sName, sp.sp_name ${sorting} LIMIT #{offset} OFFSET #{pageSize}")
 	@Result(property = "spId", column = "sp_id")
@@ -143,9 +143,9 @@ public interface ServiceProviderMapper {
 	
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
 			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
-			+ "FROM service_provider sp "
-			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
-			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
+			+ "FROM gst_service_provider sp "
+			+ "INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id "
 			+ "WHERE ${columnName} ILIKE #{searchTerms} || '%' "
 			+ "AND st.st_id = ${statusId} "
 			+ "ORDER BY  subcontractor_sName, st.st_id, sp.sp_email LIMIT #{offset} OFFSET #{pageSize}")
@@ -169,9 +169,9 @@ public interface ServiceProviderMapper {
 	
 	@Select("SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName, "
 			+ "s.s_id as subcontractor_sId, s.s_name as subcontractor_sName " 
-			+ "FROM service_provider sp "
-			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
-			+ "INNER JOIN status st ON sp.sp_fk_status_id = st.st_id "
+			+ "FROM gst_service_provider sp "
+			+ "INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id "
 			+ "WHERE ${columnName} ILIKE #{searchTerms} || '%' "
 			+ "AND st.st_id != 4 "
 			+ "ORDER BY  subcontractor_sName, st.st_id, sp.sp_email LIMIT #{offset} OFFSET #{pageSize}")
@@ -192,17 +192,17 @@ public interface ServiceProviderMapper {
 			@Param("offset") int pageSize);
 	
 	
-	@Select("SELECT COUNT(*) FROM service_provider WHERE sp_fk_status_id != 4")
+	@Select("SELECT COUNT(*) FROM gst_service_provider WHERE sp_fk_status_id != 4")
 	int countAllNonArchivedServiceProviders();
 
 	
-	@Select("SELECT COUNT(*) FROM service_provider WHERE sp_fk_status_id = ${statusId}")
+	@Select("SELECT COUNT(*) FROM gst_service_provider WHERE sp_fk_status_id = ${statusId}")
 	int countAllServiceProvidersFiltredByStatus(int statusId);
 
 	
 	@Select("SELECT COUNT(*) " 
-			+ "FROM service_provider sp "
-			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "FROM gst_service_provider sp "
+			+ "INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
 			+ "WHERE ${columnName} ILIKE #{searchTerms} || '%' "
 			+ "AND sp.sp_fk_status_id != 4 ")
 	int findNumberOfAllServiceProvidersByCriteria(
@@ -211,8 +211,8 @@ public interface ServiceProviderMapper {
 	
 	
 	@Select("SELECT COUNT(*) " 
-			+ "FROM service_provider sp "
-			+ "INNER JOIN subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
+			+ "FROM gst_service_provider sp "
+			+ "INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id "
 			+ "WHERE ${columnName} ILIKE #{searchTerms} || '%' "
 			+ "AND sp.sp_fk_status_id = ${statusId} ")
 	int findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus(
