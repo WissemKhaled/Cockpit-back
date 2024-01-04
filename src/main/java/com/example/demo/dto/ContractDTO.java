@@ -1,9 +1,17 @@
 package com.example.demo.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class ContractDTO {
+	@NotNull
 	private int cId;
+
 	private String cContractNumber;
+
+	@NotNull
 	private int cFkSubcontractorId;
+
+	@NotNull
 	private int cFKserviceProviderId;
 
 	public ContractDTO() {
