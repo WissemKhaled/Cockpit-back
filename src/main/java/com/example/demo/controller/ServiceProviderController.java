@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.dto.StatusDto;
 import com.example.demo.exception.AlreadyArchivedEntity;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
@@ -54,16 +55,18 @@ public class ServiceProviderController {
 	}
 
 	/**
-	 * Enregistre ou met à jour un prestataire.
+	 * Enregistre ou met à jour un prestataire et renvoie le numéro de la page qui lui correspond.
 	 *
 	 * @param serviceProviderDto Les données du prestataire à enregistrer ou mettre à jour.
-	 * @return ResponseEntity contenant le ServiceProviderDto enregistré ou mis à jour avec le statut OK,
+	 * @return ResponseEntity contenant le ServiceProviderDto enregistré, ou mis à jour avec le statut OK et le numéro de la page qui lui correspond,
 	 *         ResponseEntity avec HttpStatus.NOT_FOUND si le prestataire n'est pas trouvé lors de la mise à jour,
 	 *         ResponseEntity avec HttpStatus.CONFLICT si des données en double sont détectées lors de l'enregistrement,
 	 *         ResponseEntity avec HttpStatus.BAD_REQUEST en cas d'erreur.
 	 */
 	@PostMapping("/save")
-	public ResponseEntity<ServiceProviderDto> saveServiceProvider(@Valid @RequestBody ServiceProviderDto serviceProviderDto) {
+	public ResponseEntity<ServiceProviderDto> saveServiceProvider(
+			@Valid @RequestBody ServiceProviderDto serviceProviderDto, 
+			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize) {
 	    try {
 	        // Formattage des données du prestataire
 	        serviceProviderDto.setSpFirstName(serviceProviderService.firstNameAndEmailFormatter(serviceProviderDto.getSpFirstName()));
@@ -76,14 +79,20 @@ public class ServiceProviderController {
 	        if (isServiceProviderExist) {
 	            // Mise à jour du prestataire
 	            serviceProviderService.handleServiceProviderUpdating(serviceProviderDto);
-	            int updateServiceProviderId = serviceProviderService.updateServiceProvider(serviceProviderDto);
-	            return new ResponseEntity<>(serviceProviderService.getServiceProviderById(updateServiceProviderId), HttpStatus.OK);
+	            serviceProviderService.updateServiceProvider(serviceProviderDto);
+                int newPageNumberOfUpdatedServiceProvider = serviceProviderService.getPageNumberOfNewlyAddedOrUpdatedServiceProvider(serviceProviderDto.getSpId(),pageSize);
+                ServiceProviderDto updatedServiceProvider = serviceProviderService.getServiceProviderById(serviceProviderDto.getSpId());
+                updatedServiceProvider.setNewPage(newPageNumberOfUpdatedServiceProvider);
+                return new ResponseEntity<>(updatedServiceProvider, HttpStatus.OK);
 	        } else {
 	            if (serviceProviderDto.getSpId() > 0) {
 	                // Enregistrement d'un nouveau prestataire
 	                serviceProviderService.handleServiceProviderSaving(serviceProviderDto);
 	                int savedServiceProviderId = serviceProviderService.saveServiceProvider(serviceProviderDto);
-	                return new ResponseEntity<>(serviceProviderService.getServiceProviderById(savedServiceProviderId), HttpStatus.CREATED);
+	                int pageNumberOfNewlyAddedServiceProvider = serviceProviderService.getPageNumberOfNewlyAddedOrUpdatedServiceProvider(savedServiceProviderId,pageSize);
+	                ServiceProviderDto savedServiceProvider = serviceProviderService.getServiceProviderById(savedServiceProviderId);
+	                savedServiceProvider.setNewPage(pageNumberOfNewlyAddedServiceProvider);
+	                return new ResponseEntity<>(savedServiceProvider ,HttpStatus.CREATED);
 	            } else {
 	                return new ResponseEntity("Invalid Id", HttpStatus.BAD_REQUEST);
 	            }
@@ -93,9 +102,9 @@ public class ServiceProviderController {
 	    } catch (EntityDuplicateDataException e) {
 	        return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
 	    } catch (GeneralException e) {
-	        return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-	    } catch (Exception e) {
 	        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+	    } catch (Exception e) {
+	        return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 
@@ -265,6 +274,25 @@ public class ServiceProviderController {
 			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	/**
+	 * Récupère la liste de tous les statuts des prestataires.
+	 *
+	 * @return ResponseEntity contenant la liste des DTO des statuts avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si aucun statut n'est trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
+	 */
+	@GetMapping("/all-status")
+	public ResponseEntity<List<StatusDto>> getAllServiceProvider() {
+		try {
+			return new ResponseEntity<>(serviceProviderService.getAllStatus(), HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	

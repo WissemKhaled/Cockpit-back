@@ -1,7 +1,17 @@
 package com.example.demo.controller;
 
+import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.entity.MessageModel;
 import com.example.demo.exception.MessageModelNotFoundException;
+import com.example.demo.service.EmailReminderSubcontractorService;
 import com.example.demo.service.MessageModelService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,9 +29,16 @@ import java.util.List;
 public class MessageModelController {
 
 	private final MessageModelService messageModelService;
+	private final EmailReminderSubcontractorService emailReminderSubcontractorService;
 
-	public MessageModelController(MessageModelService messageModelService) {
+	
+
+	public MessageModelController(
+		MessageModelService messageModelService,
+		EmailReminderSubcontractorService emailReminderSubcontractorService
+	) {
 		this.messageModelService = messageModelService;
+		this.emailReminderSubcontractorService = emailReminderSubcontractorService;
 	}
 
 	@GetMapping("/getAllMessages/{statusId}")
@@ -38,6 +55,20 @@ public class MessageModelController {
 
 		} catch (MessageModelNotFoundException e) {
 			return (ResponseEntity<Page<MessageModel>>) ResponseEntity.notFound();
+		}
+	}
+	
+	@GetMapping("/getAllMessagesByServiceProviderId/{serviceproviderId}")
+	public ResponseEntity<List<MessageModel>> getAllMessageModelsAndStatusByServiceProviderId(
+			@PathVariable("serviceproviderId") Integer serviceproviderId) {
+
+
+		try {
+			return new ResponseEntity<>(messageModelService.getAllMessageModelsAndStatusByServiceProviderId(serviceproviderId), HttpStatus.OK);
+
+		} catch (MessageModelNotFoundException e) {
+
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
 	}
 
@@ -57,6 +88,10 @@ public class MessageModelController {
 			List<MessageModel> messageModels = allMessages.subList(start, end);
 
 			Page<MessageModel> page = new PageImpl<>(messageModels, pageable, allMessages.size());
+			
+			// appel de la méthode qui gère les relances du sous-traitant
+			emailReminderSubcontractorService.checkRelaunchSubcontractor(page, subcontractorId);
+			
 			return ResponseEntity.ok(page);
 
 		} catch (MessageModelNotFoundException e) {

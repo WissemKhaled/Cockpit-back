@@ -42,6 +42,9 @@ public class ServiceProviderDto {
 	@JsonProperty("subcontractorSName")
 	private String subcontractorSName;
 
+	@JsonProperty("newPage")
+	private int newPage;
+
 	public ServiceProviderDto() {
 	}
 
@@ -119,6 +122,14 @@ public class ServiceProviderDto {
 
 	public void setSubcontractorSName(String subcontractorSName) {
 		this.subcontractorSName = subcontractorSName;
+	}
+
+	public int getNewPage() {
+		return newPage;
+	}
+
+	public void setNewPage(int newPage) {
+		this.newPage = newPage;
 	}
 
 	@Override

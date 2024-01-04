@@ -3,6 +3,7 @@ package com.example.demo.service;
 import java.util.List;
 
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.dto.StatusDto;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.GeneralException;
 
@@ -173,5 +174,30 @@ public interface ServiceProviderService {
 	 */
 	int getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
 			String columnName) throws GeneralException;
+
+
+	/**
+	 * Récupère le nombre de la page ou le nouveau prestataire est enregistré.
+	 *
+	 * @param savedServiceProviderId      l'id du nouveau prestataire enregistré.
+	 * @param pageSize         Le nombre d'éléments par page.
+	 * @return Le nombre de page ou le nouveau prestataire est enregistré, sinon elle retourne une valeur par défaut égale à 1.
+	 */
+	int getPageNumberOfNewlyAddedOrUpdatedServiceProvider(int savedServiceProviderId, int pageSize);
+	
+	
+	/**
+	 * Récupère la liste paginée et triée des prestataires en fonction des paramètres spécifiés et du statut.
+	 *
+	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
+	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
+	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
+	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
+	 * @param statusId    L'ID du statut pour filtrer les prestataires.
+	 * @return Liste des DTO des prestataires paginée et triée avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
+	 */
+	List<StatusDto> getAllStatus();
 
 }

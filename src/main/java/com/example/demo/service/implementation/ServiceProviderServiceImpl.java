@@ -10,15 +10,18 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.GstStatusModelServiceProviderDTO;
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.mapper.GstStatusModelServiceProviderDtoMapper;
 import com.example.demo.entity.GstStatusModelServiceProvider;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
+import com.example.demo.dto.mapper.StatusDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.EmailReminderMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
+import com.example.demo.mappers.StatusMapper;
 import com.example.demo.service.ServiceProviderService;
 
 @Service
@@ -26,16 +29,20 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final ServiceProviderMapper serviceProviderMapper;
 	private final EmailReminderMapper emailReminderMapper;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
+	private final StatusDtoMapper statusDtoMapper;
+	private final StatusMapper statusMapper;
 	private final GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper;
 	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
 
 	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper,
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
-			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper, EmailReminderMapper emailReminderMapper) {
+			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper, EmailReminderMapper emailReminderMapper, StatusDtoMapper statusDtoMapper, StatusMapper statusMapper) {
 		this.serviceProviderMapper = serviceProviderMapper;
 		this.emailReminderMapper = emailReminderMapper;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
 		this.gstStatusModelServiceProviderDtoMapper = gstStatusModelServiceProviderDtoMapper;
+		this.statusDtoMapper = statusDtoMapper;
+		this.statusMapper = statusMapper;
 	}
 
 	@Override
@@ -107,10 +114,10 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	@Override
 	public List<ServiceProviderDto> getServiceProvidersBySubcontractorId(int subcontractorId) {
 	    // Récupération des prestataires associés au sous-traitant par son ID
-	    List<ServiceProvider> serviceProviders = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId);
+	    List<ServiceProviderDto> serviceProviders = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
 
 	    // Conversion des prestataires en DTO
-	    return serviceProviders.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();	
+	    return serviceProviders;	
 	}
 
 	@Override
@@ -126,8 +133,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	@Override
 	public int checkIfSubcontractorExistBySpEmail(String serviceProviderSpEmail) {
-		ServiceProvider foundServiceProvider = serviceProviderMapper
-				.findServiceProviderBySpEmail(serviceProviderSpEmail);
+		ServiceProvider foundServiceProvider = serviceProviderMapper.findServiceProviderBySpEmail(serviceProviderSpEmail);
 		if (foundServiceProvider == null)
 			return 0;
 		return foundServiceProvider.getSpId();
@@ -274,6 +280,34 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
 	    }
+	}
+
+	@Override
+	public int getPageNumberOfNewlyAddedOrUpdatedServiceProvider(int savedServiceProviderId, int pageSize) {
+        int newPage = 1;
+        int newIndex = -1;
+		int countAllNonArchivedServiceProviders = serviceProviderMapper.countAllNonArchivedServiceProviders();
+        List<ServiceProviderDto> sortedServiceProviders = serviceProviderMapper.findAllNonArchivedServiceProviders("asc", 0, countAllNonArchivedServiceProviders).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+        for (int i = 0; i < sortedServiceProviders.size(); i++) {
+            if (sortedServiceProviders.get(i).getSpId() == savedServiceProviderId) {
+                newIndex = i;
+                break;
+            }
+        }
+        if (newIndex != -1) {
+            // calculer le nombre de page en se basant sur l'indice et le nombre d'élément par page.
+            newPage = (int) Math.ceil((double) (newIndex + 1) / pageSize);
+        }
+        return newPage;
+	}
+	
+	@Override
+	public List<StatusDto> getAllStatus() {
+		List<StatusDto> foundedStatus = statusMapper.getAllStatus().stream().map(statusDtoMapper::statusToDto).toList();
+		if (foundedStatus.isEmpty()) {
+			throw new EntityNotFoundException("Il n'y a pas de status enregistré");
+		}
+		return foundedStatus;
 	}
 	
 }

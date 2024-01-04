@@ -74,7 +74,7 @@ public class SendMailServiceImpl implements SendMailService {
 			}
 
 			// ajoute des contactes en copy si il y en a
-			if (mailDTO.getMsCc() != "") {
+			if (mailDTO.getMsCc() != null && !mailDTO.getMsCc().isEmpty()) {
 
 				String[] adressesCopy = mailDTO.getMsCc().split(";");
 
@@ -82,7 +82,7 @@ public class SendMailServiceImpl implements SendMailService {
 					helper.addCc(adresse);
 				}
 			}
-			// mailSender.send(message);
+			mailSender.send(message);
 			mailMapper.saveMailAndSend(mailDTO);
 
 			LOG.info("Le courrier a été envoyé avec succès !");
