@@ -14,7 +14,7 @@ import com.example.demo.entity.UUser;
 
 @Mapper
 public interface UUserMapper {
-	@Select("SELECT * FROM u_user WHERE u_email = #{email}")
+	@Select("SELECT * FROM gst_user WHERE u_email = #{email}")
 	@Results({
         @Result(property = "uId", column = "u_id"),
         @Result(property = "uEmail", column = "u_email"),
@@ -27,7 +27,7 @@ public interface UUserMapper {
     })
 	Optional<UUser> findByEmail(@Param("email") String state);
 	
-	@Select("SELECT * FROM u_user WHERE u_id = #{userId}")
+	@Select("SELECT * FROM gst_user WHERE u_id = #{userId}")
 	@Results({
         @Result(property = "uId", column = "u_id"),
         @Result(property = "uEmail", column = "u_email"),
