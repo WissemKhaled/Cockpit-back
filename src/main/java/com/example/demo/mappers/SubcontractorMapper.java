@@ -21,7 +21,7 @@ public interface SubcontractorMapper {
 			+ "WHERE s_fk_status_id != 4")
 	Integer countAllNonArchivedSubcontractors();
 
-	
+
 	@Select("SELECT COUNT(*) "
 			+ "FROM gst_subcontractor "
 			+ "WHERE s_fk_status_id = ${idStatus} ")
@@ -31,7 +31,7 @@ public interface SubcontractorMapper {
 	// ce code permet de renvoyer une liste de sous-traitans avec la
 	// pagination est le tri grave à la requette SQL
 	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName "
-			+ "FROM gst_subcontractor s " 
+			+ "FROM gst_subcontractor s "
 			+ "INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id "
 			+ "WHERE s.s_fk_status_id != 4 "
 			+ "ORDER BY s.s_fk_status_id, s_name ${sorting} LIMIT #{offset} OFFSET #{pageSize} ")
@@ -63,14 +63,14 @@ public interface SubcontractorMapper {
 	@Result(property = "status.stName", column = "status_stName")
 	List<Subcontractor> findAllSubcontractorsWithStatus(
 			@Param("nameColonne") String nameColonne,
-			@Param("sorting") String sorting, 
-			@Param("pageSize") int offset, 
+			@Param("sorting") String sorting,
+			@Param("pageSize") int offset,
 			@Param("offset") int pageSize,
 			@Param("statusId") int statusId);
 
 	
 	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName "
-			+ "FROM gst_subcontractor s " 
+			+ "FROM gst_subcontractor s "
 			+ "INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id "
 			+ "WHERE s.s_id = #{sId}")
 	@Result(property = "sId", column = "s_id")
@@ -84,7 +84,7 @@ public interface SubcontractorMapper {
 
 	
 	@Select("SELECT s.s_id, s.s_name "
-			+ "FROM gst_subcontractor s " 
+			+ "FROM gst_subcontractor s "
 			+ "WHERE s.s_name = #{sName}")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "sName", column = "s_name")
@@ -92,7 +92,7 @@ public interface SubcontractorMapper {
 
 	
 	@Select("SELECT s.s_id, s.s_email "
-			+ "FROM gst_subcontractor s " 
+			+ "FROM gst_subcontractor s "
 			+ "WHERE s.s_email = #{sEmail}")
 	@Result(property = "sId", column = "s_id")
 	@Result(property = "sEmail", column = "s_email")

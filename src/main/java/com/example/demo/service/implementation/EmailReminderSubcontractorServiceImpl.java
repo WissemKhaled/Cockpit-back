@@ -90,41 +90,41 @@ public class EmailReminderSubcontractorServiceImpl implements EmailReminderSubco
 	    return "Table intermédiaire des sous-traitants mise à jour avec succès";
 	}
 	
-	@Override
-	public void checkRelaunchSubcontractor(Page<MessageModel> messageModels, int subcontractorId) {
-		LocalDateTime currentDate = LocalDateTime.now();
-		
-		List<GstStatusModelSubcontractorDTO> gstStatusModelSubcontractorDTOList = emailReminderMapper.findSubcontractorReminderInfo(subcontractorId);
-		
-		for (MessageModel messageModel : messageModels) {
-			// System.out.println(messageModel);
-			
-			if (messageModel.getMmType().contains("Relance")) {
-				for (GstStatusModelSubcontractorDTO gstStatusModelSubcontractorDTO : gstStatusModelSubcontractorDTOList) {
-					 // si la date de validation n'est pas null et date de 7 jours, on met à jour le status
-					if (gstStatusModelSubcontractorDTO.getStatusMsValidationDate() != null && gstStatusModelSubcontractorDTO.getStatusMsValidationDate().plusDays(7).isBefore(currentDate)) {
-						// on met à jour le statusId de la table intermédiaire
-						gstStatusModelSubcontractorDTO.setStatusMsFkSubcontractorId(gstStatusModelSubcontractorDTO.getStatusMsFkSubcontractorId());
-					    gstStatusModelSubcontractorDTO.setStatusMsFkMessageModelId(gstStatusModelSubcontractorDTO.getStatusMsFkMessageModelId());
-					    gstStatusModelSubcontractorDTO.setStatusMsFkStatusId(1);
-					    gstStatusModelSubcontractorDTO.setStatusMsSentDate(gstStatusModelSubcontractorDTO.getStatusMsSentDate());
-					    gstStatusModelSubcontractorDTO.setStatusMsValidationDate(gstStatusModelSubcontractorDTO.getStatusMsValidationDate());
-					    
-					    GstStatusModelSubcontractor gstStatusModelSubcontractor = gstStatusModelSubcontractorDtoMapper.toGstStatusModelSubcontractor(gstStatusModelSubcontractorDTO);
-						
-						emailReminderMapper.updateGstStatusModelSubcontractor(gstStatusModelSubcontractor);
-						
-						log.info("Relance : Table intermédiaire mise à jour pour l'id : " + gstStatusModelSubcontractor.getStatusMsId());
-					} else {
-						log.error("Date de validation nulle ou < 7 jours");
-					}
-				}
-			} else {
-				System.out.println(messageModel);
-				log.error("Le message model n'est pas de type relance ou son statusId n'est pas nul");
-			}
-		}
-	}
+//	@Override
+//	public void checkRelaunchSubcontractor(Page<MessageModel> messageModels, int subcontractorId) {
+//		LocalDateTime currentDate = LocalDateTime.now();
+//		
+//		List<GstStatusModelSubcontractorDTO> gstStatusModelSubcontractorDTOList = emailReminderMapper.findSubcontractorReminderInfo(subcontractorId);
+//		
+//		for (MessageModel messageModel : messageModels) {
+//			// System.out.println(messageModel);
+//			
+//			if (messageModel.getMmType().contains("Relance")) {
+//				for (GstStatusModelSubcontractorDTO gstStatusModelSubcontractorDTO : gstStatusModelSubcontractorDTOList) {
+//					 // si la date de validation n'est pas null et date de 7 jours, on met à jour le status
+//					if (gstStatusModelSubcontractorDTO.getStatusMsValidationDate() != null && gstStatusModelSubcontractorDTO.getStatusMsValidationDate().plusDays(7).isBefore(currentDate)) {
+//						// on met à jour le statusId de la table intermédiaire
+//						gstStatusModelSubcontractorDTO.setStatusMsFkSubcontractorId(gstStatusModelSubcontractorDTO.getStatusMsFkSubcontractorId());
+//					    gstStatusModelSubcontractorDTO.setStatusMsFkMessageModelId(gstStatusModelSubcontractorDTO.getStatusMsFkMessageModelId());
+//					    gstStatusModelSubcontractorDTO.setStatusMsFkStatusId(1);
+//					    gstStatusModelSubcontractorDTO.setStatusMsSentDate(gstStatusModelSubcontractorDTO.getStatusMsSentDate());
+//					    gstStatusModelSubcontractorDTO.setStatusMsValidationDate(gstStatusModelSubcontractorDTO.getStatusMsValidationDate());
+//					    
+//					    GstStatusModelSubcontractor gstStatusModelSubcontractor = gstStatusModelSubcontractorDtoMapper.toGstStatusModelSubcontractor(gstStatusModelSubcontractorDTO);
+//						
+//						emailReminderMapper.updateGstStatusModelSubcontractor(gstStatusModelSubcontractor);
+//						
+//						log.info("Relance : Table intermédiaire mise à jour pour l'id : " + gstStatusModelSubcontractor.getStatusMsId());
+//					} else {
+//						log.error("Date de validation nulle ou < 7 jours");
+//					}
+//				}
+//			} else {
+//				System.out.println(messageModel);
+//				log.error("Le message model n'est pas de type relance ou son statusId n'est pas nul");
+//			}
+//		}
+//	}
 
 	@Override
 	public List<GstStatusModelSubcontractorDTO> getSubcontractorReminderInfoBySId(int subcontractorId) {

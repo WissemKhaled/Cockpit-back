@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -74,14 +75,14 @@ public class MessageModelController {
 
 
 
-	@GetMapping("/getAllMessagesByServiceProviderId/{subcontractorId}")
-	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusBySubcontractorCategoryAndId(
+	@GetMapping("/getAllMessagesById/{subcontractorId}")
+	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusForSubcontractorCategory(
 			@PathVariable("subcontractorId") Integer subcontractorId,
 			@PageableDefault(page = 0, size = 6) Pageable pageable) {
 
 
 		try {
-			List<MessageModel> allMessages = messageModelService.getAllMessageModelsAndStatusBySubcontractorCategoryAndId(subcontractorId);
+			List<MessageModel> allMessages = messageModelService.getAllMessageModelsAndStatusBySubcontractorCategory(subcontractorId);
 
 			int start = (int) pageable.getOffset();
 			int end = Math.min((start + pageable.getPageSize()), allMessages.size());
