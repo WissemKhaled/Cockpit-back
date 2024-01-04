@@ -9,22 +9,36 @@ import com.example.demo.entity.MessageModel;
 @Mapper
 public interface MessageModelMapper {
 
-/*
-	@Select("SELECT  gmm.mm_id, gmm.mm_category, gmm.mm_type, gmm.mm_subject, gmm.mm_body, st.st_Id as status_stId,st.st_name as status_stName, st.st_description as status_stDescription "
-            +"FROM gst_message_model gmm "
-            +"INNER JOIN status st ON mm_fk_status_id = st.st_Id "
-            +"WHERE mm_fk_status_id = ${statusId}")
+//
+//	@Select("SELECT  gmm.mm_id, gmm.mm_category, gmm.mm_type, gmm.mm_subject, gmm.mm_body, st.st_Id as status_stId,st.st_name as status_stName, st.st_description as status_stDescription "
+//            +"FROM gst_message_model gmm "
+//            +"INNER JOIN status st ON mm_fk_status_id = st.st_Id "
+//            +"WHERE mm_fk_status_id = ${statusId}")
+//	@Result(property = "mmId", column = "mm_id")
+//	@Result(property = "mmCategory", column = "mm_category")
+//	@Result(property = "mmType", column = "mm_type")
+//	@Result(property = "mmSubject", column = "mm_subject")
+//	@Result(property = "mmBody", column = "mm_body")
+//	@Result(property = "mmCreationDate", column = "mm_creationDate")
+//	@Result(property = "mmLastUpdateDate", column = "mm_lastUpdateDate")
+//	@Result(property = "status.stId", column = "status_stId")
+//	@Result(property = "status.stName", column = "status_stName")
+//	@Result(property = "status.stDescription", column = "status_stDescription")
+	List<MessageModel>getAllMessageModelWhitStatus(@Param("statusId") Integer statusId);
+	
+	@Select("SELECT * , gst_cat.cat_id as cat_id, gst_cat.cat_name as cat_name "
+            +"FROM gst_message_model "
+            +"INNER JOIN gst_category gst_cat ON mm_fk_category_id = gst_cat.cat_id ")
 	@Result(property = "mmId", column = "mm_id")
-	@Result(property = "mmCategory", column = "mm_category")
-	@Result(property = "mmType", column = "mm_type")
+	@Result(property = "mmLink", column = "mm_link")
 	@Result(property = "mmSubject", column = "mm_subject")
 	@Result(property = "mmBody", column = "mm_body")
+	@Result(property = "mmHasEmail", column = "mm_has_email")
 	@Result(property = "mmCreationDate", column = "mm_creationDate")
 	@Result(property = "mmLastUpdateDate", column = "mm_lastUpdateDate")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
-	@Result(property = "status.stDescription", column = "status_stDescription")
-	List<MessageModel>getAllMessageModelWhitStatus(@Param("statusId") Integer statusId);*/
+	@Result(property = "category.catId", column = "cat_id")
+	@Result(property = "category.catName", column = "cat_name")
+	List<MessageModel>getAllMessageModel();
 	
 	@Select("SELECT  gmm.mm_id, smsp.status_msp_id, gmm.mm_category, smsp.status_msp_fk_service_provider_id, smsp.status_msp_fk_status_id, "
 			+ "st.st_id as status_stId, st.st_name as status_stName, gmm.mm_type, gmm.mm_subject, gmm.mm_body, gmm.mm_creation_date, gmm.mm_last_update "
@@ -49,7 +63,6 @@ public interface MessageModelMapper {
 	@Result(property = "status.stId", column = "status_stId")
 	List<MessageModel>getMessageModelsAndStatusByServiceProviderId(@Param("serviceProviderId") Integer serviceProviderId);
 
-	List<MessageModel>getAllMessageModelWhitStatus(@Param("statusId") Integer statusId);
 
 	@Select("SELECT DISTINCT mm.mm_id, mm.mm_category, mm.mm_type, mm.mm_subject, mm.mm_body, " +
 			"mm.mm_creation_date, mm.mm_last_update, mm.mm_fk_status_id, st.st_name as StName, " +

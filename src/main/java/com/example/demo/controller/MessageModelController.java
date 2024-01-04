@@ -41,11 +41,11 @@ public class MessageModelController {
 		this.messageModelService = messageModelService;
 		this.emailReminderSubcontractorService = emailReminderSubcontractorService;
 	}
-
+	
 	@GetMapping("/getAll")
-	public ResponseEntity<List<MessageModel>> getAllMessageModelWhitStatus(@RequestParam("statusId") Integer statusId) {
+	public ResponseEntity<List<MessageModel>> getAllMessageModel() {
 		try {
-			return new ResponseEntity<>(messageModelService.getAllMessageModelWhitStatus(statusId), HttpStatus.OK);
+			return new ResponseEntity<>(messageModelService.getAllMessageModel(), HttpStatus.OK);
 
 		} catch (MessageModelNotFoundException e) {
 
@@ -69,29 +69,29 @@ public class MessageModelController {
 
 
 
-	@GetMapping("/getAllMessagesById/{subcontractorId}")
-	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusForSubcontractorCategory(
-			@PathVariable("subcontractorId") Integer subcontractorId,
-			@PageableDefault(page = 0, size = 6) Pageable pageable) {
-
-
-		try {
-			List<MessageModel> allMessages = messageModelService.getAllMessageModelsAndStatusBySubcontractorCategory(subcontractorId);
-
-			int start = (int) pageable.getOffset();
-			int end = Math.min((start + pageable.getPageSize()), allMessages.size());
-			List<MessageModel> messageModels = allMessages.subList(start, end);
-
-			Page<MessageModel> page = new PageImpl<>(messageModels, pageable, allMessages.size());
-			
-			// appel de la méthode qui gère les relances du sous-traitant
-			emailReminderSubcontractorService.checkRelaunchSubcontractor(page, subcontractorId);
-			
-			return ResponseEntity.ok(page);
-
-		} catch (MessageModelNotFoundException e) {
-			return (ResponseEntity<Page<MessageModel>>) ResponseEntity.notFound();
-		}
-	}
+//	@GetMapping("/getAllMessagesById/{subcontractorId}")
+//	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusForSubcontractorCategory(
+//			@PathVariable("subcontractorId") Integer subcontractorId,
+//			@PageableDefault(page = 0, size = 6) Pageable pageable) {
+//
+//
+//		try {
+//			List<MessageModel> allMessages = messageModelService.getAllMessageModelsAndStatusBySubcontractorCategory(subcontractorId);
+//
+//			int start = (int) pageable.getOffset();
+//			int end = Math.min((start + pageable.getPageSize()), allMessages.size());
+//			List<MessageModel> messageModels = allMessages.subList(start, end);
+//
+//			Page<MessageModel> page = new PageImpl<>(messageModels, pageable, allMessages.size());
+//			
+//			// appel de la méthode qui gère les relances du sous-traitant
+//			emailReminderSubcontractorService.checkRelaunchSubcontractor(page, subcontractorId);
+//			
+//			return ResponseEntity.ok(page);
+//
+//		} catch (MessageModelNotFoundException e) {
+//			return (ResponseEntity<Page<MessageModel>>) ResponseEntity.notFound();
+//		}
+//	}
 
 }

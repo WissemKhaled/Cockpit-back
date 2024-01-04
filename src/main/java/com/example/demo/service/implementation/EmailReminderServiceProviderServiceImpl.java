@@ -90,39 +90,39 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 	    return "Table intermédiaire des prestataires mise à jour avec succès";
 	}
 	
-	@Override
-	public void checkRelaunchServiceProvider(Page<MessageModel> messageModels, int serviceProviderId) {
-		LocalDateTime currentDate = LocalDateTime.now();
-		
-		List<GstStatusModelServiceProviderDTO> gstStatusModelServiceProviderDTOList = emailReminderMapper.findServiceProviderReminderInfo(serviceProviderId);
-		
-		for (MessageModel messageModel : messageModels) {
-			if (messageModel.getMmType().contains("Relance")) {
-				for (GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO : gstStatusModelServiceProviderDTOList) {
-					 // si la date de validation n'est pas null et date de 7 jours, on met à jour le status
-					if (gstStatusModelServiceProviderDTO.getStatusMspValidationDate() != null && gstStatusModelServiceProviderDTO.getStatusMspValidationDate().plusDays(7).isBefore(currentDate)) {
-						// on met à jour le statusId de la table intermédiaire
-						gstStatusModelServiceProviderDTO.setStatusMspFkServiceProviderId(serviceProviderId);
-					    gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(gstStatusModelServiceProviderDTO.getStatusMspFkMessageModelId());
-					    gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(1);
-					    gstStatusModelServiceProviderDTO.setStatusMspSentDate(gstStatusModelServiceProviderDTO.getStatusMspSentDate());
-					    gstStatusModelServiceProviderDTO.setStatusMspValidationDate(gstStatusModelServiceProviderDTO.getStatusMspValidationDate());
-					    
-					    GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelServiceProvider(gstStatusModelServiceProviderDTO);
-						
-						emailReminderMapper.updateGstStatusModelServiceProvider(gstStatusModelServiceProvider);
-						
-						log.info("Relance : Table intermédiaire mise à jour pour l'id : " + gstStatusModelServiceProvider.getStatusMspId());
-					} else {
-						log.error("Date de validation nulle ou < 7 jours");
-					}
-				}
-			} else {
-				System.out.println(messageModel);
-				log.error("Le message model n'est pas de type relance ou son statusId n'est pas nul");
-			}
-		}
-	}
+//	@Override
+//	public void checkRelaunchServiceProvider(Page<MessageModel> messageModels, int serviceProviderId) {
+//		LocalDateTime currentDate = LocalDateTime.now();
+//		
+//		List<GstStatusModelServiceProviderDTO> gstStatusModelServiceProviderDTOList = emailReminderMapper.findServiceProviderReminderInfo(serviceProviderId);
+//		
+//		for (MessageModel messageModel : messageModels) {
+//			if (messageModel.getMmType().contains("Relance")) {
+//				for (GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO : gstStatusModelServiceProviderDTOList) {
+//					 // si la date de validation n'est pas null et date de 7 jours, on met à jour le status
+//					if (gstStatusModelServiceProviderDTO.getStatusMspValidationDate() != null && gstStatusModelServiceProviderDTO.getStatusMspValidationDate().plusDays(7).isBefore(currentDate)) {
+//						// on met à jour le statusId de la table intermédiaire
+//						gstStatusModelServiceProviderDTO.setStatusMspFkServiceProviderId(serviceProviderId);
+//					    gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(gstStatusModelServiceProviderDTO.getStatusMspFkMessageModelId());
+//					    gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(1);
+//					    gstStatusModelServiceProviderDTO.setStatusMspSentDate(gstStatusModelServiceProviderDTO.getStatusMspSentDate());
+//					    gstStatusModelServiceProviderDTO.setStatusMspValidationDate(gstStatusModelServiceProviderDTO.getStatusMspValidationDate());
+//					    
+//					    GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelServiceProvider(gstStatusModelServiceProviderDTO);
+//						
+//						emailReminderMapper.updateGstStatusModelServiceProvider(gstStatusModelServiceProvider);
+//						
+//						log.info("Relance : Table intermédiaire mise à jour pour l'id : " + gstStatusModelServiceProvider.getStatusMspId());
+//					} else {
+//						log.error("Date de validation nulle ou < 7 jours");
+//					}
+//				}
+//			} else {
+//				System.out.println(messageModel);
+//				log.error("Le message model n'est pas de type relance ou son statusId n'est pas nul");
+//			}
+//		}
+//	}
 
 	@Override
 	public List<GstStatusModelServiceProviderDTO> getServiceProviderReminderInfoBySpId(int serviceProviderId) {

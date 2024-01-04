@@ -18,16 +18,16 @@ public class MessageModelServiceImpl implements MessageModelService {
 		this.messageModelMapper = mapper;
 	}
 
+	
 	@Override
-	public List<MessageModel> getAllMessageModelWhitStatus(Integer statusId) {
+	public List<MessageModel> getAllMessageModel() {
 
-		List<MessageModel> messageModel = messageModelMapper.getAllMessageModelWhitStatus(statusId);
+		List<MessageModel> messageModel = messageModelMapper.getAllMessageModel();
 		if (messageModel.isEmpty()) {
 			throw new MessageModelNotFoundException("aucun modèle de mail n'existe pour ce status !");
 		}
 		return messageModel;
 	}
-	
 	@Override
 	public List<MessageModel> getAllMessageModelsAndStatusByServiceProviderId(Integer serviceproviderId) {
 		
