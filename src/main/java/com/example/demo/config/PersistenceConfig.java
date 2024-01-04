@@ -17,7 +17,7 @@ public class PersistenceConfig {
 	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/C?currentSchema=schema_test");
+		dataSource.setUrl("jdbc:postgresql://localhost:5432/Cockpit-app");
 		dataSource.setUsername("postgres");
 		dataSource.setPassword("root");
 		return dataSource;
