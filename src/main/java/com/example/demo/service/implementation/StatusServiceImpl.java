@@ -6,6 +6,9 @@ import com.example.demo.entity.Status;
 import com.example.demo.mappers.StatusMapper;
 import com.example.demo.service.StatusService;
 
+import java.util.Collections;
+import java.util.List;
+
 @Service
 public class StatusServiceImpl implements StatusService {
 
@@ -18,6 +21,11 @@ public class StatusServiceImpl implements StatusService {
 	@Override
 	public Status getStatusById(int stId) {
 		return statusMapper.findStatusById(stId);
+	}
+
+	@Override
+	public List<Status> getAllStatus() {
+		return statusMapper.getAllStatus();
 	}
 
 }
