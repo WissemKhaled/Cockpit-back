@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -25,27 +24,33 @@ public class MessageModelController {
 		this.messageModelService = messageModelService;
 	}
 
-	@GetMapping("/getAll")
-	public ResponseEntity<List<MessageModel>> getAllMessageModelWhitStatus(@RequestParam("statusId") Integer statusId) {
+	@GetMapping("/getAllMessages/{statusId}")
+	public ResponseEntity<Page<MessageModel>> getAllMessageModelWhitStatus(@PathVariable("statusId") Integer statusId, @PageableDefault(page = 0, size = 6) Pageable pageable) {
 		try {
-			return new ResponseEntity<>(messageModelService.getAllMessageModelWhitStatus(statusId), HttpStatus.OK);
+			List<MessageModel> allMessages = messageModelService.getAllMessageModelWhitStatus(statusId);
+
+			int start = (int) pageable.getOffset();
+			int end = Math.min((start + pageable.getPageSize()), allMessages.size());
+			List<MessageModel> messageModels = allMessages.subList(start, end);
+
+			Page<MessageModel> page = new PageImpl<>(messageModels, pageable, allMessages.size());
+			return ResponseEntity.ok(page);
 
 		} catch (MessageModelNotFoundException e) {
-
-			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+			return (ResponseEntity<Page<MessageModel>>) ResponseEntity.notFound();
 		}
 	}
 
 
 
-	@GetMapping("/getAllMessagesById/{subcontractorId}")
-	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusForSubcontractorCategory(
+	@GetMapping("/getAllMessagesByServiceProviderId/{subcontractorId}")
+	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusBySubcontractorCategoryAndId(
 			@PathVariable("subcontractorId") Integer subcontractorId,
 			@PageableDefault(page = 0, size = 6) Pageable pageable) {
 
 
 		try {
-			List<MessageModel> allMessages = messageModelService.getAllMessageModelsAndStatusBySubcontractorCategory(subcontractorId);
+			List<MessageModel> allMessages = messageModelService.getAllMessageModelsAndStatusBySubcontractorCategoryAndId(subcontractorId);
 
 			int start = (int) pageable.getOffset();
 			int end = Math.min((start + pageable.getPageSize()), allMessages.size());

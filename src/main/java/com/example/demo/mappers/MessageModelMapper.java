@@ -21,9 +21,9 @@ public interface MessageModelMapper {
 	@Result(property = "mmBody", column = "mm_body")
 	@Result(property = "mmCreationDate", column = "mm_creationDate")
 	@Result(property = "mmLastUpdateDate", column = "mm_lastUpdateDate")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
-	@Result(property = "status.stDescription", column = "status_stDescription")
+	@Result(property = "mmStatusId.stId", column = "status_stId")
+	@Result(property = "mmStatusId.stName", column = "status_stName")
+	@Result(property = "mmStatusId.stDescription", column = "status_stDescription")
 	List<MessageModel>getAllMessageModelWhitStatus(@Param("statusId") Integer statusId);
 
 
@@ -48,7 +48,7 @@ public interface MessageModelMapper {
 			@Result(property = "mmStatusId.stId", column = "statusId"),
 			@Result(property = "mmStatusId.stName", column = "StName")
 	})
-	List<MessageModel> getMessageModelsAndStatusBySubcontractorCategory(@Param("subcontractorId") Integer subcontractorId);
+	List<MessageModel> getMessageModelsAndStatusBySubcontractorCategoryAndId(@Param("subcontractorId") Integer subcontractorId);
 
 
 
