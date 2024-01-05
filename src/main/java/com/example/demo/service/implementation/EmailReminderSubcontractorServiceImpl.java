@@ -10,12 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.GstStatusModelServiceProviderDTO;
 import com.example.demo.dto.GstStatusModelSubcontractorDTO;
 import com.example.demo.dto.mapper.GstStatusModelSubcontractorDtoMapper;
 import com.example.demo.entity.GstStatusModelSubcontractor;
 import com.example.demo.entity.MessageModel;
-import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
