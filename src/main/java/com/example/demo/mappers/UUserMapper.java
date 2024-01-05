@@ -38,7 +38,7 @@ public interface UUserMapper {
         @Result(property = "uInsertionDate", column = "u_insertion_date"),
         @Result(property = "uLastUpdate", column = "u_last_update")
     })
-	Optional<UUser> findById(@Param("id") int state);
+	Optional<UUser> findById(@Param("userId") int userId);
 	
 	@Insert("INSERT INTO gst_user(u_email, u_password, u_first_name, u_last_name, u_status, u_insertion_date, u_last_update) VALUES (#{uEmail}, #{uPassword}, #{uFirstName}, #{uLastName}, #{uStatus}, #{uInsertionDate}, #{uLastUpdate})")
 	@Options(useGeneratedKeys = true, keyProperty = "uId", keyColumn = "u_id")

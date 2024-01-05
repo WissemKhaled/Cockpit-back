@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.springframework.core.io.ByteArrayResource;
@@ -21,8 +22,10 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.SendMailDTO;
+import com.example.demo.entity.UUser;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.SendMailMapper;
+import com.example.demo.mappers.UUserMapper;
 import com.example.demo.service.SendMailService;
 import com.example.demo.service.UserInfoService;
 
@@ -39,14 +42,18 @@ public class SendMailServiceImpl implements SendMailService {
 	private final ResourceLoader resourceLoader;
 	
 	private final UserInfoService infoService;
+	
+	private final UUserMapper userMapper;
+
 
 	private static final Logger LOG = getLogger(SendMailServiceImpl.class);
 
-	public SendMailServiceImpl(SendMailMapper mailMapper, JavaMailSender mailSender, ResourceLoader resourceLoader, UserInfoService infoService) {
+	public SendMailServiceImpl(SendMailMapper mailMapper, JavaMailSender mailSender, ResourceLoader resourceLoader, UserInfoService infoService, UUserMapper userMapper) {
 		this.mailMapper = mailMapper;
 		this.mailSender = mailSender;
 		this.resourceLoader = resourceLoader;
 		this.infoService = infoService;
+		this.userMapper = userMapper;
 	}
 
 	@Override
@@ -62,11 +69,14 @@ public class SendMailServiceImpl implements SendMailService {
 			// signature du mail recuperé a partir des ressources en HTML
 			String signature = loadSignature();
 
+			//on recupere les info du user qui envoie le mail pour l'inserer dans le replyTo
+			Optional<UUser> user = userMapper.findById(mailDTO.getUser());
+			
 			helper.setPriority(1);
 			helper.setTo(mailDTO.getMsTo());
 			helper.setSubject(mailDTO.getMsSubject());
 			helper.setText(mailDTO.getMsBody() + "<br><br>" + signature, true);
-			helper.setReplyTo(infoService.findById(mailDTO.getUser()).getUsername());
+			helper.setReplyTo(user.get().getUEmail());
 
 			if (files != null && !files.isEmpty()) {
 
@@ -86,8 +96,8 @@ public class SendMailServiceImpl implements SendMailService {
 					helper.addCc(adresse);
 				}
 			}
-			mailSender.send(message);
-			mailMapper.saveMailAndSend(mailDTO);
+			//mailSender.send(message);
+			//mailMapper.saveMailAndSend(mailDTO);
 
 			LOG.info("Le courrier a été envoyé avec succès !");
 			return "Le courrier a été envoyé avec succès !";
