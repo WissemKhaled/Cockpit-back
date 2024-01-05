@@ -36,7 +36,7 @@ public class SendMailDTO {
 	private LocalDateTime msSendDate;
 
 	@JsonProperty("user")
-	private UUser user;
+	private int user;
 
 	public SendMailDTO() {
 	}
@@ -47,7 +47,7 @@ public class SendMailDTO {
 			 String msSubject,
 			 String msBody, 
 			 LocalDateTime msSendDate,
-			 UUser user) {
+			 int user) {
 		this.msId = msId;
 		this.msTo = msTo;
 		this.msCc = msCc;
@@ -105,11 +105,11 @@ public class SendMailDTO {
 		this.msSendDate = msSendDate;
 	}
 
-	public UUser getUser() {
+	public int getUser() {
 		return user;
 	}
 
-	public void setUser(UUser user) {
+	public void setUser(int user) {
 		this.user = user;
 	}
 

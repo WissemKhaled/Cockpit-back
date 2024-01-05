@@ -14,7 +14,7 @@ public class SendMailBuilder {
 	private String msSubject;
 	private String msBody;
 	private LocalDateTime msSendDate;
-	private UUser user;
+	private int user;
 
 	public SendMailBuilder withMsId(int msId) {
 		this.msId = msId;
@@ -46,7 +46,7 @@ public class SendMailBuilder {
 		return this;
 	}
 
-	public SendMailBuilder withMsUser(UUser user) {
+	public SendMailBuilder withMsUser(int user) {
 		this.user = user;
 		return this;
 	}

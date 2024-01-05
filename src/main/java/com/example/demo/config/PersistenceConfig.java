@@ -43,21 +43,21 @@ public class PersistenceConfig {
   }
 
 //	 Initialisation de postgres BDD
-//	@Bean
-//	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-//		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-//		if (isTestMode) {
-//			populator.addScript(new ClassPathResource("schema-dev.sql"));
-//			populator.addScript(new ClassPathResource("data-test.sql"));
-//		} else {
-//			populator.addScript(new ClassPathResource("schema-dev.sql"));
-//			populator.addScript(new ClassPathResource("data-dev.sql"));
-//		}
-//		DataSourceInitializer initializer = new DataSourceInitializer();
-//		initializer.setDataSource(dataSource);
-//		initializer.setDatabasePopulator(populator);
-//
-//		return initializer;
-//	}
+	@Bean
+	public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+		ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		if (isTestMode) {
+			populator.addScript(new ClassPathResource("schema-dev.sql"));
+			populator.addScript(new ClassPathResource("data-test.sql"));
+		} else {
+			populator.addScript(new ClassPathResource("schema-dev.sql"));
+			populator.addScript(new ClassPathResource("data-dev.sql"));
+		}
+		DataSourceInitializer initializer = new DataSourceInitializer();
+		initializer.setDataSource(dataSource);
+		initializer.setDatabasePopulator(populator);
+
+		return initializer;
+	}
 
 }

@@ -24,6 +24,7 @@ import com.example.demo.dto.SendMailDTO;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.SendMailMapper;
 import com.example.demo.service.SendMailService;
+import com.example.demo.service.UserInfoService;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -36,13 +37,16 @@ public class SendMailServiceImpl implements SendMailService {
 	private final JavaMailSender mailSender;
 
 	private final ResourceLoader resourceLoader;
+	
+	private final UserInfoService infoService;
 
 	private static final Logger LOG = getLogger(SendMailServiceImpl.class);
 
-	public SendMailServiceImpl(SendMailMapper mailMapper, JavaMailSender mailSender, ResourceLoader resourceLoader) {
+	public SendMailServiceImpl(SendMailMapper mailMapper, JavaMailSender mailSender, ResourceLoader resourceLoader, UserInfoService infoService) {
 		this.mailMapper = mailMapper;
 		this.mailSender = mailSender;
 		this.resourceLoader = resourceLoader;
+		this.infoService = infoService;
 	}
 
 	@Override
@@ -62,7 +66,7 @@ public class SendMailServiceImpl implements SendMailService {
 			helper.setTo(mailDTO.getMsTo());
 			helper.setSubject(mailDTO.getMsSubject());
 			helper.setText(mailDTO.getMsBody() + "<br><br>" + signature, true);
-			helper.setReplyTo(mailDTO.getUser().getUEmail());
+			helper.setReplyTo(infoService.findById(mailDTO.getUser()).getUsername());
 
 			if (files != null && !files.isEmpty()) {
 

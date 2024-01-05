@@ -34,12 +34,12 @@ public class SendMail {
 	private LocalDateTime msSendDate;
 
 	@JsonProperty("user")
-	private UUser user;
+	private int user;
 
 	public SendMail() {
 	}
 
-	public SendMail(int msId, String msTo, String msCc, String msSubject, String msBody, LocalDateTime msSendDate, UUser user) {
+	public SendMail(int msId, String msTo, String msCc, String msSubject, String msBody, LocalDateTime msSendDate, int user) {
 		this.msId = msId;
 		this.msTo = msTo;
 		this.msCc = msCc;
@@ -97,11 +97,11 @@ public class SendMail {
 		this.msSendDate = msSendDate;
 	}
 
-	public UUser getUser() {
+	public int getUser() {
 		return user;
 	}
 
-	public void setUser(UUser user) {
+	public void setUser(int user) {
 		this.user = user;
 	}
 

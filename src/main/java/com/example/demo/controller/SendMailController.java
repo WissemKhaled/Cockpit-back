@@ -45,9 +45,7 @@ public class SendMailController {
 			                                 @RequestParam("msSender") String sender
 			                                   ) throws MessagingException {
 		try {
-			System.err.println(cc);
-			UUser user = new UUser(0, cc, body, sender, false, null, null);
-			SendMailDTO mailDTO = new SendMailDTO(0, to, cc, subject, body, null, user);
+			SendMailDTO mailDTO = new SendMailDTO(0, to, cc, subject, body, null, 1);
 			return new ResponseEntity<>(mailService.saveAndSendMail(mailDTO, file), HttpStatus.OK);
 		} catch (MessageModelNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
