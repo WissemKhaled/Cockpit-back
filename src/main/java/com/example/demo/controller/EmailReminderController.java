@@ -70,23 +70,23 @@ public class EmailReminderController {
         }
     }
 	
-	@PutMapping("/updateAlert/serviceProvider")
-	public ResponseEntity<String> updateAlertServiceProvider(
-	    @RequestParam int mmId,
-	    @RequestParam(required = false) Integer statusId,
-	    @RequestParam int serviceProviderId,
-	    @RequestParam(required = false) String validationDate
-	) {
-	    try {
-	        int actualStatusId = (statusId != null) ? statusId.intValue() : 0;
-	        String result = emailReminderServiceProviderService.updateServiceProviderStatusFromInProgressToInValidation(mmId, actualStatusId, serviceProviderId, validationDate);
-	        return ResponseEntity.ok(result);
-	    } catch (EntityNotFoundException e) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-	    } catch (DatabaseQueryFailureException e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Échec de la mise à jour du serviceProvider status : " + e.getMessage());
-	    }
-	}
+//	@PutMapping("/updateAlert/serviceProvider")
+//	public ResponseEntity<String> updateAlertServiceProvider(
+//	    @RequestParam int mmId,
+//	    @RequestParam(required = false) Integer statusId,
+//	    @RequestParam int serviceProviderId,
+//	    @RequestParam(required = false) String validationDate
+//	) {
+//	    try {
+//	        int actualStatusId = (statusId != null) ? statusId.intValue() : 0;
+//	        String result = emailReminderServiceProviderService.updateServiceProviderStatusFromInProgressToInValidation(mmId, actualStatusId, serviceProviderId, validationDate);
+//	        return ResponseEntity.ok(result);
+//	    } catch (EntityNotFoundException e) {
+//	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//	    } catch (DatabaseQueryFailureException e) {
+//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Échec de la mise à jour du serviceProvider status : " + e.getMessage());
+//	    }
+//	}
 	
 	@GetMapping("/getAlertInfo/serviceProvider/{serviceProviderId}")
     public ResponseEntity<?> getServiceProviderReminderInfo(@PathVariable int serviceProviderId) {

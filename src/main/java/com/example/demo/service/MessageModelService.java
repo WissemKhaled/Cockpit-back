@@ -10,6 +10,6 @@ public interface MessageModelService {
 	
 	List<MessageModel> getAllMessageModelsAndStatusByServiceProviderId(Integer serviceproviderId);
 
-	List<MessageModel> getAllMessageModelsAndStatusBySubcontractorCategory(Integer subcontractorId);
+	List<MessageModel> getAllMessageModelsAndStatusBySubcontractorCategoryAndId(Integer subcontractorId);
 
 }

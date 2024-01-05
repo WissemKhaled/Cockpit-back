@@ -17,16 +17,13 @@ public class StatusDto {
 	@JsonProperty("stName")
 	private String stName;
 
-	@JsonProperty("stDescription")
-	private String stDescription;
 
 	public StatusDto() {
 	}
 
-	public StatusDto(int stId, String stName, String stDescription) {
+	public StatusDto(int stId, String stName) {
 		this.stId = stId;
 		this.stName = stName;
-		this.stDescription = stDescription;
 	}
 
 	public int getStId() {
@@ -45,17 +42,9 @@ public class StatusDto {
 		this.stName = stName;
 	}
 
-	public String getStDescription() {
-		return stDescription;
-	}
-
-	public void setStDescription(String stDescription) {
-		this.stDescription = stDescription;
-	}
-
 	@Override
 	public String toString() {
-		return "StatusDto [stId=" + stId + ", stName=" + stName + ", stDescription=" + stDescription + "]";
+		return "StatusDto [stId=" + stId + ", stName=" + stName + "]";
 	}
 
 }
