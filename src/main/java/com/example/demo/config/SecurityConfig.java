@@ -44,7 +44,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/admin/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/subcontractor/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/service-providers/**").authenticated())
-				.authorizeHttpRequests(ar -> ar.requestMatchers("/emailReminder/**").authenticated())
+				.authorizeHttpRequests(ar -> ar.requestMatchers("/modelTracking/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/status/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/MessageModel/**").authenticated())
 				.sessionManagement()

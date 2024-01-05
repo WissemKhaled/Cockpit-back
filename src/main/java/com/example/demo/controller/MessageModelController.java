@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.entity.MessageModel;
 import com.example.demo.exception.MessageModelNotFoundException;
-import com.example.demo.service.EmailReminderSubcontractorService;
 import com.example.demo.service.MessageModelService;
+import com.example.demo.service.ModelTrackingService;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -29,16 +30,16 @@ import java.util.List;
 public class MessageModelController {
 
 	private final MessageModelService messageModelService;
-	private final EmailReminderSubcontractorService emailReminderSubcontractorService;
+	private final ModelTrackingService modelTrackingService;
 
 	
 
 	public MessageModelController(
 		MessageModelService messageModelService,
-		EmailReminderSubcontractorService emailReminderSubcontractorService
+		ModelTrackingService modelTrackingService
 	) {
 		this.messageModelService = messageModelService;
-		this.emailReminderSubcontractorService = emailReminderSubcontractorService;
+		this.modelTrackingService = modelTrackingService;
 	}
 
 	@GetMapping("/getAllMessages/{statusId}")
@@ -74,7 +75,7 @@ public class MessageModelController {
 
 
 
-	@GetMapping("/getAllMessagesByServiceProviderId/{subcontractorId}")
+	@GetMapping("/getAllMessagesBySubcontractorId/{subcontractorId}")
 	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusBySubcontractorCategoryAndId(
 			@PathVariable("subcontractorId") Integer subcontractorId,
 			@PageableDefault(page = 0, size = 6) Pageable pageable) {
@@ -89,8 +90,8 @@ public class MessageModelController {
 
 			Page<MessageModel> page = new PageImpl<>(messageModels, pageable, allMessages.size());
 			
-			// appel de la méthode qui gère les relances du sous-traitant
-			emailReminderSubcontractorService.checkRelaunchSubcontractor(page, subcontractorId);
+			// appel de la méthode qui gère les relances
+			modelTrackingService.checkRelaunch(page, 1); // contractId en 2ème param
 			
 			return ResponseEntity.ok(page);
 

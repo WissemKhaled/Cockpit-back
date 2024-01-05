@@ -179,8 +179,7 @@ public class SubcontractorController {
 	
 
 	/**
-	 * Enregistre ou met à jour un sous-traitant. Après l'insertion du sous-traitant, on alimente la table intermédiaire gst_status_model_subcontractor 
-	 	servant à effectuer les relances d'email
+	 * Enregistre ou met à jour un sous-traitant. 
 	 *
 	 * @param subcontractorDto DTO représentant le sous-traitant à enregistrer ou mettre à jour.
 	 * @return ResponseEntity contenant le DTO du sous-traitant enregistré ou mis à jour avec le statut OK,

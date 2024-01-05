@@ -2,12 +2,14 @@ package com.example.demo.service.implementation;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.ContractDTO;
 import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.StatusDto;
@@ -44,6 +46,11 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		this.statusDtoMapper = statusDtoMapper;
 		this.statusMapper = statusMapper;
 	}
+	
+	public static String generateRandomContractNumber() {
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        return uuid.substring(0, 13).toUpperCase();
+    }
 
 	@Override
 	public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException {
@@ -59,11 +66,17 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		
 		// Si l'insertion du nouveau sous-traitant en bdd se passe bien, on créé un nouveau contrat et on alimente la table gst_model_tracking qui va service pour les relances d'emails
 		
-		// Création d'un nouveau contract :
+		ContractDTO contractDTO = new ContractDTO();
+		
+		contractDTO.setcContractNumber(generateRandomContractNumber());
+		contractDTO.setcFKserviceProviderId(serviceProviderDtoToSave.getSpId());
+		contractDTO.setcFkSubcontractorId(1); // trouver un moyen de récup l'id du subcontractor associer au presta créé
+		
+		// appeler ici la méthode du service qui crée/insère un contract
 		
 		ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();
 		
-		// modelTrackingDTO.setMtFkContractId();
+		modelTrackingDTO.setMtFkContractId(contractDTO.getcId());
 		modelTrackingDTO.setMtFkCategoryId(1); // SP category
 		modelTrackingDTO.setMtFkMessageModelId(1);
 		modelTrackingDTO.setMtFkStatusId(serviceProviderToSave.getSpStatus().getStId());
@@ -71,18 +84,18 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
 		
 		try {
-			int isGstStatusModelServiceProviderInserted = modelTrackingMapper.insertGstStatusModelServiceProvider(modelTracking);
+			int isGstStatusModelServiceProviderInserted = modelTrackingMapper.insertGstModelTracking(modelTracking);
 			
 			if (isGstStatusModelServiceProviderInserted == 0) {
-				throw new GeneralException("Erreur lors de l'insertion des données dans la table intermédiaire des prestataires");
+				throw new GeneralException("Erreur lors de l'insertion des données dans la table modelTracker");
 			}
 			
-			log.info("Données dans la table intermédiaire des prestataires insérées avec succès");
+			log.info("Données dans la table modelTracker insérées avec succès");
 			
 			return serviceProviderToSave.getSpId();
 		} catch(PersistenceException e) {
-			log.error("Erreur MyBatis lors de l'insertion des données dans la table intermédiaire des prestatires", e);
-	        throw new GeneralException("Erreur MyBatis lors de l'insertion des données dans la table intermédiaire des prestatires : " + e);
+			log.error("Erreur MyBatis lors de l'insertion des données dans la table modelTracker : ", e);
+	        throw new GeneralException("Erreur MyBatis lors de l'insertion des données dans la table modelTracker : " + e);
 		} catch(Exception e) {
 			log.error("Erreur lors du traitement de saveServiceprovider", e);
 	        throw new GeneralException("Erreur lors du traitement de saveServiceprovider : " + e);

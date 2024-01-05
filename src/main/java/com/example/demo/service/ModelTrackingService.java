@@ -9,11 +9,11 @@ import com.example.demo.entity.MessageModel;
 import com.example.demo.exception.DatabaseQueryFailureException;
 
 public interface ModelTrackingService {
-//	public String updateServiceProviderStatusFromInProgressToInValidation(int mmId, int statusId, int serviceProviderId, String validationDate) throws DatabaseQueryFailureException;
+	public String updateModelTrackingDemand(int mmId, int statusId, int contractId, String validationDate) throws DatabaseQueryFailureException;
 	
-	public List<ModelTrackingDTO> getServiceProviderReminderInfoBySpId(int serviceProviderId);
+	public List<ModelTrackingDTO> getModelTrackingInfoByContractId(int contractId);
 	
-	public ModelTrackingDTO getSpReminderInfoBySpIdAndMmId(int serviceProviderId, int mmId);
+	public ModelTrackingDTO getModelTrackingInfoByContractIdAndMmId(int contractId, int mmId);
 	
-//	public void checkRelaunchServiceProvider(Page<MessageModel> messageModels, int serviceProviderId);
+	public void checkRelaunch(Page<MessageModel> messageModels, int serviceProviderId);
 }
