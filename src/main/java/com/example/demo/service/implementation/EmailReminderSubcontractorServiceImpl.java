@@ -17,19 +17,19 @@ import com.example.demo.entity.MessageModel;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.mappers.EmailReminderMapper;
+import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.SubcontractorMapper;
 import com.example.demo.service.EmailReminderSubcontractorService;
 
 @Service
 public class EmailReminderSubcontractorServiceImpl implements EmailReminderSubcontractorService {
 	
-	private final EmailReminderMapper emailReminderMapper;
+	private final ModelTrackingMapper emailReminderMapper;
 	private final GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper;
 	private final SubcontractorMapper subcontractorMapper;
 	private static final Logger log = LoggerFactory.getLogger(EmailReminderSubcontractorServiceImpl.class);
 	
-	public EmailReminderSubcontractorServiceImpl(EmailReminderMapper emailReminderMapper, GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper, SubcontractorMapper subcontractorMapper) {
+	public EmailReminderSubcontractorServiceImpl(ModelTrackingMapper emailReminderMapper, GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper, SubcontractorMapper subcontractorMapper) {
 		this.emailReminderMapper = emailReminderMapper;
 		this.gstStatusModelSubcontractorDtoMapper = gstStatusModelSubcontractorDtoMapper;
 		this.subcontractorMapper = subcontractorMapper;

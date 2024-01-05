@@ -20,7 +20,7 @@ public interface RefreshTokenMapper {
 	 */
 	@Select("SELECT rt.rt_id, rt.rt_token, rt.rt_expiry_date, u.u_id, u.u_email, u.u_password, u.u_first_name, u.u_last_name, u.u_status, u.u_insertion_date, u.u_last_update "
 			+ "FROM refresh_token rt " 
-			+ "INNER JOIN u_user u ON rt.rt_fk_user_id = u.u_id "
+			+ "INNER JOIN gst_user u ON rt.rt_fk_user_id = u.u_id "
 			+ "WHERE rt.rt_token = #{token}")
 	@Results({
 		@Result(property = "rtId", column = "rt_id"), 
@@ -42,7 +42,7 @@ public interface RefreshTokenMapper {
 	 */
 	@Select("SELECT rt.rt_id, rt.rt_token, rt.rt_expiry_date, u.u_id, u.u_email, u.u_password, u.u_first_name, u.u_last_name, u.u_status, u.u_insertion_date, u.u_last_update "
 			+ "FROM refresh_token rt " 
-			+ "INNER JOIN u_user u ON rt.rt_fk_user_id = u.u_id "
+			+ "INNER JOIN gst_user u ON rt.rt_fk_user_id = u.u_id "
 			+ "WHERE rt.rt_fk_user_id = #{userId}")
 	@Results({
 		@Result(property = "rtId", column = "rt_id"), 

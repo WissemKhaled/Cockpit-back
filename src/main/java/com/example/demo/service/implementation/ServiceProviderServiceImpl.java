@@ -8,18 +8,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.GstStatusModelServiceProviderDTO;
+import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.StatusDto;
-import com.example.demo.dto.mapper.GstStatusModelServiceProviderDtoMapper;
-import com.example.demo.entity.GstStatusModelServiceProvider;
+import com.example.demo.dto.mapper.ModelTrackingDtoMapper;
+import com.example.demo.entity.ModelTracking;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.dto.mapper.StatusDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
-import com.example.demo.mappers.EmailReminderMapper;
+import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.mappers.StatusMapper;
 import com.example.demo.service.ServiceProviderService;
@@ -27,20 +27,20 @@ import com.example.demo.service.ServiceProviderService;
 @Service
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final ServiceProviderMapper serviceProviderMapper;
-	private final EmailReminderMapper emailReminderMapper;
+	private final ModelTrackingMapper modelTrackingMapper;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
 	private final StatusDtoMapper statusDtoMapper;
 	private final StatusMapper statusMapper;
-	private final GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper;
+	private final ModelTrackingDtoMapper modelTrackingDtoMapper;
 	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
 
 	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper,
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
-			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper, EmailReminderMapper emailReminderMapper, StatusDtoMapper statusDtoMapper, StatusMapper statusMapper) {
+			ModelTrackingDtoMapper modelTrackingDtoMapper, ModelTrackingMapper modelTrackingMapper, StatusDtoMapper statusDtoMapper, StatusMapper statusMapper) {
 		this.serviceProviderMapper = serviceProviderMapper;
-		this.emailReminderMapper = emailReminderMapper;
+		this.modelTrackingMapper = modelTrackingMapper;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
-		this.gstStatusModelServiceProviderDtoMapper = gstStatusModelServiceProviderDtoMapper;
+		this.modelTrackingDtoMapper = modelTrackingDtoMapper;
 		this.statusDtoMapper = statusDtoMapper;
 		this.statusMapper = statusMapper;
 	}
@@ -57,19 +57,21 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		// comme ça on peut retourner le correct sans prendre en considération l'id
 		// saisi par l'utilisateur
 		
-		// Si l'insertion du nouveau sous-traitant en bdd se passe bien, on alimente la table intermédiaire qui va service pour les relances d'emails
-		int mmId = 1; // message modèle
+		// Si l'insertion du nouveau sous-traitant en bdd se passe bien, on créé un nouveau contrat et on alimente la table gst_model_tracking qui va service pour les relances d'emails
 		
-		GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = new GstStatusModelServiceProviderDTO();
+		// Création d'un nouveau contract :
 		
-		gstStatusModelServiceProviderDTO.setStatusMspFkServiceProviderId(serviceProviderToSave.getSpId());
-		gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(mmId);
-		gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(serviceProviderToSave.getSpStatus().getStId());
+		ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();
 		
-		GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelServiceProvider(gstStatusModelServiceProviderDTO);
+		// modelTrackingDTO.setMtFkContractId();
+		modelTrackingDTO.setMtFkCategoryId(1); // SP category
+		modelTrackingDTO.setMtFkMessageModelId(1);
+		modelTrackingDTO.setMtFkStatusId(serviceProviderToSave.getSpStatus().getStId());
+		
+		ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
 		
 		try {
-			int isGstStatusModelServiceProviderInserted = emailReminderMapper.insertGstStatusModelServiceProvider(gstStatusModelServiceProvider);
+			int isGstStatusModelServiceProviderInserted = modelTrackingMapper.insertGstStatusModelServiceProvider(modelTracking);
 			
 			if (isGstStatusModelServiceProviderInserted == 0) {
 				throw new GeneralException("Erreur lors de l'insertion des données dans la table intermédiaire des prestataires");

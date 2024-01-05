@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.demo.dto.GstStatusModelSubcontractorDTO;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.mappers.EmailReminderMapper;
+import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.SubcontractorMapper;
 import com.example.demo.service.implementation.EmailReminderSubcontractorServiceImpl;
 
@@ -31,7 +31,7 @@ public class EmailReminderSubcontractorServiceTest {
     private SubcontractorMapper subcontractorMapper;
 
     @Mock
-    private EmailReminderMapper emailReminderMapper;
+    private ModelTrackingMapper emailReminderMapper;
 
     @InjectMocks
     private EmailReminderSubcontractorServiceImpl emailReminderSubcontractorService;

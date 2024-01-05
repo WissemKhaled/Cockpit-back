@@ -10,29 +10,29 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.GstStatusModelServiceProviderDTO;
-import com.example.demo.dto.mapper.GstStatusModelServiceProviderDtoMapper;
-import com.example.demo.entity.GstStatusModelServiceProvider;
+import com.example.demo.dto.ModelTrackingDTO;
+import com.example.demo.dto.mapper.ModelTrackingDtoMapper;
+import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.MessageModel;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.mappers.EmailReminderMapper;
+import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
-import com.example.demo.service.EmailReminderServiceProviderService;
+import com.example.demo.service.ModelTrackingService;
 
 @Service
-public class EmailReminderServiceProviderServiceImpl implements EmailReminderServiceProviderService {
+public class ModelTrackingServiceImpl implements ModelTrackingService {
 	
-	private final EmailReminderMapper emailReminderMapper;
-	private final GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper;
+	private final ModelTrackingMapper modelTrackingMapper;
+	private final ModelTrackingDtoMapper modelTrackingDtoMapper;
 	private final ServiceProviderMapper serviceProviderMapper;
-	private static final Logger log = LoggerFactory.getLogger(EmailReminderServiceProviderServiceImpl.class);
+	private static final Logger log = LoggerFactory.getLogger(ModelTrackingServiceImpl.class);
 	
-	public EmailReminderServiceProviderServiceImpl(EmailReminderMapper emailReminderMapper,
-			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper, ServiceProviderMapper serviceProviderMapper) {
-		this.emailReminderMapper = emailReminderMapper;
-		this.gstStatusModelServiceProviderDtoMapper = gstStatusModelServiceProviderDtoMapper;
+	public ModelTrackingServiceImpl(ModelTrackingMapper modelTrackingMapper,
+			ModelTrackingDtoMapper modelTrackingDtoMapper, ServiceProviderMapper serviceProviderMapper) {
+		this.modelTrackingMapper = modelTrackingMapper;
+		this.modelTrackingDtoMapper = modelTrackingDtoMapper;
 		this.serviceProviderMapper = serviceProviderMapper;
 	}
 
@@ -46,43 +46,43 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 	
 	@Override
 	public String updateServiceProviderStatusFromInProgressToInValidation(int mmId, int statusId, int serviceProviderId, String validationDateString) throws DatabaseQueryFailureException {
-	    GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = emailReminderMapper.findAlertByServiceProviderIdAndMmId(serviceProviderId, mmId);
+	    ModelTrackingDTO modelTrackingDTO = modelTrackingMapper.findAlertByServiceProviderIdAndMmId(serviceProviderId, mmId);
 	    
-	    if (gstStatusModelServiceProviderDTO == null) {
+	    if (modelTrackingDTO == null) {
 	        log.error("Le prestataire avec l'ID " + serviceProviderId + " n'a pas été trouvé");
 	        throw new EntityNotFoundException("Le prestataire avec l'ID " + serviceProviderId + " n'a pas été trouvé");
 	    }
 
-	    gstStatusModelServiceProviderDTO.setStatusMspFkServiceProviderId(serviceProviderId);
-	    gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(mmId);
+	    modelTrackingDTO.setStatusMspFkServiceProviderId(serviceProviderId);
+	    modelTrackingDTO.setStatusMspFkMessageModelId(mmId);
 
 	    // si l'ID du status reçu du front = 1, on l'update à 2 et on update le mmId à 2 également dans la table intermédiaire et on update la date d'envoi
 	    // si l'ID du status reçu du front = 2, on l'update à 3 et on update le mmId à 3 également dans la table intermédiaire et on update la date de validation
 	    if (statusId == 2) {
 	    	// gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(2);
-	        gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(2);
-	        gstStatusModelServiceProviderDTO.setStatusMspSentDate(LocalDateTime.now());
+	        modelTrackingDTO.setStatusMspFkStatusId(2);
+	        modelTrackingDTO.setStatusMspSentDate(LocalDateTime.now());
 
 	        // 7 jours après date envoie, relance
 	    } else if (validationDateString != null) {
 	    	// gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(3);
-	        gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(3);
-	        gstStatusModelServiceProviderDTO.setStatusMspSentDate(gstStatusModelServiceProviderDTO.getStatusMspSentDate());
+	        modelTrackingDTO.setStatusMspFkStatusId(3);
+	        modelTrackingDTO.setStatusMspSentDate(modelTrackingDTO.getStatusMspSentDate());
 
 	        // Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
 	        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
 	        LocalDateTime validationDate = convertStringToLocalDateTime(validationDateString, pattern);
-	        gstStatusModelServiceProviderDTO.setStatusMspValidationDate(validationDate);
+	        modelTrackingDTO.setStatusMspValidationDate(validationDate);
 
 	        // après 7 jours date validation, relance
 	        // passer la relance à en cours
 	    }
 
-	    GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelServiceProvider(gstStatusModelServiceProviderDTO);
+	    ModelTracking modelTracking = modelTrackingDtoMapper.toGstStatusModelServiceProvider(modelTrackingDTO);
 
-	    int isGstStatusModelServiceProviderUpdated = emailReminderMapper.updateGstStatusModelServiceProvider(gstStatusModelServiceProvider);
+	    int isModelTrackingUpdated = modelTrackingMapper.updateGstStatusModelServiceProvider(modelTracking);
 
-	    if (isGstStatusModelServiceProviderUpdated == 0) {
+	    if (isModelTrackingUpdated == 0) {
 	        log.error("Erreur de mise à jour de la table intermédiaire des prestataires pour le serviceProviderId " + serviceProviderId);
 	        throw new DatabaseQueryFailureException("Erreur de mise à jour de la table intermédiaire des prestataires");
 	    }
@@ -94,11 +94,11 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 	public void checkRelaunchServiceProvider(Page<MessageModel> messageModels, int serviceProviderId) {
 		LocalDateTime currentDate = LocalDateTime.now();
 		
-		List<GstStatusModelServiceProviderDTO> gstStatusModelServiceProviderDTOList = emailReminderMapper.findServiceProviderReminderInfo(serviceProviderId);
+		List<ModelTrackingDTO> gstStatusModelServiceProviderDTOList = modelTrackingMapper.findServiceProviderReminderInfo(serviceProviderId);
 		
 		for (MessageModel messageModel : messageModels) {
 			if (messageModel.getMmType().contains("Relance")) {
-				for (GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO : gstStatusModelServiceProviderDTOList) {
+				for (ModelTrackingDTO gstStatusModelServiceProviderDTO : gstStatusModelServiceProviderDTOList) {
 					 // si la date de validation n'est pas null et date de 7 jours, on met à jour le status
 					if (gstStatusModelServiceProviderDTO.getStatusMspValidationDate() != null && gstStatusModelServiceProviderDTO.getStatusMspValidationDate().plusDays(7).isBefore(currentDate)) {
 						// on met à jour le statusId de la table intermédiaire
@@ -108,9 +108,9 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 					    gstStatusModelServiceProviderDTO.setStatusMspSentDate(gstStatusModelServiceProviderDTO.getStatusMspSentDate());
 					    gstStatusModelServiceProviderDTO.setStatusMspValidationDate(gstStatusModelServiceProviderDTO.getStatusMspValidationDate());
 					    
-					    GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelServiceProvider(gstStatusModelServiceProviderDTO);
+					    ModelTracking gstStatusModelServiceProvider = modelTrackingDtoMapper.toGstStatusModelServiceProvider(gstStatusModelServiceProviderDTO);
 						
-						emailReminderMapper.updateGstStatusModelServiceProvider(gstStatusModelServiceProvider);
+						modelTrackingMapper.updateGstStatusModelServiceProvider(gstStatusModelServiceProvider);
 						
 						log.info("Relance : Table intermédiaire mise à jour pour l'id : " + gstStatusModelServiceProvider.getStatusMspId());
 					} else {
@@ -125,7 +125,7 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 	}
 
 	@Override
-	public List<GstStatusModelServiceProviderDTO> getServiceProviderReminderInfoBySpId(int serviceProviderId) {
+	public List<ModelTrackingDTO> getServiceProviderReminderInfoBySpId(int serviceProviderId) {
 		ServiceProvider isFoundServiceProvider = serviceProviderMapper.findServiceProviderById(serviceProviderId);
 		
 		if (isFoundServiceProvider == null) {
@@ -133,14 +133,14 @@ public class EmailReminderServiceProviderServiceImpl implements EmailReminderSer
 			throw new EntityNotFoundException("Aucun prestataire trouvé avec l'id " + serviceProviderId);
 		}
 		
-		List<GstStatusModelServiceProviderDTO> gstStatusModelServiceProviderDTO = emailReminderMapper.findServiceProviderReminderInfo(serviceProviderId);
+		List<ModelTrackingDTO> gstStatusModelServiceProviderDTO = modelTrackingMapper.findServiceProviderReminderInfo(serviceProviderId);
 		
 		return gstStatusModelServiceProviderDTO;
 	}
 	
 	@Override
-	public GstStatusModelServiceProviderDTO getSpReminderInfoBySpIdAndMmId(int serviceProviderId, int mmId) {
-		GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = emailReminderMapper.findAlertByServiceProviderIdAndMmId(serviceProviderId, mmId);
+	public ModelTrackingDTO getSpReminderInfoBySpIdAndMmId(int serviceProviderId, int mmId) {
+		ModelTrackingDTO gstStatusModelServiceProviderDTO = modelTrackingMapper.findAlertByServiceProviderIdAndMmId(serviceProviderId, mmId);
 		
 		if (gstStatusModelServiceProviderDTO == null) {
 			log.error("Aucune info trouvé avec l'id prestataire " + serviceProviderId + " et le message model ID " + mmId);

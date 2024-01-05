@@ -22,7 +22,7 @@ import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
-import com.example.demo.mappers.EmailReminderMapper;
+import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.mappers.StatusMapper;
 import com.example.demo.mappers.SubcontractorMapper;
@@ -35,14 +35,14 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	private final StatusDtoMapper statusDtoMapper;
 	private final StatusMapper statusMapper;
 	private final ServiceProviderMapper serviceProviderMapper;
-	private final EmailReminderMapper emailReminderMapper;
+	private final ModelTrackingMapper emailReminderMapper;
 	private final GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper;
 	private static final Logger log = LoggerFactory.getLogger(SubcontractorServiceImpl.class);
 
 	public SubcontractorServiceImpl(SubcontractorDtoMapper subcontractorDtoMapper,
 			SubcontractorMapper subcontractorMapper, StatusDtoMapper statusDtoMapper, StatusMapper statusMapper,
 			ServiceProviderMapper serviceProviderMapper,
-			GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper, EmailReminderMapper emailReminderMapper) {
+			GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper, ModelTrackingMapper emailReminderMapper) {
 		this.subcontractorDtoMapper = subcontractorDtoMapper;
 		this.subcontractorMapper = subcontractorMapper;
 		this.statusDtoMapper = statusDtoMapper;

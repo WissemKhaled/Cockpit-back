@@ -15,24 +15,24 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.demo.dto.GstStatusModelServiceProviderDTO;
+import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.mappers.EmailReminderMapper;
+import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
-import com.example.demo.service.implementation.EmailReminderServiceProviderServiceImpl;
+import com.example.demo.service.implementation.ModelTrackingServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-public class EmailReminderServiceProviderServiceTest {
+public class ModelTrackingServiceTest {
 
     @Mock
-    private EmailReminderMapper emailReminderMapper;
+    private ModelTrackingMapper emailReminderMapper;
 
     @Mock
     private ServiceProviderMapper serviceProviderMapper;
 
     @InjectMocks
-    private EmailReminderServiceProviderServiceImpl emailReminderServiceProviderService;
+    private ModelTrackingServiceImpl emailReminderServiceProviderService;
 
     @Test
     public void testGetServiceProviderReminderInfoBySpId() {
@@ -40,10 +40,10 @@ public class EmailReminderServiceProviderServiceTest {
         ServiceProvider serviceProvider = new ServiceProvider();
         when(serviceProviderMapper.findServiceProviderById(serviceProviderId)).thenReturn(serviceProvider);
 
-        List<GstStatusModelServiceProviderDTO> expectedResult = new ArrayList<>();
+        List<ModelTrackingDTO> expectedResult = new ArrayList<>();
         when(emailReminderMapper.findServiceProviderReminderInfo(serviceProviderId)).thenReturn(expectedResult);
 
-        List<GstStatusModelServiceProviderDTO> result = emailReminderServiceProviderService.getServiceProviderReminderInfoBySpId(serviceProviderId);
+        List<ModelTrackingDTO> result = emailReminderServiceProviderService.getServiceProviderReminderInfoBySpId(serviceProviderId);
 
         assertEquals(expectedResult, result);
         verify(serviceProviderMapper, times(1)).findServiceProviderById(serviceProviderId);
@@ -66,10 +66,10 @@ public class EmailReminderServiceProviderServiceTest {
     public void testGetSpReminderInfoBySpIdAndMmId() {
         int serviceProviderId = 1;
         int mmId = 2;
-        GstStatusModelServiceProviderDTO expectedResult = new GstStatusModelServiceProviderDTO();
+        ModelTrackingDTO expectedResult = new ModelTrackingDTO();
         when(emailReminderMapper.findAlertByServiceProviderIdAndMmId(serviceProviderId, mmId)).thenReturn(expectedResult);
 
-        GstStatusModelServiceProviderDTO result = emailReminderServiceProviderService.getSpReminderInfoBySpIdAndMmId(serviceProviderId, mmId);
+        ModelTrackingDTO result = emailReminderServiceProviderService.getSpReminderInfoBySpIdAndMmId(serviceProviderId, mmId);
 
         assertEquals(expectedResult, result);
         verify(emailReminderMapper, times(1)).findAlertByServiceProviderIdAndMmId(serviceProviderId, mmId);

@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import com.example.demo.entity.GstStatusModelServiceProvider;
+import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.ServiceProvider;
 
 @Mapper

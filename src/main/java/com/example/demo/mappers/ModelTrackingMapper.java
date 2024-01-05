@@ -9,13 +9,13 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import com.example.demo.dto.GstStatusModelServiceProviderDTO;
+import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.dto.GstStatusModelSubcontractorDTO;
-import com.example.demo.entity.GstStatusModelServiceProvider;
+import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.GstStatusModelSubcontractor;
 
 @Mapper
-public interface EmailReminderMapper {
+public interface ModelTrackingMapper {
 // subcontractor 
 	@Insert("INSERT INTO gst_status_model_subcontractor (status_ms_fk_subcontractor_id, status_ms_fk_message_model_id, status_ms_fk_status_id, status_ms_sent_date, status_ms_validation_date) "
 			+ "VALUES (#{statusMsFkSubcontractorId}, #{statusMsFkMessageModelId}, #{statusMsFkStatusId}, #{statusMsSentDate}, #{statusMsValidationDate})")
@@ -78,7 +78,7 @@ public interface EmailReminderMapper {
 	@Result(property = "statusMspFkStatusId", column = "status_msp_fk_status_id")
 	@Result(property = "statusMspSentDate", column = "status_msp_sent_date")
 	@Result(property = "statusMspValidationDate", column = "status_msp_validation_date")
-	int insertGstStatusModelServiceProvider(GstStatusModelServiceProvider gstStatusModelServiceProvider);
+	int insertGstStatusModelServiceProvider(ModelTracking gstStatusModelServiceProvider);
 	
 	@Update("UPDATE gst_status_model_service_provider " +
 	        "SET status_msp_fk_service_provider_id = #{statusMspFkServiceProviderId}, " +
@@ -94,7 +94,7 @@ public interface EmailReminderMapper {
 	@Result(property = "statusMspFkStatusId", column = "status_msp_fk_status_id")
 	@Result(property = "statusMspSentDate", column = "status_msp_sent_date")
 	@Result(property = "statusMspValidationDate", column = "status_msp_validation_date")
-	int updateGstStatusModelServiceProvider(GstStatusModelServiceProvider gstStatusModelServiceProvider);
+	int updateGstStatusModelServiceProvider(ModelTracking gstStatusModelServiceProvider);
 
 	@Select("SELECT " +
             "msp.status_msp_id AS statusMspId, " +
@@ -105,7 +105,7 @@ public interface EmailReminderMapper {
             "msp.status_msp_validation_date AS statusMspValidationDate " +
             "FROM gst_status_model_service_provider msp " +
             "WHERE msp.status_msp_fk_service_provider_id = #{serviceProviderId}")
-    List<GstStatusModelServiceProviderDTO> findServiceProviderReminderInfo(int serviceProviderId);
+    List<ModelTrackingDTO> findServiceProviderReminderInfo(int serviceProviderId);
 	
 	@Select("SELECT " +
             "msp.status_msp_id AS statusMspId, " +
@@ -117,5 +117,5 @@ public interface EmailReminderMapper {
             "FROM gst_status_model_service_provider msp " +
             "WHERE msp.status_msp_fk_service_provider_id = #{serviceProviderId} " +
 			"AND status_msp_fk_message_model_id = #{mmId}")
-    GstStatusModelServiceProviderDTO findAlertByServiceProviderIdAndMmId(int serviceProviderId, int mmId);
+    ModelTrackingDTO findAlertByServiceProviderIdAndMmId(int serviceProviderId, int mmId);
 }
