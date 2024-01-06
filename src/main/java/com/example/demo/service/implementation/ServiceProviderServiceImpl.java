@@ -126,17 +126,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		}
 		return foundedStatus;
 	}
-	
-	@Override
-	public int archiveServiceProvider(int serviceProviderId) throws AlreadyArchivedEntity {
-        ServiceProviderDto serviceProviderDtoTArchive = getServiceProviderById(serviceProviderId);
-        // Vérification si le prestataire est déjà archivé
-        if (serviceProviderDtoTArchive.getSpStatus().getStId() == 4) {
-            throw new AlreadyArchivedEntity(String.format("Erreur: le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
-        }
-
-		return serviceProviderMapper.archiveServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoTArchive));
-	}
 
 	@Override
 	public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) {
@@ -156,6 +145,17 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		
 	    // Exécution de la mise à jour dans la base de données
 		return serviceProviderMapper.updateServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToUpdate));
+	}
+	
+	@Override
+	public int archiveServiceProvider(int serviceProviderId) throws AlreadyArchivedEntity {
+		ServiceProviderDto serviceProviderDtoTArchive = getServiceProviderById(serviceProviderId);
+		// Vérification si le prestataire est déjà archivé
+		if (serviceProviderDtoTArchive.getSpStatus().getStId() == 4) {
+			throw new AlreadyArchivedEntity(String.format("Erreur: le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
+		}
+		
+		return serviceProviderMapper.archiveServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoTArchive));
 	}
 
 	@Override

@@ -216,30 +216,7 @@ public class ServiceProviderController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	
-	/**
-	 * Archive un prestataire en fonction de son ID.
-	 *
-	 * @param serviceProviderId L'ID du prestataire à archiver.
-	 * @return ResponseEntity avec un message indiquant le succès de l'archivage et le statut OK,
-	 *         ResponseEntity avec un message d'erreur si le prestataire est déjà archivé et le statut BAD_REQUEST,
-	 *         ResponseEntity avec un message d'erreur et le statut INTERNAL_SERVER_ERROR en cas d'erreur.
-	 */
-	@PutMapping("/archive/{serviceProviderId}")
-	public ResponseEntity<String> archiveServiceProvider(@PathVariable int serviceProviderId) {
-	    try {
-	        serviceProviderService.archiveServiceProvider(serviceProviderId);
-	        return new ResponseEntity<>(String.format("Le prestataire avec l'id: %d a été archivé avec succès", serviceProviderId), HttpStatus.OK);
-	    } catch (AlreadyArchivedEntity e) {
-	        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-	    } catch (EntityNotFoundException e) {
-	        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
+
 	
 	/**
 	 * Enregistre ou met à jour un prestataire et renvoie le numéro de la page qui lui correspond.
@@ -293,4 +270,26 @@ public class ServiceProviderController {
 	    }
 	}
 	
+	
+	/**
+	 * Archive un prestataire en fonction de son ID.
+	 *
+	 * @param serviceProviderId L'ID du prestataire à archiver.
+	 * @return ResponseEntity avec un message indiquant le succès de l'archivage et le statut OK,
+	 *         ResponseEntity avec un message d'erreur si le prestataire est déjà archivé et le statut BAD_REQUEST,
+	 *         ResponseEntity avec un message d'erreur et le statut INTERNAL_SERVER_ERROR en cas d'erreur.
+	 */
+	@PutMapping("/archive/{serviceProviderId}")
+	public ResponseEntity<String> archiveServiceProvider(@PathVariable int serviceProviderId) {
+	    try {
+	        serviceProviderService.archiveServiceProvider(serviceProviderId);
+	        return new ResponseEntity<>(String.format("Le prestataire avec l'id: %d a été archivé avec succès", serviceProviderId), HttpStatus.OK);
+	    } catch (AlreadyArchivedEntity e) {
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	    } catch (EntityNotFoundException e) {
+	        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

@@ -39,8 +39,6 @@ public interface ServiceProviderMapper {
 			@Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms, 
 			@Param("statusId") int statusId);
-
-	int archiveServiceProvider(ServiceProvider serviceProvider);
 	
 	List<ServiceProvider> findAllNonArchivedServiceProviders(
 			@Param("sorting") String sorting,
@@ -53,9 +51,12 @@ public interface ServiceProviderMapper {
 			@Param("offset") int pageSize, 
 			@Param("statusId") int statusId);
 	
+	
 	int insertServiceProvider(ServiceProvider serviceProvider);
 	
 	int updateServiceProvider(ServiceProvider serviceProvider);
+	
+	int archiveServiceProvider(ServiceProvider serviceProvider);
 	
 	int countAllNonArchivedServiceProviders();
 	

@@ -40,8 +40,8 @@ public interface ServiceProviderService {
 	 * @return Liste des DTO des prestataires filtrés par statut (si l'ID du statut est non null) ou par recherche seule (si l'ID du statut est null) et paginés.
 	 * @throws EntityNotFoundException Si le statut spécifié n'existe pas.
 	 */
-	List<ServiceProviderDto> getAllServiceProvidersWithOrWithoutStatus(String sortingMethod, int pageNumber, int pageSize,
-			int statusId);
+	List<ServiceProviderDto> getAllServiceProvidersWithOrWithoutStatus(String sortingMethod, int pageNumber, int pageSize, int statusId);
+	
 	
 	/**
 	 * Compte le nombre de prestataires filtré par statut.
@@ -52,50 +52,6 @@ public interface ServiceProviderService {
 	 */
 	int countAllServiceProvidersWithOrWithoutStatus(int statusId);
 	
-	
-	/**
-	 * Récupère la liste paginée et triée des prestataires en fonction des paramètres spécifiés et du statut.
-	 *
-	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
-	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
-	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
-	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
-	 * @param statusId    L'ID du statut pour filtrer les prestataires.
-	 * @return Liste des DTO des prestataires paginée et triée avec le statut OK,
-	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
-	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
-	 */
-	List<StatusDto> getAllStatus();
-	
-	
-	/**
-	 * Archive un prestataire en mettant à jour son statut dans la base de données.
-	 *
-	 * @param serviceProviderIdToArchive L'ID du prestataire à archiver.
-	 * @return 1 si le prestataire a été bien archivé, sinon 0.
-	 * @throws AlreadyArchivedEntity Si le prestataire est déjà archivé.
-	 * @throws EntityNotFoundException Si le prestataire n'est pas trouvé.
-	 */
-	int archiveServiceProvider(int serviceProviderId) throws AlreadyArchivedEntity;
-	
-	
-	/**
-	 * Enregistre un nouveau prestataire dans la base de données.
-	 *
-	 * @param serviceProviderDtoToSave Le prestataire à enregistrer.
-	 * @return L'ID du prestataire enregistré, ou 0 si l'enregistrement a échoué.
-	 */
-	int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave);
-	
-	
-	/**
-	 * Met à jour les informations d'un prestataire dans la base de données.
-	 *
-	 * @param serviceProviderToUpdate Le prestataire avec les informations à mettre à jour.
-	 * @return Le nombre d'enregistrements affectés par la mise à jour.
-	 */
-	int updateServiceProvider(ServiceProviderDto serviceProviderDtoToUpdate);
-
 	
 	/**
 	 * Récupère la liste des prestataires filtrée par recherche, statut, attribut de recherche, avec prise en compte de la pagination.
@@ -136,6 +92,50 @@ public interface ServiceProviderService {
 	int countServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
 			String columnName) throws GeneralException;
 	
+	
+	/**
+	 * Récupère la liste paginée et triée des prestataires en fonction des paramètres spécifiés et du statut.
+	 *
+	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
+	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
+	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
+	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
+	 * @param statusId    L'ID du statut pour filtrer les prestataires.
+	 * @return Liste des DTO des prestataires paginée et triée avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
+	 */
+	List<StatusDto> getAllStatus();
+	
+	
+	/**
+	 * Enregistre un nouveau prestataire dans la base de données.
+	 *
+	 * @param serviceProviderDtoToSave Le prestataire à enregistrer.
+	 * @return L'ID du prestataire enregistré, ou 0 si l'enregistrement a échoué.
+	 */
+	int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave);
+	
+	
+	/**
+	 * Met à jour les informations d'un prestataire dans la base de données.
+	 *
+	 * @param serviceProviderToUpdate Le prestataire avec les informations à mettre à jour.
+	 * @return Le nombre d'enregistrements affectés par la mise à jour.
+	 */
+	int updateServiceProvider(ServiceProviderDto serviceProviderDtoToUpdate);
+	
+	
+	/**
+	 * Archive un prestataire en mettant à jour son statut dans la base de données.
+	 *
+	 * @param serviceProviderIdToArchive L'ID du prestataire à archiver.
+	 * @return 1 si le prestataire a été bien archivé, sinon 0.
+	 * @throws AlreadyArchivedEntity Si le prestataire est déjà archivé.
+	 * @throws EntityNotFoundException Si le prestataire n'est pas trouvé.
+	 */
+	int archiveServiceProvider(int serviceProviderId) throws AlreadyArchivedEntity;
+
 	
 	/**
 	 * Vérifie l'existence d'un prestataire en utilisant son ID.
