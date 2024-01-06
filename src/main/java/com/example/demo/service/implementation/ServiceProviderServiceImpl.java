@@ -8,6 +8,7 @@ import org.apache.ibatis.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.ContractDTO;
 import com.example.demo.dto.ModelTrackingDTO;
@@ -18,12 +19,14 @@ import com.example.demo.entity.ModelTracking;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.dto.mapper.StatusDtoMapper;
 import com.example.demo.entity.ServiceProvider;
+import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.mappers.StatusMapper;
+import com.example.demo.service.ContractService;
 import com.example.demo.service.ServiceProviderService;
 
 @Service
@@ -34,26 +37,24 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final StatusDtoMapper statusDtoMapper;
 	private final StatusMapper statusMapper;
 	private final ModelTrackingDtoMapper modelTrackingDtoMapper;
+	private final ContractService contractService;
 	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
 
 	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper,
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
-			ModelTrackingDtoMapper modelTrackingDtoMapper, ModelTrackingMapper modelTrackingMapper, StatusDtoMapper statusDtoMapper, StatusMapper statusMapper) {
+			ModelTrackingDtoMapper modelTrackingDtoMapper, ModelTrackingMapper modelTrackingMapper, StatusDtoMapper statusDtoMapper, StatusMapper statusMapper, ContractService contractService) {
 		this.serviceProviderMapper = serviceProviderMapper;
 		this.modelTrackingMapper = modelTrackingMapper;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
 		this.modelTrackingDtoMapper = modelTrackingDtoMapper;
 		this.statusDtoMapper = statusDtoMapper;
 		this.statusMapper = statusMapper;
+		this.contractService = contractService;
 	}
 	
-	public static String generateRandomContractNumber() {
-        String uuid = UUID.randomUUID().toString().replace("-", "");
-        return uuid.substring(0, 13).toUpperCase();
-    }
-
+	@Transactional
 	@Override
-	public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException {
+	public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException, DatabaseQueryFailureException {
 		ServiceProvider serviceProviderToSave = serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToSave);
 		serviceProviderToSave.setSpCreationDate(LocalDateTime.now());
 		int isServiceProviderInserted = serviceProviderMapper.insertServiceProvider(serviceProviderToSave);
@@ -68,15 +69,15 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		
 		ContractDTO contractDTO = new ContractDTO();
 		
-		contractDTO.setcContractNumber(generateRandomContractNumber());
-		contractDTO.setcFKserviceProviderId(serviceProviderDtoToSave.getSpId());
+		contractDTO.setcFKserviceProviderId(serviceProviderToSave.getSpId());
 		contractDTO.setcFkSubcontractorId(1); // trouver un moyen de récup l'id du subcontractor associer au presta créé
 		
-		// appeler ici la méthode du service qui crée/insère un contract
+		// le numéro de contrat est généré dand la méthode saveContract suivante dans le ContractServiceImpl :
+		int contractId = contractService.saveContract(contractDTO);
 		
 		ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();
 		
-		modelTrackingDTO.setMtFkContractId(contractDTO.getcId());
+		modelTrackingDTO.setMtFkContractId(contractId);
 		modelTrackingDTO.setMtFkCategoryId(1); // SP category
 		modelTrackingDTO.setMtFkMessageModelId(1);
 		modelTrackingDTO.setMtFkStatusId(serviceProviderToSave.getSpStatus().getStId());
@@ -84,18 +85,18 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
 		
 		try {
-			int isGstStatusModelServiceProviderInserted = modelTrackingMapper.insertGstModelTracking(modelTracking);
+			int isModelTrackingInserted = modelTrackingMapper.insertGstModelTracking(modelTracking);
 			
-			if (isGstStatusModelServiceProviderInserted == 0) {
-				throw new GeneralException("Erreur lors de l'insertion des données dans la table modelTracker");
+			if (isModelTrackingInserted == 0) {
+				throw new GeneralException("Erreur lors de l'insertion des données dans la table modelTracking");
 			}
 			
-			log.info("Données dans la table modelTracker insérées avec succès");
+			log.info("Données dans la table modelTracking insérées avec succès");
 			
 			return serviceProviderToSave.getSpId();
 		} catch(PersistenceException e) {
-			log.error("Erreur MyBatis lors de l'insertion des données dans la table modelTracker : ", e);
-	        throw new GeneralException("Erreur MyBatis lors de l'insertion des données dans la table modelTracker : " + e);
+			log.error("Erreur MyBatis lors de l'insertion des données dans la table modelTracking : ", e);
+	        throw new GeneralException("Erreur MyBatis lors de l'insertion des données dans la table modelTracking : " + e);
 		} catch(Exception e) {
 			log.error("Erreur lors du traitement de saveServiceprovider", e);
 	        throw new GeneralException("Erreur lors du traitement de saveServiceprovider : " + e);

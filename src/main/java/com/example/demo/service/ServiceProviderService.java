@@ -5,6 +5,7 @@ import java.util.List;
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.StatusDto;
 import com.example.demo.entity.ServiceProvider;
+import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.GeneralException;
 
 public interface ServiceProviderService {
@@ -23,8 +24,9 @@ public interface ServiceProviderService {
 	 *
 	 * @param serviceProviderDtoToSave Le prestataire à enregistrer.
 	 * @return L'ID du prestataire enregistré, ou 0 si l'enregistrement a échoué.
+	 * @throws GeneralException, DatabaseQueryFailureException 
 	 */
-	int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException;
+	int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException, DatabaseQueryFailureException;
 	
 	
 	/**
