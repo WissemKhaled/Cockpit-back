@@ -10,6 +10,21 @@ import com.example.demo.exception.GeneralException;
 public interface SubcontractorService {
 
 	/**
+	 * Récupère la liste paginée et triée des sous-traitants en fonction des paramètres spécifiés et du statut.
+	 *
+	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
+	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
+	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
+	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
+	 * @param statusId    L'ID du statut pour filtrer les sous-traitants.
+	 * @return Liste des DTO des sous-traitants paginée et triée avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si aucun sous-traitant n'est trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
+	 */
+	List<StatusDto> getAllStatus();
+	
+	
+	/**
 	 * Récupère la liste paginée et triée des sous-traitants non archivés en fonction des paramètres spécifiés.
 	 *
 	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
@@ -40,29 +55,6 @@ public interface SubcontractorService {
 
 	
 	/**
-	 * Récupère la liste paginée et triée des sous-traitants en fonction des paramètres spécifiés et du statut.
-	 *
-	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
-	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
-	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
-	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
-	 * @param statusId    L'ID du statut pour filtrer les sous-traitants.
-	 * @return Liste des DTO des sous-traitants paginée et triée avec le statut OK,
-	 *         ResponseEntity avec un message d'erreur si aucun sous-traitant n'est trouvé et le statut NOT_FOUND,
-	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
-	 */
-	List<StatusDto> getAllStatus();
-
-	
-	/**
-	 * Calcule le nombre maximal de pages en fonction du nombre total d'éléments et de la taille de la page.
-	 *
-	 * @return Le nombre maximal de pages.
-	 */
-	int getNumbersOfPages();
-
-	
-	/**
 	 * Récupère le nombre total de sous-traitants enregistrés.
 	 *
 	 * @return Le nombre total de sous-traitants.
@@ -78,7 +70,7 @@ public interface SubcontractorService {
 	 * @return Le nombre total de sous-traitants avec le statut spécifié.
 	 * @throws EntityNotFoundException Si aucun sous-traitant n'est trouvé.
 	 */
-	Integer countTotalItemWhitStatus(Integer statusId);
+	Integer getNumberOfAllSubcontractorsWithStatus(Integer statusId);
 
 	
 	/**
@@ -187,7 +179,7 @@ public interface SubcontractorService {
 	 * @throws GeneralException Si l'attribut de recherche spécifié n'est pas pris en charge.
 	 */
 	List<SubcontractorDto> getAllSubcontractorsBySearchAndWithOrWithoutStatusFiltring(String searchTerms,
-			int pageNumber, int pageSize, int statusId, String columnName) throws GeneralException;
+			int pageNumber, int pageSize, int statusId, String columnName, String sortingMethod) throws GeneralException;
 
 	/**
 	 * Récupère le nombre de sous-traitants filtré par recherche, statut et attribut de recherche.
@@ -200,8 +192,7 @@ public interface SubcontractorService {
 	 * @return Le nombre de sous-traitants selon la recherche, le statut et l'attribut spécifiés.
 	 * @throws GeneralException Si l'attribut de recherche spécifié n'est pas pris en charge.
 	 */
-	Integer getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
-			String columnName) throws GeneralException;
+	Integer getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId, String columnName) throws GeneralException;
 
 
 	/**

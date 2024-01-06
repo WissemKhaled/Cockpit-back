@@ -1,8 +1,8 @@
 package com.example.demo.service.implementation;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.slf4j.Logger;
@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.GstStatusModelSubcontractorDTO;
-import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.GstStatusModelSubcontractorDtoMapper;
@@ -18,6 +17,7 @@ import com.example.demo.dto.mapper.StatusDtoMapper;
 import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.GstStatusModelSubcontractor;
 import com.example.demo.entity.ServiceProvider;
+import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
@@ -38,6 +38,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	private final EmailReminderMapper emailReminderMapper;
 	private final GstStatusModelSubcontractorDtoMapper gstStatusModelSubcontractorDtoMapper;
 	private static final Logger log = LoggerFactory.getLogger(SubcontractorServiceImpl.class);
+
 
 	public SubcontractorServiceImpl(SubcontractorDtoMapper subcontractorDtoMapper,
 			SubcontractorMapper subcontractorMapper, StatusDtoMapper statusDtoMapper, StatusMapper statusMapper,
@@ -93,46 +94,38 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 
 	@Override
-	public List<SubcontractorDto> getAllNonArchivedSubcontractors(String nameColonne, String sorting, int page, int pageSize) {
+	public List<SubcontractorDto> getAllNonArchivedSubcontractors(String nameColonne, String sortingMethod, int page, int pageSize) {
 		int offset = (page - 1) * pageSize;
-		List<SubcontractorDto> foundedSubcontractors = subcontractorMapper.findAllNonArchivedSubcontractors(nameColonne, sorting, offset,pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
-		if (foundedSubcontractors.isEmpty()) {
-			throw new EntityNotFoundException("Il n'y a pas de sous-traitans");
+		Optional<List<Subcontractor>> optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllNonArchivedSubcontractors(nameColonne, sortingMethod, offset, pageSize));
+				
+		if (optionalSubcontractorsList.isEmpty()) {
+			throw new EntityNotFoundException("Il n'y a pas de sous-traitans enregistré");
 		}
-		return foundedSubcontractors;
+		return optionalSubcontractorsList.get().stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	}
 	
 	@Override
-	public List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sorting, int pageSize,
-			int page, int statusId) {
-		List<SubcontractorDto> subcontractorDtosList = new ArrayList<>();
+	public List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sortingMethod, int pageSize, int page, int statusId) {
 		int offset = (page - 1) * pageSize;
-		List<Subcontractor> subContarcList = subcontractorMapper.findAllSubcontractorsWithStatus(nameColonne, sorting,
-				offset, pageSize, statusId);
-
-		if (!subContarcList.isEmpty()) {
-			for (Subcontractor subcontractor : subContarcList) {
-				subcontractorDtosList.add(subcontractorDtoMapper.subcontractorToDto(subcontractor));
-			}
-			return subcontractorDtosList;
-		} else
-			throw new RuntimeException("Il n'y a pas de sous-traitans");
+		
+		Optional<List<Subcontractor>> optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllSubcontractorsWithStatus(nameColonne, sortingMethod, offset, pageSize, statusId));
+		
+		if (optionalSubcontractorsList.isEmpty()) {
+			throw new EntityNotFoundException("Il n'y a pas de sous-traitans enregistré");
+		}
+		
+		return optionalSubcontractorsList.get().stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	}
 	
 	@Override
 	public List<StatusDto> getAllStatus() {
-		List<StatusDto> foundedStatus = statusMapper.getAllStatus().stream().map(statusDtoMapper::statusToDto).toList();
-		if (foundedStatus.isEmpty()) {
-			throw new EntityNotFoundException("Il n'y a pas de status enregistré");
+		Optional<List<Status>> optionalStatusList = Optional.ofNullable(statusMapper.getAllStatus());
+		if (optionalStatusList.isEmpty()) {
+			throw new EntityNotFoundException("Il n'y a pas de statut enregistré");
 		}
-		return foundedStatus;
+		return optionalStatusList.get().stream().map(statusDtoMapper::statusToDto).toList();
 	}
-	
 
-	@Override
-	public int getNumbersOfPages() {
-		return subcontractorMapper.countAllNonArchivedSubcontractors();
-	}
 	
 	@Override
 	public Integer getNumberOfAllSubcontractors() {
@@ -144,7 +137,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 	
 	@Override
-	public Integer countTotalItemWhitStatus(Integer statusId) {
+	public Integer getNumberOfAllSubcontractorsWithStatus(Integer statusId) {
 		Integer numberOfFoundSubcontractorsWithStatus = subcontractorMapper.countAllNonArchivedSubcontractorsWithStatus(statusId);
 		if (numberOfFoundSubcontractorsWithStatus == 0) {
 			throw new EntityNotFoundException("il n'y a pas de sous-traiatant trouvé");
@@ -155,12 +148,11 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 	@Override
 	public SubcontractorDto getSubcontractorWithStatus(int sId) {
-		SubcontractorDto foundedSubcontractor = subcontractorDtoMapper.subcontractorToDto(subcontractorMapper.findSubcontractorWithStatusById(sId));
-		
-		if (foundedSubcontractor == null) {
+		Optional<Subcontractor> optionalSubcontractor = Optional.ofNullable(subcontractorMapper.findSubcontractorWithStatusById(sId));
+		if (optionalSubcontractor.isEmpty()) {
 			throw new EntityNotFoundException("le sous-traitant avec l'id: " + sId + " n'existe pas!!");
 		}
-		return foundedSubcontractor;
+		return subcontractorDtoMapper.subcontractorToDto(optionalSubcontractor.get());
 	}
 
 	@Override
@@ -194,7 +186,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 	@Override
 	public int checkIfSubcontractorExistBySName(String sName) {
-		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusBySName(sName.toUpperCase());
+		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusBySubcontractorName(sName.toUpperCase());
 		if (subcontractor == null) {
 			return 0;
 		}
@@ -203,7 +195,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 	@Override
 	public int checkIfSubcontractorExistBySEmail(String sEmail) {
-		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusBySEmail(sEmail);
+		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusBySubcontractorEmail(sEmail);
 		if (subcontractor == null) {
 			return 0;
 		}
@@ -236,7 +228,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 	@Override
 	public Subcontractor getSubcontractorBySName(String sName) {
-		Subcontractor foundSubcontractorBySName = subcontractorMapper.findSubcontractorWithStatusBySName(sName);
+		Subcontractor foundSubcontractorBySName = subcontractorMapper.findSubcontractorWithStatusBySubcontractorName(sName);
 		if (foundSubcontractorBySName == null) {
 			throw new EntityNotFoundException("le sous-traitant avec le nom: " + sName + " n'existe pas!!");
 		}
@@ -245,22 +237,22 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	@Override
 	public List<SubcontractorDto> getAllSubcontractorsBySearchAndWithOrWithoutStatusFiltring(String searchTerms,
-			int pageNumber, int pageSize, int statusId, String columnName) throws GeneralException {
+			int pageNumber, int pageSize, int statusId, String columnName, String sortingMethod) throws GeneralException {
 	    // Calcul de l'offset pour la pagination
 	    int offset = (pageNumber - 1) * pageSize;
 
 	    // Vérification de l'attribut de recherche et récupération des prestataires en conséquence
-	    if (columnName.equals("name")) {
+	    if (columnName.equals("s_name")) {
 	        if (statusId == 0) {
-	            return subcontractorMapper.findAllSubcontractorsByCriteria("s.s_name", searchTerms, offset, pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	            return subcontractorMapper.findAllSubcontractorsByCriteria("s.s_name", searchTerms, offset, pageSize, sortingMethod).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	        } else {
-	            return subcontractorMapper.findAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_name", searchTerms, offset, pageSize, statusId).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	            return subcontractorMapper.findAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_name", searchTerms, offset, pageSize, sortingMethod, statusId).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	        }
-	    } else if (columnName.equals("email")) {
+	    } else if (columnName.equals("s_email")) {
 	        if (statusId == 0) {
-	            return subcontractorMapper.findAllSubcontractorsByCriteria("s.s_email", searchTerms, offset, pageSize).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	            return subcontractorMapper.findAllSubcontractorsByCriteria("s.s_email", searchTerms, offset, pageSize, sortingMethod).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	        } else {
-	            return subcontractorMapper.findAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_email",searchTerms, offset, pageSize, statusId).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	            return subcontractorMapper.findAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_email",searchTerms, offset, pageSize, sortingMethod, statusId).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	        }
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
@@ -268,20 +260,13 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 
 	@Override
-	public Integer getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
-			String columnName) throws GeneralException {
-	    if (columnName.equals("name")) {
+	public Integer getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId, String columnName) throws GeneralException {
+	    if (columnName.equals("s_name") || columnName.equals("s_email")) {
 	        // Vérification de l'attribut de recherche et récupération du nombre de prestataires de services en conséquence
 	        if (statusId == 0) {
-	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteria("s.s_name",searchTerms);
+	            return subcontractorMapper.countAllSubcontractorsByCriteria(columnName,searchTerms);
 	        } else {
-	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_name",searchTerms,statusId);
-	        }
-	    } else if (columnName.equals("email")) {
-	        if (statusId == 0) {
-	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteria("s.s_email",searchTerms);
-	        } else {
-	            return subcontractorMapper.findNumberOfAllSubcontractorsByCriteriaAndFiltredByStatus("s.s_email",searchTerms,statusId);
+	            return subcontractorMapper.countAllSubcontractorsByCriteriaAndFiltredByStatus(columnName,searchTerms,statusId);
 	        }
 	    } else {
 	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));

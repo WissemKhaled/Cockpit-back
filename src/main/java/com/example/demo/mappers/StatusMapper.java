@@ -16,8 +16,8 @@ public interface StatusMapper {
 	Status findStatusById(int stId);
 	
 	// debut cette method recupere tous les status
-	@Select("SELECT * FROM gst_status ORDER BY st_id")
-	@Result(property = "stId", column = "st_id")
-	@Result(property = "stName", column = "st_name")
+//	@Select("SELECT * FROM gst_status ORDER BY st_id")
+//	@Result(property = "stId", column = "st_id")
+//	@Result(property = "stName", column = "st_name")
 	List<Status> getAllStatus();
 }
