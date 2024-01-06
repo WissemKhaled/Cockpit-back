@@ -187,7 +187,7 @@ public class ServiceProviderServiceTest {
 			given(serviceProviderMapper.findServiceProvidersBySubcontractorId(existingSubcontractorId))
 					.willReturn(expectedServiceProviders);
 
-			serviceProviderService.getServiceProvidersBySubcontractorId(existingSubcontractorId);
+			serviceProviderService.getAllServiceProvidersBySubcontractorId(existingSubcontractorId);
 
 		} catch (EntityNotFoundException e) {
 			assert (e.getMessage().equals("le sous-traitant avec l'id: 1 n'a pas de prestataires"));

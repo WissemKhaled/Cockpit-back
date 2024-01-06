@@ -3,18 +3,6 @@
 <!-- SubcontractorMapper.xml -->
 <mapper namespace="com.example.demo.mappers.SubcontractorMapper">
 
-	<select id="countAllNonArchivedSubcontractors" resultType="java.lang.Integer">
-		SELECT COUNT(*)
-		FROM gst_subcontractor
-		WHERE s_fk_status_id != 4
-	</select>
-	
-	<select id="countAllNonArchivedSubcontractorsWithStatus" resultType="java.lang.Integer">
-		SELECT COUNT(*)
-		FROM gst_subcontractor
-		WHERE s_fk_status_id = ${idStatus}
-	</select>
-
 	<resultMap type="com.example.demo.entity.Subcontractor" id="subcontractorResultMap">
 		<result property="sId" column="s_id" />
 		<result property="sName" column="s_name" />
@@ -26,6 +14,18 @@
             <result property="stName" column="st_name"/>
         </association>
 	</resultMap>
+
+	<select id="countAllNonArchivedSubcontractors" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM gst_subcontractor
+		WHERE s_fk_status_id != 4
+	</select>
+	
+	<select id="countAllNonArchivedSubcontractorsWithStatus" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM gst_subcontractor
+		WHERE s_fk_status_id = ${idStatus}
+	</select>
 
     <select id="findAllNonArchivedSubcontractors" resultMap="subcontractorResultMap">
         SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date,
@@ -54,7 +54,7 @@
 		WHERE s.s_id = #{sId}
     </select>
     
-    <select id="findSubcontractorWithStatusBySName" resultMap="subcontractorResultMap">
+    <select id="findSubcontractorWithStatusBySubcontractorName" resultMap="subcontractorResultMap">
         SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id, st.st_name
         FROM gst_subcontractor s
         INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id

@@ -13,5 +13,6 @@
 	<mappers>
 		<mapper resource="com/example/demo/mappers/SubcontractorMapper.xml" />
 		<mapper resource="com/example/demo/mappers/StatusMapper.xml" />
+		<mapper resource="com/example/demo/mappers/ServiceProviderMapper.xml" />
 	</mappers>
 </configuration>
