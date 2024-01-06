@@ -13,4 +13,10 @@
 		FROM gst_status
 	</select>
 
+	<select id="findStatusById" resultMap="statusResultMap">
+		SELECT * 
+		FROM gst_status 
+		WHERE st_id = #{stId}
+	</select>
+	
 </mapper>
