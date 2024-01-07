@@ -4,15 +4,10 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-<!-- 	<settings> -->
-<!-- 	<setting name="mapUnderscoreToCamelCase" value="true"/> -->
-<!-- 	</settings> -->
 	<typeAliases>
 		<package name="com.example.demo.entity" />
 	</typeAliases>
 	<mappers>
-		<mapper resource="com/example/demo/mappers/SubcontractorMapper.xml" />
-		<mapper resource="com/example/demo/mappers/StatusMapper.xml" />
-		<mapper resource="com/example/demo/mappers/ServiceProviderMapper.xml" />
+		<mapper resource="com/example/demo/mappers/**.xml" />
 	</mappers>
 </configuration>

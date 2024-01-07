@@ -102,7 +102,7 @@ public class UserInfoService implements UserDetailsService {
 	    user.setUStatus(true);
 
 	    try {
-	        userMapper.insert(user);
+	        userMapper.insertUser(user);
 	        log.info("Utilisateur '" + user.getUEmail() + "' ajouté avec succès");
 	        return "Utilisateur '" + user.getUEmail() + "' ajouté avec succès";
 	    } catch (Exception ex) {
