@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mappers.RefreshTokenMapper">
+	
+	<resultMap type="com.example.demo.entity.RefreshToken" id="refreshTokenResultMap">
+		<result property="rtId" column="rt_id"/>
+		<result property="rtToken" column="rt_token"/>
+		<result property="rtExpiryDate" column="rt_expiry_date"/>
+        <association property="uUser" javaType="com.example.demo.entity.UUser">
+            <id property="uId" column="u_id"/>
+			<result property="uEmail" column="u_email" />
+			<result property="uPassword" column="u_password" />
+			<result property="uFirstName" column="u_first_name" />
+			<result property="uLastName" column="u_last_name" />
+			<result property="uStatus" column="u_status" />
+			<result property="uInsertionDate" column="u_insertion_date" />
+			<result property="uLastUpdate" column="u_last_update" />
+        </association>
+	</resultMap>
+	
+	<select id="findRefreshTokenByToken" parameterType="java.lang.String" resultMap="refreshTokenResultMap">
+		SELECT rt.rt_id, rt.rt_token, rt.rt_expiry_date, u.u_id, u.u_email, u.u_password, u.u_first_name, u.u_last_name, u.u_status, u.u_insertion_date, u.u_last_update
+		FROM refresh_token rt
+		INNER JOIN gst_user u ON rt.rt_fk_user_id = u.u_id
+		WHERE rt.rt_token = #{token}
+	</select>
+	
+	<select id="findRefreshTokenByUserId" parameterType="java.lang.Integer" resultMap="refreshTokenResultMap">
+		SELECT rt.rt_id, rt.rt_token, rt.rt_expiry_date, u.u_id, u.u_email, u.u_password, u.u_first_name, u.u_last_name, u.u_status, u.u_insertion_date, u.u_last_update
+		FROM refresh_token rt 
+		INNER JOIN gst_user u ON rt.rt_fk_user_id = u.u_id 
+		WHERE rt.rt_fk_user_id = #{userId}
+	</select>
+	
+	<insert id="insertRefreshToken" parameterType="com.example.demo.entity.RefreshToken">
+        INSERT INTO refresh_token(rt_id, rt_token, rt_expiry_date, rt_fk_user_id)
+        VALUES (#{rtId}, #{rtToken}, TO_TIMESTAMP(#{rtExpiryDate}, 'YYYY-MM-DD HH24:MI:SS'), #{uUser.uId})
+    </insert>
+	
+	<delete id="deleteRefreshTokenByToken" parameterType="java.lang.String">
+		DELETE 
+		FROM refresh_token 
+		WHERE rt_token = #{token}
+	</delete>
+	
+	<delete id="deleteRefreshTokenById" parameterType="java.lang.Integer">
+		DELETE 
+		FROM refresh_token 
+		WHERE rt_fk_user_id = #{userId}
+	</delete>
+	
+</mapper>
