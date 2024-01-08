@@ -49,6 +49,7 @@
     <sql id="sortingColumnsAndPagination">
 		s.s_name, st.st_id, sp.sp_name LIMIT #{offset} OFFSET #{pageSize}
     </sql>
+    
     <!-- Select statements -->
 
     <select id="findServiceProviderWithSubcontractorBySpId" resultMap="serviceProviderResultMap">
