@@ -71,7 +71,7 @@ public class SendMailServiceImpl implements SendMailService {
 
 			// on recupere les info du user qui envoie le mail pour l'inserer dans le
 			// replyTo
-			Optional<UUser> user = userMapper.findById(mailDTO.getMsFkUserId());
+			Optional<UUser> user = userMapper.findUserById(mailDTO.getMsFkUserId());
 
 			helper.setPriority(1);
 			helper.setTo(mailDTO.getMsTo());
