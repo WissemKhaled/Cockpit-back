@@ -13,7 +13,6 @@ public class StatusDtoMapper {
 		return new StatusDtoBuilder()
 				.withStId(status.getStId())
 				.withStName(status.getStName())
-				.withStDescription(status.getStDescription())
 				.build();
 	}
 
@@ -21,7 +20,6 @@ public class StatusDtoMapper {
 		return new StatusBuilder()
 				.withStId(statusDto.getStId())
 				.withStName(statusDto.getStName())
-				.withStDescription(statusDto.getStDescription())
 				.build();
 				
 	}

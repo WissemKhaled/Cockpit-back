@@ -190,7 +190,7 @@ public class UserInfoServiceTest {
         doAnswer(invocation -> {
             // Vous pouvez mettre ici le code pour simuler l'insertion avec succès
             return null; // La méthode est de type void, donc renvoie null
-        }).when(userMapper).insert(user);
+        }).when(userMapper).insertUser(user);
 
         // Appel de la méthode addUser
         String result = userInfoService.addUser(userDTO);
@@ -222,7 +222,7 @@ public class UserInfoServiceTest {
         doAnswer(invocation -> {
             // Vous pouvez mettre ici le code pour lancer l'exception ou effectuer d'autres actions
             throw new RuntimeException("Erreur lors de l'insertion");
-        }).when(userMapper).insert(user);
+        }).when(userMapper).insertUser(user);
 
         // Appel de la méthode addUser et vérification que cela lance une exception
         assertThrows(GeneralException.class, () -> userInfoService.addUser(userDTO));

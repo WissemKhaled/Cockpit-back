@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mappers.SubcontractorMapper">
+
+	<resultMap type="com.example.demo.entity.Subcontractor" id="subcontractorResultMap">
+		<result property="sId" column="s_id" />
+		<result property="sName" column="s_name" />
+		<result property="sEmail" column="s_email" />
+		<result property="sCreationDate" column="s_creation_date" />
+		<result property="sLastUpdateDate" column="s_lastupdate_date" />
+        <association property="status" javaType="com.example.demo.entity.Status">
+            <id property="stId" column="st_id"/>
+            <result property="stName" column="st_name"/>
+        </association>
+	</resultMap>
+
+	<select id="countAllNonArchivedSubcontractors" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM gst_subcontractor
+		WHERE s_fk_status_id != 4
+	</select>
+	
+	<select id="countAllNonArchivedSubcontractorsWithStatus" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM gst_subcontractor
+		WHERE s_fk_status_id = ${idStatus}
+	</select>
+
+    <select id="findAllNonArchivedSubcontractors" resultMap="subcontractorResultMap">
+        SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date,
+               st.st_id, st.st_name
+        FROM gst_subcontractor s
+        INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id
+        WHERE s.s_fk_status_id != 4
+        ORDER BY s.s_fk_status_id, s.s_name ${sortingMethod}
+        LIMIT #{offset} OFFSET #{pageSize}
+    </select>
+    
+    <select id="findAllSubcontractorsWithStatus" resultMap="subcontractorResultMap">
+        SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date,
+               st.st_id, st.st_name
+        FROM gst_subcontractor s
+        INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id
+        WHERE s.s_fk_status_id = ${statusId}
+        ORDER BY ${nameColonne}, s.s_email ${sortingMethod}
+        LIMIT #{offset} OFFSET #{pageSize}
+    </select>
+
+    <select id="findSubcontractorWithStatusById" resultMap="subcontractorResultMap">
+        SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id, st.st_name
+        FROM gst_subcontractor s
+        INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id
+		WHERE s.s_id = #{sId}
+    </select>
+    
+    <select id="findSubcontractorWithStatusBySubcontractorName" resultMap="subcontractorResultMap">
+        SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id, st.st_name
+        FROM gst_subcontractor s
+        INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id
+		WHERE s.s_name = #{sName}
+    </select>
+
+    <select id="findSubcontractorWithStatusBySEmail" resultMap="subcontractorResultMap">
+        SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id, st.st_name
+        FROM gst_subcontractor s
+        INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id
+		WHERE s.s_email = #{sEmail}
+    </select>
+    
+    <select id="findAllSubcontractorsByCriteria" resultMap="subcontractorResultMap">
+        SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id, st.st_name
+        FROM gst_subcontractor s
+        INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id
+		WHERE ${columnName} ILIKE #{searchTerms} || '%' AND s.s_fk_status_id != 4
+		ORDER BY st.st_id, s.s_name ${sortingMethod}
+        LIMIT #{offset} OFFSET #{pageSize}
+    </select>
+    
+    <select id="findAllSubcontractorsByCriteriaAndFiltredByStatus" resultMap="subcontractorResultMap">
+        SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id, st.st_name
+        FROM gst_subcontractor s
+        INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id
+		WHERE ${columnName} ILIKE #{searchTerms} || '%' AND s.s_fk_status_id = #{statusId}
+		ORDER BY s.s_fk_status_id, s.s_name ${sortingMethod}
+        LIMIT #{offset} OFFSET #{pageSize}
+    </select>
+    
+    <select id="countAllSubcontractorsByCriteria" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM gst_subcontractor
+		WHERE ${columnName} ILIKE #{searchTerms} || '%' AND s_fk_status_id != 4
+    </select>
+    
+    <select id="countAllSubcontractorsByCriteriaAndFiltredByStatus" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM gst_subcontractor
+		WHERE ${columnName} ILIKE #{searchTerms} || '%' AND s_fk_status_id = #{statusId}
+    </select>
+    
+    <insert id="insertSubcontractor" parameterType="com.example.demo.entity.Subcontractor">
+        INSERT INTO gst_subcontractor (s_name, s_email, s_creation_date, s_lastUpdate_date, s_fk_status_id)
+        VALUES (#{sName}, #{sEmail}, #{sCreationDate}, #{sLastUpdateDate}, #{status.stId})
+    </insert>
+    
+    <update id="updateSubcontractor" parameterType="com.example.demo.entity.Subcontractor">
+        UPDATE gst_subcontractor
+        SET s_name = #{sName}, s_email = #{sEmail}, s_lastUpdate_date = #{sLastUpdateDate}, s_fk_status_id = #{status.stId}
+        WHERE s_id = #{sId}
+    </update>
+    
+    <update id="archiveSubcontractor" parameterType="com.example.demo.entity.Subcontractor">
+        UPDATE gst_subcontractor
+        SET s_fk_status_id = 4
+        WHERE s_id = #{sId}
+    </update>
+    
+</mapper>

@@ -42,6 +42,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/addNewUser", "/auth/generateToken", "/auth/refreshToken", "/messages/**", "/gstlogs/**", "/MessageModel/**", "/SendMail/**").permitAll())
 				.authorizeHttpRequests(ar ->ar.requestMatchers("/auth/user/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/admin/**").authenticated())
+				.authorizeHttpRequests(ar -> ar.requestMatchers("/status/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/subcontractor/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/service-providers/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/emailReminder/**").authenticated())
@@ -51,7 +52,9 @@ public class SecurityConfig {
 				.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
 
-	// Password Encoding 
+	/**
+	 * Password Encoding
+	*/
 	@Bean
 	public PasswordEncoder passwordEncoder() { 
 		return new BCryptPasswordEncoder(); 

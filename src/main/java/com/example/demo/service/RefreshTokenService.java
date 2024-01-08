@@ -47,7 +47,7 @@ public class RefreshTokenService {
 		LOG.info("refreshToken suivant créé : " + refreshToken);
 
 		// Insère le refresh token en base de donnée et récupère la clé générée (rtId)
-		int rowsAffected = refreshTokenMapper.insert(refreshToken);
+		int rowsAffected = refreshTokenMapper.insertRefreshToken(refreshToken);
 
 		if (rowsAffected > 0) {
 			int generatedRtId = refreshToken.getRtId();
@@ -63,7 +63,7 @@ public class RefreshTokenService {
 	 * paramètre
 	 */
 	public Optional<RefreshToken> findByToken(String token) throws GeneralException {
-		Optional<RefreshToken> refreshToken = refreshTokenMapper.findByToken(token);
+		Optional<RefreshToken> refreshToken = refreshTokenMapper.findRefreshTokenByToken(token);
 		if (!refreshToken.isPresent()) {
 			LOG.warn("Le refresh token avec la clé '" + token + "' n'a pas été trouvé dans la base de données.");
 		}
@@ -74,7 +74,7 @@ public class RefreshTokenService {
 	public RefreshToken verifyExpiration(RefreshToken token) throws GeneralException {
 		try {
 			if (token.getRtExpiryDate().compareTo(Instant.now()) < 0) {
-				refreshTokenMapper.delete(token.getRtToken());
+				refreshTokenMapper.deleteRefreshTokenByToken(token.getRtToken());
 				LOG.info(token.getRtToken() + " Refresh token expiré. Suppression de la base de donnée");
 				throw new GeneralException("Refresh token expiré. Veuillez vous reconnecter");
 			}
@@ -87,10 +87,10 @@ public class RefreshTokenService {
 
 	@Transactional
 	public void deleteTokenByUserId(int userId) {
-		Optional<RefreshToken> refreshToken = refreshTokenMapper.findByUserId(userId);
+		Optional<RefreshToken> refreshToken = refreshTokenMapper.findRefreshTokenByUserId(userId);
 
 		if (refreshToken.isPresent()) {
-			refreshTokenMapper.deleteRtById(userId);
+			refreshTokenMapper.deleteRefreshTokenById(userId);
 			LOG.info("Refresh token associé au User avec l'Id " + userId + " supprimé de la base de donnée");
 		}
 	}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mappers.UUserMapper">
+
+	<resultMap type="com.example.demo.entity.UUser" id="uUserResultMap">
+		<result property="uId" column="u_id" />
+		<result property="uEmail" column="u_email" />
+		<result property="uPassword" column="u_password" />
+		<result property="uFirstName" column="u_first_name" />
+		<result property="uLastName" column="u_last_name" />
+		<result property="uStatus" column="u_status" />
+		<result property="uInsertionDate" column="u_insertion_date" />
+		<result property="uLastUpdate" column="u_last_update" />
+	</resultMap>
+	
+	<select id="findByEmail" parameterType="java.lang.String" resultMap="uUserResultMap">
+		SELECT * 
+		FROM gst_user 
+		WHERE u_email = #{email}
+	</select>
+	
+	<select id="findById" parameterType="java.lang.Integer" resultMap="uUserResultMap">
+		SELECT * 
+		FROM gst_user 
+		WHERE u_id = #{userId}
+	</select>
+	
+	<insert id="insertUser" parameterType="com.example.demo.entity.UUser">
+        INSERT INTO gst_user(u_email, u_password, u_first_name, u_last_name, u_status, u_insertion_date, u_last_update)
+        VALUES (#{uEmail}, #{uPassword}, #{uFirstName}, #{uLastName}, #{uStatus}, #{uInsertionDate}, #{uLastUpdate})
+	</insert>
+	
+	<update id="updatePassword" parameterType="com.example.demo.entity.UUser">
+		UPDATE gst_user SET u_password = #{user.uPassword}, u_last_update = #{user.uLastUpdate} 
+		WHERE u_email = #{user.uEmail}
+	</update>
+	
+</mapper>
