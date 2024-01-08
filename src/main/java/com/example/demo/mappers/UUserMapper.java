@@ -12,7 +12,7 @@ public interface UUserMapper {
 	
 Optional<UUser> findByEmail(@Param("email") String state);
 	
-	Optional<UUser> findById(@Param("id") int state);
+	Optional<UUser> findById(@Param("userId") int state);
 	
 	void insertUser(UUser userInfo);
 	

@@ -40,15 +40,15 @@ public class SendMailServiceImpl implements SendMailService {
 	private final JavaMailSender mailSender;
 
 	private final ResourceLoader resourceLoader;
-	
-	private final UserInfoService infoService;
-	
-	private final UUserMapper userMapper;
 
+	private final UserInfoService infoService;
+
+	private final UUserMapper userMapper;
 
 	private static final Logger LOG = getLogger(SendMailServiceImpl.class);
 
-	public SendMailServiceImpl(SendMailMapper mailMapper, JavaMailSender mailSender, ResourceLoader resourceLoader, UserInfoService infoService, UUserMapper userMapper) {
+	public SendMailServiceImpl(SendMailMapper mailMapper, JavaMailSender mailSender, ResourceLoader resourceLoader,
+			UserInfoService infoService, UUserMapper userMapper) {
 		this.mailMapper = mailMapper;
 		this.mailSender = mailSender;
 		this.resourceLoader = resourceLoader;
@@ -69,9 +69,10 @@ public class SendMailServiceImpl implements SendMailService {
 			// signature du mail recuperé a partir des ressources en HTML
 			String signature = loadSignature();
 
-			//on recupere les info du user qui envoie le mail pour l'inserer dans le replyTo
-			Optional<UUser> user = userMapper.findById(mailDTO.getUser());
-			
+			// on recupere les info du user qui envoie le mail pour l'inserer dans le
+			// replyTo
+			Optional<UUser> user = userMapper.findById(mailDTO.getMsFkUserId());
+
 			helper.setPriority(1);
 			helper.setTo(mailDTO.getMsTo());
 			helper.setSubject(mailDTO.getMsSubject());
@@ -96,8 +97,8 @@ public class SendMailServiceImpl implements SendMailService {
 					helper.addCc(adresse);
 				}
 			}
-			//mailSender.send(message);
-			//mailMapper.saveMailAndSend(mailDTO);
+			// mailSender.send(message);
+			mailMapper.saveSendMail(mailDTO);
 
 			LOG.info("Le courrier a été envoyé avec succès !");
 			return "Le courrier a été envoyé avec succès !";

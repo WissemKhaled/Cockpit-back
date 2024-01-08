@@ -13,5 +13,6 @@
 		<mapper resource="xml/com/example/demo/mappers/StatusMapper.xml" />
 		<mapper resource="xml/com/example/demo/mappers/UUserMapper.xml" />
 		<mapper resource="xml/com/example/demo/mappers/RefreshTokenMapper.xml" />
+		<mapper resource="xml/com/example/demo/mappers/SendMailMapper.xml" />
 	</mappers>
 </configuration>
