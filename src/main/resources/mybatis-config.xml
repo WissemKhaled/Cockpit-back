@@ -8,6 +8,10 @@
 		<package name="com.example.demo.entity" />
 	</typeAliases>
 	<mappers>
-		<mapper resource="com/example/demo/mappers/**.xml" />
+		<mapper resource="xml/com/example/demo/mappers/SubcontractorMapper.xml" />
+		<mapper resource="xml/com/example/demo/mappers/ServiceProviderMapper.xml" />
+		<mapper resource="xml/com/example/demo/mappers/StatusMapper.xml" />
+		<mapper resource="xml/com/example/demo/mappers/UUserMapper.xml" />
+		<mapper resource="xml/com/example/demo/mappers/RefreshTokenMapper.xml" />
 	</mappers>
 </configuration>

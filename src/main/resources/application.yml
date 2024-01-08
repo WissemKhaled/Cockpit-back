@@ -9,8 +9,6 @@ logging:
       %highlight([%-5level]) %clr(%-40.40logger{39}){cyan} %msg%n'    
 
 spring:
-  mybatis:
-    config-location: classpath:mybatis-config.xml
     
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -59,3 +57,7 @@ reset:
     claim:
       expiration:
         duration: 15
+        
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mybatis/xml/mappers/*.xml
