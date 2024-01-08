@@ -59,5 +59,6 @@ reset:
         duration: 15
         
 mybatis:
-  config-location: classpath:mybatis-config.xml
-  mapper-locations: classpath:mybatis/xml/mappers/*.xml
+    config-location: classpath:mybatis-config.xml
+    mapper-locations: classpath:mybatis/xml/mappers/*.xml
+        
