@@ -10,3 +10,4 @@ public interface SendMailMapper {
 	void saveSendMail(SendMailDTO message_send);
 
 }
+  
