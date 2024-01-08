@@ -10,9 +10,9 @@ import com.example.demo.entity.UUser;
 @Mapper
 public interface UUserMapper {
 
-	Optional<UUser> findByEmail(@Param("email") String state);
+	Optional<UUser> findUserByEmail(@Param("uEmail") String uEmail);
 	
-	Optional<UUser> findById(@Param("id") int state);
+	Optional<UUser> findUserById(@Param("userId") int userId);
 	
 	void insertUser(UUser userInfo);
 	

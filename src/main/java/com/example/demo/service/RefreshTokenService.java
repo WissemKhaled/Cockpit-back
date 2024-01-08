@@ -34,7 +34,7 @@ public class RefreshTokenService {
 	
 	public RefreshToken createRefreshToken(String email) {
 		RefreshToken refreshToken = new RefreshTokenBuilder()
-				.withUUser(uUserMapper.findByEmail(email).get())
+				.withUUser(uUserMapper.findUserByEmail(email).get())
 				.withRtToken(UUID.randomUUID().toString())
 				.withRtExpiryDate(Instant.now().plusSeconds(refreshTokenExpirationDuration))
 				.build();

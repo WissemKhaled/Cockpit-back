@@ -16,7 +16,7 @@
 	<select id="findByEmail" parameterType="java.lang.String" resultMap="uUserResultMap">
 		SELECT * 
 		FROM gst_user 
-		WHERE u_email = #{email}
+		WHERE u_email = #{uEmail}
 	</select>
 	
 	<select id="findById" parameterType="java.lang.Integer" resultMap="uUserResultMap">

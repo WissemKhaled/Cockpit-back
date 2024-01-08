@@ -54,7 +54,7 @@ public class UserInfoServiceTest {
         UUser user = new UUser(1, userEmail, "password", "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now());
 
         // Mock du userMapper pour renvoyer l'utilisateur lorsque findByEmail est appelé
-        when(userMapper.findByEmail(userEmail)).thenReturn(Optional.of(user));
+        when(userMapper.findUserByEmail(userEmail)).thenReturn(Optional.of(user));
 
         // Appel de la méthode loadUserByUsername
         UserDetails userDetails = userInfoService.loadUserByUsername(userEmail);
@@ -74,7 +74,7 @@ public class UserInfoServiceTest {
         String userEmail = "nonexistent@example.com";
 
         // Mock du userMapper pour renvoyer un Optionnal vide, indiquant que l'utilisateur n'est pas trouvé
-        when(userMapper.findByEmail(userEmail)).thenReturn(Optional.empty());
+        when(userMapper.findUserByEmail(userEmail)).thenReturn(Optional.empty());
 
         // Appel de la méthode loadUserByUsername qui est censé lancer l'exception UsernameNotFoundException
         assertThrows(UsernameNotFoundException.class, () -> userInfoService.loadUserByUsername(userEmail));
@@ -94,7 +94,7 @@ public class UserInfoServiceTest {
         UUser user = new UUser(1, userEmail, "password", "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now());
 
         // Mock du résultat de findByEmail pour retourner l'utilisateur
-        when(userMapper.findByEmail(userEmail)).thenReturn(Optional.of(user));
+        when(userMapper.findUserByEmail(userEmail)).thenReturn(Optional.of(user));
 
         // Mock de la conversion de l'entité utilisateur en DTO
         UUserDTO userDto = new UUserDTO(1, userEmail, "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now());
@@ -132,7 +132,7 @@ public class UserInfoServiceTest {
       String userEmail = "nonexistent@example.com";
 
       // Mock du userMapper pour renvoyer un Optionnal vide, indiquant que l'utilisateur n'est pas trouvé
-      when(userMapper.findByEmail(userEmail)).thenReturn(Optional.empty());
+      when(userMapper.findUserByEmail(userEmail)).thenReturn(Optional.empty());
 
       // Appel de la méthode loadUserByUsername qui est censé lancer l'exception UsernameNotFoundException
       assertThrows(UsernameNotFoundException.class, () -> userInfoService.loadUserByUsername(userEmail));
@@ -145,7 +145,7 @@ public class UserInfoServiceTest {
     public void testFindUserById_UserFound() {
         int userId = 1;
         UUser user = new UUser(userId, "test@example.com", "John", "Doe", true, null, null);
-        when(userMapper.findById(userId)).thenReturn(Optional.of(user));
+        when(userMapper.findUserById(userId)).thenReturn(Optional.of(user));
 
         UserDetails userDetails = userInfoService.findById(userId);
 
@@ -160,7 +160,7 @@ public class UserInfoServiceTest {
     @Test
     public void testFindUserById_UserNotFound() {
         int userId = 1;
-        when(userMapper.findById(userId)).thenReturn(Optional.empty());
+        when(userMapper.findUserById(userId)).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> {
             userInfoService.findById(userId);
