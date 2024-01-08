@@ -19,6 +19,7 @@ import com.example.demo.entity.ModelTracking;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.dto.mapper.StatusDtoMapper;
 import com.example.demo.entity.ServiceProvider;
+import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
@@ -28,6 +29,7 @@ import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.mappers.StatusMapper;
 import com.example.demo.service.ContractService;
 import com.example.demo.service.ServiceProviderService;
+import com.example.demo.service.SubcontractorService;
 
 @Service
 public class ServiceProviderServiceImpl implements ServiceProviderService {
@@ -38,11 +40,19 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final StatusMapper statusMapper;
 	private final ModelTrackingDtoMapper modelTrackingDtoMapper;
 	private final ContractService contractService;
+	private final SubcontractorService subcontractorService;
 	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
 
-	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper,
+	public ServiceProviderServiceImpl(
+			ServiceProviderMapper serviceProviderMapper,
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
-			ModelTrackingDtoMapper modelTrackingDtoMapper, ModelTrackingMapper modelTrackingMapper, StatusDtoMapper statusDtoMapper, StatusMapper statusMapper, ContractService contractService) {
+			ModelTrackingDtoMapper modelTrackingDtoMapper, 
+			ModelTrackingMapper modelTrackingMapper, 
+			StatusDtoMapper statusDtoMapper, 
+			StatusMapper statusMapper, 
+			ContractService contractService,
+			SubcontractorService subcontractorService
+	) {
 		this.serviceProviderMapper = serviceProviderMapper;
 		this.modelTrackingMapper = modelTrackingMapper;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
@@ -50,6 +60,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		this.statusDtoMapper = statusDtoMapper;
 		this.statusMapper = statusMapper;
 		this.contractService = contractService;
+		this.subcontractorService = subcontractorService;
 	}
 	
 	@Transactional
@@ -69,8 +80,11 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		
 		ContractDTO contractDTO = new ContractDTO();
 		
+		// récupération du sous-traitant associé au prestataire
+		Subcontractor associatedSubcontractor = subcontractorService.getSubcontractorBySName(serviceProviderToSave.getSubcontractor().getSName());
+		
 		contractDTO.setcFKserviceProviderId(serviceProviderToSave.getSpId());
-		contractDTO.setcFkSubcontractorId(1); // trouver un moyen de récup l'id du subcontractor associer au presta créé
+		contractDTO.setcFkSubcontractorId(associatedSubcontractor.getSId());
 		
 		// le numéro de contrat est généré dand la méthode saveContract suivante dans le ContractServiceImpl :
 		int contractId = contractService.saveContract(contractDTO);
