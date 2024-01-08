@@ -14,6 +14,7 @@ import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.service.MessageModelService;
 import com.example.demo.service.ModelTrackingService;
 
+import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -91,13 +92,24 @@ public class MessageModelController {
 			Page<MessageModel> page = new PageImpl<>(messageModels, pageable, allMessages.size());
 			
 			// appel de la méthode qui gère les relances
-			modelTrackingService.checkRelaunch(page, 1); // contractId en 2ème param
+			modelTrackingService.checkRelaunch(51); // contractId en param
 			
 			return ResponseEntity.ok(page);
 
 		} catch (MessageModelNotFoundException e) {
-			return (ResponseEntity<Page<MessageModel>>) ResponseEntity.notFound();
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
 	}
+	
+	@GetMapping("/relaunch/{contractId}")
+	public ResponseEntity<String> relaunch(@PathVariable("contractId") Integer contractId) {
+	    try {
+	        String response = modelTrackingService.checkRelaunch(contractId);
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Une erreur est survenue : " + e.getMessage());
+	    }
+	}
+
 
 }

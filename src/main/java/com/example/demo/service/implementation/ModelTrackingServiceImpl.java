@@ -60,13 +60,11 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	    // si l'ID du status reçu du front = 1, on l'update à 2 et on update le mmId à 2 également dans la table intermédiaire et on update la date d'envoi
 	    // si l'ID du status reçu du front = 2, on l'update à 3 et on update le mmId à 3 également dans la table intermédiaire et on update la date de validation
 	    if (statusId == 2) {
-	    	// gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(2);
 	        modelTrackingDTO.setMtFkStatusId(statusId);
 	        modelTrackingDTO.setMtSendDate(LocalDateTime.now());
 
 	        // 7 jours après date envoie, relance
 	    } else if (validationDateString != null) {
-	    	// gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(3);
 	        modelTrackingDTO.setMtFkStatusId(3);
 	        modelTrackingDTO.setMtSendDate(modelTrackingDTO.getMtSendDate());
 
@@ -92,38 +90,47 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	}
 	
 	@Override
-	public void checkRelaunch(Page<MessageModel> messageModels, int contractId) {
-		LocalDateTime currentDate = LocalDateTime.now();
-		
-		List<ModelTrackingDTO> modelTrackingDTOList = modelTrackingMapper.findModelTrackingInfo(contractId);
-		
-		for (MessageModel messageModel : messageModels) {
-			if (messageModel.getMmType().contains("Relance")) {
-				for (ModelTrackingDTO modelTrackingDTO : modelTrackingDTOList) {
-					 // si la date de validation n'est pas null et date de 7 jours, on met à jour le status
-					if (modelTrackingDTO.getMtValidationDate() != null && modelTrackingDTO.getMtValidationDate().plusDays(7).isBefore(currentDate)) {
-						// on met à jour le statusId de la table intermédiaire
-						modelTrackingDTO.setMtFkContractId(contractId);
-					    modelTrackingDTO.setMtFkMessageModelId(modelTrackingDTO.getMtFkMessageModelId());
-					    modelTrackingDTO.setMtFkStatusId(1);
-					    modelTrackingDTO.setMtSendDate(modelTrackingDTO.getMtSendDate());
-					    modelTrackingDTO.setMtValidationDate(modelTrackingDTO.getMtValidationDate());
-					    
-					    ModelTracking gstStatusModelServiceProvider = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
-						
-						modelTrackingMapper.updateModelTracking(gstStatusModelServiceProvider);
-						
-						log.info("Relance : Table ModelTracking mise à jour pour l'id : " + gstStatusModelServiceProvider.getMtId());
-					} else {
-						log.error("Date de validation nulle ou < 7 jours");
-					}
-				}
-			} else {
-				System.out.println(messageModel);
-				log.error("Le message model n'est pas de type relance ou son statusId n'est pas nul");
-			}
-		}
+	public String checkRelaunch(int contractId) {
+	    try {
+	        LocalDateTime currentDate = LocalDateTime.now();
+
+	        List<ModelTrackingDTO> modelTrackingDTOList = modelTrackingMapper.findModelTrackingInfo(contractId);
+
+	        for (ModelTrackingDTO modelTrackingDTO : modelTrackingDTOList) {
+	            if (modelTrackingDTO.getMtFkCategoryId() == 1 || modelTrackingDTO.getMtFkCategoryId() == 2) {
+	            	// Vérifie si la date d'envoi n'est pas nulle et n'a pas dépassée 7 jours
+	                if (modelTrackingDTO.getMtSendDate() != null && modelTrackingDTO.getMtSendDate().plusDays(7).isBefore(currentDate)) {
+	                	// Maj du statusId de la table gst_model_tracking
+	                    modelTrackingDTO.setMtFkContractId(contractId);
+	                    modelTrackingDTO.setMtFkMessageModelId(modelTrackingDTO.getMtFkMessageModelId());
+	                    modelTrackingDTO.setMtFkStatusId(1);
+	                    modelTrackingDTO.setMtSendDate(modelTrackingDTO.getMtSendDate());
+	                    modelTrackingDTO.setMtValidationDate(modelTrackingDTO.getMtValidationDate());
+
+	                    ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
+
+	                    modelTrackingMapper.updateModelTracking(modelTracking);
+
+	                    log.info("Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId());
+	                    return "Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId();
+	                } else {
+	                    log.error("Date de validation nulle ou < 7 jours");
+	                    return "Date de validation nulle ou < 7 jours";
+	                }
+	            }
+	        }
+
+	        // If no suitable records were found
+	        log.warn("Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId);
+	        return "Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId;
+
+	    } catch (Exception e) {
+	        // Log the exception and return an error message
+	        log.error("Une erreur est survenue lors de la vérification de relance : " + e.getMessage(), e);
+	        return "Une erreur est survenue lors de la vérification de relance : " + e.getMessage();
+	    }
 	}
+
 
 	@Override
 	public List<ModelTrackingDTO> getModelTrackingInfoByContractId(int contractId) {
