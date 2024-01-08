@@ -12,7 +12,7 @@ import com.example.demo.exception.GeneralException;
 public interface ServiceProviderService {
 	
 	/**
-	 * Récupère un prestataire par son ID, en incluant les informations sur le sous-traitant associé.
+	 * Récupère un prestataire par son ID.
 	 *
 	 * @param serviceProviderId L'ID du prestataire à récupérer.
 	 * @return Le prestataire trouvé avec les informations sur le sous-traitant, s'il existe.
