@@ -9,7 +9,7 @@ import com.example.demo.entity.Subcontractor;
 
 @Mapper
 public interface SubcontractorMapper {
-	
+
 	/**
 	 * Récupère le nombre total de sous-traitants enregistrés.
 	 *
@@ -183,5 +183,4 @@ public interface SubcontractorMapper {
 			@Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms, 
 			@Param("statusId") int statusId);
-
 }

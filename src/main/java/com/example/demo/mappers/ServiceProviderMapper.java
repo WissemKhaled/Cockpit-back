@@ -9,8 +9,7 @@ import com.example.demo.entity.ServiceProvider;
 
 @Mapper
 public interface ServiceProviderMapper {
-	
-	ServiceProvider findServiceProviderWithSubcontractorBySpId(int sId);
+ServiceProvider findServiceProviderWithSubcontractorBySpId(int sId);
 	
 	ServiceProvider findServiceProviderById(int spId);
 	

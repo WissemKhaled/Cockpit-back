@@ -15,5 +15,5 @@ public interface EmailReminderSubcontractorService {
 	
 	public GstStatusModelSubcontractorDTO getSubcontractorReminderInfoBySpIdAndMmId(int sId, int mmId);
 	
-	public void checkRelaunchSubcontractor(Page<MessageModel> messageModels, int subcontractorId);
+	//public void checkRelaunchSubcontractor(Page<MessageModel> messageModels, int subcontractorId);
 }

@@ -34,6 +34,7 @@ public interface RefreshTokenMapper {
 	/*
 	 * Supprime le refresh token par le userId
 	 */
-	void deleteRefreshTokenById(@Param("userId") int userId);
+	void deleteRefreshTokenById(@Param("userId") int userId);	
+
 
 }

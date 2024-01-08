@@ -11,10 +11,10 @@ import com.example.demo.entity.UUser;
 public interface UUserMapper {
 
 	Optional<UUser> findUserByEmail(@Param("uEmail") String uEmail);
-	
+
 	Optional<UUser> findUserById(@Param("userId") int userId);
-	
+
 	void insertUser(UUser userInfo);
-	
+
 	int updatePassword(@Param("user") UUser user);
 }

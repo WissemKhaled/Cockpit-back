@@ -15,5 +15,5 @@ public interface EmailReminderServiceProviderService {
 	
 	public GstStatusModelServiceProviderDTO getSpReminderInfoBySpIdAndMmId(int serviceProviderId, int mmId);
 	
-	public void checkRelaunchServiceProvider(Page<MessageModel> messageModels, int serviceProviderId);
+	//public void checkRelaunchServiceProvider(Page<MessageModel> messageModels, int serviceProviderId);
 }

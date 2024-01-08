@@ -9,7 +9,6 @@ import com.example.demo.entity.Status;
 
 @Mapper
 public interface StatusMapper {
-
 	Status findStatusById(@Param("stId") int stId);
 	
 	List<Status> getAllStatus();
