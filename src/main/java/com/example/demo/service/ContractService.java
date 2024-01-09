@@ -10,6 +10,6 @@ import java.util.List;
  */
 public interface ContractService {
 
-    List<Contract> getContractsByMessageModelId(Integer serviceProviderId,Integer subContractorId);
+    List<Contract> getContractsByMessageModelId(Integer serviceProviderId,Integer subContractorId,Integer messageModelId);
 
 }

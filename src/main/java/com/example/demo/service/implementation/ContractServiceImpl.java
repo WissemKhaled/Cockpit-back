@@ -26,8 +26,8 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public List<Contract> getContractsByMessageModelId(Integer serviceProviderId, Integer subContractorId) {
-        List<Contract> contracts = contractMapper.getContractsByMessageModelId(subContractorId,serviceProviderId);
+    public List<Contract> getContractsByMessageModelId(Integer serviceProviderId, Integer subContractorId, Integer messageModelId) {
+        List<Contract> contracts = contractMapper.getContractsByMessageModelId(subContractorId,serviceProviderId,messageModelId);
         return Optional.ofNullable(contracts).filter(not(List::isEmpty))
                 .orElseThrow(() -> new MessageModelNotFoundException("No contract exists for this id!"));
     }
