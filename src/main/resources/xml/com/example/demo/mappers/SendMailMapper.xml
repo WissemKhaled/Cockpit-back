@@ -12,7 +12,7 @@
 	    <result property = "msFkUserId" column = "ms_fk_user_id" />
     </resultMap>
     
-    <insert id="saveSendMail" parameterType="com.example.demo.entity.SendMail">
+    <insert id="saveSendMail" flushCache="true" statementType="PREPARED" keyProperty="msId" keyColumn="ms_id" useGeneratedKeys="true" parameterType="com.example.demo.entity.SendMail">
 	    INSERT INTO gst_message_send (ms_to, ms_cc, ms_subject, ms_body, ms_send_date, ms_fk_user_id) 
 	    VALUES (#{msTo}, #{msCc}, #{msSubject}, #{msBody}, #{msSendDate}, #{msFkUserId} )
     </insert>

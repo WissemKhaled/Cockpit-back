@@ -1,6 +1,11 @@
 package com.example.demo.controller;
 
 import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,20 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.example.demo.entity.MessageModel;
 import com.example.demo.exception.MessageModelNotFoundException;
-import com.example.demo.service.EmailReminderSubcontractorService;
 import com.example.demo.service.MessageModelService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.List;
+import com.example.demo.service.ModelTrackingService;
 
 @RestController
 @RequestMapping("/MessageModel")
@@ -30,68 +26,50 @@ import java.util.List;
 public class MessageModelController {
 
 	private final MessageModelService messageModelService;
-	private final EmailReminderSubcontractorService emailReminderSubcontractorService;
-
-	
+	private final ModelTrackingService modelTrackingService;
 
 	public MessageModelController(
 		MessageModelService messageModelService,
-		EmailReminderSubcontractorService emailReminderSubcontractorService
+		ModelTrackingService modelTrackingService
 	) {
 		this.messageModelService = messageModelService;
-		this.emailReminderSubcontractorService = emailReminderSubcontractorService;
+		this.modelTrackingService = modelTrackingService;
 	}
-	
-	@GetMapping("/getAll")
-	public ResponseEntity<List<MessageModel>> getAllMessageModel() {
-		try {
-			return new ResponseEntity<>(messageModelService.getAllMessageModel(), HttpStatus.OK);
 
-		} catch (MessageModelNotFoundException e) {
 
-			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-		}
-	}
-	
-	@GetMapping("/getAllMessagesByServiceProviderId/{serviceproviderId}")
-	public ResponseEntity<List<MessageModel>> getAllMessageModelsAndStatusByServiceProviderId(
-			@PathVariable("serviceproviderId") Integer serviceproviderId) {
+	@GetMapping("/getAllMessagesById")
+	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusForSubcontractorCategory(
+			@RequestParam(value = "subContractorId", required = false) Integer subContractorId,
+			@RequestParam(value = "serviceProviderId", required = false) Integer serviceProviderId,
+			@RequestParam(value = "subContractorStatusId", required = false) Integer subContractorStatusId,
+			@RequestParam(value = "serviceProviderStatusId", required = false) Integer serviceProviderStatusId,
+			@PageableDefault(page = 0, size = 6) Pageable pageable) {
 
 
 		try {
-			return new ResponseEntity<>(messageModelService.getAllMessageModelsAndStatusByServiceProviderId(serviceproviderId), HttpStatus.OK);
+			List<MessageModel> allMessages = messageModelService.getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorId, serviceProviderId, subContractorStatusId, serviceProviderStatusId);
+
+			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
+
+//			// appel de la méthode qui gère les relances selon le contractId
+			// modelTrackingService.checkRelaunch(contractId);
+
+			return ResponseEntity.ok(page);
 
 		} catch (MessageModelNotFoundException e) {
-
-			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+			return ResponseEntity.notFound().build();
 		}
 	}
+	
+	@GetMapping("/relaunch/{contractId}")
+	public ResponseEntity<String> relaunch(@PathVariable("contractId") Integer contractId) {
+	    try {
+	        String response = modelTrackingService.checkRelaunch(contractId);
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Une erreur est survenue : " + e.getMessage());
+	    }
+	}
 
-
-
-//	@GetMapping("/getAllMessagesById/{subcontractorId}")
-//	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusForSubcontractorCategory(
-//			@PathVariable("subcontractorId") Integer subcontractorId,
-//			@PageableDefault(page = 0, size = 6) Pageable pageable) {
-//
-//
-//		try {
-//			List<MessageModel> allMessages = messageModelService.getAllMessageModelsAndStatusBySubcontractorCategory(subcontractorId);
-//
-//			int start = (int) pageable.getOffset();
-//			int end = Math.min((start + pageable.getPageSize()), allMessages.size());
-//			List<MessageModel> messageModels = allMessages.subList(start, end);
-//
-//			Page<MessageModel> page = new PageImpl<>(messageModels, pageable, allMessages.size());
-//			
-//			// appel de la méthode qui gère les relances du sous-traitant
-//			emailReminderSubcontractorService.checkRelaunchSubcontractor(page, subcontractorId);
-//			
-//			return ResponseEntity.ok(page);
-//
-//		} catch (MessageModelNotFoundException e) {
-//			return (ResponseEntity<Page<MessageModel>>) ResponseEntity.notFound();
-//		}
-//	}
 
 }

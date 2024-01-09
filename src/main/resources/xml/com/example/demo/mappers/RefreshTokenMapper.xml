@@ -18,21 +18,24 @@
         </association>
 	</resultMap>
 	
+	<sql id="userRefreshTokenJoin">
+		refresh_token rt 
+		INNER JOIN gst_user u ON rt.rt_fk_user_id = u.u_id
+	</sql>
+	
 	<select id="findRefreshTokenByToken" parameterType="java.lang.String" resultMap="refreshTokenResultMap">
 		SELECT rt.*, u.*
-		FROM refresh_token rt
-		INNER JOIN gst_user u ON rt.rt_fk_user_id = u.u_id
+		FROM <include refid="userRefreshTokenJoin"/> 
 		WHERE rt.rt_token = #{token}
 	</select>
 	
 	<select id="findRefreshTokenByUserId" parameterType="java.lang.Integer" resultMap="refreshTokenResultMap">
 		SELECT rt.*, u.*
-		FROM refresh_token rt 
-		INNER JOIN gst_user u ON rt.rt_fk_user_id = u.u_id 
+		FROM <include refid="userRefreshTokenJoin"/> 
 		WHERE rt.rt_fk_user_id = #{userId}
 	</select>
 	
-	<insert id="insertRefreshToken" parameterType="com.example.demo.entity.RefreshToken">
+	<insert id="insertRefreshToken" flushCache="true" statementType="PREPARED" keyProperty="rtId" keyColumn="rt_id" useGeneratedKeys="true" parameterType="com.example.demo.entity.RefreshToken">
         INSERT INTO refresh_token(rt_id, rt_token, rt_expiry_date, rt_fk_user_id)
         VALUES (#{rtId}, #{rtToken}, TO_TIMESTAMP(#{rtExpiryDate}, 'YYYY-MM-DD HH24:MI:SS'), #{uUser.uId})
     </insert>

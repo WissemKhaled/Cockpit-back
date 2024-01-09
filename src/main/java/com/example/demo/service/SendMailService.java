@@ -10,10 +10,7 @@ import com.example.demo.exception.GeneralException;
 import jakarta.mail.MessagingException;
 
 public interface SendMailService {
-	
-	String saveAndSendMail (SendMailDTO mailDTO,  List<MultipartFile> file)  throws  MessagingException, GeneralException ;
 
-	String saveAndSendMail2 (SendMailDTO mailDTO)  throws  MessagingException, GeneralException ;
-	 
+	String saveAndSendMail(SendMailDTO mailDTO, List<MultipartFile> file) throws MessagingException, GeneralException;
+
 }
-

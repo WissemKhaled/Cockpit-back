@@ -2,10 +2,7 @@ package com.example.demo.builder;
 
 import java.time.LocalDateTime;
 
-import org.apache.catalina.User;
-
 import com.example.demo.entity.SendMail;
-import com.example.demo.entity.UUser;
 
 public class SendMailBuilder {
 	private int msId;

@@ -8,11 +8,11 @@
 	</resultMap>
 
 	<select id="getAllStatus" resultMap="statusResultMap">
-		SELECT st_id, st_name
+		SELECT *
 		FROM gst_status
 	</select>
 
-	<select id="findStatusById" resultMap="statusResultMap">
+	<select id="findStatusById" parameterType="java.lang.Integer" resultMap="statusResultMap">
 		SELECT * 
 		FROM gst_status 
 		WHERE st_id = #{stId}

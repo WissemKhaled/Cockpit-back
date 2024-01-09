@@ -88,6 +88,7 @@ public interface SubcontractorService {
 	 *
 	 * @param subcontractorDto Le DTO du sous-traitant à enregistrer.
 	 * @return L'ID du sous-traitant enregistré ou -1 en cas d'échec.
+	 * @throws GeneralException 
 	 */
 	int saveSubcontractor(SubcontractorDto subcontractorDtoToUpdate) throws GeneralException;
 

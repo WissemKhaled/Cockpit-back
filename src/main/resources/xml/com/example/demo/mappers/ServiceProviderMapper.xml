@@ -24,25 +24,43 @@
         </association>
     </resultMap>
 
+    <sql id="serviceProviderColumns">
+    	sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
+        st.st_id, st.st_name,
+        s.s_id, s.s_name, s.s_email
+    </sql>
+    
+    <sql id="countServiceProviders">
+    	SELECT COUNT(*) 
+		FROM gst_service_provider
+    </sql>
+    
+    <sql id="serviceProviderSubcontractorStatusJoin">
+		gst_service_provider sp
+        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
+        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+    </sql>
+    
+    <sql id="serviceProviderSubcontractorJoin">
+		gst_service_provider sp
+        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
+    </sql>
+    
+    <sql id="sortingColumnsAndPagination">
+		s.s_name, st.st_id, sp.sp_name LIMIT #{offset} OFFSET #{pageSize}
+    </sql>
+    
     <!-- Select statements -->
 
     <select id="findServiceProviderWithSubcontractorBySpId" resultMap="serviceProviderResultMap">
-        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
-               st.st_id, st.st_name,
-               s.s_id, s.s_name, s.s_email
-        FROM gst_service_provider sp
-        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
-        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+        SELECT <include refid="serviceProviderColumns"/>
+        FROM <include refid="serviceProviderSubcontractorStatusJoin"/>
         WHERE sp.sp_id = #{spId}
     </select>
 
     <select id="findServiceProviderById" resultMap="serviceProviderResultMap">
-        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
-               s.s_id, s.s_name, s.s_email,
-               st.st_id, st.st_name
-        FROM gst_service_provider sp
-        LEFT JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
-        LEFT JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+        SELECT <include refid="serviceProviderColumns"/>
+        FROM gst_service_provider
         WHERE sp.sp_id = #{spId}
     </select>
 
@@ -52,94 +70,70 @@
         WHERE sp.sp_email = #{spEmail}
     </select>
     
-    <select id="findServiceProvidersBySubcontractorId" resultMap="serviceProviderResultMap">
-        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
-               st.st_id, st.st_name,
-               s.s_id, s.s_name, s.s_email
-        FROM gst_service_provider sp
-        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
-        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
-        WHERE sp.sp_fk_subcontractor_id = #{sId}
-        ORDER BY sp.sp_id
-    </select>
-    
     <select id="findServiceProvidersByCriteria" resultMap="serviceProviderResultMap">
-        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
-               st.st_id, st.st_name,
-               s.s_id, s.s_name, s.s_email
-        FROM gst_service_provider sp
-        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
-        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+        SELECT <include refid="serviceProviderColumns"/>
+		FROM <include refid="serviceProviderSubcontractorStatusJoin"/>
         WHERE ${columnName} ILIKE #{searchTerms} || '%' AND st.st_id != 4
-        ORDER BY s.s_name, st.st_id, sp.sp_email LIMIT #{offset} OFFSET #{pageSize}
+        ORDER BY <include refid="sortingColumnsAndPagination"/>
     </select>
     
    	<select id="findServiceProvidersByCriteriaAndFiltredByStatus" resultMap="serviceProviderResultMap">
-        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
-               st.st_id, st.st_name,
-               s.s_id, s.s_name, s.s_email
-        FROM gst_service_provider sp
-        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
-        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+        SELECT <include refid="serviceProviderColumns"/>
+		FROM <include refid="serviceProviderSubcontractorStatusJoin"/>
         WHERE ${columnName} ILIKE #{searchTerms} || '%' AND st.st_id = ${statusId}
-        ORDER BY s.s_name, st.st_id, sp.sp_email LIMIT #{offset} OFFSET #{pageSize}
+        ORDER BY <include refid="sortingColumnsAndPagination"/>
     </select>
     
    	<select id="findAllNonArchivedServiceProviders" resultMap="serviceProviderResultMap">
-        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
-               st.st_id, st.st_name,
-               s.s_id, s.s_name, s.s_email
-        FROM gst_service_provider sp
-        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
-        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+        SELECT <include refid="serviceProviderColumns"/>
+		FROM <include refid="serviceProviderSubcontractorStatusJoin"/>
 		WHERE st.st_id != 4
-		ORDER BY s.s_name, st.st_id, sp.sp_name ${sorting} LIMIT #{offset} OFFSET #{pageSize}
+        ORDER BY <include refid="sortingColumnsAndPagination"/>
     </select>
     
    	<select id="findAllServiceProvidersFlitredByStatus" resultMap="serviceProviderResultMap">
-        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
-               st.st_id, st.st_name,
-               s.s_id, s.s_name, s.s_email
-        FROM gst_service_provider sp
-        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
-        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+        SELECT <include refid="serviceProviderColumns"/>
+        FROM <include refid="serviceProviderSubcontractorStatusJoin"/>
 		WHERE st.st_id = ${statusId}
-		ORDER BY s.s_name, st.st_id, sp.sp_name ${sorting} LIMIT #{offset} OFFSET #{pageSize}
+        ORDER BY <include refid="sortingColumnsAndPagination"/>
+    </select>
+    
+    <select id="findServiceProvidersBySubcontractorId" resultMap="serviceProviderResultMap">
+        SELECT <include refid="serviceProviderColumns"/>
+        FROM <include refid="serviceProviderSubcontractorStatusJoin"/>
+        WHERE sp.sp_fk_subcontractor_id = #{sId}
+        ORDER BY sp.sp_id
     </select>
     
     <!-- Count statements -->
 
     <select id="countAllNonArchivedServiceProviders" resultType="java.lang.Integer">
-		SELECT COUNT(*) 
-		FROM gst_service_provider 
+		<include refid="countServiceProviders"/>
 		WHERE sp_fk_status_id != 4
     </select>
     
  	<select id="countAllServiceProvidersFiltredByStatus" resultType="java.lang.Integer">
-		SELECT COUNT(*) 
-		FROM gst_service_provider 
+		<include refid="countServiceProviders"/>
 		WHERE sp_fk_status_id = ${statusId}
     </select>
     
    	<select id="countServiceProvidersByCriteria" resultType="java.lang.Integer">
 		SELECT COUNT(*)  
-		FROM gst_service_provider sp 
-		INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id 
+		FROM <include refid="serviceProviderSubcontractorJoin"/>
 		WHERE ${columnName} ILIKE #{searchTerms} || '%' 
 		AND sp.sp_fk_status_id != 4
     </select>
     
    	<select id="countServiceProvidersByByCriteriaAndFiltredByStatus" resultType="java.lang.Integer">
 		SELECT COUNT(*)
-		FROM gst_service_provider sp
-		INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
+		FROM <include refid="serviceProviderSubcontractorJoin"/>
 		WHERE ${columnName} ILIKE #{searchTerms} || '%' 
 		AND sp.sp_fk_status_id = ${statusId}
     </select>
     
     <!-- Insert statement -->
 
-    <insert id="insertServiceProvider" parameterType="com.example.demo.entity.ServiceProvider">
+    <insert id="insertServiceProvider" flushCache="true" statementType="PREPARED" keyProperty="spId" keyColumn="sp_id" useGeneratedKeys="true" parameterType="com.example.demo.entity.ServiceProvider">
         INSERT INTO gst_service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date, sp_fk_subcontractor_id, sp_fk_status_id)
         VALUES (#{spFirstName}, #{spName}, #{spEmail}, #{spCreationDate}, #{spLastUpdateDate}, #{subcontractor.sId}, #{spStatus.stId})
     </insert>
@@ -152,8 +146,9 @@
     	WHERE sp_id = #{spId}
     </update>
     
-    <update id="updateServiceProvider" parameterType="com.example.demo.entity.ServiceProvider">
-		UPDATE gst_service_provider SET sp_first_name = #{spFirstName}, sp_name = #{spName}, sp_email = #{spEmail}, sp_lastUpdate_date = #{spLastUpdateDate},
+    <update id="updateServiceProvider" statementType="PREPARED" parameterType="com.example.demo.entity.ServiceProvider">
+		UPDATE gst_service_provider 
+		SET sp_first_name = #{spFirstName}, sp_name = #{spName}, sp_email = #{spEmail}, sp_lastUpdate_date = #{spLastUpdateDate},
 		sp_fk_status_id = #{spStatus.stId}, sp_fk_subcontractor_id = #{subcontractor.sId}
 		WHERE sp_id = #{spId}
     </update>
