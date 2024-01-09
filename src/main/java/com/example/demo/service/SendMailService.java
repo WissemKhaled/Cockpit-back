@@ -13,8 +13,7 @@ public interface SendMailService {
 	
 	String saveAndSendMail (SendMailDTO mailDTO,  List<MultipartFile> file)  throws  MessagingException, GeneralException ;
 
-
-
+	String saveAndSendMail2 (SendMailDTO mailDTO)  throws  MessagingException, GeneralException ;
 	 
 }
 

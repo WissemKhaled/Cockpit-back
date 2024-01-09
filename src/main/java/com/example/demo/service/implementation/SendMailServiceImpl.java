@@ -120,5 +120,52 @@ public class SendMailServiceImpl implements SendMailService {
 			return FileCopyUtils.copyToString(reader);
 		}
 	}
+	
+	public String saveAndSendMail2(SendMailDTO mailDTO)
+			throws MessagingException, GeneralException {
+
+		MimeMessage message = getMimeMessage();
+		try {
+
+			mailDTO.setMsSendDate(LocalDateTime.now());
+			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+			// signature du mail recuperé a partir des ressources en HTML
+			String signature = loadSignature();
+
+			// on recupere les info du user qui envoie le mail pour l'inserer dans le
+			// replyTo
+			Optional<UUser> user = userMapper.findUserById(mailDTO.getMsFkUserId());
+
+			helper.setPriority(1);
+			helper.setTo(mailDTO.getMsTo());
+			helper.setSubject(mailDTO.getMsSubject());
+			helper.setText(mailDTO.getMsBody() + "<br><br>" + signature, true);
+			helper.setReplyTo(user.get().getUEmail());
+
+			
+
+			// ajoute des contactes en copy si il y en a
+			if (mailDTO.getMsCc() != null && !mailDTO.getMsCc().isEmpty()) {
+
+				String[] adressesCopy = mailDTO.getMsCc().split(";");
+
+				for (String adresse : adressesCopy) {
+					helper.addCc(adresse);
+				}
+			}
+			// mailSender.send(message);
+			mailMapper.saveSendMail(mailDTO);
+
+			LOG.info("Le courrier a été envoyé avec succès !");
+			return "Le courrier a été envoyé avec succès !";
+
+		} catch (MailException | IOException e) {
+
+			LOG.error("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer.");
+			throw new GeneralException("Une erreur s'est produite lors de l'envoi du courrier. Veuillez réessayer.");
+
+		}
+	}
 
 }
