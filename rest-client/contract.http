@@ -1,3 +1,3 @@
 ### Get contracts by sp or sc id
-GET {{host}}/contract/getContractsById?serviceProviderId=2
+GET {{host}}/contract/getContractsById?messageModelId=2
 Authorization: Bearer {{token}}

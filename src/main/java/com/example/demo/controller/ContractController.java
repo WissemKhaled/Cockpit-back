@@ -30,16 +30,13 @@ public class ContractController {
     public ResponseEntity<Page<Contract>> getAllMessageModelsAndStatusForSubcontractorCategory(
             @RequestParam(value = "serviceProviderId", required = false) Integer serviceProviderId,
             @RequestParam(value = "subContractorId", required = false) Integer subContractorId,
+            @RequestParam(value = "messageModelId", required = false) Integer messageModelId,
             @PageableDefault(page = 0, size = 6) Pageable pageable) {
 
         try {
-            List<Contract> contractList = contractService.getContractsByMessageModelId(serviceProviderId,subContractorId);
+            List<Contract> contractList = contractService.getContractsByMessageModelId(serviceProviderId,subContractorId,messageModelId);
 
-            int start = (int) pageable.getOffset();
-            int end = Math.min((start + pageable.getPageSize()), contractList.size());
-            List<Contract> contracts = contractList.subList(start, end);
-
-            Page<Contract> page = new PageImpl<>(contracts, pageable, contractList.size());
+            Page<Contract> page = new PageImpl<>(contractList, pageable, contractList.size());
 
             return ResponseEntity.ok(page);
 

@@ -12,7 +12,7 @@ import com.example.demo.exception.DatabaseQueryFailureException;
  */
 public interface ContractService {
 
-    List<Contract> getContractsByMessageModelId(Integer serviceProviderId,Integer subContractorId);
+    List<Contract> getContractsByMessageModelId(Integer serviceProviderId,Integer subContractorId,Integer messageModelId);
 
     public int saveContract(ContractDTO contractDTO) throws DatabaseQueryFailureException;
 }
