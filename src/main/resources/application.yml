@@ -14,8 +14,8 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: root
-#    url: jdbc:postgresql://localhost:5432/Cockpit-app?currentSchema=schema_test
-    url: jdbc:postgresql://localhost:5432/Cockpit-app?currentSchema=schema_dev
+#    url: jdbc:postgresql://localhost:5432/gst_db?currentSchema=schema_test
+    url: jdbc:postgresql://localhost:5432/gst_db?currentSchema=schema_dev
     
   sql:
     init:

@@ -39,10 +39,6 @@ public class SendMailServiceImpl implements SendMailService {
 
 	private final JavaMailSender mailSender;
 
-	private final ResourceLoader resourceLoader;
-
-	private final UserInfoService infoService;
-
 	private final UUserMapper userMapper;
 
 	private static final Logger LOG = getLogger(SendMailServiceImpl.class);
@@ -51,8 +47,6 @@ public class SendMailServiceImpl implements SendMailService {
 			UserInfoService infoService, UUserMapper userMapper) {
 		this.mailMapper = mailMapper;
 		this.mailSender = mailSender;
-		this.resourceLoader = resourceLoader;
-		this.infoService = infoService;
 		this.userMapper = userMapper;
 	}
 
@@ -97,7 +91,7 @@ public class SendMailServiceImpl implements SendMailService {
 					helper.addCc(adresse);
 				}
 			}
-			// mailSender.send(message);
+			
 			mailMapper.saveSendMail(mailDTO);
 
 			LOG.info("Le courrier a été envoyé avec succès !");
