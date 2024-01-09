@@ -61,7 +61,7 @@ class ContractControllerTest {
         List<Contract> mockContracts = Collections.singletonList(new Contract());
 
         // Define behavior of mocked service method
-        when(contractService.getContractsBySubContractorIdOrServiceProviderIdOrMessageModelId(serviceProviderId, subContractorId, messageModelId))
+        when(contractService.getContractsByMessageModelId(serviceProviderId, subContractorId, messageModelId))
                 .thenReturn(mockContracts);
 
         // Perform a GET request to the specified URL and set up the request
@@ -83,7 +83,7 @@ class ContractControllerTest {
         System.out.println("Response Status: " + result.getResponse().getStatus());
 
         // Verify the service method was called with the correct parameters
-        verify(contractService).getContractsBySubContractorIdOrServiceProviderIdOrMessageModelId(serviceProviderId, subContractorId, messageModelId);
+        verify(contractService).getContractsByMessageModelId(serviceProviderId, subContractorId, messageModelId);
     }
     }
 

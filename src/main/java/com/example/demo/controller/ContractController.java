@@ -34,7 +34,7 @@ public class ContractController {
             @PageableDefault(page = 0, size = 6) Pageable pageable) {
 
         try {
-            List<Contract> contractList = contractService.getContractsBySubContractorIdOrServiceProviderIdOrMessageModelId(serviceProviderId,subContractorId,messageModelId);
+            List<Contract> contractList = contractService.getContractsByMessageModelId(serviceProviderId,subContractorId,messageModelId);
 
             Page<Contract> page = new PageImpl<>(contractList, pageable, contractList.size());
 

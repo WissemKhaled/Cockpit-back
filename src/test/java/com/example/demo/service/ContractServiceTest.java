@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -43,7 +44,7 @@ class ContractServiceTest {
                 .thenReturn(mockResponse);
 
         // When
-        List<Contract> result = contractService.getContractsBySubContractorIdOrServiceProviderIdOrMessageModelId(serviceProviderId, subContractorId, modelMessageId);
+        List<Contract> result = contractService.getContractsByMessageModelId(serviceProviderId, subContractorId, modelMessageId);
 
         // Then
         assertNotNull(result);
@@ -66,7 +67,7 @@ class ContractServiceTest {
 
         // When/Then
         assertThrows(MessageModelNotFoundException.class, () -> {
-            contractService.getContractsBySubContractorIdOrServiceProviderIdOrMessageModelId(serviceProviderId, subContractorId, messageModelId);
+            contractService.getContractsByMessageModelId(serviceProviderId, subContractorId, messageModelId);
         });
 
         // Verify the interaction with the mock
