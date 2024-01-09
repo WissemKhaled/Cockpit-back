@@ -59,8 +59,8 @@ public class MessageModelController {
 
 			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
 
-//			// appel de la méthode qui gère les relances selon le contractId
-			// modelTrackingService.checkRelaunch(contractId);
+			// appel de la méthode qui gère les relances
+			modelTrackingService.checkRelaunch(allMessages);
 
 			return ResponseEntity.ok(page);
 
@@ -68,16 +68,4 @@ public class MessageModelController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
-	@GetMapping("/relaunch/{contractId}")
-	public ResponseEntity<String> relaunch(@PathVariable("contractId") Integer contractId) {
-	    try {
-	        String response = modelTrackingService.checkRelaunch(contractId);
-	        return ResponseEntity.ok(response);
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Une erreur est survenue : " + e.getMessage());
-	    }
-	}
-
-
 }

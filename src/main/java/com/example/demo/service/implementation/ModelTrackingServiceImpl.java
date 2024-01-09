@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.dto.mapper.ModelTrackingDtoMapper;
 import com.example.demo.entity.ModelTracking;
+import com.example.demo.entity.Category;
 import com.example.demo.entity.MessageModel;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.DatabaseQueryFailureException;
@@ -90,53 +91,48 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	}
 	
 	@Override
-	public String checkRelaunch(int contractId) {
-	    try {
-	        LocalDateTime currentDate = LocalDateTime.now();
-
-	        List<ModelTrackingDTO> modelTrackingDTOList = modelTrackingMapper.findModelTrackingInfo(contractId);
-
-	        for (ModelTrackingDTO modelTrackingDTO : modelTrackingDTOList) {
-	            if (modelTrackingDTO.getMtFkCategoryId() == 1 || modelTrackingDTO.getMtFkCategoryId() == 2) {
-	            	// Vérifie si la date d'envoi n'est pas nulle et n'a pas dépassée 7 jours
-	                if (modelTrackingDTO.getMtSendDate() != null && modelTrackingDTO.getMtSendDate().plusDays(7).isBefore(currentDate)) {
-	                	// Maj du statusId de la table gst_model_tracking
-	                    modelTrackingDTO.setMtFkContractId(contractId);
-	                    modelTrackingDTO.setMtFkMessageModelId(modelTrackingDTO.getMtFkMessageModelId());
-	                    modelTrackingDTO.setMtFkStatusId(1);
-	                    modelTrackingDTO.setMtSendDate(modelTrackingDTO.getMtSendDate());
-	                    modelTrackingDTO.setMtValidationDate(modelTrackingDTO.getMtValidationDate());
-
-	                    ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
-
-	                    modelTrackingMapper.updateModelTracking(modelTracking);
-
-	                    log.info("Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId());
-	                    return "Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId();
-	                } else {
-	                    log.error("Date d'envoi nulle ou < 7 jours");
-	                    return "Date d'envoi nulle ou < 7 jours";
-	                }
-	            } else if (modelTrackingDTO.getMtFkCategoryId() == 3) {
-	            	
-	            } else if (modelTrackingDTO.getMtFkCategoryId() == 4) {
-	            	
-	            }
-	        }
-
-	        // If no suitable records were found
-	        log.warn("Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId);
-	        return "Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId;
-
-	    } catch (Exception e) {
-	        // Log the exception and return an error message
-	        log.error("Une erreur est survenue lors de la vérification de relance : " + e.getMessage(), e);
-	        return "Une erreur est survenue lors de la vérification de relance : " + e.getMessage();
-	    }
-	}
-	
-	public void createAndinsertRelaunchMessageModels() {
-		// MessageModel relaunchAdminDocSp = new MessageModel(1, "Relance des documents administratifs du prestataire", "je suis le body du mail", true, LocalDateTime.now(), null, 1);
+	public void checkRelaunch(List<MessageModel> allMessages) {
+		System.out.println(allMessages);
+//	    try {
+//	        LocalDateTime currentDate = LocalDateTime.now();
+//
+//	        List<ModelTrackingDTO> modelTrackingDTOList = modelTrackingMapper.findModelTrackingInfo(contractId);
+//
+//	        for (ModelTrackingDTO modelTrackingDTO : modelTrackingDTOList) {
+//	        	// prendre en compte link
+//	            if (modelTrackingDTO.getMtFkCategoryId() == 1 || modelTrackingDTO.getMtFkCategoryId() == 2) {
+//	            	// Vérifie si la date d'envoi n'est pas nulle et n'a pas dépassée 7 jours et si le status = 2 (en validation) 
+//	                if (modelTrackingDTO.getMtSendDate() != null && modelTrackingDTO.getMtSendDate().plusDays(7).isBefore(currentDate)) {
+//	                	// Maj du statusId de la table gst_model_tracking
+//	                    modelTrackingDTO.setMtFkContractId(contractId);
+//	                    modelTrackingDTO.setMtFkMessageModelId(modelTrackingDTO.getMtFkMessageModelId());
+//	                    modelTrackingDTO.setMtFkStatusId(1);
+//	                    modelTrackingDTO.setMtSendDate(modelTrackingDTO.getMtSendDate());
+//	                    modelTrackingDTO.setMtValidationDate(modelTrackingDTO.getMtValidationDate());
+//
+//	                    ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
+//
+//	                    modelTrackingMapper.updateModelTracking(modelTracking);
+//
+//	                    log.info("Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId());
+//	                    return "Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId();
+//	                } else {
+//	                    log.error("Date d'envoi nulle ou < 7 jours");
+//	                    return "Date d'envoi nulle ou < 7 jours";
+//	                }
+//	            } else if (modelTrackingDTO.getMtFkCategoryId() == 3) {
+//	            	
+//	            } else if (modelTrackingDTO.getMtFkCategoryId() == 4) {
+//	            	
+//	            }
+//	        }
+//	        log.warn("Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId);
+//	        return "Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId;
+//
+//	    } catch (Exception e) {
+//	        log.error("Une erreur est survenue lors de la vérification de relance : " + e.getMessage(), e);
+//	        return "Une erreur est survenue lors de la vérification de relance : " + e.getMessage();
+//	    }
 	}
 
 	@Override
