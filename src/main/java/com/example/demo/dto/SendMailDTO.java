@@ -16,7 +16,6 @@ public class SendMailDTO {
 	@JsonProperty("msTo")
 	private String msTo;
 
-	@Pattern(regexp = "^[a-zA-Z](?:[a-zA-Z\\d]*[-._]?[a-zA-Z\\d]+)@[a-zA-Z\\d]+[-._]?[a-zA-Z\\d]+\\.[a-zA-Z]{2,3}$", message = "Le format de l'email est invalide")
 	@JsonProperty("msCc")
 	private String msCc;
 
@@ -24,7 +23,6 @@ public class SendMailDTO {
 	@JsonProperty("msSubject")
 	private String msSubject;
 
-	@NotEmpty(message = "le corps du mail est nécessaire")
 	@JsonProperty("msBody")
 	private String msBody;
 

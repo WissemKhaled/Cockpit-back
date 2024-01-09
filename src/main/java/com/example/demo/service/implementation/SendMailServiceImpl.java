@@ -91,7 +91,7 @@ public class SendMailServiceImpl implements SendMailService {
 					helper.addCc(adresse);
 				}
 			}
-			
+
 			mailMapper.saveSendMail(mailDTO);
 
 			LOG.info("Le courrier a été envoyé avec succès !");
