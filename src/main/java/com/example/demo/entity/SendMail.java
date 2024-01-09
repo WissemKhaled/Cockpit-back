@@ -14,9 +14,6 @@ public class SendMail {
 	@JsonProperty("msId")
 	private int msId;
 
-	@JsonProperty("msSender")
-	private String msSender;
-
 	@Pattern(regexp = "^[a-zA-Z](?:[a-zA-Z\\d]*[-._]?[a-zA-Z\\d]+)@[a-zA-Z\\d]+[-._]?[a-zA-Z\\d]+\\.[a-zA-Z]{2,3}$", message = "Le format de l'email est invalide")
 	@JsonProperty("msTo")
 	private String msTo;
@@ -33,31 +30,23 @@ public class SendMail {
 	@JsonProperty("msBody")
 	private String msBody;
 
-	@JsonProperty("msError")
-	private String msError;
+	@JsonProperty("msSendDate")
+	private LocalDateTime msSendDate;
 
-	@Max(value = 3, message = "L'id du status doit être inférieure ou égale à 3")
-	@Min(value = 1, message = "L'id du status doit être supérieure ou égale à 1")
-	@JsonProperty("msStatus")
-	private int msStatus;
-
-	@JsonProperty("msCreationsDate")
-	private LocalDateTime msCreationsDate;
+	@JsonProperty("user")
+	private UUser user;
 
 	public SendMail() {
 	}
 
-	public SendMail(int msId, String msSender, String msTo, String msCc, String msSubject, String msBody,
-			String msError, int msStatus, LocalDateTime msCreationsDate) {
+	public SendMail(int msId, String msTo, String msCc, String msSubject, String msBody, LocalDateTime msSendDate, UUser user) {
 		this.msId = msId;
-		this.msSender = msSender;
 		this.msTo = msTo;
 		this.msCc = msCc;
 		this.msSubject = msSubject;
 		this.msBody = msBody;
-		this.msError = msError;
-		this.msStatus = msStatus;
-		this.msCreationsDate = msCreationsDate;
+		this.msSendDate = msSendDate;
+		this.user = user;
 	}
 
 	public int getMsId() {
@@ -66,14 +55,6 @@ public class SendMail {
 
 	public void setMsId(int msId) {
 		this.msId = msId;
-	}
-
-	public String getMsSender() {
-		return msSender;
-	}
-
-	public void setMsSender(String msSender) {
-		this.msSender = msSender;
 	}
 
 	public String getMsTo() {
@@ -108,35 +89,28 @@ public class SendMail {
 		this.msBody = msBody;
 	}
 
-	public String getMsError() {
-		return msError;
+	public LocalDateTime getMsSendDate() {
+		return msSendDate;
 	}
 
-	public void setMsError(String msError) {
-		this.msError = msError;
+	public void setMsSendDate(LocalDateTime msSendDate) {
+		this.msSendDate = msSendDate;
 	}
 
-	public int getMsStatus() {
-		return msStatus;
+	public UUser getUser() {
+		return user;
 	}
 
-	public void setMsStatus(int msStatus) {
-		this.msStatus = msStatus;
-	}
-
-	public LocalDateTime getMsCreationsDate() {
-		return msCreationsDate;
-	}
-
-	public void setMsCreationsDate(LocalDateTime msCreationsDate) {
-		this.msCreationsDate = msCreationsDate;
+	public void setUser(UUser user) {
+		this.user = user;
 	}
 
 	@Override
 	public String toString() {
-		return "SendMail [msId=" + msId + ", msSender=" + msSender + ", msTo=" + msTo + ", msCc=" + msCc
-				+ ", msSubject=" + msSubject + ", msBody=" + msBody + ", msError=" + msError + ", msStatus=" + msStatus
-				+ ", msCreationsDate=" + msCreationsDate + "]";
+		return "SendMail [msId=" + msId + ", msTo=" + msTo + ", msCc=" + msCc + ", msSubject=" + msSubject + ", msBody="
+				+ msBody + ", msSendDate=" + msSendDate + ", user=" + user + "]";
 	}
+	
+	
 
 }

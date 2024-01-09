@@ -1,5 +1,7 @@
 package com.example.demo.service.implementation;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -10,8 +12,11 @@ import com.example.demo.dto.ContractDTO;
 import com.example.demo.dto.mapper.ContractDtoMapper;
 import com.example.demo.entity.Contract;
 import com.example.demo.exception.DatabaseQueryFailureException;
+import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.mappers.ContractMapper;
 import com.example.demo.service.ContractService;
+
+import static java.util.function.Predicate.not;
 
 @Service
 public class ContractServiceImpl implements ContractService {
@@ -24,6 +29,13 @@ public class ContractServiceImpl implements ContractService {
 		this.contractDtoMapper = contractDtoMapper;
 		this.contractMapper = contractMapper;
 	}
+	
+	@Override
+    public List<Contract> getContractsByMessageModelId(Integer serviceProviderId, Integer subContractorId) {
+        List<Contract> contracts = contractMapper.getContractsByMessageModelId(subContractorId,serviceProviderId);
+        return Optional.ofNullable(contracts).filter(not(List::isEmpty))
+                .orElseThrow(() -> new MessageModelNotFoundException("No contract exists for this id!"));
+    }
 	
 	@Override
 	public int saveContract(ContractDTO contractDTO) throws DatabaseQueryFailureException {

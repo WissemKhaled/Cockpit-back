@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.SendMailDTO;
 import com.example.demo.entity.SendMail;
+import com.example.demo.entity.UUser;
 import com.example.demo.exception.GeneralException;
 
 import com.example.demo.exception.MessageModelNotFoundException;
@@ -45,7 +46,8 @@ public class SendMailController {
 			                                   ) throws MessagingException {
 		try {
 			System.err.println(cc);
-			SendMailDTO mailDTO = new SendMailDTO(0, sender, to, cc, subject, body, null, 1, null);
+			UUser user = new UUser(0, cc, body, sender, false, null, null);
+			SendMailDTO mailDTO = new SendMailDTO(0, to, cc, subject, body, null, user);
 			return new ResponseEntity<>(mailService.saveAndSendMail(mailDTO, file), HttpStatus.OK);
 		} catch (MessageModelNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);

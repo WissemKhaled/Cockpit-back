@@ -52,7 +52,7 @@ public class SendMailServiceImpl implements SendMailService {
 		MimeMessage message = getMimeMessage();
 		try {
 
-			mailDTO.setMsCreationsDate(LocalDateTime.now());
+			mailDTO.setMsSendDate(LocalDateTime.now());
 			MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
 			// signature du mail recuperé a partir des ressources en HTML
@@ -62,7 +62,7 @@ public class SendMailServiceImpl implements SendMailService {
 			helper.setTo(mailDTO.getMsTo());
 			helper.setSubject(mailDTO.getMsSubject());
 			helper.setText(mailDTO.getMsBody() + "<br><br>" + signature, true);
-			helper.setReplyTo(mailDTO.getMsSender());
+			helper.setReplyTo(mailDTO.getUser().getUEmail());
 
 			if (files != null && !files.isEmpty()) {
 

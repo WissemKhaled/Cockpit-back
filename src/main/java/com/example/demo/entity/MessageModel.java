@@ -7,13 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class MessageModel {
 
 	@JsonProperty("mmId")
-	private Integer mmId;
+	private int mmId;
 
-	@JsonProperty("mmType")
-	private String mmType;
-
-	@JsonProperty("mmCategory")
-	private String mmCategory;
+	@JsonProperty("mmLink")
+	private int mmLink;
 
 	@JsonProperty("mmSubject")
 	private String mmSubject;
@@ -21,72 +18,47 @@ public class MessageModel {
 	@JsonProperty("mmBody")
 	private String mmBody;
 
+	@JsonProperty("mmHasEmail")
+	private Boolean mmHasEmail;
+
 	@JsonProperty("mmCreationDate")
 	private LocalDateTime mmCreationDate;
 
 	@JsonProperty("mmLastUpdateDate")
 	private LocalDateTime mmLastUpdateDate;
 
-	@JsonProperty("status")
-	private Status status;
-	
-	@JsonProperty("statusMspId")
-	private Integer statusMspId;
-	
-	@JsonProperty("statusMspFkServiceProviderId")
-	private Integer statusMspFkServiceProviderId;
-	
-	@JsonProperty("statusMspFkStatusId")
-	private Integer statusMspFkStatusId;
-
-	@JsonProperty("mmStatusId")
-	private Status mmStatusId;
+	@JsonProperty("category")
+	private Category category;
 
 	public MessageModel() {
 	}
 
-	public MessageModel(Integer mmId, String mmType, String mmCategory, String mmSubject, String mmBody,
-			LocalDateTime mmCreationDate, LocalDateTime mmLastUpdateDate, Status status, Integer statusMspId,
-			Integer statusMspFkServiceProviderId, Integer statusMspFkStatusId) {
+	public MessageModel(Integer mmId, Integer mmLink, String mmSubject, String mmBody, Boolean mmHasEmail,
+			LocalDateTime mmCreationDate, LocalDateTime mmLastUpdateDate, Category category) {
 		this.mmId = mmId;
-		this.mmType = mmType;
-		this.mmCategory = mmCategory;
+		this.mmLink = mmLink;
 		this.mmSubject = mmSubject;
 		this.mmBody = mmBody;
+		this.mmHasEmail = mmHasEmail;
 		this.mmCreationDate = mmCreationDate;
 		this.mmLastUpdateDate = mmLastUpdateDate;
-		this.status = status;
-		this.statusMspId = statusMspId;
-		this.statusMspFkServiceProviderId = statusMspFkServiceProviderId;
-		this.statusMspFkStatusId = statusMspFkStatusId;
-		this.mmStatusId = status;
-
+		this.category = category;
 	}
 
-
-
-	public String getMmCategory() {
-		return mmCategory;
-	}
-
-	public void setMmCategory(String mmCategory) {
-		this.mmCategory = mmCategory;
-	}
-
-	public Integer getMmId() {
+	public int getMmId() {
 		return mmId;
 	}
 
-	public void setMmId(Integer mmId) {
+	public void setMmId(int mmId) {
 		this.mmId = mmId;
 	}
 
-	public String getMmType() {
-		return mmType;
+	public int getMmLink() {
+		return mmLink;
 	}
 
-	public void setMmType(String mmType) {
-		this.mmType = mmType;
+	public void setMmLink(int mmLink) {
+		this.mmLink = mmLink;
 	}
 
 	public String getMmSubject() {
@@ -105,6 +77,14 @@ public class MessageModel {
 		this.mmBody = mmBody;
 	}
 
+	public Boolean getMmHasEmail() {
+		return mmHasEmail;
+	}
+
+	public void setMmHasEmail(Boolean mmHasEmail) {
+		this.mmHasEmail = mmHasEmail;
+	}
+
 	public LocalDateTime getMmCreationDate() {
 		return mmCreationDate;
 	}
@@ -121,46 +101,19 @@ public class MessageModel {
 		this.mmLastUpdateDate = mmLastUpdateDate;
 	}
 
-	public Status getMmStatusId() {
-		return mmStatusId;
+	public Category getCategory() {
+		return category;
 	}
 
-	public void setMmStatusId(Status mmStatusId) {
-		this.mmStatusId = mmStatusId;
-	}
-	
-	public Integer getStatusMspId() {
-		return statusMspId;
-	}
-
-	public void setStatusMspId(Integer statusMspId) {
-		this.statusMspId = statusMspId;
-	}
-	
-	public Integer getStatusMspFkServiceProviderId() {
-		return statusMspFkServiceProviderId;
-	}
-
-	public void setStatusMspFkServiceProviderId(Integer statusMspFkServiceProviderId) {
-		this.statusMspFkServiceProviderId = statusMspFkServiceProviderId;
-	}
-	
-	public Integer getStatusMspFkStatusId() {
-		return statusMspFkStatusId;
-	}
-
-	public void setStatusMspFkStatusId(Integer statusMspFkStatusId) {
-		this.statusMspFkStatusId = statusMspFkStatusId;
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 
 	@Override
 	public String toString() {
-		return "MessageModel [mmId=" + mmId + ", mmCategory= " + mmCategory + ", mmType=" + mmType + ", mmSubject=" + mmSubject + ", mmBody=" + mmBody
-				+ ", mmCreationDate=" + mmCreationDate + ", mmLastUpdateDate=" + mmLastUpdateDate + ", status=" + status 
-				+ ", statusMspId=" + statusMspId + ", statusMspFkServiceProviderId=" + statusMspFkServiceProviderId
-				+ ", statusMspFkStatusId=" + statusMspFkStatusId + ", statusMspFkStatusId=" + statusMspFkStatusId 
-				+ ", mmCreationDate=" + mmCreationDate + ", mmLastUpdateDate=" + mmLastUpdateDate + ", status=" + mmStatusId
-				+ "]";
+		return "MessageModel [mmId=" + mmId + ", mmLink=" + mmLink + ", mmSubject=" + mmSubject + ", mmBody=" + mmBody
+				+ ", mm_has_email=" + mmHasEmail + ", mmCreationDate=" + mmCreationDate + ", mmLastUpdateDate="
+				+ mmLastUpdateDate + ", category=" + category + "]";
 	}
 
 }
