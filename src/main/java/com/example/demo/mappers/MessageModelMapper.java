@@ -15,6 +15,7 @@ public interface MessageModelMapper {
             +"INNER JOIN status st ON mm_fk_status_id = st.st_Id "
             +"WHERE mm_fk_status_id = ${statusId}")
 	@Result(property = "mmId", column = "mm_id")
+	@Result(property = "mmCategory", column = "mm_category")
 	@Result(property = "mmType", column = "mm_type")
 	@Result(property = "mmSubject", column = "mm_subject")
 	@Result(property = "mmBody", column = "mm_body")
