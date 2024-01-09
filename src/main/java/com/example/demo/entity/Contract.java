@@ -1,9 +1,18 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Contract {
+	@JsonProperty("cId")
 	private int cId;
+	
+	@JsonProperty("cContractNumber")
 	private String cContractNumber;
+	
+	@JsonProperty("cFkSubcontractorId")
 	private int cFkSubcontractorId;
+	
+	@JsonProperty("cFKserviceProviderId")
 	private int cFKserviceProviderId;
 
 	public Contract() {
