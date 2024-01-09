@@ -1,17 +1,16 @@
 package com.example.demo.service.implementation;
 
-import com.example.demo.entity.Contract;
-import com.example.demo.entity.MessageModel;
-import com.example.demo.exception.MessageModelNotFoundException;
-import com.example.demo.mappers.ContractMapper;
-import com.example.demo.mappers.MessageModelMapper;
-import com.example.demo.service.ContractService;
-import org.springframework.stereotype.Service;
+import static java.util.function.Predicate.not;
 
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.function.Predicate.not;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.entity.Contract;
+import com.example.demo.exception.MessageModelNotFoundException;
+import com.example.demo.mappers.ContractMapper;
+import com.example.demo.service.ContractService;
 
 /**
  * Created by Elimane Fofana on 2024.

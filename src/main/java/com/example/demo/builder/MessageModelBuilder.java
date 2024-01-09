@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 
 import com.example.demo.entity.Category;
 import com.example.demo.entity.MessageModel;
-import com.example.demo.entity.Status;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MessageModelBuilder {
 	private Integer mmId;
@@ -16,7 +14,6 @@ public class MessageModelBuilder {
 	private LocalDateTime mmCreationDate;
 	private LocalDateTime mmLastUpdateDate;
 	private Category category;
-
 
 	public MessageModelBuilder withMmId(Integer mmId) {
 		this.mmId = mmId;
@@ -37,7 +34,7 @@ public class MessageModelBuilder {
 		this.mmBody = mmBody;
 		return this;
 	}
-	
+
 	public MessageModelBuilder withMmHasEmail(Boolean mmHasEmail) {
 		this.mmHasEmail = mmHasEmail;
 		return this;
@@ -52,17 +49,15 @@ public class MessageModelBuilder {
 		this.mmLastUpdateDate = mmLastUpdateDate;
 		return this;
 	}
-	
+
 	public MessageModelBuilder withCategory(Category category) {
 		this.category = category;
 		return this;
 	}
-	
-	
 
-	
 	public MessageModel build() {
-		return new MessageModel(mmId, mmLink, mmSubject, mmBody, mmHasEmail, mmCreationDate, mmLastUpdateDate, category);
+		return new MessageModel(mmId, mmLink, mmSubject, mmBody, mmHasEmail, mmCreationDate, mmLastUpdateDate,
+				category);
 	}
 
 }

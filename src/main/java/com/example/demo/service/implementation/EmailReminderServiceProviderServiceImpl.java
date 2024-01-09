@@ -7,13 +7,11 @@ import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.GstStatusModelServiceProviderDTO;
 import com.example.demo.dto.mapper.GstStatusModelServiceProviderDtoMapper;
 import com.example.demo.entity.GstStatusModelServiceProvider;
-import com.example.demo.entity.MessageModel;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;

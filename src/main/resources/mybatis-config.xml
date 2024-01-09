@@ -18,5 +18,6 @@
 		<mapper resource="xml/com/example/demo/mappers/RefreshTokenMapper.xml" />
 		<mapper resource="xml/com/example/demo/mappers/GstLogMapper.xml" />
 		<mapper resource="xml/com/example/demo/mappers/SendMailMapper.xml" />
+		<mapper resource="xml/com/example/demo/mappers/MessageModelMapper.xml" />
 	</mappers>
 </configuration>

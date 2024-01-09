@@ -38,11 +38,6 @@ public class RefreshTokenService {
 				.withRtToken(UUID.randomUUID().toString())
 				.withRtExpiryDate(Instant.now().plusSeconds(refreshTokenExpirationDuration))
 				.build();
-//		RefreshToken refreshToken = RefreshToken.builder()
-//				.uUser(uUserMapper.findByEmail(email).get())
-//				.rtToken(UUID.randomUUID().toString())
-//				.rtExpiryDate(Instant.now().plusSeconds(refreshTokenExpirationDuration))
-//				.build();
 
 		LOG.info("refreshToken suivant créé : " + refreshToken);
 
