@@ -25,12 +25,12 @@
 		WHERE u_id = #{userId}
 	</select>
 	
-	<insert id="insertUser" parameterType="com.example.demo.entity.UUser">
+	<insert id="insertUser" flushCache="true" statementType="PREPARED" keyProperty="uId" keyColumn="u_id" useGeneratedKeys="true" parameterType="com.example.demo.entity.UUser">
         INSERT INTO gst_user(u_email, u_password, u_first_name, u_last_name, u_status, u_insertion_date, u_last_update)
         VALUES (#{uEmail}, #{uPassword}, #{uFirstName}, #{uLastName}, #{uStatus}, #{uInsertionDate}, #{uLastUpdate})
 	</insert>
 	
-	<update id="updatePassword" parameterType="com.example.demo.entity.UUser">
+	<update id="updatePassword" statementType="PREPARED" parameterType="com.example.demo.entity.UUser">
 		UPDATE gst_user SET u_password = #{user.uPassword}, u_last_update = #{user.uLastUpdate} 
 		WHERE u_email = #{user.uEmail}
 	</update>

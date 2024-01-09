@@ -13,19 +13,21 @@
 	</resultMap>
 	
 	<select id="getLogByValue" parameterType="java.lang.String" resultMap="gstLogResultMap">
-		SELECT * FROM gst_log
+		SELECT * 
+		FROM gst_log
 	 	WHERE log_value = #{logValue}
 	</select>
 	
 	<select id="getThreeLatestLogs" parameterType="java.lang.String" resultMap="gstLogResultMap">
-		SELECT * FROM gst_log
+		SELECT * 
+		FROM gst_log
         WHERE log_email = #{email}
         AND log_password IS NOT NULL
         ORDER BY log_id DESC
         LIMIT 3
 	</select>
 	
-	<insert id="insertLog" parameterType="com.example.demo.entity.GstLog">
+	<insert id="insertLog" flushCache="true" statementType="PREPARED" keyProperty="logId" keyColumn="log_id" useGeneratedKeys="true" parameterType="com.example.demo.entity.GstLog">
 		INSERT INTO gst_log(log_type, log_email, log_value, log_creation_date)
 		VALUES (#{logType}, #{logEmail}, #{logValue}, #{logCreationDate})
 	</insert>

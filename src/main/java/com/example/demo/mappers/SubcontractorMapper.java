@@ -17,6 +17,7 @@ public interface SubcontractorMapper {
 	 */
 	Integer countAllNonArchivedSubcontractors();
 		
+	
 	/**
 	 * Récupère le nombre total de sous-traitants enregistrés filtrés par statut.
 	 * 
@@ -134,6 +135,7 @@ public interface SubcontractorMapper {
 			@Param("offset") int pageSize,
 			@Param("sortingMethod") String sortingMethod);
 	
+	
 	/**
 	 * Récupère le nombre de sous-traitants filtré par recherche, statut et attribut de recherche.
 	 *
@@ -156,6 +158,7 @@ public interface SubcontractorMapper {
 	        @Param("sortingMethod") String sortingMethod,
 	        @Param("statusId") int statusId);
 
+	
 	/**
 	 * Récupère le nombre de sous-traitants filtré par recherche et attribut de recherche.
 	 *
@@ -168,6 +171,7 @@ public interface SubcontractorMapper {
 	Integer countAllSubcontractorsByCriteria(
 			@Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms);
+	
 	
 	/**
 	 * Récupère le nombre de sous-traitants filtré par recherche, statut et attribut de recherche.

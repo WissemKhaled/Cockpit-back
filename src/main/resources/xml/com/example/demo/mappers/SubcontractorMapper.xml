@@ -29,25 +29,31 @@
 		gst_subcontractor s
         INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id
     </sql>
+    
+    <sql id="sortingColumnsAndPaginationWithFiltringByStatus">
+		s.s_fk_status_id, s.s_name ${sortingMethod}
+        LIMIT #{offset} OFFSET #{pageSize}
+    </sql>
+    
+    <sql id="sortingColumnsAndPagination">
+		s.s_name ${sortingMethod}
+        LIMIT #{offset} OFFSET #{pageSize}
+    </sql>
 
     <!-- Select statements -->
-
-
 
     <select id="findAllNonArchivedSubcontractors" resultMap="subcontractorResultMap">
         SELECT <include refid="subcontractorAndStatusColumns"/> 
         FROM <include refid="subcontractorStatusJoin"/>
         WHERE s.s_fk_status_id != 4
-        ORDER BY s.s_fk_status_id, s.s_name ${sortingMethod}
-        LIMIT #{offset} OFFSET #{pageSize}
+        ORDER BY <include refid="sortingColumnsAndPaginationWithFiltringByStatus"/>
     </select>
     
     <select id="findAllSubcontractorsWithStatus" resultMap="subcontractorResultMap">
         SELECT <include refid="subcontractorAndStatusColumns"/> 
         FROM <include refid="subcontractorStatusJoin"/>
         WHERE s.s_fk_status_id = ${statusId}
-        ORDER BY ${nameColonne}, s.s_email ${sortingMethod}
-        LIMIT #{offset} OFFSET #{pageSize}
+        ORDER BY <include refid="sortingColumnsAndPagination"/>
     </select>
 
     <select id="findSubcontractorWithStatusById" resultMap="subcontractorResultMap">
@@ -72,16 +78,14 @@
         SELECT <include refid="subcontractorAndStatusColumns"/> 
         FROM <include refid="subcontractorStatusJoin"/>
 		WHERE ${columnName} ILIKE #{searchTerms} || '%' AND s.s_fk_status_id != 4
-		ORDER BY st.st_id, s.s_name ${sortingMethod}
-        LIMIT #{offset} OFFSET #{pageSize}
+        ORDER BY <include refid="sortingColumnsAndPaginationWithFiltringByStatus"/>
     </select>
     
     <select id="findAllSubcontractorsByCriteriaAndFiltredByStatus" resultMap="subcontractorResultMap">
         SELECT <include refid="subcontractorAndStatusColumns"/> 
         FROM <include refid="subcontractorStatusJoin"/>
 		WHERE ${columnName} ILIKE #{searchTerms} || '%' AND s.s_fk_status_id = #{statusId}
-		ORDER BY s.s_fk_status_id, s.s_name ${sortingMethod}
-        LIMIT #{offset} OFFSET #{pageSize}
+        ORDER BY <include refid="sortingColumnsAndPagination"/>
     </select>
     
    	<select id="countAllNonArchivedSubcontractors" resultType="java.lang.Integer">
@@ -106,14 +110,14 @@
     
         <!-- Insert statements -->
     
-    <insert id="insertSubcontractor" parameterType="com.example.demo.entity.Subcontractor">
+    <insert id="insertSubcontractor" flushCache="true" statementType="PREPARED" keyProperty="sId" keyColumn="s_id" useGeneratedKeys="true" timeout="20" parameterType="com.example.demo.entity.Subcontractor">
         INSERT INTO gst_subcontractor (s_name, s_email, s_creation_date, s_lastUpdate_date, s_fk_status_id)
         VALUES (#{sName}, #{sEmail}, #{sCreationDate}, #{sLastUpdateDate}, #{status.stId})
     </insert>
     
         <!-- Update statements -->
     
-    <update id="updateSubcontractor" parameterType="com.example.demo.entity.Subcontractor">
+    <update id="updateSubcontractor" statementType="PREPARED" parameterType="com.example.demo.entity.Subcontractor">
         UPDATE gst_subcontractor
         SET s_name = #{sName}, s_email = #{sEmail}, s_lastUpdate_date = #{sLastUpdateDate}, s_fk_status_id = #{status.stId}
         WHERE s_id = #{sId}

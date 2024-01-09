@@ -133,7 +133,7 @@
     
     <!-- Insert statement -->
 
-    <insert id="insertServiceProvider" parameterType="com.example.demo.entity.ServiceProvider">
+    <insert id="insertServiceProvider" flushCache="true" statementType="PREPARED" keyProperty="spId" keyColumn="sp_id" useGeneratedKeys="true" parameterType="com.example.demo.entity.ServiceProvider">
         INSERT INTO gst_service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date, sp_fk_subcontractor_id, sp_fk_status_id)
         VALUES (#{spFirstName}, #{spName}, #{spEmail}, #{spCreationDate}, #{spLastUpdateDate}, #{subcontractor.sId}, #{spStatus.stId})
     </insert>
@@ -146,7 +146,7 @@
     	WHERE sp_id = #{spId}
     </update>
     
-    <update id="updateServiceProvider" parameterType="com.example.demo.entity.ServiceProvider">
+    <update id="updateServiceProvider" statementType="PREPARED" parameterType="com.example.demo.entity.ServiceProvider">
 		UPDATE gst_service_provider 
 		SET sp_first_name = #{spFirstName}, sp_name = #{spName}, sp_email = #{spEmail}, sp_lastUpdate_date = #{spLastUpdateDate},
 		sp_fk_status_id = #{spStatus.stId}, sp_fk_subcontractor_id = #{subcontractor.sId}
