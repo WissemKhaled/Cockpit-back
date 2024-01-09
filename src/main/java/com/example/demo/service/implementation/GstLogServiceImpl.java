@@ -173,7 +173,7 @@ public class GstLogServiceImpl implements GstLogService{
 	        List<GstLog> gstLogs = gstLogMapper.getThreeLatestLogs(email);
 	        // Si la liste est vide, le password est considéré comme étant disponible
 	        if (gstLogs == null || gstLogs.isEmpty()) {
-	            Optional<UUser> currentUser = userMapper.findByEmail(email);
+	            Optional<UUser> currentUser = userMapper.findUserByEmail(email);
 	            if (encoder.matches(newPwd, currentUser.get().getUPassword())) {
 	                log.error("Votre nouveau mot de passe doit être différent du mot de passe actuel");
 	                throw new PasswordAvailabilityException("Votre nouveau mot de passe doit être différent du mot de passe actuel");

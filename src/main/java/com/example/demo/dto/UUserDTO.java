@@ -31,7 +31,6 @@ public class UUserDTO {
 
 	public UUserDTO(int uId, String uEmail, String uFirstName, String uLastName, boolean uStatus,
 			LocalDateTime insertionDate, LocalDateTime lastUpdate) {
-		super();
 		this.uId = uId;
 		this.uEmail = uEmail;
 		this.uFirstName = uFirstName;

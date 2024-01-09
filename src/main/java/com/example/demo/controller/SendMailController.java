@@ -2,8 +2,6 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,9 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.SendMailDTO;
-import com.example.demo.entity.SendMail;
 import com.example.demo.exception.GeneralException;
-
 import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.service.SendMailService;
 
@@ -44,8 +40,7 @@ public class SendMailController {
 			                                 @RequestParam("msSender") String sender
 			                                   ) throws MessagingException {
 		try {
-			System.err.println(cc);
-			SendMailDTO mailDTO = new SendMailDTO(0, sender, to, cc, subject, body, null, 1, null);
+			SendMailDTO mailDTO = new SendMailDTO(0, "hamzaoui.h@outlook.fr", cc, subject, body, null, 1);
 			return new ResponseEntity<>(mailService.saveAndSendMail(mailDTO, file), HttpStatus.OK);
 		} catch (MessageModelNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);

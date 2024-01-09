@@ -6,22 +6,15 @@ import com.example.demo.entity.SendMail;
 
 public class SendMailBuilder {
 	private int msId;
-	private String msSender;
 	private String msTo;
 	private String msCc;
 	private String msSubject;
 	private String msBody;
-	private String msError;
-	private int msStatus;
-	private LocalDateTime msCreationsDate;
+	private LocalDateTime msSendDate;
+	private int user;
 
 	public SendMailBuilder withMsId(int msId) {
 		this.msId = msId;
-		return this;
-	}
-
-	public SendMailBuilder withMsSender(String msSender) {
-		this.msSender = msSender;
 		return this;
 	}
 
@@ -45,23 +38,18 @@ public class SendMailBuilder {
 		return this;
 	}
 
-	public SendMailBuilder withMsError(String msError) {
-		this.msError = msError;
+	public SendMailBuilder withMsSendDate(LocalDateTime msSendDate) {
+		this.msSendDate = msSendDate;
 		return this;
 	}
 
-	public SendMailBuilder withMsStatus(int msStatus) {
-		this.msStatus = msStatus;
-		return this;
-	}
-
-	public SendMailBuilder withMsCreationsDate(LocalDateTime msCreationsDate) {
-		this.msCreationsDate = msCreationsDate;
+	public SendMailBuilder withMsUser(int user) {
+		this.user = user;
 		return this;
 	}
 	
 	public SendMail build() {
-		return new SendMail(msId,msSender,msTo,msCc,msSubject,msBody,msError,msStatus,msCreationsDate);
+		return new SendMail(msId,msTo,msCc,msSubject,msBody,msSendDate,user);
 	}
 
 }

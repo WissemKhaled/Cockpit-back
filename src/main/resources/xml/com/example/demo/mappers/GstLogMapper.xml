@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mappers.GstLogMapper">
+
+	<resultMap type="com.example.demo.entity.GstLog" id="gstLogResultMap">
+		<result property="logId" column="log_id" />
+		<result property="logType" column="log_type" />
+		<result property="logEmail" column="log_email" />
+		<result property="logPassword" column="log_password" />
+		<result property="logValue" column="log_value" />
+		<result property="logCreationDate" column="log_creation_date" />
+		<result property="logLastUpdate" column="log_last_update" />
+	</resultMap>
+	
+	<select id="getLogByValue" parameterType="java.lang.String" resultMap="gstLogResultMap">
+		SELECT * 
+		FROM gst_log
+	 	WHERE log_value = #{logValue}
+	</select>
+	
+	<select id="getThreeLatestLogs" parameterType="java.lang.String" resultMap="gstLogResultMap">
+		SELECT * 
+		FROM gst_log
+        WHERE log_email = #{email}
+        AND log_password IS NOT NULL
+        ORDER BY log_id DESC
+        LIMIT 3
+	</select>
+	
+	<insert id="insertLog" flushCache="true" statementType="PREPARED" keyProperty="logId" keyColumn="log_id" useGeneratedKeys="true" parameterType="com.example.demo.entity.GstLog">
+		INSERT INTO gst_log(log_type, log_email, log_value, log_creation_date)
+		VALUES (#{logType}, #{logEmail}, #{logValue}, #{logCreationDate})
+	</insert>
+	
+	<update id="updateGstLogPwd" parameterType="com.example.demo.entity.GstLog">
+		UPDATE gst_log
+		SET log_password = #{gstLog.logPassword}, log_last_update = #{gstLog.logLastUpdate}
+		WHERE log_value = #{gstLog.logValue}
+	</update>
+	
+</mapper>

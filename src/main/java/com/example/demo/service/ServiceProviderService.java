@@ -4,12 +4,16 @@ import java.util.List;
 
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.StatusDto;
-import com.example.demo.entity.ServiceProvider;
+import com.example.demo.exception.AlreadyArchivedEntity;
+import com.example.demo.exception.EntityDuplicateDataException;
+import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.GeneralException;
 
 public interface ServiceProviderService {
+	
 	/**
-	 * Récupère un prestataire par son ID, en incluant les informations sur le sous-traitant associé.
+	 * Récupère un prestataire par son ID.
 	 *
 	 * @param serviceProviderId L'ID du prestataire à récupérer.
 	 * @return Le prestataire trouvé avec les informations sur le sous-traitant, s'il existe.
@@ -19,12 +23,100 @@ public interface ServiceProviderService {
 	
 	
 	/**
+	 * Récupère la liste des prestataires associés à un sous-traitant spécifié.
+	 *
+	 * @param subcontractorId L'ID du sous-traitant pour lequel récupérer les prestataires.
+	 * @return Liste des DTO des prestataires associés au sous-traitant.
+	 */
+	List<ServiceProviderDto> getAllServiceProvidersBySubcontractorId(int subcontractorId);
+	
+	
+	/**
+	 *Récupère la liste des prestataires filtrée par recherche et statut (si l'ID du statut est non null) ou par recherche seule, avec prise en compte de la pagination.
+	 *
+	 * @param sortingMethod La méthode de tri, "asc" pour ascendant ou "desc" pour descendant.
+	 * @param pageNumber    Le numéro de la page à récupérer.
+	 * @param pageSize      Le nombre d'éléments par page.
+	 * @param statusId      L'ID du statut pour filtrer les prestataires (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
+	 * @return Liste des DTO des prestataires filtrés par statut (si l'ID du statut est non null) ou par recherche seule (si l'ID du statut est null) et paginés.
+	 * @throws EntityNotFoundException Si le statut spécifié n'existe pas.
+	 */
+	List<ServiceProviderDto> getAllServiceProvidersWithOrWithoutStatus(String sortingMethod, int pageNumber, int pageSize, int statusId);
+	
+	
+	/**
+	 * Compte le nombre de prestataires filtré par statut.
+	 *
+	 * @param statusId      L'ID du statut pour filtrer les prestataires (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
+	 * @return Le nombre de prestataires selon le statut spécifié.
+	 * @throws EntityNotFoundException Si le statut spécifié n'existe pas.
+	 */
+	int countAllServiceProvidersWithOrWithoutStatus(int statusId);
+	
+	
+	/**
+	 * Récupère la liste des prestataires filtrée par recherche, statut, attribut de recherche, avec prise en compte de la pagination.
+	 *
+	 * @param searchTerms      Les termes de recherche pour filtrer les prestataires.
+	 * @param pageNumber       Le numéro de la page à récupérer.
+	 * @param pageSize         Le nombre d'éléments par page.
+	 * @param statusId      L'ID du statut pour filtrer les prestataires (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
+	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
+	 *                   <ul>
+	 *                      <li>"subcontractorName": Nom du sous-traitant affilié.</li>
+	 *                      <li>"firstName": Prénom du prestataire.</li>
+	 *                      <li>"name": Nom du prestataire.</li>
+	 *                      <li>"email": Email du prestataire.</li>
+	 *                   </ul>
+	 * @return Liste des DTO des prestataires filtrés par recherche, statut et attribut de recherche, paginés.
+	 * @throws GeneralException Si l'attribut de recherche spécifié n'est pas pris en charge.
+	 */
+	List<ServiceProviderDto> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
+			int pageSize, int statusId, String columnName) throws GeneralException;
+	
+	
+	/**
+	 * Récupère le nombre de prestataires filtré par recherche, statut et attribut de recherche.
+	 *
+	 * @param searchTerms      Les termes de recherche pour filtrer les prestataires.
+	 * @param statusId         L'ID du statut pour filtrer les prestataires (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
+	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
+	 *                   <ul>
+	 *                      <li>"subcontractorName": Nom du sous-traitant affilié.</li>
+	 *                      <li>"firstName": Prénom du prestataire.</li>
+	 *                      <li>"name": Nom du prestataire.</li>
+	 *                      <li>"email": Email du prestataire.</li>
+	 *                   </ul>
+	 * @return Le nombre de prestataires selon la recherche, le statut et l'attribut spécifiés.
+	 * @throws GeneralException Si l'attribut de recherche spécifié n'est pas pris en charge.
+	 */
+	int countServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
+			String columnName) throws GeneralException;
+	
+	
+	/**
+	 * Récupère la liste paginée et triée des prestataires en fonction des paramètres spécifiés et du statut.
+	 *
+	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
+	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
+	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
+	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
+	 * @param statusId    L'ID du statut pour filtrer les prestataires.
+	 * @return Liste des DTO des prestataires paginée et triée avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
+	 */
+	List<StatusDto> getAllStatus();
+	
+	
+	/**
 	 * Enregistre un nouveau prestataire dans la base de données.
 	 *
 	 * @param serviceProviderDtoToSave Le prestataire à enregistrer.
 	 * @return L'ID du prestataire enregistré, ou 0 si l'enregistrement a échoué.
+	 * @throws GeneralException, DatabaseQueryFailureException 
 	 */
-	int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException;
+	int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException, DatabaseQueryFailureException;
 	
 	
 	/**
@@ -34,7 +126,7 @@ public interface ServiceProviderService {
 	 * @return Le nombre d'enregistrements affectés par la mise à jour.
 	 */
 	int updateServiceProvider(ServiceProviderDto serviceProviderDtoToUpdate);
-
+	
 	
 	/**
 	 * Archive un prestataire en mettant à jour son statut dans la base de données.
@@ -44,16 +136,7 @@ public interface ServiceProviderService {
 	 * @throws AlreadyArchivedEntity Si le prestataire est déjà archivé.
 	 * @throws EntityNotFoundException Si le prestataire n'est pas trouvé.
 	 */
-	int archiveServiceProvider(ServiceProviderDto serviceProviderDtoToArchive);
-
-	
-	/**
-	 * Récupère la liste des prestataires associés à un sous-traitant spécifié.
-	 *
-	 * @param subcontractorId L'ID du sous-traitant pour lequel récupérer les prestataires.
-	 * @return Liste des DTO des prestataires associés au sous-traitant.
-	 */
-	List<ServiceProviderDto> getServiceProvidersBySubcontractorId(int subcontractorId);
+	int archiveServiceProvider(int serviceProviderId) throws AlreadyArchivedEntity;
 
 	
 	/**
@@ -93,90 +176,6 @@ public interface ServiceProviderService {
 
 	
 	/**
-	 * Formate le prénom ou l'email en mettant la première lettre en majuscule et le reste en minuscules.
-	 *
-	 * @param name La chaîne de caractères représentant le prénom ou l'email à formater.
-	 * @return La chaîne de caractères formatée avec la première lettre en majuscule et le reste en minuscules.
-	 * @throws GeneralException Si le prénom ou l'email est nul ou vide.
-	 */
-	String firstNameAndEmailFormatter(String name) throws GeneralException;
-
-	
-	/**
-	 * Formate le nom en mettant toutes les lettres en majuscules.
-	 *
-	 * @param name La chaîne de caractères représentant le nom à formater.
-	 * @return La chaîne de caractères formatée avec toutes les lettres en majuscules.
-	 * @throws GeneralException Si le nom est nul ou vide.
-	 */
-	String nameFormatter(String name) throws GeneralException;
-
-	
-	/**
-	 *Récupère la liste des prestataires filtrée par recherche et statut (si l'ID du statut est non null) ou par recherche seule, avec prise en compte de la pagination.
-	 *
-	 * @param sortingMethod La méthode de tri, "asc" pour ascendant ou "desc" pour descendant.
-	 * @param pageNumber    Le numéro de la page à récupérer.
-	 * @param pageSize      Le nombre d'éléments par page.
-	 * @param statusId      L'ID du statut pour filtrer les prestataires (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
-	 * @return Liste des DTO des prestataires filtrés par statut (si l'ID du statut est non null) ou par recherche seule (si l'ID du statut est null) et paginés.
-	 * @throws EntityNotFoundException Si le statut spécifié n'existe pas.
-	 */
-	List<ServiceProviderDto> getAllServiceProvidersWithOrWithoutStatus(String sortingMethod, int pageNumber, int pageSize,
-			int statusId);
-
-	
-	/**
-	 * Récupère la liste des prestataires filtrée par recherche, statut, attribut de recherche, avec prise en compte de la pagination.
-	 *
-	 * @param searchTerms      Les termes de recherche pour filtrer les prestataires.
-	 * @param pageNumber       Le numéro de la page à récupérer.
-	 * @param pageSize         Le nombre d'éléments par page.
-	 * @param statusId      L'ID du statut pour filtrer les prestataires (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
-	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
-	 *                   <ul>
-	 *                      <li>"subcontractorName": Nom du sous-traitant affilié.</li>
-	 *                      <li>"firstName": Prénom du prestataire.</li>
-	 *                      <li>"name": Nom du prestataire.</li>
-	 *                      <li>"email": Email du prestataire.</li>
-	 *                   </ul>
-	 * @return Liste des DTO des prestataires filtrés par recherche, statut et attribut de recherche, paginés.
-	 * @throws GeneralException Si l'attribut de recherche spécifié n'est pas pris en charge.
-	 */
-	List<ServiceProviderDto> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
-			int pageSize, int statusId, String columnName) throws GeneralException;
-	
-	
-	/**
-	 * Compte le nombre de prestataires filtré par statut.
-	 *
-	 * @param statusId      L'ID du statut pour filtrer les prestataires (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
-	 * @return Le nombre de prestataires selon le statut spécifié.
-	 * @throws EntityNotFoundException Si le statut spécifié n'existe pas.
-	 */
-	int countAllServiceProvidersWithOrWithoutStatus(int statusId);
-
-	
-	/**
-	 * Récupère le nombre de prestataires filtré par recherche, statut et attribut de recherche.
-	 *
-	 * @param searchTerms      Les termes de recherche pour filtrer les prestataires.
-	 * @param statusId         L'ID du statut pour filtrer les prestataires (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
-	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "subcontractorName", "firstName", "name", et "email".
-	 *                   <ul>
-	 *                      <li>"subcontractorName": Nom du sous-traitant affilié.</li>
-	 *                      <li>"firstName": Prénom du prestataire.</li>
-	 *                      <li>"name": Nom du prestataire.</li>
-	 *                      <li>"email": Email du prestataire.</li>
-	 *                   </ul>
-	 * @return Le nombre de prestataires selon la recherche, le statut et l'attribut spécifiés.
-	 * @throws GeneralException Si l'attribut de recherche spécifié n'est pas pris en charge.
-	 */
-	int getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
-			String columnName) throws GeneralException;
-
-
-	/**
 	 * Récupère le nombre de la page ou le nouveau prestataire est enregistré.
 	 *
 	 * @param savedServiceProviderId      l'id du nouveau prestataire enregistré.
@@ -184,20 +183,14 @@ public interface ServiceProviderService {
 	 * @return Le nombre de page ou le nouveau prestataire est enregistré, sinon elle retourne une valeur par défaut égale à 1.
 	 */
 	int getPageNumberOfNewlyAddedOrUpdatedServiceProvider(int savedServiceProviderId, int pageSize);
-	
+
 	
 	/**
-	 * Récupère la liste paginée et triée des prestataires en fonction des paramètres spécifiés et du statut.
+	 * Formater le nom, prénom et l'émail du prestatire DTO passé en paramétre.
 	 *
-	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
-	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
-	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
-	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
-	 * @param statusId    L'ID du statut pour filtrer les prestataires.
-	 * @return Liste des DTO des prestataires paginée et triée avec le statut OK,
-	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
-	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
+	 * @param serviceProviderDto le prestataire dto à formater.
+	 * @throws GeneralException Si l'une des données à formatter est nul ou vide.
 	 */
-	List<StatusDto> getAllStatus();
+	void formattingServiceProviderData(ServiceProviderDto serviceProviderDto) throws GeneralException;
 
 }

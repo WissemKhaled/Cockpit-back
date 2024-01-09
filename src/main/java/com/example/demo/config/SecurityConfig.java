@@ -1,5 +1,7 @@
 package com.example.demo.config;
 
+import com.example.demo.service.JwtService;
+import com.example.demo.service.implementation.JwtServiceImplementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,21 +41,25 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/addNewUser", "/auth/generateToken", "/auth/refreshToken", "/messages/**", "/gstlogs/**", "/MessageModel/**", "/SendMail/**", "/status/**").permitAll())
+				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/addNewUser", "/auth/generateToken", "/auth/refreshToken", "/messages/**", "/gstlogs/**", "/MessageModel/**", "/SendMail/**", "/status/**", "/contract/**").permitAll())
 				.authorizeHttpRequests(ar ->ar.requestMatchers("/auth/user/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/admin/**").authenticated())
+				.authorizeHttpRequests(ar -> ar.requestMatchers("/status/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/subcontractor/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/service-providers/**").authenticated())
-				.authorizeHttpRequests(ar -> ar.requestMatchers("/emailReminder/**").authenticated())
+				.authorizeHttpRequests(ar -> ar.requestMatchers("/modelTracking/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/status/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/MessageModel/**").authenticated())
+				.authorizeHttpRequests(ar -> ar.requestMatchers("/contract/**").authenticated())
 				.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.authenticationProvider(authenticationProvider())
 				.addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
 
-	// Password Encoding 
+	/**
+	 * Password Encoding
+	*/
 	@Bean
 	public PasswordEncoder passwordEncoder() { 
 		return new BCryptPasswordEncoder(); 
@@ -71,4 +77,10 @@ public class SecurityConfig {
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception { 
 		return config.getAuthenticationManager(); 
 	}
+
+
+//	@Bean
+//	public JwtService jwtService() {
+//		return new JwtServiceImplementation();
+//	}
 }

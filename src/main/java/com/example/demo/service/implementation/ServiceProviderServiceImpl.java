@@ -2,51 +2,163 @@ package com.example.demo.service.implementation;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.dto.GstStatusModelServiceProviderDTO;
+import com.example.demo.dto.ContractDTO;
+import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.StatusDto;
-import com.example.demo.dto.mapper.GstStatusModelServiceProviderDtoMapper;
-import com.example.demo.entity.GstStatusModelServiceProvider;
+import com.example.demo.dto.mapper.ModelTrackingDtoMapper;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.dto.mapper.StatusDtoMapper;
+import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.ServiceProvider;
+import com.example.demo.entity.Subcontractor;
+import com.example.demo.exception.AlreadyArchivedEntity;
+import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
-import com.example.demo.mappers.EmailReminderMapper;
+import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.mappers.StatusMapper;
+import com.example.demo.service.ContractService;
 import com.example.demo.service.ServiceProviderService;
+import com.example.demo.service.SubcontractorService;
 
 @Service
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final ServiceProviderMapper serviceProviderMapper;
-	private final EmailReminderMapper emailReminderMapper;
+	private final ModelTrackingMapper modelTrackingMapper;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
 	private final StatusDtoMapper statusDtoMapper;
 	private final StatusMapper statusMapper;
-	private final GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper;
+	private final ModelTrackingDtoMapper modelTrackingDtoMapper;
+	private final ContractService contractService;
+	private final SubcontractorService subcontractorService;
 	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
 
-	public ServiceProviderServiceImpl(ServiceProviderMapper serviceProviderMapper,
+	public ServiceProviderServiceImpl(
+			ServiceProviderMapper serviceProviderMapper,
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
-			GstStatusModelServiceProviderDtoMapper gstStatusModelServiceProviderDtoMapper, EmailReminderMapper emailReminderMapper, StatusDtoMapper statusDtoMapper, StatusMapper statusMapper) {
+			ModelTrackingDtoMapper modelTrackingDtoMapper, 
+			ModelTrackingMapper modelTrackingMapper, 
+			StatusDtoMapper statusDtoMapper, 
+			StatusMapper statusMapper, 
+			ContractService contractService,
+			SubcontractorService subcontractorService
+	) {
 		this.serviceProviderMapper = serviceProviderMapper;
-		this.emailReminderMapper = emailReminderMapper;
+		this.modelTrackingMapper = modelTrackingMapper;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
-		this.gstStatusModelServiceProviderDtoMapper = gstStatusModelServiceProviderDtoMapper;
+		this.modelTrackingDtoMapper = modelTrackingDtoMapper;
 		this.statusDtoMapper = statusDtoMapper;
 		this.statusMapper = statusMapper;
+		this.contractService = contractService;
+		this.subcontractorService = subcontractorService;
+	}
+	
+	@Transactional
+	@Override
+	public ServiceProviderDto getServiceProviderById(int serviceProviderId) {
+		Optional<ServiceProvider> optionalServiceProviderById = Optional.ofNullable(serviceProviderMapper.findServiceProviderWithSubcontractorBySpId(serviceProviderId));
+		if (optionalServiceProviderById.isEmpty()) {
+			throw new EntityNotFoundException("le prestataire avec l'id: " + serviceProviderId + " n'existe pas!!");
+		}
+		return serviceProviderDtoMapper.serviceProviderToDto(optionalServiceProviderById.get());
+	}
+	
+	@Override
+	public List<ServiceProviderDto> getAllServiceProvidersBySubcontractorId(int subcontractorId) {
+	    List<ServiceProvider> serviceProviders = Optional.ofNullable(serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId))
+	            .orElseThrow(() -> new EntityNotFoundException(String.format("Le sous-traitant avec l'id: %d n'a pas de prestataires", subcontractorId)));
+
+	    if (serviceProviders.isEmpty()) {
+	        throw new EntityNotFoundException(String.format("Le sous-traitant avec l'id: %d n'a pas de prestataires", subcontractorId));
+	    }
+
+	    return serviceProviders.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	}
+	
+	@Override
+	public List<ServiceProviderDto> getAllServiceProvidersWithOrWithoutStatus(String sortingMethod, int pageNumber,
+	        int pageSize, int statusId) {
+	    int offset = (pageNumber - 1) * pageSize;
+
+	    List<ServiceProvider> serviceProvidersList;
+
+	    if (statusId == 0) {
+	        serviceProvidersList = serviceProviderMapper.findAllNonArchivedServiceProviders(sortingMethod, offset, pageSize);
+	    } else if (statusId >= 1 && statusId <= 4) {
+	        serviceProvidersList = serviceProviderMapper.findAllServiceProvidersFlitredByStatus(sortingMethod, offset, pageSize, statusId);
+	    } else {
+	        throw new EntityNotFoundException(String.format("Le statut avec l'id: %d n'existe pas", statusId));
+	    }
+
+	    if (serviceProvidersList == null || serviceProvidersList.isEmpty()) {
+	        throw new EntityNotFoundException("Aucun résultat trouvé");
+	    }
+
+	    return serviceProvidersList.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	}
+	
+	@Override
+	public int countAllServiceProvidersWithOrWithoutStatus(int statusId) {
+	    // Vérification du statut et comptage des prestataires en conséquence
+		if (statusId == 0 ) {
+			return serviceProviderMapper.countAllNonArchivedServiceProviders();
+		} else if (statusId>=1 && statusId<=4) {
+			return serviceProviderMapper.countAllServiceProvidersFiltredByStatus(statusId);			
+		} else {
+			throw new EntityNotFoundException(String.format("le statut avec l'id: %d n'existe pas", statusId));
+		}
+	}
+	
+	@Override
+	public List<ServiceProviderDto> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
+	        int pageSize, int statusId, String columnName) throws GeneralException {
+	    int offset = (pageNumber - 1) * pageSize;
+
+	    String criteriaColumn = getCriteriaColumn(columnName);
+
+	    if (statusId == 0) {
+	        return serviceProviderMapper.findServiceProvidersByCriteria(criteriaColumn, searchTerms, offset, pageSize)
+	                .stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    } else {
+	        return serviceProviderMapper.findServiceProvidersByCriteriaAndFiltredByStatus(criteriaColumn, searchTerms, offset, pageSize, statusId)
+	                .stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    }
+	}
+	
+	@Override
+	public int countServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
+	        String columnName) throws GeneralException {
+	    String criteriaColumn = getCriteriaColumn(columnName);
+
+	    if (statusId == 0) {
+	        return serviceProviderMapper.countServiceProvidersByCriteria(criteriaColumn, searchTerms);
+	    } else {
+	        return serviceProviderMapper.countServiceProvidersByByCriteriaAndFiltredByStatus(criteriaColumn, searchTerms, statusId);
+	    }
 	}
 
 	@Override
-	public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException {
+	public List<StatusDto> getAllStatus() {
+		List<StatusDto> foundedStatus = statusMapper.getAllStatus().stream().map(statusDtoMapper::statusToDto).toList();
+		if (foundedStatus.isEmpty()) {
+			throw new EntityNotFoundException("Il n'y a pas de status enregistré");
+		}
+		return foundedStatus;
+	}
+
+	@Override
+	public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException, DatabaseQueryFailureException {
 		ServiceProvider serviceProviderToSave = serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToSave);
 		serviceProviderToSave.setSpCreationDate(LocalDateTime.now());
 		int isServiceProviderInserted = serviceProviderMapper.insertServiceProvider(serviceProviderToSave);
@@ -57,46 +169,47 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		// comme ça on peut retourner le correct sans prendre en considération l'id
 		// saisi par l'utilisateur
 		
-		// Si l'insertion du nouveau sous-traitant en bdd se passe bien, on alimente la table intermédiaire qui va service pour les relances d'emails
-		int mmId = 1; // message modèle
+		// Si l'insertion du nouveau sous-traitant en bdd se passe bien, on créé un nouveau contrat et on alimente la table gst_model_tracking qui va service pour les relances d'emails
 		
-		GstStatusModelServiceProviderDTO gstStatusModelServiceProviderDTO = new GstStatusModelServiceProviderDTO();
+		ContractDTO contractDTO = new ContractDTO();
 		
-		gstStatusModelServiceProviderDTO.setStatusMspFkServiceProviderId(serviceProviderToSave.getSpId());
-		gstStatusModelServiceProviderDTO.setStatusMspFkMessageModelId(mmId);
-		gstStatusModelServiceProviderDTO.setStatusMspFkStatusId(serviceProviderToSave.getSpStatus().getStId());
+		// récupération du sous-traitant associé au prestataire
+		Subcontractor associatedSubcontractor = subcontractorService.getSubcontractorBySName(serviceProviderToSave.getSubcontractor().getSName());
 		
-		GstStatusModelServiceProvider gstStatusModelServiceProvider = gstStatusModelServiceProviderDtoMapper.toGstStatusModelServiceProvider(gstStatusModelServiceProviderDTO);
+		contractDTO.setcFKserviceProviderId(serviceProviderToSave.getSpId());
+		contractDTO.setcFkSubcontractorId(associatedSubcontractor.getSId());
+		
+		// le numéro de contrat est généré dand la méthode saveContract suivante dans le ContractServiceImpl :
+		int contractId = contractService.saveContract(contractDTO);
+		
+		ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();
+		
+		modelTrackingDTO.setMtFkContractId(contractId);
+		modelTrackingDTO.setMtFkCategoryId(1); // SP category
+		modelTrackingDTO.setMtFkMessageModelId(1);
+		modelTrackingDTO.setMtFkStatusId(serviceProviderToSave.getSpStatus().getStId());
+		
+		ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
 		
 		try {
-			int isGstStatusModelServiceProviderInserted = emailReminderMapper.insertGstStatusModelServiceProvider(gstStatusModelServiceProvider);
+			int isModelTrackingInserted = modelTrackingMapper.insertGstModelTracking(modelTracking);
 			
-			if (isGstStatusModelServiceProviderInserted == 0) {
-				throw new GeneralException("Erreur lors de l'insertion des données dans la table intermédiaire des prestataires");
+			if (isModelTrackingInserted == 0) {
+				throw new GeneralException("Erreur lors de l'insertion des données dans la table modelTracking");
 			}
 			
-			log.info("Données dans la table intermédiaire des prestataires insérées avec succès");
+			log.info("Données dans la table modelTracking insérées avec succès");
 			
 			return serviceProviderToSave.getSpId();
 		} catch(PersistenceException e) {
-			log.error("Erreur MyBatis lors de l'insertion des données dans la table intermédiaire des prestatires", e);
-	        throw new GeneralException("Erreur MyBatis lors de l'insertion des données dans la table intermédiaire des prestatires : " + e);
+			log.error("Erreur MyBatis lors de l'insertion des données dans la table modelTracking : ", e);
+	        throw new GeneralException("Erreur MyBatis lors de l'insertion des données dans la table modelTracking : " + e);
 		} catch(Exception e) {
 			log.error("Erreur lors du traitement de saveServiceprovider", e);
 	        throw new GeneralException("Erreur lors du traitement de saveServiceprovider : " + e);
 		}
 	}
-
-	@Override
-	public ServiceProviderDto getServiceProviderById(int serviceProviderId) {
-		ServiceProviderDto foundedServiceProviderById = serviceProviderDtoMapper.serviceProviderToDto(serviceProviderMapper
-				.findServiceProviderWithSubcontractorBySpId(serviceProviderId));
-		if (foundedServiceProviderById == null) {
-			throw new EntityNotFoundException("le prestataire avec l'id: " + serviceProviderId + " n'existe pas!!");
-		}
-		return foundedServiceProviderById;
-	}
-
+	
 	@Override
 	public int updateServiceProvider(ServiceProviderDto serviceProviderDtoToUpdate) {
 	    // Mise à jour de la date de dernière modification
@@ -105,19 +218,16 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    // Exécution de la mise à jour dans la base de données
 		return serviceProviderMapper.updateServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToUpdate));
 	}
-
-	@Override
-	public int archiveServiceProvider(ServiceProviderDto serviceProviderDtoToArchive) {
-		return serviceProviderMapper.archiveServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToArchive));
-	}
 	
 	@Override
-	public List<ServiceProviderDto> getServiceProvidersBySubcontractorId(int subcontractorId) {
-	    // Récupération des prestataires associés au sous-traitant par son ID
-	    List<ServiceProviderDto> serviceProviders = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-
-	    // Conversion des prestataires en DTO
-	    return serviceProviders;	
+	public int archiveServiceProvider(int serviceProviderId) throws AlreadyArchivedEntity {
+		ServiceProviderDto serviceProviderDtoTArchive = getServiceProviderById(serviceProviderId);
+		// Vérification si le prestataire est déjà archivé
+		if (serviceProviderDtoTArchive.getSpStatus().getStId() == 4) {
+			throw new AlreadyArchivedEntity(String.format("Erreur: le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
+		}
+		
+		return serviceProviderMapper.archiveServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoTArchive));
 	}
 
 	@Override
@@ -162,127 +272,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public String firstNameAndEmailFormatter(String name) throws GeneralException {
-	    // Vérification de la validité du prénom ou de l'email
-		if (name == null || name.trim().isEmpty()) {
-			throw new GeneralException("le nom est necessaire");
-		}
-		
-	    // Formatage de la chaîne en mettant la première lettre en majuscule et le reste en minuscules
-		return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
-	}
-
-	@Override
-	public String nameFormatter(String name) throws GeneralException {
-	    // Vérification de la validité du nom
-		if (name == null || name.trim().isEmpty()) {
-			throw new GeneralException("le nom est necessaire");
-		}
-		
-	    // Formatage de la chaîne en mettant toutes les lettres en majuscules
-		return name.toUpperCase();
-	}
-
-
-	@Override
-	public int countAllServiceProvidersWithOrWithoutStatus(int statusId) {
-	    // Vérification du statut et comptage des prestataires en conséquence
-		if (statusId == 0 ) {
-			return serviceProviderMapper.countAllNonArchivedServiceProviders();
-		} else if (statusId>=1 && statusId<=4) {
-			return serviceProviderMapper.countAllServiceProvidersFiltredByStatus(statusId);			
-		} else {
-			throw new EntityNotFoundException(String.format("le statut avec l'id: %d n'existe pas", statusId));
-		}
-	}
-
-	@Override
-	public List<ServiceProviderDto> getAllServiceProvidersWithOrWithoutStatus(String sortingMethod, int pageNumber,
-			int pageSize, int statusId) {
-	    // Calcul de l'offset pour la pagination
-		int offset = (pageNumber - 1) * pageSize;
-		
-	    // Vérification du statut et récupération des prestataires en conséquence
-		if (statusId == 0 ) {
-			return serviceProviderMapper.findAllNonArchivedServiceProviders(sortingMethod, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-		} else if (statusId>=1 && statusId<=4) {
-			return serviceProviderMapper.findAllServiceProvidersFlitredByStatus(sortingMethod, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-		} else {
-			throw new EntityNotFoundException(String.format("le statut avec l'id: %d n'existe pas", statusId));
-		}
-	}
-
-	
-	@Override
-	public List<ServiceProviderDto> getAllServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int pageNumber,
-	        int pageSize, int statusId, String columnName) throws GeneralException {
-	    // Calcul de l'offset pour la pagination
-	    int offset = (pageNumber - 1) * pageSize;
-
-	    // Vérification de l'attribut de recherche et récupération des prestataires en conséquence
-	    if (columnName.equals("name")) {
-	        if (statusId == 0) {
-	            return serviceProviderMapper.findServiceProvidersByCriteria("sp.sp_name",searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersByCriteriaAndFiltredByStatus("sp.sp_name",searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	        }
-	    } else if (columnName.equals("firstName")) {
-	        if (statusId == 0) {
-	            return serviceProviderMapper.findServiceProvidersByCriteria("sp.sp_first_name",searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersByCriteriaAndFiltredByStatus("sp.sp_first_name",searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	        }
-	    } else if (columnName.equals("email")) {
-	    	if (statusId == 0) {
-	    		return serviceProviderMapper.findServiceProvidersByCriteria("sp.sp_email",searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	    	} else {
-	    		return serviceProviderMapper.findAllServiceProvidersByCriteriaAndFiltredByStatus("sp.sp_email",searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	    	}
-	    } else if (columnName.equals("subcontractorName")) {
-	        if (statusId == 0) {
-	            return serviceProviderMapper.findServiceProvidersByCriteria("s.s_name",searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	        } else {
-	            return serviceProviderMapper.findAllServiceProvidersByCriteriaAndFiltredByStatus("s.s_name",searchTerms, offset, pageSize, statusId).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	        }
-	    } else {
-	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
-	    }
-	}
-
-	@Override
-	public int getNumberOfServiceProvidersBySearchAndWithOrWithoutStatusFiltring(String searchTerms, int statusId,
-			String columnName) throws GeneralException {
-	    if (columnName.equals("name")) {
-	        // Vérification de l'attribut de recherche et récupération du nombre de prestataires de services en conséquence
-	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByCriteria("sp.sp_name",searchTerms);
-	        } else {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus("sp.sp_name",searchTerms,statusId);
-	        }
-	    } else if (columnName.equals("firstName")) {
-	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByCriteria("sp.sp_first_name",searchTerms);
-	        } else {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus("sp.sp_first_name",searchTerms,statusId);
-	        }
-	    } else if (columnName.equals("email")) {
-	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByCriteria("sp.sp_email",searchTerms);
-	        } else {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus("sp.sp_email",searchTerms,statusId);
-	        }
-	    } else if (columnName.equals("subcontractorName")) {
-	        if (statusId == 0) {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByCriteria("s.s_name",searchTerms);
-	        } else {
-	            return serviceProviderMapper.findNumberOfAllServiceProvidersByByCriteriaAndFiltredByStatus("s.s_name",searchTerms,statusId);
-	        }
-	    } else {
-	        throw new GeneralException(String.format("le champs %s n'existe pas", columnName));
-	    }
-	}
-
-	@Override
 	public int getPageNumberOfNewlyAddedOrUpdatedServiceProvider(int savedServiceProviderId, int pageSize) {
         int newPage = 1;
         int newIndex = -1;
@@ -302,12 +291,70 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 	
 	@Override
-	public List<StatusDto> getAllStatus() {
-		List<StatusDto> foundedStatus = statusMapper.getAllStatus().stream().map(statusDtoMapper::statusToDto).toList();
-		if (foundedStatus.isEmpty()) {
-			throw new EntityNotFoundException("Il n'y a pas de status enregistré");
+	public void formattingServiceProviderData(ServiceProviderDto serviceProviderDto)
+			throws GeneralException {
+        serviceProviderDto.setSpFirstName(firstNameAndEmailFormatter(serviceProviderDto.getSpFirstName()));
+        serviceProviderDto.setSpName(nameFormatter(serviceProviderDto.getSpName()));
+        serviceProviderDto.setSpEmail(firstNameAndEmailFormatter(serviceProviderDto.getSpEmail()));
+	}
+	
+	
+	/**
+	 * Formate le prénom ou l'email en mettant la première lettre en majuscule et le reste en minuscules.
+	 *
+	 * @param name La chaîne de caractères représentant le prénom ou l'email à formater.
+	 * @return La chaîne de caractères formatée avec la première lettre en majuscule et le reste en minuscules.
+	 * @throws GeneralException Si le prénom ou l'email est nul ou vide.
+	 */
+	private String firstNameAndEmailFormatter(String name) throws GeneralException {
+	    // Vérification de la validité du prénom ou de l'email
+		if (name == null || name.trim().isEmpty()) {
+			throw new GeneralException("le nom est necessaire");
 		}
-		return foundedStatus;
+		
+	    // Formatage de la chaîne en mettant la première lettre en majuscule et le reste en minuscules
+		return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+	}
+
+	
+	/**
+	 * Formate le nom en mettant toutes les lettres en majuscules.
+	 *
+	 * @param name La chaîne de caractères représentant le nom à formater.
+	 * @return La chaîne de caractères formatée avec toutes les lettres en majuscules.
+	 * @throws GeneralException Si le nom est nul ou vide.
+	 */
+	private String nameFormatter(String name) throws GeneralException {
+	    // Vérification de la validité du nom
+		if (name == null || name.trim().isEmpty()) {
+			throw new GeneralException("le nom est necessaire");
+		}
+		
+	    // Formatage de la chaîne en mettant toutes les lettres en majuscules
+		return name.toUpperCase();
+	}
+
+	
+	/**
+	 * Récupère la colonne de la base de données correspondante en fonction du nom de colonne donné.
+	 *
+	 * @param columnName Le nom de la colonne pour laquelle récupérer la colonne de la base de données.
+	 * @return La colonne de la base de données correspondant au nom de colonne fourni.
+	 * @throws GeneralException Si le nom de colonne fourni ne correspond à aucune colonne connue.
+	 */
+	private String getCriteriaColumn(String columnName) throws GeneralException {
+	    switch (columnName) {
+	        case "name":
+	            return "sp.sp_name";
+	        case "firstName":
+	            return "sp.sp_first_name";
+	        case "email":
+	            return "sp.sp_email";
+	        case "subcontractorName":
+	            return "s.s_name";
+	        default:
+	            throw new GeneralException(String.format("Le champ %s n'existe pas", columnName));
+	    }
 	}
 	
 }
