@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Contract;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -10,6 +9,6 @@ import java.util.List;
  */
 public interface ContractService {
 
-    List<Contract> getContractsByMessageModelId(Integer serviceProviderId,Integer subContractorId,Integer messageModelId);
+    List<Contract> getContractsBySubContractorIdOrServiceProviderIdOrMessageModelId(Integer serviceProviderId, Integer subContractorId, Integer messageModelId);
 
 }
