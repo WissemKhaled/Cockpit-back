@@ -114,9 +114,13 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	                    log.info("Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId());
 	                    return "Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId();
 	                } else {
-	                    log.error("Date de validation nulle ou < 7 jours");
-	                    return "Date de validation nulle ou < 7 jours";
+	                    log.error("Date d'envoi nulle ou < 7 jours");
+	                    return "Date d'envoi nulle ou < 7 jours";
 	                }
+	            } else if (modelTrackingDTO.getMtFkCategoryId() == 3) {
+	            	
+	            } else if (modelTrackingDTO.getMtFkCategoryId() == 4) {
+	            	
 	            }
 	        }
 
@@ -130,7 +134,10 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	        return "Une erreur est survenue lors de la vérification de relance : " + e.getMessage();
 	    }
 	}
-
+	
+	public void createAndinsertRelaunchMessageModels() {
+		// MessageModel relaunchAdminDocSp = new MessageModel(1, "Relance des documents administratifs du prestataire", "je suis le body du mail", true, LocalDateTime.now(), null, 1);
+	}
 
 	@Override
 	public List<ModelTrackingDTO> getModelTrackingInfoByContractId(int contractId) {

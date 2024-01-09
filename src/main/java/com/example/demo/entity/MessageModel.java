@@ -48,7 +48,6 @@ public class MessageModel {
 	public MessageModel(Integer mmId, String mmType, String mmCategory, String mmSubject, String mmBody,
 			LocalDateTime mmCreationDate, LocalDateTime mmLastUpdateDate, Status status, Integer statusMspId,
 			Integer statusMspFkServiceProviderId, Integer statusMspFkStatusId) {
-		super();
 		this.mmId = mmId;
 		this.mmType = mmType;
 		this.mmCategory = mmCategory;
