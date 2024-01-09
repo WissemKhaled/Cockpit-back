@@ -90,7 +90,7 @@
     
    	<select id="countAllNonArchivedSubcontractors" resultType="java.lang.Integer">
 		SELECT <include refid="countSubcontractors"/>
-		WHERE s_fk_status_id != 4
+		WHERE s.s_fk_status_id != 4
 	</select>
 	
 	<select id="countAllNonArchivedSubcontractorsWithStatus" resultType="java.lang.Integer">

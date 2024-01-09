@@ -6,11 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.builder.SubcontractorBuilder;
 import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 
 @SpringBootTest
+@Transactional
 public class SubcontractorMapperTest {
 
 	@Autowired
@@ -18,25 +21,64 @@ public class SubcontractorMapperTest {
 
 	@Test
 	void archiveTest_ArchivingASubcontractor_ShouldReturnOne() {
-		Subcontractor existingSubcontractor = new Subcontractor();
-		existingSubcontractor.setSId(1);
-		existingSubcontractor.setSName("Subcontractor 1");
-		existingSubcontractor.setSEmail("Subcontractor1@example.com");
-		existingSubcontractor.setStatus(new Status(1));
+		
+		// GIVEN
+		Subcontractor existingSubcontractor = new SubcontractorBuilder()
+				.withSId(1)
+				.withSName("Orange")
+				.withSEmail("Orange@email.fr")
+				.withStatus(new Status(1))
+				.build();
 
+		// WHEN
 		int isArchived = subcontractorMapper.archiveSubcontractor(existingSubcontractor);
+		
+		// THEN
 		assertEquals(1, isArchived);
 	}
 
 	@Test
 	void archiveTest_ArchivingASubcontractorFailed_ShouldReturnZero() {
-		Subcontractor nonExistingSubcontractor = new Subcontractor();
-		nonExistingSubcontractor.setSId(Integer.MAX_VALUE);
-		nonExistingSubcontractor.setSName("NonExistingSubcontractor");
-		nonExistingSubcontractor.setSEmail("NonExistingSubcontractor@example.fr");
-		nonExistingSubcontractor.setStatus(new Status(1));
-
+		
+		// GIVEN
+		Subcontractor nonExistingSubcontractor = new SubcontractorBuilder()
+				.withSId(Integer.MAX_VALUE)
+				.withSName("NonExistingSubcontractor")
+				.withSEmail("NonExistingSubcontractor@example.fr")
+				.withStatus(new Status(1))
+				.build();
+		
+		// WHEN
 		int isNotArchived = subcontractorMapper.archiveSubcontractor(nonExistingSubcontractor);
+		
+		// THEN
 		assertEquals(0, isNotArchived);
 	}
+	
+    @Test
+    public void testCountAllNonArchivedSubcontractors_ShouldReturnExpectedCount() {
+
+		// GIVEN
+    	int expectedCount = 5;
+    	
+		// WHEN
+        int count = subcontractorMapper.countAllNonArchivedSubcontractors();
+
+		// THEN
+        assertEquals(expectedCount, count); // Replace expectedCount with the expected result
+    }
+    
+    @Test
+    public void testCountAllNonArchivedSubcontractorsWithStatus() {
+    	
+		// GIVEN
+    	int expectedCount = 5;
+    	
+		// WHEN
+        int count = subcontractorMapper.countAllNonArchivedSubcontractorsWithStatus(1);
+        
+		// THEN
+        assertEquals(expectedCount, count);
+    }
+    
 }
