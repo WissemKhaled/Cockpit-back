@@ -68,7 +68,7 @@
 		WHERE s.s_name = #{sName}
     </select>
 
-    <select id="findSubcontractorWithStatusBySEmail" resultMap="subcontractorResultMap">
+    <select id="findSubcontractorWithStatusBySubcontractorEmail" resultMap="subcontractorResultMap">
         SELECT <include refid="subcontractorAndStatusColumns"/> 
         FROM <include refid="subcontractorStatusJoin"/>
 		WHERE s.s_email = #{sEmail}
