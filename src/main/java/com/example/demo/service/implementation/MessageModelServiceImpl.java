@@ -27,8 +27,8 @@ public class MessageModelServiceImpl implements MessageModelService {
 	}
 	
 	@Override
-	public List<MessageModel> getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(Integer subContractorId, int categoryId) {
-		List<MessageModel> messageModels = messageModelMapper.getAllMessageModelByStatusIdOrSubContractorIdOrCategoryId(categoryId,subContractorId);
+	public List<MessageModel> getAllMessageModelBySubcontractorId(Integer subContractorId) {
+		List<MessageModel> messageModels = messageModelMapper.getAllMessageModelBySubContractorId(subContractorId);
 		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
 				.orElseThrow(() -> new MessageModelNotFoundException("No message model exists for this id!"));
 	}

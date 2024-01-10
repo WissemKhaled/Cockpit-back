@@ -72,12 +72,11 @@ public class MessageModelController {
 	@GetMapping("/getAllMessagesById")
 	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusForSubcontractorCategory(
 			@RequestParam(value = "subContractorId", required = false) Integer subContractorId,
-			@RequestParam(value = "categoryId", required = false) Integer categoryId,
 			@PageableDefault(page = 0, size = 6) Pageable pageable) {
 
 
 		try {
-			List<MessageModel> allMessages = messageModelService.getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorId, categoryId);
+			List<MessageModel> allMessages = messageModelService.getAllMessageModelBySubcontractorId(subContractorId);
 
 			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
 

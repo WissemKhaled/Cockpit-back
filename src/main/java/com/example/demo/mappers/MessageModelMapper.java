@@ -133,46 +133,30 @@ public interface MessageModelMapper {
 	List<MessageModel> getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId( @Param("subContractorId") Integer subContractorId,  @Param("serviceProviderId") Integer serviceProviderId, @Param("subContractorStatusId") Integer subContractorStatusId, @Param("serviceProviderStatusId") Integer serviceProviderStatusId);
 
 	@Select("SELECT DISTINCT " +
-	        "gmt.mt_id AS mtId, " +
 	        "gmm.mm_link AS mmLink, " +
 	        "gmm.mm_subject AS mmSubject, " +
 	        "gmm.mm_body AS mmBody, " +
 	        "gmm.mm_last_update AS mmLastUpdateDate, " +
 	        "gmm.mm_creation_date AS mmCreationDate, " +
 	        "gmm.mm_has_email AS mmHasEmail, " +
-	        "gmt.mt_send_date AS sendDate, " +
-	        "gmt.mt_validation_date AS validationDate, " +
-	        "st.st_id AS statusId, " +
-	        "st.st_name AS statusStName, " +
 	        "gsc.s_name AS subcontractorName, " +
 	        "gsc.s_email AS subcontractorEmail, " +
-	        "gc.cat_name AS categoryName " +
 	        "FROM gst_model_tracking gmt " +
 	        "LEFT JOIN gst_contract gct ON gmt.mt_fk_contract_id = gct.c_id " +
 	        "LEFT JOIN gst_message_model gmm ON gmt.mt_fk_message_model_id = gmm.mm_id " +
 	        "LEFT JOIN gst_subcontractor gsc ON gct.c_fk_subcontractor_id = gsc.s_id " +
 	        "LEFT JOIN gst_category gc ON gmt.mt_fk_category_id = gc.cat_id " +
-	        "LEFT JOIN gst_status st ON gmt.mt_fk_status_id = st.st_id " +
 	        "WHERE gct.c_fk_subcontractor_id = #{subContractorId} " +
-	        "AND gmt.mt_fk_category_id != #{categoryId} " +
-	        "ORDER BY mt_id, mm_link ASC")
+	        "ORDER BY mm_id ASC")
 	@Results({
-	        @Result(property = "mtId", column = "mtId"),
+	        @Result(property = "mmId", column = "mmId"),
 	        @Result(property = "mmLink", column = "mmLink"),
 	        @Result(property = "mmSubject", column = "mmSubject"),
 	        @Result(property = "mmBody", column = "mmBody"),
 	        @Result(property = "mmHasEmail", column = "mmHasEmail"),
 	        @Result(property = "mmCreationDate", column = "mmCreationDate"),
 	        @Result(property = "mmLastUpdateDate", column = "mmLastUpdateDate"),
-	        @Result(property = "sendDate", column = "sendDate"),
-	        @Result(property = "validationDate", column = "validationDate"),
-	        @Result(property = "statusId", column = "statusId"),
-	        @Result(property = "statusStName", column = "statusStName"),
-	        @Result(property = "subcontractorName", column = "subcontractorName"),
-	        @Result(property = "subcontractorEmail", column = "subcontractorEmail"),
-	        @Result(property = "category.catName", column = "categoryName")
 	})
-	List<MessageModel> getAllMessageModelByStatusIdOrSubContractorIdOrCategoryId(
-	        @Param("subContractorId") Integer subContractorId,
-	        @Param("categoryId") Integer categoryId);
+	List<MessageModel> getAllMessageModelBySubcontractorId(
+	        @Param("subContractorId") Integer subContractorId);
 }

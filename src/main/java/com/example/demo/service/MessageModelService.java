@@ -15,5 +15,5 @@ public interface MessageModelService {
 
 	List<MessageModel> getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId( Integer subContractorStatusId,Integer serviceProviderStatusId, Integer subContractorId,Integer serviceProviderId);
 	
-	public List<MessageModel> getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(Integer subContractorId, int categoryId);
+	public List<MessageModel> getAllMessageModelBySubcontractorId(Integer subContractorId);
 }
