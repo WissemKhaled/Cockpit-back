@@ -181,7 +181,7 @@ public class ServiceProviderServiceTest {
 	@Test
 	public void getTest_GetServiceProvidersBySubcontractorIdFailed_ShouldReturnZero() {
 		try {
-			int existingSubcontractorId = 1;
+			int existingSubcontractorId = 6;
 			List<ServiceProvider> expectedServiceProviders = new ArrayList<ServiceProvider>();
 
 			given(serviceProviderMapper.findServiceProvidersBySubcontractorId(existingSubcontractorId))
@@ -190,7 +190,7 @@ public class ServiceProviderServiceTest {
 			serviceProviderService.getAllServiceProvidersBySubcontractorId(existingSubcontractorId);
 
 		} catch (EntityNotFoundException e) {
-			assert (e.getMessage().equals("le sous-traitant avec l'id: 1 n'a pas de prestataires"));
+			assert (e.getMessage().equals("Le sous-traitant avec l'id: 6 n'a pas de prestataires"));
 		}
 
 	}

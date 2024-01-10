@@ -31,7 +31,7 @@ public class SendMailController {
 
 	@PostMapping("/saveAndSendMail")
 	public ResponseEntity<?> saveAndSendMail(@RequestPart("sendMail") SendMailDTO mailDTO,
-			@RequestPart("files") List<MultipartFile> files) throws MessagingException {
+			                                 @RequestPart("files") List<MultipartFile> files) throws MessagingException {
 		try {
 			return new ResponseEntity<>(mailService.saveAndSendMail(mailDTO, files), HttpStatus.OK);
 		} catch (MessageModelNotFoundException e) {

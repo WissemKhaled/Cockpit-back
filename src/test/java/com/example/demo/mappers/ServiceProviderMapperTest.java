@@ -23,11 +23,11 @@ public class ServiceProviderMapperTest {
 
 	@Test
 	void findTest_FindingServiceProvidersBySubcontractorId_ShouldReturnTwo() {
-		int existingSubcontractorId = 1;
+		int existingSubcontractorId = 2;
 
 		List<ServiceProvider> serviceProviders = serviceProviderMapper
 				.findServiceProvidersBySubcontractorId(existingSubcontractorId);
-		assertEquals(2, serviceProviders.size());
+		assertEquals(12, serviceProviders.size());
 
 	}
 
@@ -48,7 +48,7 @@ public class ServiceProviderMapperTest {
 		ServiceProvider foundedServiceProvider = serviceProviderMapper.findServiceProviderById(existingServiceProviderId);
 
 		assertEquals(1, foundedServiceProvider.getSpId());
-		assertEquals("Firstspfirstname", foundedServiceProvider.getSpFirstName());
+		assertEquals("Lea", foundedServiceProvider.getSpFirstName());
 
 	}
 	

@@ -30,6 +30,10 @@
         s.s_id, s.s_name, s.s_email
     </sql>
     
+     <sql id="serviceProviderColumnsExecptSubcontractorAndStatusColums">
+    	sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date
+    </sql>
+    
     <sql id="countServiceProviders">
     	SELECT COUNT(*) 
 		FROM gst_service_provider
@@ -59,8 +63,8 @@
     </select>
 
     <select id="findServiceProviderById" resultMap="serviceProviderResultMap">
-        SELECT <include refid="serviceProviderColumns"/>
-        FROM gst_service_provider
+        SELECT <include refid="serviceProviderColumnsExecptSubcontractorAndStatusColums"/>
+        FROM gst_service_provider sp
         WHERE sp.sp_id = #{spId}
     </select>
 
