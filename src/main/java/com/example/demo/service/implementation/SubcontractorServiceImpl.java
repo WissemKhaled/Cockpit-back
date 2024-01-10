@@ -64,8 +64,8 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 	
 	@Override
-	public List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sortingMethod, int pageSize, int page, int statusId) {
-		int offset = (page - 1) * pageSize;
+	public List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sortingMethod, int pageSize, int pageNumber, int statusId) {
+		int offset = (pageNumber - 1) * pageSize;
 		
 		Optional<List<Subcontractor>> optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllSubcontractorsWithStatus(nameColonne, sortingMethod, offset, pageSize, statusId));
 		

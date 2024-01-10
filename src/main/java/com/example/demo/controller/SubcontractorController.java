@@ -104,7 +104,7 @@ public class SubcontractorController {
 	 *
 	 * @param nameColonne Le nom de la colonne à utiliser pour le tri (par défaut : "s_name").
 	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
-	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
+	 * @param pageNumber        Le numéro de la page à récupérer (par défaut : 1).
 	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
 	 * @param statusId    L'ID du statut pour filtrer les sous-traitants.
 	 * @return ResponseEntity contenant la liste des DTO des sous-traitants avec le statut OK,
@@ -114,11 +114,11 @@ public class SubcontractorController {
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWithStatus(
 			@RequestParam(name = "nameColonne", defaultValue = "s_name", required = false) String nameColonne,
 			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
-			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
+			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
 			@RequestParam(name = "statusId") int statusId) {
 		try {
-			return new ResponseEntity<>(subcontractorService.getAllSubcontractorWithStatus(nameColonne, sorting, pageSize, page, statusId),
+			return new ResponseEntity<>(subcontractorService.getAllSubcontractorWithStatus(nameColonne, sorting, pageSize, pageNumber, statusId),
 					HttpStatus.OK);
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
