@@ -251,7 +251,7 @@ public class ServiceProviderController {
 	        } else {
 	            if (serviceProviderDto.getSpId() > 0) {
 	                // Enregistrement d'un nouveau prestataire
-	                serviceProviderService.handleServiceProviderSaving(serviceProviderDto);
+//	                serviceProviderService.handleServiceProviderSaving(serviceProviderDto);
 	                int savedServiceProviderId = serviceProviderService.saveServiceProvider(serviceProviderDto);
 	                int pageNumberOfNewlyAddedServiceProvider = serviceProviderService.getPageNumberOfNewlyAddedOrUpdatedServiceProvider(savedServiceProviderId,pageSize);
 	                ServiceProviderDto savedServiceProvider = serviceProviderService.getServiceProviderById(savedServiceProviderId);

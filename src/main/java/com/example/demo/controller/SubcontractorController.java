@@ -188,7 +188,7 @@ public class SubcontractorController {
 	@PostMapping("/save")
 	public ResponseEntity<SubcontractorDto> saveSubcontractor(
 			@Valid @RequestBody SubcontractorDto subcontractorDto,
-			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize) {
+			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
 		try {
 			if (subcontractorDto.getSId() > 0) {
 				boolean isSubcontractorExist = subcontractorService.checkIfSubcontractorExist(subcontractorDto.getSId());
