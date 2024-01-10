@@ -235,7 +235,7 @@ public class SubcontractorController {
 	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
 	 */
 	@PutMapping("/archive/{id}")
-	public ResponseEntity<SubcontractorDto> archiveSubcontractor(@PathVariable String id) {
+	public ResponseEntity<String> archiveSubcontractor(@PathVariable String id) {
 		try {
 			int parsedId = Integer.parseInt(id);
 			if (parsedId > 0) {
@@ -243,8 +243,11 @@ public class SubcontractorController {
 				if (subcontractortoArchive.getStatus().getStName().equals("Archivé")) {
 					throw new AlreadyArchivedEntity(String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
 				}
-				subcontractorService.archiveSubcontractor(subcontractortoArchive);
-				return new ResponseEntity<>(subcontractorService.getSubcontractorWithStatus(parsedId), HttpStatus.OK);
+				int isArchived = subcontractorService.archiveSubcontractor(subcontractortoArchive);
+				if (isArchived == 0 ) {
+					throw new Exception();
+				}
+				return new ResponseEntity<>(String.format("le sous-traitant avec l'id: %d a été archivé", parsedId), HttpStatus.OK);
 			} else {
 				throw new NumberFormatException();
 			}

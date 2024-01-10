@@ -1,6 +1,6 @@
 logging:
   level:
-    org.mybatis: DEBUG
+#    org.mybatis: DEBUG
     com:
       example:
         demo: info
