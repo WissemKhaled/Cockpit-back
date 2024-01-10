@@ -22,6 +22,11 @@
             <result property="stName" column="st_name"/>
         </association>
     </resultMap>
+    
+    <resultMap type="com.example.demo.entity.ServiceProvider" id="serviceProviderResultMapForSearch">
+        <id property="spId" column="sp_id"/>
+        <result property="spEmail" column="sp_email"/>
+    </resultMap>
 
     <select id="findServiceProviderWithSubcontractorBySpId" resultMap="serviceProviderResultMap">
         SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
@@ -43,7 +48,7 @@
         WHERE sp.sp_id = #{spId}
     </select>
 
-    <select id="findServiceProviderBySpEmail" resultMap="serviceProviderResultMap">
+    <select id="findServiceProviderBySpEmail" resultMap="serviceProviderResultMapForSearch">
         SELECT sp.sp_id, sp.sp_first_name
         FROM gst_service_provider sp
         WHERE sp.sp_email = #{spEmail}
@@ -138,7 +143,7 @@
 		ORDER BY s.s_name, st.st_id, sp.sp_name ${sorting} LIMIT #{offset} OFFSET #{pageSize}
     </select>
 
-    <insert id="insertServiceProvider" parameterType="com.example.demo.entity.ServiceProvider">
+    <insert id="insertServiceProvider" flushCache="true" statementType="PREPARED" keyProperty="spId" keyColumn="sp_id" useGeneratedKeys="true" timeout="20" parameterType="com.example.demo.entity.ServiceProvider">
         INSERT INTO gst_service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date, sp_fk_subcontractor_id, sp_fk_status_id)
         VALUES (#{spFirstName}, #{spName}, #{spEmail}, #{spCreationDate}, #{spLastUpdateDate}, #{subcontractor.sId}, #{spStatus.stId})
     </insert>
