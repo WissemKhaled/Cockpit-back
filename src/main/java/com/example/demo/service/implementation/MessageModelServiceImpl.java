@@ -28,4 +28,18 @@ public class MessageModelServiceImpl implements MessageModelService {
 		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
 				.orElseThrow(() -> new MessageModelNotFoundException("No message model exists for this id!"));
 	}
+	
+	@Override
+	public List<MessageModel> getAllMessageModelBySubcontractorId(Integer subContractorId) {
+		List<MessageModel> messageModels = messageModelMapper.getAllMessageModelBySubcontractorId(subContractorId);
+		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
+				.orElseThrow(() -> new MessageModelNotFoundException("No message model exists for this id!"));
+	}
+	
+	@Override
+	public List<MessageModel> getAllMessageModelByServiceProviderId(Integer serviceProviderId) {
+		List<MessageModel> messageModels = messageModelMapper.getAllMessageModelByServiceProviderId(serviceProviderId);
+		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
+				.orElseThrow(() -> new MessageModelNotFoundException("No message model exists for this id!"));
+	}
 }

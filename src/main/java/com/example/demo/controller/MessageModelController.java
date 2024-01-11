@@ -37,22 +37,43 @@ public class MessageModelController {
 	}
 
 
-	@GetMapping("/getAllMessagesById")
-	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusForSubcontractorCategory(
-			@RequestParam(value = "subContractorId", required = false) Integer subContractorId,
-			@RequestParam(value = "serviceProviderId", required = false) Integer serviceProviderId,
-			@RequestParam(value = "subContractorStatusId", required = false) Integer subContractorStatusId,
-			@RequestParam(value = "serviceProviderStatusId", required = false) Integer serviceProviderStatusId,
+//	@GetMapping("/getAllMessagesById")
+//	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusForSubcontractorCategory(
+//			@RequestParam(value = "subContractorId", required = false) Integer subContractorId,
+//			@RequestParam(value = "serviceProviderId", required = false) Integer serviceProviderId,
+//			@RequestParam(value = "subContractorStatusId", required = false) Integer subContractorStatusId,
+//			@RequestParam(value = "serviceProviderStatusId", required = false) Integer serviceProviderStatusId,
+//			@PageableDefault(page = 0, size = 6) Pageable pageable) {
+//
+//
+//		try {
+//			List<MessageModel> allMessages = messageModelService.getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorId, serviceProviderId, subContractorStatusId, serviceProviderStatusId);
+//
+//			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
+//
+//			// appel de la méthode qui gère les relances
+//			modelTrackingService.checkRelaunch(allMessages);
+//
+//			return ResponseEntity.ok(page);
+//
+//		} catch (MessageModelNotFoundException e) {
+//			return ResponseEntity.notFound().build();
+//		}
+//	}
+	
+	@GetMapping("/getAllMessagesBySubcontractorId")
+	public ResponseEntity<Page<MessageModel>> getAllMessageModelBySubcontractorId(
+			@RequestParam(value = "subcontractorId", required = false) Integer subcontractorId,
+			@RequestParam(value = "contractId") Integer contractId,
+			@RequestParam(value = "statusId", required = false) Integer statusId,
 			@PageableDefault(page = 0, size = 6) Pageable pageable) {
-
-
 		try {
-			List<MessageModel> allMessages = messageModelService.getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorId, serviceProviderId, subContractorStatusId, serviceProviderStatusId);
+			List<MessageModel> allMessages = messageModelService.getAllMessageModelBySubcontractorId(subcontractorId);
 
 			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
 
-//			// appel de la méthode qui gère les relances selon le contractId
-			// modelTrackingService.checkRelaunch(contractId);
+			// appel de la méthode qui gère les relances
+			modelTrackingService.checkRelaunch(allMessages, contractId, statusId);
 
 			return ResponseEntity.ok(page);
 
@@ -61,15 +82,24 @@ public class MessageModelController {
 		}
 	}
 	
-	@GetMapping("/relaunch/{contractId}")
-	public ResponseEntity<String> relaunch(@PathVariable("contractId") Integer contractId) {
-	    try {
-	        String response = modelTrackingService.checkRelaunch(contractId);
-	        return ResponseEntity.ok(response);
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Une erreur est survenue : " + e.getMessage());
-	    }
+	@GetMapping("/getAllMessagesByServiceProviderId")
+	public ResponseEntity<Page<MessageModel>> getAllMessageModelByServiceProviderId(
+			@RequestParam(value = "serviceProviderId", required = false) Integer serviceProviderId,
+			@RequestParam(value = "contractId") Integer contractId,
+			@RequestParam(value = "statusId", required = false) Integer statusId,
+			@PageableDefault(page = 0, size = 6) Pageable pageable) {
+		try {
+			List<MessageModel> allMessages = messageModelService.getAllMessageModelByServiceProviderId(serviceProviderId);
+
+			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
+
+			// appel de la méthode qui gère les relances
+			modelTrackingService.checkRelaunch(allMessages, contractId, statusId);
+
+			return ResponseEntity.ok(page);
+
+		} catch (MessageModelNotFoundException e) {
+			return ResponseEntity.notFound().build();
+		}
 	}
-
-
 }
