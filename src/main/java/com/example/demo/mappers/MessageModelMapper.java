@@ -133,29 +133,21 @@ public interface MessageModelMapper {
 	List<MessageModel> getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId( @Param("subContractorId") Integer subContractorId,  @Param("serviceProviderId") Integer serviceProviderId, @Param("subContractorStatusId") Integer subContractorStatusId, @Param("serviceProviderStatusId") Integer serviceProviderStatusId);
 
 	@Select("SELECT DISTINCT " +
-	        "gmm.mm_link AS mmLink, " +
-	        "gmm.mm_subject AS mmSubject, " +
-	        "gmm.mm_body AS mmBody, " +
-	        "gmm.mm_last_update AS mmLastUpdateDate, " +
-	        "gmm.mm_creation_date AS mmCreationDate, " +
-	        "gmm.mm_has_email AS mmHasEmail, " +
-	        "gsc.s_name AS subcontractorName, " +
-	        "gsc.s_email AS subcontractorEmail, " +
-	        "FROM gst_model_tracking gmt " +
-	        "LEFT JOIN gst_contract gct ON gmt.mt_fk_contract_id = gct.c_id " +
-	        "LEFT JOIN gst_message_model gmm ON gmt.mt_fk_message_model_id = gmm.mm_id " +
-	        "LEFT JOIN gst_subcontractor gsc ON gct.c_fk_subcontractor_id = gsc.s_id " +
-	        "LEFT JOIN gst_category gc ON gmt.mt_fk_category_id = gc.cat_id " +
-	        "WHERE gct.c_fk_subcontractor_id = #{subContractorId} " +
-	        "ORDER BY mm_id ASC")
+	        "gmm.* " +
+	        "FROM schema_dev.gst_message_model gmm " +
+	        "INNER JOIN schema_dev.gst_model_tracking gmt ON gmt.mt_fk_message_model_id = gmm.mm_id " +
+	        "INNER JOIN schema_dev.gst_contract gc ON gmt.mt_fk_contract_id = gc.c_id " +
+	        "WHERE gc.c_fk_subcontractor_id = #{subContractorId} " +
+	        "AND gmm.mm_fk_category_id != 1 " +
+	        "ORDER BY gmm.mm_id ASC")
 	@Results({
-	        @Result(property = "mmId", column = "mmId"),
-	        @Result(property = "mmLink", column = "mmLink"),
-	        @Result(property = "mmSubject", column = "mmSubject"),
-	        @Result(property = "mmBody", column = "mmBody"),
-	        @Result(property = "mmHasEmail", column = "mmHasEmail"),
-	        @Result(property = "mmCreationDate", column = "mmCreationDate"),
-	        @Result(property = "mmLastUpdateDate", column = "mmLastUpdateDate"),
+	        @Result(property = "mmId", column = "mm_id"),
+	        @Result(property = "mmLink", column = "mm_link"),
+	        @Result(property = "mmSubject", column = "mm_subject"),
+	        @Result(property = "mmBody", column = "mm_body"),
+	        @Result(property = "mmHasEmail", column = "mm_has_email"),
+	        @Result(property = "mmCreationDate", column = "mm_creation_date"),
+	        @Result(property = "mmLastUpdateDate", column = "mm_last_update_date"),
 	})
 	List<MessageModel> getAllMessageModelBySubcontractorId(
 	        @Param("subContractorId") Integer subContractorId);

@@ -69,7 +69,7 @@ public class MessageModelController {
 //		}
 //	}
 	
-	@GetMapping("/getAllMessagesById")
+	@GetMapping("/getAllMessagesBySubcontractorId")
 	public ResponseEntity<Page<MessageModel>> getAllMessageModelsAndStatusForSubcontractorCategory(
 			@RequestParam(value = "subContractorId", required = false) Integer subContractorId,
 			@PageableDefault(page = 0, size = 6) Pageable pageable) {
