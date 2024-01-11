@@ -122,12 +122,13 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		subcontractorDtoForUpdated.setSLastUpdateDate(LocalDateTime.now());
 		return subcontractorMapper.updateSubcontractor(subcontractorDtoForUpdated);
 	}
+	
 	@Override
 	public int archiveSubcontractor(SubcontractorDto subcontractorDtoToArchive) {
 		Subcontractor subcontractorToArchive = subcontractorDtoMapper.dtoToSubcontractor(subcontractorDtoToArchive);
 		int isArchivedSubcontractor = subcontractorMapper.archiveSubcontractor(subcontractorToArchive);
 		List<ServiceProvider> foundedServiceProvidersBySubcontractorId = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorDtoToArchive.getSId());
-		if (!foundedServiceProvidersBySubcontractorId.isEmpty()) {
+		if (!foundedServiceProvidersBySubcontractorId.isEmpty() && isArchivedSubcontractor != 0) {
 			for (ServiceProvider serviceProvider : foundedServiceProvidersBySubcontractorId) {
 				serviceProviderMapper.archiveServiceProvider(serviceProvider);
 			}
@@ -138,10 +139,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	@Override
 	public boolean checkIfSubcontractorExist(int sId) {
 		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusById(sId);
-		if (subcontractor == null) {
-			return false;
-		}
-		return true;
+		return subcontractor != null;
 	}
 	
 	@Override
@@ -152,6 +150,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		}
 		return subcontractor.getSId();
 	}
+	
 	@Override
 	public int checkIfSubcontractorExistBySEmail(String sEmail) {
 		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusBySubcontractorEmail(sEmail);
@@ -201,12 +200,16 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	    String criteriaColumn = getCriteriaColumn(columnName);
 	    List<SubcontractorDto> subcontractorDtoList;
 
+	    List<Subcontractor> subcontractorList;
 	    if (statusId == 0) {
-	        subcontractorDtoList = subcontractorMapper.findAllSubcontractorsByCriteria(criteriaColumn, searchTerms, offset, pageSize, sortingMethod)
-	                .stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	        subcontractorList = subcontractorMapper.findAllSubcontractorsByCriteria(criteriaColumn, searchTerms, offset, pageSize, sortingMethod);
 	    } else {
-	    	subcontractorDtoList = subcontractorMapper.findAllSubcontractorsByCriteriaAndFiltredByStatus(criteriaColumn, searchTerms, offset, pageSize, sortingMethod, statusId)
-	                .stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	        subcontractorList = subcontractorMapper.findAllSubcontractorsByCriteriaAndFiltredByStatus(criteriaColumn, searchTerms, offset, pageSize, sortingMethod, statusId);
+	    }
+	    if (subcontractorList != null && !subcontractorList.isEmpty()) {
+	        subcontractorDtoList = subcontractorList.stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	    } else {
+	        throw new EntityNotFoundException("Aucun résultat trouvé");
 	    }
 
 	    return subcontractorDtoList;
