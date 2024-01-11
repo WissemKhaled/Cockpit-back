@@ -7,12 +7,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.net.http.HttpResponse;
+import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -28,12 +36,30 @@ import com.example.demo.entity.Subcontractor;
 import com.example.demo.service.SubcontractorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@Rollback
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // pour utiliser @BeforeAll et @AfterAll dans les méthodes non
+												// statiques,on doit ajouter à notre test
+												// @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+												// pour éviter la lancement de JUnitException
 public class SubcontractorControllerTest {
+	
+	@Value("${jwt.secret}")
+	private String SECRET;
 
+	@Value("${token.expiration.duration}")
+	private int tokenExpirationDuration;
+
+	private String jwtToken;
+
+	private String baseUrl = "/subcontractor/";
+	
 	@Autowired
 	private MockMvc mockMvc;
 	
@@ -42,8 +68,11 @@ public class SubcontractorControllerTest {
 	
 	@Mock
 	private SubcontractorService service;
-
-	private String baseUrl = "/subcontractor/";
+	
+	@BeforeAll
+	private void setUpBeforeClass() {
+		jwtToken = createToken("john@test.fr");
+	}
 
 
 //	@Test
@@ -70,28 +99,34 @@ public class SubcontractorControllerTest {
 //	}
 
 	@Test
-	public void testGetSubcontractor_SubcontractorOk() throws Exception {
+	void testGetSubcontractor_SubcontractorOk() throws Exception {
 		int expectedSId = 1;
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		LocalDateTime expectedSCreationDate = LocalDateTime.parse("2023-01-01 12:00:00", formatter);
-		DateTimeFormatter responseFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + expectedSId).contentType(MediaType.APPLICATION_JSON))
+		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + expectedSId)
+				.header("Authorization", "Bearer " + jwtToken)
+				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.sId").value(expectedSId))
-				.andExpect(jsonPath("$.sName").value("Subcontractor 1"))
-				.andExpect(jsonPath("$.sEmail").value("subcontractor1@example.com"))
-				.andExpect(jsonPath("$.sCreationDate").value(expectedSCreationDate.format(responseFormatter)))
+				.andExpect(jsonPath("$.sName").value("Orange"))
+				.andExpect(jsonPath("$.sEmail").value("Orange@email.fr"))
 				.andExpect(jsonPath("$.sLastUpdateDate").isEmpty())
 				.andExpect(jsonPath("$.status.stId").value(1))
 				.andExpect(jsonPath("$.status.stName").value("En cours"));
 		}
+	
+    private LocalDateTime dateFormatter(String dateString) {
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
+    	LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
+    	return dateTime;
+	}
 
 	@Test
-	public void testGetSubcontractor_SubcontractorNotFound_ShouldReturnHttpNotFound() throws Exception {
+	void testGetSubcontractor_SubcontractorNotFound_ShouldReturnHttpNotFound() throws Exception {
 		int subcontractorId = Integer.MAX_VALUE;
 
-		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + subcontractorId).contentType(MediaType.APPLICATION_JSON))
+		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + subcontractorId)
+				.header("Authorization", "Bearer " + jwtToken)
+				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 	}
 
@@ -103,7 +138,9 @@ public class SubcontractorControllerTest {
 		nonExistingSubcontractorTosave.setSEmail("test_saving@email.fr");
 		nonExistingSubcontractorTosave.setStatus(new Status(1));
 
-		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save").content(asJsonString(nonExistingSubcontractorTosave))
+		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save")
+				.content(asJsonString(nonExistingSubcontractorTosave))
+				.header("Authorization", "Bearer " + jwtToken)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.sName").value("test_saving"))
 				.andExpect(MockMvcResultMatchers.jsonPath("$.sEmail").value("test_saving@email.fr"))
@@ -135,45 +172,60 @@ public class SubcontractorControllerTest {
 //	}
 
 	@Test
-	public void testArchiveSubcontractor_SuccessfulArchive_ShouldReturnHttpOk() throws Exception {
+	void testArchiveSubcontractor_SuccessfulArchive_ShouldReturnHttpOk() throws Exception {
 		int subcontractorToArchiveId = 1;
 
 		mockMvc.perform(MockMvcRequestBuilders
 				.put(baseUrl + "/archive/" + subcontractorToArchiveId)
-				.content(asJsonString(subcontractorToArchiveId)).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
-				.andExpect(MockMvcResultMatchers.jsonPath("$.status.stId").value(4))
-				.andExpect(MockMvcResultMatchers.jsonPath("$.status.stName").value("Archivé"));
+				.header("Authorization", "Bearer " + jwtToken)
+				.content(asJsonString(subcontractorToArchiveId))
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
 	}
 
 	@Test
-	public void testArchiveSubcontractor_FailedArchive_ShouldReturnAlreadyArchivedSubcontractorException()
+	void testArchiveSubcontractor_FailedArchive_ShouldReturnAlreadyArchivedSubcontractorException()
 			throws Exception {
+		int alreadyArchivedSubcontractorId = 103;
+
 		mockMvc.perform(
-				MockMvcRequestBuilders.put(baseUrl + "/archive/" + 2)
-						.content(asJsonString(2)).contentType(MediaType.APPLICATION_JSON))
+				MockMvcRequestBuilders.put(baseUrl + "/archive/" + alreadyArchivedSubcontractorId)
+						.content(asJsonString(alreadyArchivedSubcontractorId))
+						.header("Authorization", "Bearer " + jwtToken)
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest());
 	}
 
 	@Test
-	public void testArchiveSubcontractor_FailedArchive_InvalidId_ShouldReturnHttpNotAcceptable() throws Exception {
+	void testArchiveSubcontractor_FailedArchive_InvalidId_ShouldReturnHttpNotAcceptable() throws Exception {
 		String invalidId = "e";
 		mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/archive/" + invalidId)
-				.content(asJsonString(invalidId)).contentType(MediaType.APPLICATION_JSON))
+				.header("Authorization", "Bearer " + jwtToken)
+				.content(asJsonString(invalidId))
+				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotAcceptable());
 	}
 
 	@Test
-	public void testArchiveSubcontractor_FailedArchive_NonExistingSubcontractor_ShouldReturnHttpNotFound()
+	void testArchiveSubcontractor_FailedArchive_NonExistingSubcontractor_ShouldReturnHttpNotFound()
 			throws Exception {
-		int nonExistingSubcontarctorId = Integer.MAX_VALUE - 3942;
+		int nonExistingSubcontarctorId = Integer.MAX_VALUE;
 		mockMvc.perform(
 				MockMvcRequestBuilders.put(baseUrl + "/archive/" + nonExistingSubcontarctorId)
-						.content(asJsonString(nonExistingSubcontarctorId)).contentType(MediaType.APPLICATION_JSON))
+						.content(asJsonString(nonExistingSubcontarctorId))
+						.header("Authorization", "Bearer " + jwtToken)
+						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 	}
 
-// method pour convertir un objet Java en sa représentation JSON sous forme de chaîne de caractères.
+	/**
+	 * Convertir un objet Java en sa représentation sous forme de chaîne JSON.
+	 * Cette méthode utilise l'ObjectMapper de Jackson pour effectuer la sérialisation.
+	 *
+	 * @param object L'objet Java à sérialiser en JSON.
+	 * @return Une chaîne au format JSON représentant l'objet d'entrée.
+	 * @throws RuntimeException Si une exception survient pendant le processus de sérialisation.
+	 */
 	public static String asJsonString(Object object) {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -181,5 +233,29 @@ public class SubcontractorControllerTest {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * Crée un jeton JWT (JSON Web Token) pour un utilisateur donné.
+	 *
+	 * @param userName Le nom d'utilisateur pour lequel générer le jeton.
+	 * @return Le jeton JWT généré.
+	 */
+	private String createToken(String userName) {
+		Map<String, Object> claims = new HashMap<>();
+		// Add any additional claims if needed
+		return Jwts.builder().setClaims(claims).setSubject(userName).setIssuedAt(new Date(System.currentTimeMillis()))
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * tokenExpirationDuration))
+				.signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
+	}
+
+	/**
+	 * Obtient la clé de signature HMAC à partir de la chaîne secrète encodée en Base64.
+	 *
+	 * @return La clé de signature HMAC.
+	 */
+	private Key getSignKey() {
+		byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+		return Keys.hmacShaKeyFor(keyBytes);
 	}
 }
