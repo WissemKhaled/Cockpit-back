@@ -64,7 +64,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		this.subcontractorService = subcontractorService;
 	}
 	
-	@Transactional
 	@Override
 	public ServiceProviderDto getServiceProviderById(int serviceProviderId) {
 		Optional<ServiceProvider> optionalServiceProviderById = Optional.ofNullable(serviceProviderMapper.findServiceProviderWithSubcontractorBySpId(serviceProviderId));
@@ -226,7 +225,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		if (serviceProviderDtoTArchive.getSpStatus().getStId() == 4) {
 			throw new AlreadyArchivedEntity(String.format("Erreur: le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
 		}
-		
 		return serviceProviderMapper.archiveServiceProvider(serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoTArchive));
 	}
 
