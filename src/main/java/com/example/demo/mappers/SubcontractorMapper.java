@@ -37,7 +37,6 @@ public interface SubcontractorMapper {
 	 * @return Liste des sous-traitants non archivés paginée et triée.
 	 */
 	List<Subcontractor> findAllNonArchivedSubcontractors(
-			@Param("nameColonne") String nameColonne, 
 			@Param("sortingMethod") String sortingMethod,
 			@Param("pageSize") int offset, 
 			@Param("offset") int pageSize);
@@ -54,7 +53,6 @@ public interface SubcontractorMapper {
 	 * @return Liste des sous-traitants paginée et triée.
 	 */
 	List<Subcontractor> findAllSubcontractorsWithStatus(
-			@Param("nameColonne") String nameColonne,
 			@Param("sortingMethod") String sortingMethod, 
 			@Param("pageSize") int offset, 
 			@Param("offset") int pageSize,

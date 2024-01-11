@@ -71,7 +71,7 @@ public class SubcontractorController {
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
 		try {
-			return new ResponseEntity<>(subcontractorService.getAllNonArchivedSubcontractors(nameColonne, sorting, pageNumber, pageSize),HttpStatus.OK);
+			return new ResponseEntity<>(subcontractorService.getAllNonArchivedSubcontractors(sorting, pageNumber, pageSize),HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -112,13 +112,12 @@ public class SubcontractorController {
 	 */
 	@GetMapping("/all-subcontractors/status")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWithStatus(
-			@RequestParam(name = "nameColonne", defaultValue = "s_name", required = false) String nameColonne,
 			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
 			@RequestParam(name = "statusId") int statusId) {
 		try {
-			return new ResponseEntity<>(subcontractorService.getAllSubcontractorWithStatus(nameColonne, sorting, pageSize, pageNumber, statusId),
+			return new ResponseEntity<>(subcontractorService.getAllSubcontractorWithStatus(sorting, pageSize, pageNumber, statusId),
 					HttpStatus.OK);
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);

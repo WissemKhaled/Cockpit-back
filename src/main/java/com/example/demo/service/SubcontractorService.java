@@ -35,7 +35,7 @@ public interface SubcontractorService {
 	 *         ResponseEntity avec un message d'erreur si aucun sous-traitant n'est trouvé et le statut NOT_FOUND,
 	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
 	 */
-	List<SubcontractorDto> getAllNonArchivedSubcontractors(String nameColonne, String sorting, int pageSize, int page);
+	List<SubcontractorDto> getAllNonArchivedSubcontractors(String sorting, int pageSize, int page);
 
 	
 	/**
@@ -50,7 +50,7 @@ public interface SubcontractorService {
 	 *         ResponseEntity avec un message d'erreur si aucun sous-traitant n'est trouvé et le statut NOT_FOUND,
 	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
 	 */
-	List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sorting, int pageSize, int page,
+	List<SubcontractorDto> getAllSubcontractorWithStatus(String sorting, int pageSize, int page,
 			int statusId);
 
 	

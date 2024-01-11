@@ -53,9 +53,9 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 
 	@Override
-	public List<SubcontractorDto> getAllNonArchivedSubcontractors(String nameColonne, String sortingMethod, int page, int pageSize) {
+	public List<SubcontractorDto> getAllNonArchivedSubcontractors(String sortingMethod, int page, int pageSize) {
 		int offset = (page - 1) * pageSize;
-		Optional<List<Subcontractor>> optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllNonArchivedSubcontractors(nameColonne, sortingMethod, offset, pageSize));
+		Optional<List<Subcontractor>> optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllNonArchivedSubcontractors(sortingMethod, offset, pageSize));
 				
 		if (optionalSubcontractorsList.isEmpty()) {
 			throw new EntityNotFoundException("Il n'y a pas de sous-traitans enregistré");
@@ -64,13 +64,13 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 	
 	@Override
-	public List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sortingMethod, int pageSize, int pageNumber, int statusId) {
+	public List<SubcontractorDto> getAllSubcontractorWithStatus(String sortingMethod, int pageSize, int pageNumber, int statusId) {
 		int offset = (pageNumber - 1) * pageSize;
 		Optional<List<Subcontractor>> optionalSubcontractorsList;
 		if (statusId == 0) {
-			optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllNonArchivedSubcontractors(nameColonne, sortingMethod, offset, pageSize));
+			optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllNonArchivedSubcontractors(sortingMethod, offset, pageSize));
 		} else {
-			optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllSubcontractorsWithStatus(nameColonne, sortingMethod, offset, pageSize, statusId));			
+			optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllSubcontractorsWithStatus(sortingMethod, offset, pageSize, statusId));			
 		}
 		
 		if (optionalSubcontractorsList.isEmpty()) {
@@ -240,7 +240,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
         int newPage = 1;
         int newIndex = -1;
 		int countAllNonArchivedServiceProviders = subcontractorMapper.countAllNonArchivedSubcontractors();
-        List<SubcontractorDto> sortedSubcontractors = subcontractorMapper.findAllNonArchivedSubcontractors("s_fk_status_id","asc", 0, countAllNonArchivedServiceProviders).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+        List<SubcontractorDto> sortedSubcontractors = subcontractorMapper.findAllNonArchivedSubcontractors("asc", 0, countAllNonArchivedServiceProviders).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
         for (int i = 0; i < sortedSubcontractors.size(); i++) {
             if (sortedSubcontractors.get(i).getSId() == savedSubcontractorId) {
                 newIndex = i;

@@ -66,13 +66,13 @@ public class SubcontractorServiceTest {
 		mockDtos.add(subcontractorDto);
 
 		// Mock the behavior of subcontractorMapper
-		when(subcontractorMapper.findAllNonArchivedSubcontractors(nameColonne, sorting, page, pageSize))
+		when(subcontractorMapper.findAllNonArchivedSubcontractors(sorting, page, pageSize))
 				.thenReturn(mockSubcontractors);
 
 		// Mock the behavior of dtoMapper
 		when(dtoMapper.subcontractorToDto(any(Subcontractor.class))).thenReturn(mockDtos.get(0));
 
-		List<SubcontractorDto> result = subcontractorService.getAllNonArchivedSubcontractors(nameColonne, sorting, page, pageSize);
+		List<SubcontractorDto> result = subcontractorService.getAllNonArchivedSubcontractors(sorting, page, pageSize);
 
 		assertEquals(1, result.size());
 	}
@@ -86,13 +86,13 @@ public class SubcontractorServiceTest {
 		int pageSize = 10;
 
 		// Configurez le mock subcontractorMapper pour renvoyer une liste vide
-		when(subcontractorMapper.findAllNonArchivedSubcontractors(nameColonne, sorting, 0, pageSize))
+		when(subcontractorMapper.findAllNonArchivedSubcontractors(sorting, 0, pageSize))
 				.thenReturn(Collections.emptyList());
 
 		// Appelez la méthode que vous testez et vérifiez qu'elle génère une
 		// RuntimeException
 		assertThrows(RuntimeException.class, () -> {
-			subcontractorService.getAllNonArchivedSubcontractors(nameColonne, sorting, page, pageSize);
+			subcontractorService.getAllNonArchivedSubcontractors(sorting, page, pageSize);
 		});
 	}
 
