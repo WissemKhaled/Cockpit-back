@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- ServiceProviderMapper.xml -->
+<mapper namespace="com.example.demo.mappers.ServiceProviderMapper">
+
+    <resultMap type="com.example.demo.entity.ServiceProvider" id="serviceProviderResultMap">
+        <id property="spId" column="sp_id"/>
+        <result property="spFirstName" column="sp_first_name"/>
+        <result property="spName" column="sp_name"/>
+        <result property="spEmail" column="sp_email"/>
+        <result property="spCreationDate" column="sp_creation_date"/>
+        <result property="spLastUpdateDate" column="sp_lastupdate_date"/>
+
+        <association property="subcontractor" javaType="com.example.demo.entity.Subcontractor">
+            <id property="sId" column="s_id"/>
+            <result property="sName" column="s_name"/>
+            <result property="sEmail" column="s_email"/>
+        </association>
+
+        <association property="spStatus" javaType="com.example.demo.entity.Status">
+            <id property="stId" column="st_id"/>
+            <result property="stName" column="st_name"/>
+        </association>
+    </resultMap>
+    
+    <resultMap type="com.example.demo.entity.ServiceProvider" id="serviceProviderResultMapForSearch">
+        <id property="spId" column="sp_id"/>
+        <result property="spEmail" column="sp_email"/>
+    </resultMap>
+
+    <select id="findServiceProviderWithSubcontractorBySpId" resultMap="serviceProviderResultMap">
+        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
+               st.st_id, st.st_name,
+               s.s_id, s.s_name, s.s_email
+        FROM gst_service_provider sp
+        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
+        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+        WHERE sp.sp_id = #{spId}
+    </select>
+
+    <select id="findServiceProviderById" resultMap="serviceProviderResultMap">
+        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
+               s.s_id, s.s_name, s.s_email,
+               st.st_id, st.st_name
+        FROM gst_service_provider sp
+        LEFT JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
+        LEFT JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+        WHERE sp.sp_id = #{spId}
+    </select>
+
+    <select id="findServiceProviderBySpEmail" resultMap="serviceProviderResultMapForSearch">
+        SELECT sp.sp_id, sp.sp_first_name
+        FROM gst_service_provider sp
+        WHERE sp.sp_email = #{spEmail}
+    </select>
+
+    <select id="findServiceProvidersBySubcontractorId" resultMap="serviceProviderResultMap">
+        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
+               st.st_id, st.st_name,
+               s.s_id, s.s_name, s.s_email
+        FROM gst_service_provider sp
+        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
+        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+        WHERE sp.sp_fk_subcontractor_id = #{sId}
+        ORDER BY sp.sp_id
+    </select>
+
+    <select id="countAllNonArchivedServiceProviders" resultType="java.lang.Integer">
+		SELECT COUNT(*) 
+		FROM gst_service_provider 
+		WHERE sp_fk_status_id != 4
+    </select>
+
+ 	<select id="countAllServiceProvidersFiltredByStatus" resultType="java.lang.Integer">
+		SELECT COUNT(*) 
+		FROM gst_service_provider 
+		WHERE sp_fk_status_id = ${statusId}
+    </select>
+
+	<select id="findServiceProvidersByCriteria" resultMap="serviceProviderResultMap">
+        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
+               st.st_id, st.st_name,
+               s.s_id, s.s_name, s.s_email
+        FROM gst_service_provider sp
+        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
+        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+        WHERE ${columnName} ILIKE #{searchTerms} || '%' AND st.st_id != 4
+        ORDER BY s.s_name, st.st_id, sp.sp_email LIMIT #{offset} OFFSET #{pageSize}
+    </select>
+
+   	<select id="findServiceProvidersByCriteriaAndFiltredByStatus" resultMap="serviceProviderResultMap">
+        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
+               st.st_id, st.st_name,
+               s.s_id, s.s_name, s.s_email
+        FROM gst_service_provider sp
+        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
+        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+        WHERE ${columnName} ILIKE #{searchTerms} || '%' AND st.st_id = ${statusId}
+        ORDER BY s.s_name, st.st_id, sp.sp_email LIMIT #{offset} OFFSET #{pageSize}
+    </select>
+
+   	<select id="countServiceProvidersByCriteria" resultType="java.lang.Integer">
+		SELECT COUNT(*)  
+		FROM gst_service_provider sp 
+		INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id 
+		WHERE ${columnName} ILIKE #{searchTerms} || '%' 
+		AND sp.sp_fk_status_id != 4
+    </select>
+
+   	<select id="countServiceProvidersByByCriteriaAndFiltredByStatus" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM gst_service_provider sp
+		INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
+		WHERE ${columnName} ILIKE #{searchTerms} || '%' 
+		AND sp.sp_fk_status_id = ${statusId}
+    </select>
+
+    <update id="archiveServiceProvider" parameterType="com.example.demo.entity.ServiceProvider">
+    	Update gst_service_provider 
+    	SET sp_fk_status_id = 4 
+    	WHERE sp_id = #{spId}
+    </update>
+
+   	<select id="findAllNonArchivedServiceProviders" resultMap="serviceProviderResultMap">
+        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
+               st.st_id, st.st_name,
+               s.s_id, s.s_name, s.s_email
+        FROM gst_service_provider sp
+        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
+        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+		WHERE st.st_id != 4
+		ORDER BY s.s_name, st.st_id, sp.sp_name ${sorting} LIMIT #{offset} OFFSET #{pageSize}
+    </select>
+
+   	<select id="findAllServiceProvidersFlitredByStatus" resultMap="serviceProviderResultMap">
+        SELECT sp.sp_id, sp.sp_first_name, sp.sp_name, sp.sp_email, sp.sp_creation_date, sp.sp_lastUpdate_date,
+               st.st_id, st.st_name,
+               s.s_id, s.s_name, s.s_email
+        FROM gst_service_provider sp
+        INNER JOIN gst_subcontractor s ON sp.sp_fk_subcontractor_id = s.s_id
+        INNER JOIN gst_status st ON sp.sp_fk_status_id = st.st_id
+		WHERE st.st_id = ${statusId}
+		ORDER BY s.s_name, st.st_id, sp.sp_name ${sorting} LIMIT #{offset} OFFSET #{pageSize}
+    </select>
+
+    <insert id="insertServiceProvider" flushCache="true" statementType="PREPARED" keyProperty="spId" keyColumn="sp_id" useGeneratedKeys="true" timeout="20" parameterType="com.example.demo.entity.ServiceProvider">
+        INSERT INTO gst_service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date, sp_fk_subcontractor_id, sp_fk_status_id)
+        VALUES (#{spFirstName}, #{spName}, #{spEmail}, #{spCreationDate}, #{spLastUpdateDate}, #{subcontractor.sId}, #{spStatus.stId})
+    </insert>
+
+    <update id="updateServiceProvider" parameterType="com.example.demo.entity.ServiceProvider">
+		UPDATE gst_service_provider SET sp_first_name = #{spFirstName}, sp_name = #{spName}, sp_email = #{spEmail}, sp_lastUpdate_date = #{spLastUpdateDate},
+		sp_fk_status_id = #{spStatus.stId}, sp_fk_subcontractor_id = #{subcontractor.sId}
+		WHERE sp_id = #{spId}
+    </update>
+
+</mapper>

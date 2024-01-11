@@ -44,7 +44,7 @@ public class UserInfoService implements UserDetailsService {
 	*/
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Optional<UUser> userDetail = userMapper.findByEmail(email);
+		Optional<UUser> userDetail = userMapper.findUserByEmail(email);
 
 		// Conversion de userDetail vers UserInfoDetails
 		return userDetail.map(UserInfoDetails::new)
@@ -57,7 +57,7 @@ public class UserInfoService implements UserDetailsService {
 	public UUserDTO findUserByEmail(String email) {
 	    try {
 	        if (email != null && !email.isBlank()) {
-	            Optional<UUser> foundUser = userMapper.findByEmail(email);
+	            Optional<UUser> foundUser = userMapper.findUserByEmail(email);
 	            UUser userInfo = foundUser.orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé " + email));
 	            UUserDTO userInfoDTO = uUserMapperEntityDTO.toDto(userInfo);
 
@@ -77,7 +77,7 @@ public class UserInfoService implements UserDetailsService {
 	 * Méthode qui retourne les informations de l'utilisateur en fonction de son id
 	*/
 	public UserDetails findById(int id) throws UsernameNotFoundException {
-		Optional<UUser> userDetail = userMapper.findById(id);
+		Optional<UUser> userDetail = userMapper.findUserById(id);
 
 		// Converting userDetail to UserInfoDetails
 		return userDetail.map(UserInfoDetails::new)
@@ -90,7 +90,7 @@ public class UserInfoService implements UserDetailsService {
 	 */
 	public String addUser(CreateUserDTO userDTO) throws GeneralException {
 	    // Check if the user with the given email already exists
-	    Optional<UUser> existingUser = userMapper.findByEmail(userDTO.getUEmail());
+	    Optional<UUser> existingUser = userMapper.findUserByEmail(userDTO.getUEmail());
 	    if (existingUser.isPresent()) {
 	        log.warn("Utilisateur avec l'email '" + userDTO.getUEmail() + "' existe déjà");
 	        throw new GeneralException("Un utilisateur avec cet email existe déjà");
@@ -102,7 +102,7 @@ public class UserInfoService implements UserDetailsService {
 	    user.setUStatus(true);
 
 	    try {
-	        userMapper.insert(user);
+	        userMapper.insertUser(user);
 	        log.info("Utilisateur '" + user.getUEmail() + "' ajouté avec succès");
 	        return "Utilisateur '" + user.getUEmail() + "' ajouté avec succès";
 	    } catch (Exception ex) {
@@ -112,7 +112,7 @@ public class UserInfoService implements UserDetailsService {
 	}
 	
 	public void resetPassword(String newPassword, String email) throws DatabaseQueryFailureException {
-	    Optional<UUser> userOptional = userMapper.findByEmail(email);
+	    Optional<UUser> userOptional = userMapper.findUserByEmail(email);
 	    if (userOptional.isPresent()) {
 	        UUser user = userOptional.get();
 	        user.setUPassword(newPassword);

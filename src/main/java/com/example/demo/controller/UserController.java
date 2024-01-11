@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import java.util.Base64;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -17,7 +16,6 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
@@ -78,13 +76,13 @@ public class UserController {
 	@GetMapping("/user/userdetails")
 	public ResponseEntity<?> findUserByEmail(HttpServletRequest request) {
 	    String authorizationHeader = request.getHeader("Authorization");
-	    
 	    try {
             String token = authorizationHeader.substring(7);
+            
             // Récupère les infos de l'utilisateur à partir du token
             String email = jwtService.extractUsername(token);
+            
             // Charge les détails du user en se basant sur l'email
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
             UUserDTO foundUser = service.findUserByEmail(email);
             return new ResponseEntity<>(foundUser, HttpStatus.OK);
         
@@ -128,6 +126,7 @@ public class UserController {
 	            if (user.isUStatus()) {
 	                log.info("Utilisateur authentifié avec un compte actif");
 	                int userId = service.findUserByEmail(authRequest.getEmail()).getUId();
+	                
 	                // on supprime la clé de refresh token associée à l'utilisateur s'il y en a déjà une en bdd avant d'en créer une
 	                refreshTokenService.deleteTokenByUserId(userId);
 

@@ -8,19 +8,18 @@ import com.example.demo.entity.MessageModel;
 
 @Mapper
 public interface MessageModelMapper {
-
-
+	
 	@Select("SELECT  gmm.mm_id, gmm.mm_category, gmm.mm_type, gmm.mm_subject, gmm.mm_body, st.st_Id as status_stId,st.st_name as status_stName, st.st_description as status_stDescription "
             +"FROM gst_message_model gmm "
             +"INNER JOIN status st ON mm_fk_status_id = st.st_Id "
             +"WHERE mm_fk_status_id = ${statusId}")
 	@Result(property = "mmId", column = "mm_id")
-	@Result(property = "mmCategory", column = "mm_category")
 	@Result(property = "mmType", column = "mm_type")
 	@Result(property = "mmSubject", column = "mm_subject")
 	@Result(property = "mmBody", column = "mm_body")
 	@Result(property = "mmCreationDate", column = "mm_creationDate")
 	@Result(property = "mmLastUpdateDate", column = "mm_lastUpdateDate")
+	@Result(property = "mmCategory", column = "mm_category")
 	@Result(property = "status.stId", column = "status_stId")
 	@Result(property = "status.stName", column = "status_stName")
 	@Result(property = "status.stDescription", column = "status_stDescription")
@@ -140,6 +139,7 @@ public interface MessageModelMapper {
 	        "INNER JOIN schema_dev.gst_category category ON category.cat_id = gmm.mm_fk_category_id " +
 	        "INNER JOIN schema_dev.gst_contract gc ON gmt.mt_fk_contract_id = gc.c_id " +
 	        "WHERE gc.c_fk_subcontractor_id = #{subContractorId} " +
+	        "AND gmm.mm_fk_category_id != 1 " +
 	        "ORDER BY gmm.mm_id ASC")
 	@Results({
 	        @Result(property = "mmId", column = "mm_id"),
@@ -163,6 +163,7 @@ public interface MessageModelMapper {
 	        "INNER JOIN schema_dev.gst_category category ON category.cat_id = gmm.mm_fk_category_id " +
 	        "INNER JOIN schema_dev.gst_contract gc ON gmt.mt_fk_contract_id = gc.c_id " +
 	        "WHERE gc.c_fk_service_provider_id = #{serviceProviderId} " +
+	        "AND gmm.mm_fk_category_id = 1 " +
 	        "ORDER BY gmm.mm_id ASC")
 	@Results({
 	        @Result(property = "mmId", column = "mm_id"),

@@ -2,22 +2,17 @@ package com.example.demo.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.SendMailDTO;
-import com.example.demo.entity.SendMail;
-import com.example.demo.entity.UUser;
 import com.example.demo.exception.GeneralException;
-
 import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.service.SendMailService;
 
@@ -28,8 +23,6 @@ import jakarta.mail.MessagingException;
 @CrossOrigin(origins = "http://localhost:4200")
 public class SendMailController {
 
-
-
 	private final SendMailService mailService;
 
 	public SendMailController(SendMailService mailService) {
@@ -37,21 +30,15 @@ public class SendMailController {
 	}
 
 	@PostMapping("/saveAndSendMail")
-	public ResponseEntity<?> saveAndSendMail(@RequestParam(value="files", required = false) List<MultipartFile> file,
-			                                 @RequestParam("msTo") String to,
-			                                 @RequestParam("msSubject") String subject,
-			                                 @RequestParam("msCc") String cc,
-			                                 @RequestParam("msBody") String body,
-			                                 @RequestParam("msSender") String sender
-			                                   ) throws MessagingException {
+	public ResponseEntity<?> saveAndSendMail(@RequestPart("sendMail") SendMailDTO mailDTO,
+			@RequestPart("files") List<MultipartFile> files) throws MessagingException {
 		try {
-			System.err.println(cc);
-			UUser user = new UUser(0, cc, body, sender, false, null, null);
-			SendMailDTO mailDTO = new SendMailDTO(0, to, cc, subject, body, null, user);
-			return new ResponseEntity<>(mailService.saveAndSendMail(mailDTO, file), HttpStatus.OK);
+			return new ResponseEntity<>(mailService.saveAndSendMail(mailDTO, files), HttpStatus.OK);
 		} catch (MessageModelNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (GeneralException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

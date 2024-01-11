@@ -2,187 +2,189 @@ package com.example.demo.mappers;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 
 import com.example.demo.entity.Subcontractor;
 
 @Mapper
 public interface SubcontractorMapper {
-	// ce code permet de renvoyer le nombre total de colonne de la
-	// table subcontractor
-	@Select("SELECT COUNT(*) "
-			+ "FROM gst_subcontractor "
-			+ "WHERE s_fk_status_id != 4")
+
+	/**
+	 * Récupère le nombre total de sous-traitants enregistrés.
+	 *
+	 * @return Le nombre total de sous-traitants.
+	 */
 	Integer countAllNonArchivedSubcontractors();
-
-
-	@Select("SELECT COUNT(*) "
-			+ "FROM gst_subcontractor "
-			+ "WHERE s_fk_status_id = ${idStatus} ")
+		
+	
+	/**
+	 * Récupère le nombre total de sous-traitants enregistrés filtrés par statut.
+	 * 
+	 * @param statusId    L'ID du statut pour filtrer les sous-traitants.
+	 * @return Le nombre total de sous-traitants filtrés par statut.
+	 */
 	Integer countAllNonArchivedSubcontractorsWithStatus(@Param("idStatus") Integer idStatus);
 
-
-	// ce code permet de renvoyer une liste de sous-traitans avec la
-	// pagination est le tri grave à la requette SQL
-	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName "
-			+ "FROM gst_subcontractor s "
-			+ "INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id "
-			+ "WHERE s.s_fk_status_id != 4 "
-			+ "ORDER BY s.s_fk_status_id, s_name ${sorting} LIMIT #{offset} OFFSET #{pageSize} ")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
-	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "sCreationDate", column = "s_creation_date")
-	@Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
+	
+	/**
+	 * Récupère la liste paginée et triée des sous-traitants non archivés en fonction des paramètres spécifiés.
+	 *
+	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
+	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant.
+	 * @param page        Le numéro de la page à récupérer.
+	 * @param pageSize    Le nombre d'éléments par page.
+	 * @return Liste des sous-traitants non archivés paginée et triée.
+	 */
 	List<Subcontractor> findAllNonArchivedSubcontractors(
 			@Param("nameColonne") String nameColonne, 
-			@Param("sorting") String sorting,
+			@Param("sortingMethod") String sortingMethod,
 			@Param("pageSize") int offset, 
 			@Param("offset") int pageSize);
-
 	
-	// ce code permet de renvoyer une liste de sous-traitans avec la
-	// pagination est le tri grave à la requette SQL
-	@Select("SELECT s.s_id, s.s_name, s.s_email, st.st_id as status_stId, st.st_name as status_stName "
-			+ "FROM gst_subcontractor s "
-			+ "INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id "
-			+ "WHERE st.st_id= ${statusId} "
-			+ "ORDER BY ${nameColonne}  ${sorting} LIMIT  #{offset}  OFFSET #{pageSize} ")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
-	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
+	
+	/**
+	 * Récupère la liste paginée et triée des sous-traitants en fonction des paramètres spécifiés et du statut.
+	 *
+	 * @param nameColonne La colonne à utiliser pour le tri.
+	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant.
+	 * @param pageSize    Le nombre d'éléments par page.
+	 * @param page        Le numéro de la page à récupérer.
+	 * @param statusId    L'ID du statut pour filtrer les sous-traitants.
+	 * @return Liste des sous-traitants paginée et triée.
+	 */
 	List<Subcontractor> findAllSubcontractorsWithStatus(
 			@Param("nameColonne") String nameColonne,
-			@Param("sorting") String sorting,
-			@Param("pageSize") int offset,
+			@Param("sortingMethod") String sortingMethod, 
+			@Param("pageSize") int offset, 
 			@Param("offset") int pageSize,
 			@Param("statusId") int statusId);
 
 	
-	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName "
-			+ "FROM gst_subcontractor s "
-			+ "INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id "
-			+ "WHERE s.s_id = #{sId}")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
-	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "sCreationDate", column = "s_creation_date")
-	@Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
+	/**
+	 * Récupère un sous-traitant avec son statut à partir de l'ID.
+	 *
+	 * @param sId L'ID du sous-traitant.
+	 * @return Le sous-traitant avec son statut.
+	 */
 	Subcontractor findSubcontractorWithStatusById(int sId);
 
 	
-	@Select("SELECT s.s_id, s.s_name "
-			+ "FROM gst_subcontractor s "
-			+ "WHERE s.s_name = #{sName}")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
-	Subcontractor findSubcontractorWithStatusBySName(String sName);
+	/**
+	 * Récupère un sous-traitant en fonction de son nom.
+	 *
+	 * @param sName Le nom du sous-traitant à récupérer.
+	 * @return Le sous-traitant trouvé.
+	 */
+	Subcontractor findSubcontractorWithStatusBySubcontractorName(@Param("sName") String sName);
 
 	
-	@Select("SELECT s.s_id, s.s_email "
-			+ "FROM gst_subcontractor s "
-			+ "WHERE s.s_email = #{sEmail}")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sEmail", column = "s_email")
-	Subcontractor findSubcontractorWithStatusBySEmail(String sEmail);
+	/**
+	 * Récupère un sous-traitant en fonction de son émail.
+	 *
+	 * @param sEmail L'émail du sous-traitant à récupérer.
+	 * @return Le sous-traitant trouvé.
+	 */
+	Subcontractor findSubcontractorWithStatusBySubcontractorEmail(@Param("sEmail") String sEmail);
 
 	
-	@Insert("INSERT INTO gst_subcontractor (s_name, s_email, s_creation_date, s_lastUpdate_date, s_fk_status_id) "
-			+ "VALUES (#{sName}, #{sEmail}, #{sCreationDate},#{sLastUpdateDate}, #{status.stId})")
-	@Options(useGeneratedKeys = true, keyProperty = "sId", keyColumn = "s_id")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
-	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "sCreationDate", column = "s_CreationDate")
-	@Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
-	@Result(property = "status.stId", column = "s_fk_status_id")
+	/**
+	 * Enregistre un nouveau sous-traitant.
+	 *
+	 * @param subcontractorDto Le DTO du sous-traitant à enregistrer.
+	 * @return L'ID du sous-traitant enregistré ou -1 en cas d'échec.
+	 */
 	int insertSubcontractor(Subcontractor subcontractor);
 
 	
-	@Update("UPDATE gst_subcontractor "
-			+ "SET s_name = #{sName}, s_email = #{sEmail}, s_lastUpdate_date = #{sLastUpdateDate}, s_fk_status_id = #{status.stId} "
-			+ "WHERE s_id = #{sId}")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
-	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "sLastUpdate", column = "s_last_update")
-	@Result(property = "status.stId", column = "s_fk_status_id")
+	/**
+	 * Met à jour les informations d'un sous-traitant.
+	 *
+	 * @param subcontractorDto Le DTO du sous-traitant à mettre à jour.
+	 * @return Un indicateur de succès (par exemple, 1 pour succès, 0 pour échec).
+	 */
 	int updateSubcontractor(Subcontractor subcontractor);
 
 	
-	@Update("Update gst_subcontractor SET s_fk_status_id = 4 WHERE s_id = #{sId}")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "status.stId", column = "s_fk_status_id")
-	int archiveSubcontractor(Subcontractor subcontractortoArchive);
+	/**
+	 * Archive un sous-traitant et archive également ses prestataires de services associés.
+	 *
+	 * @param subcontractorDtoToArchive Le DTO du sous-traitant à archiver.
+	 * @return Un indicateur de succès (par exemple, 1 pour succès, 0 pour échec).
+	 */
+	int archiveSubcontractor(Subcontractor subcontractorToArchive);
 
 
-	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName "
-			+ "FROM gst_subcontractor s "
-			+ "INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id "
-			+ "WHERE ${columnName} ILIKE #{searchTerms} || '%' "
-			+ "AND s.s_fk_status_id != 4")
-	@Result(property = "sId", column = "s_id")
-	@Result(property = "sName", column = "s_name")
-	@Result(property = "sEmail", column = "s_email")
-	@Result(property = "sCreationDate", column = "s_creation_date")
-	@Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
-	@Result(property = "status.stId", column = "status_stId")
-	@Result(property = "status.stName", column = "status_stName")
+	/**
+	 * Récupère le nombre de sous-traitants filtré par recherche, statut et attribut de recherche.
+	 *
+	 * @param searchTerms      Les termes de recherche pour filtrer les sous-traitants.
+	 * @param statusId         L'ID du statut pour filtrer les sous-traitants (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
+	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "name", et "email".
+	 *                         - "name" : Nom du sous-traitant.
+	 *                         - "email" : Email du sous-traitant.
+	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant.
+	 * @param pageSize    Le nombre d'éléments par page.
+	 * @param page        Le numéro de la page à récupérer (par défaut : 1).                    
+	 * @return Le nombre de sous-traitants selon la recherche, le statut et l'attribut spécifiés.
+	 */
 	List<Subcontractor> findAllSubcontractorsByCriteria(
 	        @Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms, 
 			@Param("pageSize")int offset,
-			@Param("offset") int pageSize);
+			@Param("offset") int pageSize,
+			@Param("sortingMethod") String sortingMethod);
 	
 	
-	@Select("SELECT s.s_id, s.s_name, s.s_email, s.s_creation_date, s.s_lastUpdate_date, st.st_id as status_stId, st.st_name as status_stName "
-	        + "FROM gst_subcontractor s "
-	        + "INNER JOIN gst_status st ON s.s_fk_status_id = st.st_id "
-	        + "WHERE ${columnName} ILIKE #{searchTerms} || '%' "
-	        + "AND st.st_id = #{statusId}")
-	        @Result(property = "sId", column = "s_id")
-	        @Result(property = "sName", column = "s_name")
-	        @Result(property = "sEmail", column = "s_email")
-	        @Result(property = "sCreationDate", column = "s_creation_date")
-	        @Result(property = "sLastUpdateDate", column = "s_lastUpdate_date")
-	        @Result(property = "status.stId", column = "status_stId")
-	        @Result(property = "status.stName", column = "status_stName")
+	/**
+	 * Récupère le nombre de sous-traitants filtré par recherche, statut et attribut de recherche.
+	 *
+	 * @param searchTerms      Les termes de recherche pour filtrer les sous-traitants.
+	 * @param statusId         L'ID du statut pour filtrer les sous-traitants (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
+	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "name", et "email".
+	 *                         - "name" : Nom du sous-traitant.
+	 *                         - "email" : Email du sous-traitant.
+	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant.
+	 * @param pageSize    Le nombre d'éléments par page.
+	 * @param page        Le numéro de la page à récupérer (par défaut : 1). 
+	 * @param statusId    L'ID du statut pour filtrer les sous-traitants.                   
+	 * @return Le nombre de sous-traitants selon la recherche, le statut et l'attribut spécifiés.
+	 */
 	List<Subcontractor> findAllSubcontractorsByCriteriaAndFiltredByStatus(
 	        @Param("columnName") String columnName,
 	        @Param("searchTerms") String searchTerms,
 	        @Param("pageSize") int offset,
 	        @Param("offset") int pageSize,
+	        @Param("sortingMethod") String sortingMethod,
 	        @Param("statusId") int statusId);
 
-
-	@Select("SELECT COUNT(*) " 
-			+ "FROM gst_subcontractor s "
-			+ "WHERE ${columnName} ILIKE #{searchTerms} || '%' "
-			+ "AND s.s_fk_status_id != 4 ")
-	Integer findNumberOfAllSubcontractorsByCriteria(
+	
+	/**
+	 * Récupère le nombre de sous-traitants filtré par recherche et attribut de recherche.
+	 *
+	 * @param searchTerms      Les termes de recherche pour filtrer les sous-traitants.
+	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "name", et "email".
+	 *                         - "name" : Nom du sous-traitant.
+	 *                         - "email" : Email du sous-traitant.
+	 * @return Le nombre de sous-traitants selon la recherche et l'attribut spécifiés.
+	 */
+	Integer countAllSubcontractorsByCriteria(
 			@Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms);
 	
 	
-	@Select("SELECT COUNT(*) " 
-			+ "FROM gst_subcontractor s "
-			+ "WHERE ${columnName} ILIKE #{searchTerms} || '%' "
-			+ "AND s.s_fk_status_id = ${statusId} ")
-	Integer findNumberOfAllSubcontractorsByCriteriaAndFiltredByStatus(
+	/**
+	 * Récupère le nombre de sous-traitants filtré par recherche, statut et attribut de recherche.
+	 *
+	 * @param searchTerms      Les termes de recherche pour filtrer les sous-traitants.
+	 * @param statusId         L'ID du statut pour filtrer les sous-traitants (0 pour les statuts sauf archivé, 4 pour les archivés, 1 à 3 pour les autres statuts).
+	 * @param columnName  L'attribut de recherche spécifié parmi la liste suivante : "name", et "email".
+	 *                         - "name" : Nom du sous-traitant.
+	 *                         - "email" : Email du sous-traitant.
+	 * @return Le nombre de sous-traitants selon la recherche, le statut et l'attribut spécifiés.
+	 */
+	Integer countAllSubcontractorsByCriteriaAndFiltredByStatus(
 			@Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms, 
 			@Param("statusId") int statusId);
-
 }

@@ -35,6 +35,25 @@ public class SubcontractorController {
 	}
 
 	/**
+	 * Récupère la liste de tous les statuts des sous-traitants.
+	 *
+	 * @return ResponseEntity contenant la liste des DTO des statuts avec le statut OK,
+	 *         ResponseEntity avec un message d'erreur si aucun statut n'est trouvé et le statut NOT_FOUND,
+	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
+	 */
+	@GetMapping("/all-status")
+	public ResponseEntity<List<StatusDto>> getAllStatus() {
+		try {
+			return new ResponseEntity<>(subcontractorService.getAllStatus(), HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (RuntimeException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	
+	/**
 	 * Récupère la liste de tous les sous-traitants avec pagination et tri.
 	 *
 	 * @param nameColonne Le nom de la colonne à utiliser pour le tri (par défaut :  l'ID du statut "s_fk_status_id").
@@ -72,7 +91,6 @@ public class SubcontractorController {
 	public ResponseEntity<Integer> getNumberOfAllSubcontractors() {
 		try {
 			return new ResponseEntity<>(subcontractorService.getNumberOfAllSubcontractors(), HttpStatus.OK);
-			
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -86,22 +104,21 @@ public class SubcontractorController {
 	 *
 	 * @param nameColonne Le nom de la colonne à utiliser pour le tri (par défaut : "s_name").
 	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
-	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
+	 * @param pageNumber        Le numéro de la page à récupérer (par défaut : 1).
 	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
 	 * @param statusId    L'ID du statut pour filtrer les sous-traitants.
 	 * @return ResponseEntity contenant la liste des DTO des sous-traitants avec le statut OK,
 	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
 	 */
 	@GetMapping("/all-subcontractors/status")
-	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWhitStatus(
+	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWithStatus(
 			@RequestParam(name = "nameColonne", defaultValue = "s_name", required = false) String nameColonne,
 			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
-			@RequestParam(name = "page", defaultValue = "1", required = false) int page,
+			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
 			@RequestParam(name = "statusId") int statusId) {
 		try {
-			return new ResponseEntity<>(
-					subcontractorService.getAllSubcontractorWithStatus(nameColonne, sorting, pageSize, page, statusId),
+			return new ResponseEntity<>(subcontractorService.getAllSubcontractorWithStatus(nameColonne, sorting, pageSize, pageNumber, statusId),
 					HttpStatus.OK);
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -121,27 +138,8 @@ public class SubcontractorController {
 	public ResponseEntity<Integer> getNumberOfAllSubcontractorsWithStatus(
 			@RequestParam(name = "statusId") Integer statusId) {
 		try {
-			return new ResponseEntity<>(subcontractorService.countTotalItemWhitStatus(statusId), HttpStatus.OK);
+			return new ResponseEntity<>(subcontractorService.getNumberOfAllSubcontractorsWithStatus(statusId), HttpStatus.OK);
 			
-		} catch (EntityNotFoundException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-		} catch (RuntimeException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
-	}
-	
-	
-	/**
-	 * Récupère la liste de tous les statuts des sous-traitants.
-	 *
-	 * @return ResponseEntity contenant la liste des DTO des statuts avec le statut OK,
-	 *         ResponseEntity avec un message d'erreur si aucun statut n'est trouvé et le statut NOT_FOUND,
-	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
-	 */
-	@GetMapping("/all-status")
-	public ResponseEntity<List<StatusDto>> getAllSubcontractor() {
-		try {
-			return new ResponseEntity<>(subcontractorService.getAllStatus(), HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -190,7 +188,7 @@ public class SubcontractorController {
 	@PostMapping("/save")
 	public ResponseEntity<SubcontractorDto> saveSubcontractor(
 			@Valid @RequestBody SubcontractorDto subcontractorDto,
-			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize) {
+			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
 		try {
 			if (subcontractorDto.getSId() > 0) {
 				boolean isSubcontractorExist = subcontractorService.checkIfSubcontractorExist(subcontractorDto.getSId());
@@ -237,17 +235,19 @@ public class SubcontractorController {
 	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
 	 */
 	@PutMapping("/archive/{id}")
-	public ResponseEntity<SubcontractorDto> archiveSubcontractor(@PathVariable String id) {
+	public ResponseEntity<String> archiveSubcontractor(@PathVariable String id) {
 		try {
 			int parsedId = Integer.parseInt(id);
 			if (parsedId > 0) {
 				SubcontractorDto subcontractortoArchive = subcontractorService.getSubcontractorWithStatus(parsedId);
 				if (subcontractortoArchive.getStatus().getStName().equals("Archivé")) {
-					throw new AlreadyArchivedEntity(
-							String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
+					throw new AlreadyArchivedEntity(String.format("le sous-traitant avec l'id: %d est déjà archivé", parsedId));
 				}
-				subcontractorService.archiveSubcontractor(subcontractortoArchive);
-				return new ResponseEntity<>(subcontractorService.getSubcontractorWithStatus(parsedId), HttpStatus.OK);
+				int isArchived = subcontractorService.archiveSubcontractor(subcontractortoArchive);
+				if (isArchived == 0 ) {
+					throw new Exception();
+				}
+				return new ResponseEntity<>(String.format("le sous-traitant avec l'id: %d a été archivé", parsedId), HttpStatus.OK);
 			} else {
 				throw new NumberFormatException();
 			}
@@ -288,7 +288,7 @@ public class SubcontractorController {
 			@RequestParam(name = "columnName") String columnName) {
 		try {
 	        // Récupération les sous-traitants filtré par recherche et (facultativement) statut
-			List<SubcontractorDto> filtredSubcontractors= subcontractorService.getAllSubcontractorsBySearchAndWithOrWithoutStatusFiltring(searchTerms, pageNumber, pageSize,statusId,columnName);
+			List<SubcontractorDto> filtredSubcontractors= subcontractorService.getAllSubcontractorsBySearchAndWithOrWithoutStatusFiltring(searchTerms, pageNumber, pageSize,statusId,columnName,sortingMethod);
 			if (filtredSubcontractors.isEmpty()) throw new EntityNotFoundException(String.format("Le sous-traitant avec le %s n'existe pas", searchTerms));
 			return new ResponseEntity<>(filtredSubcontractors, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
@@ -318,7 +318,8 @@ public class SubcontractorController {
 			@RequestParam(name = "columnName") String columnName) {
 		try {
 	        // Récupération du nombre de prestataires filtré par recherche et (facultativement) statut
-			Integer numberOfSubcontractors= subcontractorService.getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(searchTerms,statusId, columnName);
+			Integer numberOfSubcontractors= subcontractorService.getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(searchTerms,statusId,columnName);
+			System.err.println("here: "+numberOfSubcontractors);
 			if (numberOfSubcontractors == 0) throw new EntityNotFoundException(String.format("Le sous-traitant avec le %s et le statusId: %d n'existe pas", searchTerms, statusId));
 			return new ResponseEntity<>(numberOfSubcontractors, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {

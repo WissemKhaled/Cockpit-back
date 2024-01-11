@@ -50,7 +50,6 @@ public class CreateUserDTO {
 		this.insertionDate = insertionDate;
 		this.lastUpdate = lastUpdate;
 	}
-//	(int, String, String, String, String, boolean, LocalDateTime, LocalDateTime)
 
 	public int getUId() {
 		return uId;

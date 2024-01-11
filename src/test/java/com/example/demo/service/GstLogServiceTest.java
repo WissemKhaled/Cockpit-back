@@ -254,7 +254,7 @@ public class GstLogServiceTest {
         String encodedPassword = "encodedPassword";
 
         UUser currentUser = new UUser(1, email, "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now().plusDays(2));
-        when(userMapper.findByEmail(email)).thenReturn(Optional.of(currentUser));
+        when(userMapper.findUserByEmail(email)).thenReturn(Optional.of(currentUser));
         when(encoder.matches(newPwd, encodedPassword)).thenReturn(true);
 
         assertThrows(PasswordAvailabilityException.class, () -> gstLogService.checkNewPasswordAvailability(newPwd, email),
@@ -268,7 +268,7 @@ public class GstLogServiceTest {
         String encodedPassword = "encodedPassword";
 
         UUser currentUser = new UUser(1, email, "123-Az", "John", "Doe", true, LocalDateTime.now(), LocalDateTime.now().plusDays(2));
-        when(userMapper.findByEmail(email)).thenReturn(Optional.of(currentUser));
+        when(userMapper.findUserByEmail(email)).thenReturn(Optional.of(currentUser));
         when(encoder.matches(newPwd, encodedPassword)).thenReturn(false);
         when(encoder.matches(newPwd, currentUser.getUPassword())).thenReturn(false);
 

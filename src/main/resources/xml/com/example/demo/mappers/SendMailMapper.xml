@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mappers.SendMailMapper">
+
+    <resultMap type="com.example.demo.entity.SendMail" id="sendMailResultMap">
+	    <result property = "msId" column = "ms_id" />
+	    <result property = "msTo" column = "ms_to" />
+	    <result property = "msCc" column = "ms_cc" />
+	    <result property = "msSubject" column = "ms_subject" />
+	    <result property = "msBody" column = "ms_body" />
+	    <result property = "msSendDate" column = "ms_send_date" />
+	    <result property = "msFkUserId" column = "ms_fk_user_id" />
+    </resultMap>
+    
+    <insert id="saveSendMail" flushCache="true" statementType="PREPARED" keyProperty="msId" keyColumn="ms_id" useGeneratedKeys="true" parameterType="com.example.demo.entity.SendMail">
+	    INSERT INTO gst_message_send (ms_to, ms_cc, ms_subject, ms_body, ms_send_date, ms_fk_user_id) 
+	    VALUES (#{msTo}, #{msCc}, #{msSubject}, #{msBody}, #{msSendDate}, #{msFkUserId} )
+    </insert>
+    
+</mapper>

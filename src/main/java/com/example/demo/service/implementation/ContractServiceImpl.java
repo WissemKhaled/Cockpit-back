@@ -1,5 +1,7 @@
 package com.example.demo.service.implementation;
 
+import static java.util.function.Predicate.not;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,8 +17,6 @@ import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.mappers.ContractMapper;
 import com.example.demo.service.ContractService;
-
-import static java.util.function.Predicate.not;
 
 @Service
 public class ContractServiceImpl implements ContractService {

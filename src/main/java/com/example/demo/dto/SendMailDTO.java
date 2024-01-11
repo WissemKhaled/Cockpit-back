@@ -2,13 +2,9 @@ package com.example.demo.dto;
 
 import java.time.LocalDateTime;
 
-import com.example.demo.entity.UUser;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public class SendMailDTO {
@@ -20,7 +16,6 @@ public class SendMailDTO {
 	@JsonProperty("msTo")
 	private String msTo;
 
-	@Pattern(regexp = "^[a-zA-Z](?:[a-zA-Z\\d]*[-._]?[a-zA-Z\\d]+)@[a-zA-Z\\d]+[-._]?[a-zA-Z\\d]+\\.[a-zA-Z]{2,3}$", message = "Le format de l'email est invalide")
 	@JsonProperty("msCc")
 	private String msCc;
 
@@ -28,33 +23,31 @@ public class SendMailDTO {
 	@JsonProperty("msSubject")
 	private String msSubject;
 
-	@NotEmpty(message = "le corps du mail est nécessaire")
 	@JsonProperty("msBody")
 	private String msBody;
 
 	@JsonProperty("msSendDate")
 	private LocalDateTime msSendDate;
 
-	@JsonProperty("user")
-	private UUser user;
+	@JsonProperty("msFkUserId")
+	private int msFkUserId;
 
 	public SendMailDTO() {
 	}
 
 	public SendMailDTO(int msId,
-			 String msTo,
-			 String msCc,
-			 String msSubject,
-			 String msBody, 
-			 LocalDateTime msSendDate,
-			 UUser user) {
+			@Pattern(regexp = "^[a-zA-Z](?:[a-zA-Z\\d]*[-._]?[a-zA-Z\\d]+)@[a-zA-Z\\d]+[-._]?[a-zA-Z\\d]+\\.[a-zA-Z]{2,3}$", message = "Le format de l'email est invalide") String msTo,
+			@Pattern(regexp = "^[a-zA-Z](?:[a-zA-Z\\d]*[-._]?[a-zA-Z\\d]+)@[a-zA-Z\\d]+[-._]?[a-zA-Z\\d]+\\.[a-zA-Z]{2,3}$", message = "Le format de l'email est invalide") String msCc,
+			@NotEmpty(message = "le sujet est nécessaire") String msSubject,
+			@NotEmpty(message = "le corps du mail est nécessaire") String msBody, LocalDateTime msSendDate,
+			int msFkUserId) {
 		this.msId = msId;
 		this.msTo = msTo;
 		this.msCc = msCc;
 		this.msSubject = msSubject;
 		this.msBody = msBody;
 		this.msSendDate = msSendDate;
-		this.user = user;
+		this.msFkUserId = msFkUserId;
 	}
 
 	public int getMsId() {
@@ -105,18 +98,18 @@ public class SendMailDTO {
 		this.msSendDate = msSendDate;
 	}
 
-	public UUser getUser() {
-		return user;
+	public int getMsFkUserId() {
+		return msFkUserId;
 	}
 
-	public void setUser(UUser user) {
-		this.user = user;
+	public void setMsFkUserId(int msFkUserId) {
+		this.msFkUserId = msFkUserId;
 	}
 
 	@Override
 	public String toString() {
-		return "SendMail [msId=" + msId + ", msTo=" + msTo + ", msCc=" + msCc + ", msSubject=" + msSubject + ", msBody="
-				+ msBody + ", msSendDate=" + msSendDate + ", user=" + user + "]";
+		return "SendMailDTO [msId=" + msId + ", msTo=" + msTo + ", msCc=" + msCc + ", msSubject=" + msSubject
+				+ ", msBody=" + msBody + ", msSendDate=" + msSendDate + ", msFkUserId=" + msFkUserId + "]";
 	}
 
 }
