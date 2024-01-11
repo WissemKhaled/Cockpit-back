@@ -64,10 +64,14 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 	
 	@Override
-	public List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sortingMethod, int pageSize, int page, int statusId) {
-		int offset = (page - 1) * pageSize;
-		
-		Optional<List<Subcontractor>> optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllSubcontractorsWithStatus(nameColonne, sortingMethod, offset, pageSize, statusId));
+	public List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sortingMethod, int pageSize, int pageNumber, int statusId) {
+		int offset = (pageNumber - 1) * pageSize;
+		Optional<List<Subcontractor>> optionalSubcontractorsList;
+		if (statusId == 0) {
+			optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllNonArchivedSubcontractors(nameColonne, sortingMethod, offset, pageSize));
+		} else {
+			optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllSubcontractorsWithStatus(nameColonne, sortingMethod, offset, pageSize, statusId));			
+		}
 		
 		if (optionalSubcontractorsList.isEmpty()) {
 			throw new EntityNotFoundException("Il n'y a pas de sous-traitans enregistré");
