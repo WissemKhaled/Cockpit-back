@@ -20,14 +20,22 @@ public interface ContractMapper {
             "FROM gst_contract gc\n" +
             "INNER JOIN gst_service_provider gsp ON gc.c_fk_service_provider_id = gsp.sp_id\n" +
             "INNER JOIN gst_subcontractor gsc ON gc.c_fk_service_provider_id = gsc.s_id\n" +
-            "WHERE (gsp.sp_id IS NULL OR gsp.sp_id = #{serviceProviderId})\n" +
-            "   OR (gsc.s_id IS NULL OR gsc.s_id = #{subContractorId});")
+            "WHERE (gsp.sp_id IS NULL OR gsp.sp_id = #{serviceProviderId})")
     @Result(property = "cId", column = "c_id")
     @Result(property = "cContractNumber", column = "c_contract_number")
-    List<Contract> getContractsByMessageModelId(@Param("serviceProviderId") Integer serviceProviderId, @Param("subContractorId") Integer subContractorId);
+    List<Contract> getContractsByServiceProviderId(@Param("serviceProviderId") Integer serviceProviderId);
     
 	@Insert("INSERT INTO schema_dev.gst_contract (c_contract_number, c_fk_subcontractor_id, c_fk_service_provider_id) " +
             "VALUES (#{cContractNumber}, #{cFkSubcontractorId}, #{cFKserviceProviderId})")
 	@Options(useGeneratedKeys = true, keyProperty = "cId", keyColumn = "c_id")
 	int insertContract(Contract contract);
+	
+	@Select("SELECT DISTINCT c_id, gc.c_contract_number\n" +
+            "FROM gst_contract gc\n" +
+            "INNER JOIN gst_service_provider gsp ON gc.c_fk_service_provider_id = gsp.sp_id\n" +
+            "INNER JOIN gst_subcontractor gsc ON gc.c_fk_service_provider_id = gsc.s_id\n" +
+            "WHERE (gsc.s_id IS NULL OR gsc.s_id = #{subContractorId});")
+    @Result(property = "cId", column = "c_id")
+    @Result(property = "cContractNumber", column = "c_contract_number")
+    List<Contract> getContractsBySubcontractorId(@Param("subContractorId") Integer subContractorId);
 }
