@@ -91,7 +91,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	}
 	
 	@Override
-	public void checkRelaunch(List<MessageModel> allMessages) {
+	public void checkRelaunch(List<MessageModel> allMessages, int contractId, int statusId) {
 		// Groupement des MessageModel par mmLink
         Map<Integer, List<MessageModel>> groupedByLink = allMessages.stream()
                 .collect(Collectors.groupingBy(MessageModel::getMmLink));
