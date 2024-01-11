@@ -70,7 +70,7 @@ public class MessageModelController {
 //	}
 	
 	@GetMapping("/getAllMessagesBySubcontractorId")
-	public ResponseEntity<Page<MessageModel>> getAllMessageModelsBySubcontractorId(
+	public ResponseEntity<Page<MessageModel>> getAllMessageModelBySubcontractorId(
 			@RequestParam(value = "subcontractorId", required = false) Integer subcontractorId,
 			@RequestParam(value = "contractId") Integer contractId,
 			@RequestParam(value = "statusId", required = false) Integer statusId,
@@ -91,13 +91,13 @@ public class MessageModelController {
 	}
 	
 	@GetMapping("/getAllMessagesByServiceProviderId")
-	public ResponseEntity<Page<MessageModel>> getAllMessageModelsByServiceProviderId(
+	public ResponseEntity<Page<MessageModel>> getAllMessageModelByServiceProviderId(
 			@RequestParam(value = "serviceProviderId", required = false) Integer serviceProviderId,
 			@RequestParam(value = "contractId") Integer contractId,
 			@RequestParam(value = "statusId", required = false) Integer statusId,
 			@PageableDefault(page = 0, size = 6) Pageable pageable) {
 		try {
-			List<MessageModel> allMessages = messageModelService.getAllMessageModelBySubcontractorId(serviceProviderId);
+			List<MessageModel> allMessages = messageModelService.getAllMessageModelByServiceProviderId(serviceProviderId);
 
 			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
 
