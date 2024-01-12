@@ -59,7 +59,18 @@ public interface ModelTrackingMapper {
 	        "FROM schema_dev.gst_model_tracking mt " +
 	        "WHERE mt.mt_fk_contract_id = #{contractId}")
 	List<ModelTrackingDTO> findModelTrackingInfo(int contractId);
-
+	
+	@Select("SELECT " +
+	        "mt.mt_id AS mtId, " +
+	        "mt.mt_send_date AS mtSendDate, " +
+	        "mt.mt_validation_date AS mtValidationDate, " +
+	        "mt.mt_fk_contract_id AS mtFkContractId, " +
+	        "mt.mt_fk_message_model_id AS mtFkMessageModelId, " +
+	        "mt.mt_fk_status_id AS mtFkStatusId, " +
+	        "mt.mt_fk_category_id AS mtFkCategoryId " +
+	        "FROM schema_dev.gst_model_tracking mt " +
+	        "WHERE mt_fk_message_model_id = #{mmId}")
+	List<ModelTrackingDTO> findModelTrackingInfoByMmId(int mmId);
 	
 	@Select("SELECT " +
 	        "mt.mt_id AS mtId, " +
