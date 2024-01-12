@@ -96,7 +96,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
         Map<Integer, List<MessageModel>> groupedByLink = allMessages.stream()
                 .collect(Collectors.groupingBy(MessageModel::getMmLink));
         
-        System.out.println(groupedByLink);
+        // System.out.println(groupedByLink);
 
         // Itérer sur chaque groupe de MessageModel ayant le même mmLink
         for (List<MessageModel> group : groupedByLink.values()) {
@@ -107,48 +107,50 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
                 MessageModel model2 = group.get(1);
 
                 // Effectuer des opérations sur la paire (model1, model2)
-               // performOperationsOnPair(model1, model2);
+               performOperationsOnPair(model1, model2);
             }
         }
 		
-//	    try {
-//	        LocalDateTime currentDate = LocalDateTime.now();
-//
-//	        List<ModelTrackingDTO> modelTrackingDTOList = modelTrackingMapper.findModelTrackingInfo(contractId);
-//
-//	        for (ModelTrackingDTO modelTrackingDTO : modelTrackingDTOList) {
-//	        	// prendre en compte link
-//	            if (modelTrackingDTO.getMtFkCategoryId() == 1 || modelTrackingDTO.getMtFkCategoryId() == 2) {
-//	            	// Vérifie si la date d'envoi n'est pas nulle et n'a pas dépassée 7 jours et si le status = 2 (en validation) 
-//	                if (modelTrackingDTO.getMtSendDate() != null && modelTrackingDTO.getMtSendDate().plusDays(7).isBefore(currentDate)) {
-//	                	// Maj du statusId de la table gst_model_tracking
-//	                    modelTrackingDTO.setMtFkContractId(contractId);
-//	                    modelTrackingDTO.setMtFkMessageModelId(modelTrackingDTO.getMtFkMessageModelId());
-//	                    modelTrackingDTO.setMtFkStatusId(1);
-//	                    modelTrackingDTO.setMtSendDate(modelTrackingDTO.getMtSendDate());
-//	                    modelTrackingDTO.setMtValidationDate(modelTrackingDTO.getMtValidationDate());
-//
-//	                    ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
-//
-//	                    modelTrackingMapper.updateModelTracking(modelTracking);
-//
-//	                    log.info("Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId());
-//	                } else {
-//	                    log.error("Date d'envoi nulle ou < 7 jours");
-//	                }
-//	            } else if (modelTrackingDTO.getMtFkCategoryId() == 3) {
-//	            	
-//	            } else if (modelTrackingDTO.getMtFkCategoryId() == 4) {
-//	            	
-//	            }
-//	        }
-//	        log.warn("Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId);
-//	        return "Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId;
-//
-//	    } catch (Exception e) {
-//	        log.error("Une erreur est survenue lors de la vérification de relance : " + e.getMessage(), e);
-//	        return "Une erreur est survenue lors de la vérification de relance : " + e.getMessage();
-//	    }
+	    try {
+	        LocalDateTime currentDate = LocalDateTime.now();
+
+	        List<ModelTrackingDTO> modelTrackingDTOList = modelTrackingMapper.findModelTrackingInfo(contractId);
+	        
+	        System.out.println(modelTrackingDTOList);
+
+	        for (ModelTrackingDTO modelTrackingDTO : modelTrackingDTOList) {
+	        	// prendre en compte link
+	            if (modelTrackingDTO.getMtFkCategoryId() == 1 || modelTrackingDTO.getMtFkCategoryId() == 2) {
+	            	// Vérifie si la date d'envoi n'est pas nulle et n'a pas dépassée 7 jours et si le status = 2 (en validation) 
+	                if (modelTrackingDTO.getMtSendDate() != null && modelTrackingDTO.getMtSendDate().plusDays(7).isBefore(currentDate)) {
+	                	// Maj du statusId de la table gst_model_tracking
+	                    modelTrackingDTO.setMtFkContractId(contractId);
+	                    modelTrackingDTO.setMtFkMessageModelId(modelTrackingDTO.getMtFkMessageModelId());
+	                    modelTrackingDTO.setMtFkStatusId(1);
+	                    modelTrackingDTO.setMtSendDate(modelTrackingDTO.getMtSendDate());
+	                    modelTrackingDTO.setMtValidationDate(modelTrackingDTO.getMtValidationDate());
+
+	                    ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
+
+	                    modelTrackingMapper.updateModelTracking(modelTracking);
+
+	                    log.info("Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId());
+	                } else {
+	                    log.error("Date d'envoi nulle ou < 7 jours");
+	                }
+	            } else if (modelTrackingDTO.getMtFkCategoryId() == 3) {
+	            	
+	            } else if (modelTrackingDTO.getMtFkCategoryId() == 4) {
+	            	
+	            }
+	        }
+	        log.warn("Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId);
+	        // return "Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId;
+
+	    } catch (Exception e) {
+	        log.error("Une erreur est survenue lors de la vérification de relance : " + e.getMessage(), e);
+	        // return "Une erreur est survenue lors de la vérification de relance : " + e.getMessage();
+	    }
 	}
 	
 	 private static void performOperationsOnPair(MessageModel model1, MessageModel model2) {
