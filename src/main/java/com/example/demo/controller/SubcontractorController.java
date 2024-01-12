@@ -65,13 +65,12 @@ public class SubcontractorController {
 	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
 	 */
 	@GetMapping("/all-subcontractors")
-	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractors(
-			@RequestParam(name = "nameColonne", defaultValue = "s_fk_status_id", required = false) String nameColonne,
-			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
+	public ResponseEntity<List<SubcontractorDto>> getAllNonArchivedSubcontractors(
+			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
 		try {
-			return new ResponseEntity<>(subcontractorService.getAllNonArchivedSubcontractors(sorting, pageNumber, pageSize),HttpStatus.OK);
+			return new ResponseEntity<>(subcontractorService.getAllNonArchivedSubcontractors(sortingMethod, pageNumber, pageSize),HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -88,9 +87,9 @@ public class SubcontractorController {
 	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
 	 */
 	@GetMapping("/count-all-subcontractors")
-	public ResponseEntity<Integer> getNumberOfAllSubcontractors() {
+	public ResponseEntity<Integer> getNumberOfAllNonArchivedSubcontractors() {
 		try {
-			return new ResponseEntity<>(subcontractorService.getNumberOfAllSubcontractors(), HttpStatus.OK);
+			return new ResponseEntity<>(subcontractorService.getNumberOfAllNonSubcontractors(), HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -103,7 +102,7 @@ public class SubcontractorController {
 	 * Récupère la liste des sous-traitants avec un statut spécifié, avec pagination et tri.
 	 *
 	 * @param nameColonne Le nom de la colonne à utiliser pour le tri (par défaut : "s_name").
-	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
+	 * @param sortingMethod     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
 	 * @param pageNumber        Le numéro de la page à récupérer (par défaut : 1).
 	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
 	 * @param statusId    L'ID du statut pour filtrer les sous-traitants.
@@ -112,13 +111,15 @@ public class SubcontractorController {
 	 */
 	@GetMapping("/all-subcontractors/status")
 	public ResponseEntity<List<SubcontractorDto>> getAllSubcontractorWithStatus(
-			@RequestParam(name = "sorting", defaultValue = "asc", required = false) String sorting,
+			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
-			@RequestParam(name = "statusId") int statusId) {
+			@RequestParam(name = "statusId", defaultValue = "1") int statusId) {
 		try {
-			return new ResponseEntity<>(subcontractorService.getAllSubcontractorWithStatus(sorting, pageSize, pageNumber, statusId),
+			return new ResponseEntity<>(subcontractorService.getAllSubcontractorWithStatus(sortingMethod, pageSize, pageNumber, statusId),
 					HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}

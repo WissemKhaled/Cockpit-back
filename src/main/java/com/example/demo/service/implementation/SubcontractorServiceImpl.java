@@ -53,8 +53,8 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 
 	@Override
-	public List<SubcontractorDto> getAllNonArchivedSubcontractors(String sortingMethod, int page, int pageSize) {
-		int offset = (page - 1) * pageSize;
+	public List<SubcontractorDto> getAllNonArchivedSubcontractors(String sortingMethod, int pageNumber, int pageSize) {
+		int offset = (pageNumber - 1) * pageSize;
 		Optional<List<Subcontractor>> optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllNonArchivedSubcontractors(sortingMethod, offset, pageSize));
 				
 		if (optionalSubcontractorsList.isEmpty()) {
@@ -74,7 +74,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		}
 		
 		if (optionalSubcontractorsList.isEmpty()) {
-			throw new EntityNotFoundException("Il n'y a pas de sous-traitans enregistré");
+			throw new EntityNotFoundException("Il n'y a pas de sous-traitans enregistrés");
 		}
 		
 		return optionalSubcontractorsList.get().stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
@@ -89,7 +89,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		return optionalStatusList.get().stream().map(statusDtoMapper::statusToDto).toList();
 	}
 	@Override
-	public Integer getNumberOfAllSubcontractors() {
+	public Integer getNumberOfAllNonSubcontractors() {
 		Integer numberOfFoundSubcontractors = subcontractorMapper.countAllNonArchivedSubcontractors();
 		if (numberOfFoundSubcontractors == 0) {
 			throw new EntityNotFoundException("il n'y a pas de sous-traiatant trouvé");

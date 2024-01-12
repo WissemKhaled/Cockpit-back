@@ -252,7 +252,7 @@ public class SubcontractorServiceTest {
         when(subcontractorMapper.countAllNonArchivedSubcontractors()).thenReturn(103); // Adjust the expected count
 
         // WHEN
-        Integer numberOfSubcontractors = subcontractorService.getNumberOfAllSubcontractors();
+        Integer numberOfSubcontractors = subcontractorService.getNumberOfAllNonSubcontractors();
 
         // THEN
 	    assertThat(numberOfSubcontractors).isNotNull().isEqualTo(103);
@@ -264,7 +264,7 @@ public class SubcontractorServiceTest {
         when(subcontractorMapper.countAllNonArchivedSubcontractors()).thenReturn(0);
 
         // WHEN/THEN
-        assertThrows(EntityNotFoundException.class, () -> subcontractorService.getNumberOfAllSubcontractors());
+        assertThrows(EntityNotFoundException.class, () -> subcontractorService.getNumberOfAllNonSubcontractors());
     }
 
     @Test
