@@ -113,7 +113,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 //		 ModelTrackingDTO modelTrackingDTODemand = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(demand.getMmId(), contractId);
 //		 ModelTrackingDTO modelTrackingDTORelaunch = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(relaunch.getMmId(), contractId);
 		 
-		 List<ModelTrackingDTO> modelTrackingDTODemandList = modelTrackingMapper.findModelTrackingInfo(demand.getMmId());
+		 List<ModelTrackingDTO> modelTrackingDTODemandList = modelTrackingMapper.findModelTrackingInfoByMmId(demand.getMmId());
 		 List<ModelTrackingDTO> modelTrackingDTORelaunchList = modelTrackingMapper.findModelTrackingInfoByMmId(relaunch.getMmId());
 		 
 		 int size = Math.min(modelTrackingDTODemandList.size(), modelTrackingDTORelaunchList.size());
@@ -210,7 +210,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 			throw new EntityNotFoundException("Aucun contrat trouvé avec l'id " + contractId);
 		}
 		
-		List<ModelTrackingDTO> modelTrackingDTO = modelTrackingMapper.findModelTrackingInfo(contractId);
+		List<ModelTrackingDTO> modelTrackingDTO = modelTrackingMapper.getModelTrackingInfoByContractId(contractId);
 		
 		return modelTrackingDTO;
 	}
