@@ -31,13 +31,6 @@ public class ContractServiceImpl implements ContractService {
 	}
 	
 	@Override
-    public List<Contract> getContractsByMessageModelId(Integer serviceProviderId, Integer subContractorId) {
-        List<Contract> contracts = contractMapper.getContractsByMessageModelId(subContractorId,serviceProviderId);
-        return Optional.ofNullable(contracts).filter(not(List::isEmpty))
-                .orElseThrow(() -> new MessageModelNotFoundException("No contract exists for this id!"));
-    }
-	
-	@Override
 	public int saveContract(ContractDTO contractDTO) throws DatabaseQueryFailureException {
 		try {
 			if (contractDTO == null) {
@@ -69,4 +62,18 @@ public class ContractServiceImpl implements ContractService {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         return uuid.substring(0, 13).toUpperCase();
     }
+
+	@Override
+	public List<Contract> getContractsByServiceProviderId(Integer serviceProviderId) {
+		List<Contract> contracts = contractMapper.getContractsByServiceProviderId(serviceProviderId);
+        return Optional.ofNullable(contracts).filter(not(List::isEmpty))
+                .orElseThrow(() -> new MessageModelNotFoundException("No contract exists for this id!"));
+	}
+
+	@Override
+	public List<Contract> getContractsBySubcontractorId(Integer subContractorId) {
+		List<Contract> contracts = contractMapper.getContractsBySubcontractorId(subContractorId);
+        return Optional.ofNullable(contracts).filter(not(List::isEmpty))
+                .orElseThrow(() -> new MessageModelNotFoundException("No contract exists for this id!"));
+	}
 }
