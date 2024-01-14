@@ -16,11 +16,12 @@ import com.example.demo.entity.Contract;
 @Mapper
 public interface ContractMapper {
 
-    @Select("SELECT DISTINCT c_id, gc.c_contract_number\n" +
-            "FROM gst_contract gc\n" +
-            "INNER JOIN gst_service_provider gsp ON gc.c_fk_service_provider_id = gsp.sp_id\n" +
-            "INNER JOIN gst_subcontractor gsc ON gc.c_fk_service_provider_id = gsc.s_id\n" +
+    @Select("SELECT DISTINCT c_id, gc.c_contract_number" +
+            "FROM gst_contract gc" +
+            "INNER JOIN gst_service_provider gsp ON gc.c_fk_service_provider_id = gsp.sp_id" +
+            "INNER JOIN gst_subcontractor gsc ON gc.c_fk_service_provider_id = gsc.s_id" +
             "WHERE (gsp.sp_id IS NULL OR gsp.sp_id = #{serviceProviderId})")
+
     @Result(property = "cId", column = "c_id")
     @Result(property = "cContractNumber", column = "c_contract_number")
     List<Contract> getContractsByServiceProviderId(@Param("serviceProviderId") Integer serviceProviderId);

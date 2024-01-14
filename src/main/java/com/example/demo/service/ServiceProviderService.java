@@ -95,21 +95,6 @@ public interface ServiceProviderService {
 	
 	
 	/**
-	 * Récupère la liste paginée et triée des prestataires en fonction des paramètres spécifiés et du statut.
-	 *
-	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
-	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
-	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
-	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
-	 * @param statusId    L'ID du statut pour filtrer les prestataires.
-	 * @return Liste des DTO des prestataires paginée et triée avec le statut OK,
-	 *         ResponseEntity avec un message d'erreur si aucun prestataire n'est trouvé et le statut NOT_FOUND,
-	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
-	 */
-	List<StatusDto> getAllStatus();
-	
-	
-	/**
 	 * Enregistre un nouveau prestataire dans la base de données.
 	 *
 	 * @param serviceProviderDtoToSave Le prestataire à enregistrer.
