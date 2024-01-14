@@ -20,8 +20,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.builder.SubcontractorBuilder;
+import com.example.demo.builder.dto.SubcontractorDtoBuilder;
+import com.example.demo.dto.SubcontractorDto;
+import com.example.demo.entity.Status;
+import com.example.demo.entity.Subcontractor;
 import com.example.demo.service.SubcontractorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -53,6 +59,7 @@ public class SubcontractorControllerTest {
 	private MockMvc mockMvc;
 	
 //	@MockBean
+	@Autowired
 	private SubcontractorService subcontractorService;
 	
 //	@Mock
@@ -274,8 +281,10 @@ public class SubcontractorControllerTest {
 	
 	@Test
 	void testGetSubcontractor_SubcontractorOk() throws Exception {
+		// GIVEN
 		int expectedSId = 1;
 
+		// WHEN/THEN
 		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + "/" +expectedSId)
 				.header("Authorization", "Bearer " + jwtToken)
 				.contentType(MediaType.APPLICATION_JSON))
@@ -289,9 +298,35 @@ public class SubcontractorControllerTest {
 		}
 	
 	@Test
+	void testGetSubcontractor_InvalidId_SubcontractorOk() throws Exception {
+		// GIVEN
+		String expectedSId = "e";
+		
+		// WHEN/THEN
+		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + "/" +expectedSId)
+				.header("Authorization", "Bearer " + jwtToken)
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	void testGetSubcontractor_InvalidIdd_SubcontractorOk() throws Exception {
+		// GIVEN
+		int expectedSId = -1;
+		
+		// WHEN/THEN
+		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + "/" +expectedSId)
+				.header("Authorization", "Bearer " + jwtToken)
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
 	void testGetSubcontractor_SubcontractorNotFound_ShouldReturnHttpNotFound() throws Exception {
+		// GIVEN
 		int subcontractorId = Integer.MAX_VALUE;
 
+		// WHEN/THEN
 		mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + "/" +subcontractorId)
 				.header("Authorization", "Bearer " + jwtToken)
 				.contentType(MediaType.APPLICATION_JSON))
@@ -301,8 +336,10 @@ public class SubcontractorControllerTest {
 	
 	@Test
 	void testArchiveSubcontractor_SuccessfulArchive_ShouldReturnHttpOk() throws Exception {
+		// GIVEN
 		int subcontractorToArchiveId = 1;
-
+		
+		// WHEN/THEN
 		mockMvc.perform(MockMvcRequestBuilders
 				.put(baseUrl + "/archive/" + subcontractorToArchiveId)
 				.header("Authorization", "Bearer " + jwtToken)
@@ -314,8 +351,10 @@ public class SubcontractorControllerTest {
 	@Test
 	void testArchiveSubcontractor_FailedArchive_ShouldReturnAlreadyArchivedSubcontractorException()
 			throws Exception {
+		// GIVEN
 		int alreadyArchivedSubcontractorId = 103;
 
+		// WHEN/THEN
 		mockMvc.perform(
 				MockMvcRequestBuilders.put(baseUrl + "/archive/" + alreadyArchivedSubcontractorId)
 						.content(asJsonString(alreadyArchivedSubcontractorId))
@@ -326,7 +365,10 @@ public class SubcontractorControllerTest {
 
 	@Test
 	void testArchiveSubcontractor_FailedArchive_InvalidId_ShouldReturnHttpNotAcceptable() throws Exception {
+		// GIVEN
 		String invalidId = "e";
+		
+		// WHEN/THEN
 		mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/archive/" + invalidId)
 				.header("Authorization", "Bearer " + jwtToken)
 				.content(asJsonString(invalidId))
@@ -337,7 +379,10 @@ public class SubcontractorControllerTest {
 	@Test
 	void testArchiveSubcontractor_FailedArchive_NonExistingSubcontractor_ShouldReturnHttpNotFound()
 			throws Exception {
+		// GIVEN
 		int nonExistingSubcontarctorId = Integer.MAX_VALUE;
+		
+		// WHEN/THEN
 		mockMvc.perform(
 				MockMvcRequestBuilders.put(baseUrl + "/archive/" + nonExistingSubcontarctorId)
 						.content(asJsonString(nonExistingSubcontarctorId))
@@ -346,82 +391,230 @@ public class SubcontractorControllerTest {
 				.andExpect(status().isNotFound());
 	}
 	
-	
-	
-	
-	
-	
-	//*********************
-//    @Test
-//    void testGetAllSubcontractors_EntityNotFoundException() {
-//        // Arrange
-//        String nameColonne = "s_fk_status_id";
-//        String sorting = "asc";
-//        int pageNumber = 1;
-//        int pageSize = 10;
-//
-//        when(subcontractorService.getAllNonArchivedSubcontractors(sorting, pageNumber, pageSize))
-//                .thenThrow(new EntityNotFoundException("Il n'y a pas de sous-traitans enregistré"));
-//
-//        // Act
-//        ResponseEntity<List<SubcontractorDto>> response = subcontractorController.getAllSubcontractors(nameColonne, sorting, pageNumber, pageSize);
-//
-//        // Assert
-//        assertNotNull(response);
-//        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-//        assertEquals("Il n'y a pas de sous-traitans enregistré", response.getBody());
-//    }
+    @Test
+    void getAllSubcontractorsBySearchAndStatus_SuccessfulWithResults() throws Exception {
+		// GIVEN
+    	String searchTerms = "Orang";
+		String sortingMethod = "asc";
+		int pageNumber = 1;
+		int pageSize = 10;
+		int statusId = 1;
+		String columnName = "s_name";
+		
+		// WHEN/THEN
+		mockMvc.perform(get(baseUrl + "/all-subcontractors/search")
+				.param("searchTerms", searchTerms)
+				.param("sortingMethod", sortingMethod)
+				.param("pageNumber",String.valueOf(pageNumber))
+				.param("pageSize",String.valueOf(pageSize))
+				.param("statusId",String.valueOf(statusId))
+				.param("columnName", columnName)
+				.header("Authorization", "Bearer " + jwtToken))	
+		.andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(1)))
+		.andExpect(jsonPath("$[0].sName").value("Orange"))
+		.andExpect(jsonPath("$[0].sEmail").value("Orange@email.fr"));
+    }
+    
+    @Test
+    void getAllSubcontractorsBySearchAndStatus_SuccessfulNoResults() throws Exception {
+    	// GIVEN
+    	String searchTerms = "nonExistingSubcontractor";
+    	String sortingMethod = "asc";
+    	int pageNumber = 1;
+    	int pageSize = 10;
+    	int statusId = 1;
+    	String columnName = "s_name";
+    	
+    	// WHEN/THEN
+    	mockMvc.perform(get(baseUrl + "/all-subcontractors/search")
+    			.param("searchTerms", searchTerms)
+    			.param("sortingMethod", sortingMethod)
+    			.param("pageNumber",String.valueOf(pageNumber))
+    			.param("pageSize",String.valueOf(pageSize))
+    			.param("statusId",String.valueOf(statusId))
+    			.param("columnName", columnName)
+    			.header("Authorization", "Bearer " + jwtToken))	
+    	.andExpect(status().isNotFound());
+    }
+    
+    @Test
+    void getAllSubcontractorsBySearchAndStatus_InvalidRequestMissingParameters() throws Exception {
+    	// GIVEN
+    	String searchTerms = null;
+    	String sortingMethod = "asc";
+    	int pageNumber = 1;
+    	int pageSize = 10;
+    	int statusId = 1;
+    	String columnName = "s_name";
+    	
+    	// WHEN/THEN
+    	mockMvc.perform(get(baseUrl + "/all-subcontractors/search")
+    			.param("searchTerms", searchTerms)
+    			.param("sortingMethod", sortingMethod)
+    			.param("pageNumber",String.valueOf(pageNumber))
+    			.param("pageSize",String.valueOf(pageSize))
+    			.param("statusId",String.valueOf(statusId))
+    			.param("columnName", columnName)
+    			.header("Authorization", "Bearer " + jwtToken))	
+    	.andExpect(status().isBadRequest());
+    }
+    
+    @Test
+    void getNumberOfSubcontractorsBySearchAndStatus_SuccessfulWithResults() throws Exception {
+		// GIVEN
+    	String searchTerms = "Orang";
+        int statusId = 1;
+        String columnName = "s_name";
+		
+		// WHEN/THEN
+		mockMvc.perform(get(baseUrl + "/count-all-subcontractors/search")
+				.param("searchTerms", searchTerms)
+				.param("statusId",String.valueOf(statusId))
+				.param("columnName", columnName)
+				.header("Authorization", "Bearer " + jwtToken))	
+		.andExpect(status().isOk())
+        .andExpect(jsonPath("$").value(1));
+    }
+    
+    @Test
+    void getNumberOfSubcontractorsBySearchAndStatus_SuccessfulNoResults() throws Exception {
+    	// GIVEN
+    	String searchTerms = "nonExistingSubcontractor";
+        int statusId = 1;
+        String columnName = "s_name";
+    	
+        // WHEN/THEN
+        mockMvc.perform(get(baseUrl + "/count-all-subcontractors/search")
+                .param("searchTerms", searchTerms)
+                .param("statusId", String.valueOf(statusId))
+                .param("columnName", columnName)
+                .header("Authorization", "Bearer " + jwtToken))
+    	.andExpect(status().isNotFound());
+    }
+    
+    @Test
+    void getNumberOfSubcontractorsBySearchAndStatus_InvalidRequestMissingParameters() throws Exception {
+        // GIVEN
+        String searchTerms = null;
+        int statusId = 1;
+        String columnName = "s_name";
+
+        // WHEN/THEN
+        mockMvc.perform(get(baseUrl + "/count-all-subcontractors/search")
+                .param("searchTerms", searchTerms)
+                .param("statusId", String.valueOf(statusId))
+                .param("columnName", columnName)
+                .header("Authorization", "Bearer " + jwtToken))
+                .andExpect(status().isBadRequest());
+    }
 
 
-//	
-//    private LocalDateTime dateFormatter(String dateString) {
-//    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
-//    	LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
-//    	return dateTime;
-//	}
-//
-//
-//	@Test
-//	public void testSaveSubcontractor_saveNewSubcontractor_ShouldReturnHttpCreated() throws Exception {
-//		Subcontractor nonExistingSubcontractorTosave = new Subcontractor() ;  
-//		nonExistingSubcontractorTosave.setSId(99991);
-//		nonExistingSubcontractorTosave.setSName("test_saving");
-//		nonExistingSubcontractorTosave.setSEmail("test_saving@email.fr");
-//		nonExistingSubcontractorTosave.setStatus(new Status(1));
-//
-//		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save")
-//				.content(asJsonString(nonExistingSubcontractorTosave))
-//				.header("Authorization", "Bearer " + jwtToken)
-//				.contentType(MediaType.APPLICATION_JSON))
-//				.andExpect(MockMvcResultMatchers.jsonPath("$.sName").value("test_saving"))
-//				.andExpect(MockMvcResultMatchers.jsonPath("$.sEmail").value("test_saving@email.fr"))
-//				.andExpect(MockMvcResultMatchers.jsonPath("$.status.stId").value(1))
-//				.andExpect(status().isCreated());
-//	}
-//
-////	@Test
-////	public void testSaveSubcontractor_UpdateExistingSubcontractor_ShouldReturnHttpOk() throws Exception {
-////		Subcontractor savedSubcontractor = new Subcontractor();
-////		savedSubcontractor.setSId(Integer.MAX_VALUE);
-////		savedSubcontractor.setSName("testUpdating_0");
-////		savedSubcontractor.setSEmail("testUpdating_0@email.fr");
-////		savedSubcontractor.setStatus(new Status(1));
-////		int savedSubcontractorId = subcontractorService.saveSubcontractor(savedSubcontractor);
-////
-////		SubcontractorDto updatedSubcontractorDto = new SubcontractorDto();
-////		updatedSubcontractorDto.setSId(savedSubcontractorId);
-////		updatedSubcontractorDto.setSName("testUpdating_1");
-////		updatedSubcontractorDto.setSEmail("testUpdating_1@email.fr");
-////		updatedSubcontractorDto.setStatus(new Status(3));
-////
-////		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save").content(asJsonString(updatedSubcontractorDto))
-////				.contentType(MediaType.APPLICATION_JSON))
-////			.andExpect(status().isOk())
-////			.andExpect(MockMvcResultMatchers.jsonPath("$.sName").value("testUpdating_1"))
-////			.andExpect(MockMvcResultMatchers.jsonPath("$.sEmail").value("testUpdating_1@email.fr"))
-////			.andExpect(MockMvcResultMatchers.jsonPath("$.status.stId").value(3));
-////	}
-//
+	@Test
+	void testSaveSubcontractor_saveNewSubcontractor_ShouldReturnHttpCreated() throws Exception {
+        // GIVEN
+		Subcontractor nonExistingSubcontractorTosave = new SubcontractorBuilder()
+				.withSId(99991)
+				.withSName("test_saving")
+				.withSEmail("test_saving@email.fr")
+				.withStatus(new Status(1,"En cours"))
+				.build() ;  
+
+        // WHEN/THEN
+		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save")
+				.content(asJsonString(nonExistingSubcontractorTosave))
+				.header("Authorization", "Bearer " + jwtToken)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.sName").value("test_saving"))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.sEmail").value("test_saving@email.fr"))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.status.stId").value(1))
+				.andExpect(status().isCreated());
+	}
+
+	@Test
+	void testSaveSubcontractor_UpdateExistingSubcontractor_ShouldReturnHttpOk() throws Exception {
+        // GIVEN
+		SubcontractorDto savedSubcontractor = new SubcontractorDtoBuilder()
+				.withSId(Integer.MAX_VALUE)
+				.withSName("testUpdating_0")
+				.withSEmail("testUpdating_0@email.fr")
+				.withStatus(new Status(1,"En cours"))
+				.build();
+
+		int savedSubcontractorId = subcontractorService.saveSubcontractor(savedSubcontractor);
+
+		SubcontractorDto updatedSubcontractorDto = new SubcontractorDtoBuilder()
+				.withSId(savedSubcontractorId)
+				.withSName("testUpdating_1")
+				.withSEmail("testUpdating_1@email.fr")
+				.withStatus(new Status(3, "En validation"))
+				.build();
+
+        // WHEN/THEN
+		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save")
+				.content(asJsonString(updatedSubcontractorDto))
+                .header("Authorization", "Bearer " + jwtToken)
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.jsonPath("$.sName").value("testUpdating_1"))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.sEmail").value("testUpdating_1@email.fr"))
+			.andExpect(MockMvcResultMatchers.jsonPath("$.status.stId").value(3));
+	}
+	
+	@Test
+	void testSaveSubcontractor_invalidParams_shouldReturnHttpCreated() throws Exception {
+        // GIVEN
+		Subcontractor nonExistingSubcontractorTosave = new SubcontractorBuilder()
+				.withSId(Integer.MAX_VALUE)
+				.withSName("test_saving")
+				.withSEmail("test_saving@email.fr")
+				.withStatus(null)
+				.build() ;  
+
+        // WHEN/THEN
+		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save")
+				.content(asJsonString(nonExistingSubcontractorTosave))
+				.header("Authorization", "Bearer " + jwtToken)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isInternalServerError());
+	}
+	
+	@Test
+	void testSaveSubcontractor_invalidId_shouldReturnHttpCreated() throws Exception {
+		// GIVEN
+		Subcontractor nonExistingSubcontractorTosave = new SubcontractorBuilder()
+				.withSId(-1)
+				.withSName("test_saving")
+				.withSEmail("test_saving@email.fr")
+				.withStatus(null)
+				.build() ;  
+		
+		// WHEN/THEN
+		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save")
+				.content(asJsonString(nonExistingSubcontractorTosave))
+				.header("Authorization", "Bearer " + jwtToken)
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	void testSaveSubcontractor_DuplicateData_shouldReturnHttpCreated() throws Exception {
+		// GIVEN
+		SubcontractorDto nonExistingSubcontractorTosave = new SubcontractorDtoBuilder()
+				.withSId(Integer.MAX_VALUE)
+				.withSName("Orange")
+				.withSEmail("Orange@email.fr")
+				.withStatus(new Status(1,"En cours"))
+				.build() ;  
+		
+		// WHEN/THEN
+		mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/save")
+				.content(asJsonString(nonExistingSubcontractorTosave))
+				.header("Authorization", "Bearer " + jwtToken)
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isConflict());
+	}
+
 
 
 	/**

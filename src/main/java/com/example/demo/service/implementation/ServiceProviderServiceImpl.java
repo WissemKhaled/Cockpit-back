@@ -261,9 +261,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	@Override
 	public void handleServiceProviderSaving(ServiceProviderDto serviceProviderDto) {
 	    // Vérification de l'existence d'un autre prestataire avec le même email
-		System.err.println("here 1");
 		int isServiceProviderExistBySpEmail = checkIfSubcontractorExistBySpEmail(serviceProviderDto.getSpEmail());
-		System.err.println("here 2");
 	    // Si un autre prestataire avec le même email existe
 		if (isServiceProviderExistBySpEmail != 0) {
 			throw new EntityDuplicateDataException("l'émail du préstataire saisi existe déjà");

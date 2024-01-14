@@ -6,12 +6,10 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.StatusDtoMapper;
 import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.ServiceProvider;
-import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
@@ -25,8 +23,6 @@ import com.example.demo.service.SubcontractorService;
 public class SubcontractorServiceImpl implements SubcontractorService {
 	private final SubcontractorDtoMapper subcontractorDtoMapper;
 	private final SubcontractorMapper subcontractorMapper;
-	private final StatusDtoMapper statusDtoMapper;
-	private final StatusMapper statusMapper;
 	private final ServiceProviderMapper serviceProviderMapper;
 
 
@@ -35,8 +31,6 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 			ServiceProviderMapper serviceProviderMapper) {
 		this.subcontractorDtoMapper = subcontractorDtoMapper;
 		this.subcontractorMapper = subcontractorMapper;
-		this.statusDtoMapper = statusDtoMapper;
-		this.statusMapper = statusMapper;
 		this.serviceProviderMapper = serviceProviderMapper;
 	}
 
@@ -80,14 +74,6 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		return optionalSubcontractorsList.get().stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	}
 	
-	@Override
-	public List<StatusDto> getAllStatus() {
-		Optional<List<Status>> optionalStatusList = Optional.ofNullable(statusMapper.getAllStatus());
-		if (optionalStatusList.isEmpty()) {
-			throw new EntityNotFoundException("Il n'y a pas de statut enregistré");
-		}
-		return optionalStatusList.get().stream().map(statusDtoMapper::statusToDto).toList();
-	}
 	@Override
 	public Integer getNumberOfAllNonSubcontractors() {
 		Integer numberOfFoundSubcontractors = subcontractorMapper.countAllNonArchivedSubcontractors();

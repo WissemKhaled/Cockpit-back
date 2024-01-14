@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.exception.AlreadyArchivedEntity;
 import com.example.demo.exception.EntityDuplicateDataException;
@@ -34,25 +33,6 @@ public class SubcontractorController {
 		this.subcontractorService = subcontractorService;
 	}
 
-	/**
-	 * Récupère la liste de tous les statuts des sous-traitants.
-	 *
-	 * @return ResponseEntity contenant la liste des DTO des statuts avec le statut OK,
-	 *         ResponseEntity avec un message d'erreur si aucun statut n'est trouvé et le statut NOT_FOUND,
-	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
-	 */
-	@GetMapping("/all-status")
-	public ResponseEntity<List<StatusDto>> getAllStatus() {
-		try {
-			return new ResponseEntity<>(subcontractorService.getAllStatus(), HttpStatus.OK);
-		} catch (EntityNotFoundException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-		} catch (RuntimeException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-		}
-	}
-	
-	
 	/**
 	 * Récupère la liste de tous les sous-traitants avec pagination et tri.
 	 *
@@ -283,7 +263,7 @@ public class SubcontractorController {
 			@RequestParam(name = "searchTerms") String searchTerms,
 			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
-			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
+			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
 			@RequestParam(name = "statusId") int statusId,
 			@RequestParam(name = "columnName") String columnName) {
 		try {
@@ -319,7 +299,6 @@ public class SubcontractorController {
 		try {
 	        // Récupération du nombre de prestataires filtré par recherche et (facultativement) statut
 			Integer numberOfSubcontractors= subcontractorService.getNumberOfSubcontractorsBySearchAndWithOrWithoutStatusFiltring(searchTerms,statusId,columnName);
-			System.err.println("here: "+numberOfSubcontractors);
 			if (numberOfSubcontractors == 0) throw new EntityNotFoundException(String.format("Le sous-traitant avec le %s et le statusId: %d n'existe pas", searchTerms, statusId));
 			return new ResponseEntity<>(numberOfSubcontractors, HttpStatus.OK);
 		} catch (EntityNotFoundException e) {
