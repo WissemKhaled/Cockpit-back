@@ -8,15 +8,12 @@ import org.apache.ibatis.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.ContractDTO;
 import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.dto.ServiceProviderDto;
-import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.mapper.ModelTrackingDtoMapper;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
-import com.example.demo.dto.mapper.StatusDtoMapper;
 import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Subcontractor;
@@ -27,7 +24,6 @@ import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
-import com.example.demo.mappers.StatusMapper;
 import com.example.demo.service.ContractService;
 import com.example.demo.service.ServiceProviderService;
 import com.example.demo.service.SubcontractorService;
@@ -37,8 +33,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final ServiceProviderMapper serviceProviderMapper;
 	private final ModelTrackingMapper modelTrackingMapper;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
-	private final StatusDtoMapper statusDtoMapper;
-	private final StatusMapper statusMapper;
 	private final ModelTrackingDtoMapper modelTrackingDtoMapper;
 	private final ContractService contractService;
 	private final SubcontractorService subcontractorService;
@@ -49,8 +43,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
 			ModelTrackingDtoMapper modelTrackingDtoMapper, 
 			ModelTrackingMapper modelTrackingMapper, 
-			StatusDtoMapper statusDtoMapper, 
-			StatusMapper statusMapper, 
 			ContractService contractService,
 			SubcontractorService subcontractorService
 	) {
@@ -58,8 +50,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		this.modelTrackingMapper = modelTrackingMapper;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
 		this.modelTrackingDtoMapper = modelTrackingDtoMapper;
-		this.statusDtoMapper = statusDtoMapper;
-		this.statusMapper = statusMapper;
 		this.contractService = contractService;
 		this.subcontractorService = subcontractorService;
 	}
@@ -145,15 +135,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    } else {
 	        return serviceProviderMapper.countServiceProvidersByByCriteriaAndFiltredByStatus(criteriaColumn, searchTerms, statusId);
 	    }
-	}
-
-	@Override
-	public List<StatusDto> getAllStatus() {
-		List<StatusDto> foundedStatus = statusMapper.getAllStatus().stream().map(statusDtoMapper::statusToDto).toList();
-		if (foundedStatus.isEmpty()) {
-			throw new EntityNotFoundException("Il n'y a pas de status enregistré");
-		}
-		return foundedStatus;
 	}
 
 	@Override

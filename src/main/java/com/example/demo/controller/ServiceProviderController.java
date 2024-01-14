@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ServiceProviderDto;
-import com.example.demo.dto.StatusDto;
 import com.example.demo.exception.AlreadyArchivedEntity;
-import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
@@ -197,25 +195,6 @@ public class ServiceProviderController {
 			return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
-	
-	/**
-	 * Récupère la liste de tous les statuts des prestataires.
-	 *
-	 * @return ResponseEntity contenant la liste des DTO des statuts avec le statut OK,
-	 *         ResponseEntity avec un message d'erreur si aucun statut n'est trouvé et le statut NOT_FOUND,
-	 *         ResponseEntity avec un message d'erreur et le statut BAD_REQUEST en cas d'erreur.
-	 */
-	@GetMapping("/all-status")
-	public ResponseEntity<List<StatusDto>> getAllServiceProvider() {
-		try {
-			return new ResponseEntity<>(serviceProviderService.getAllStatus(), HttpStatus.OK);
-		} catch (EntityNotFoundException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-		} catch (RuntimeException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 
