@@ -18,6 +18,7 @@ import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.mappers.MessageModelMapper;
 import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.ModelTrackingService;
@@ -28,13 +29,15 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	private final ModelTrackingMapper modelTrackingMapper;
 	private final ModelTrackingDtoMapper modelTrackingDtoMapper;
 	private final ServiceProviderMapper serviceProviderMapper;
+	private final MessageModelMapper messageModelMapper;
 	private static final Logger log = LoggerFactory.getLogger(ModelTrackingServiceImpl.class);
 	
 	public ModelTrackingServiceImpl(ModelTrackingMapper modelTrackingMapper,
-			ModelTrackingDtoMapper modelTrackingDtoMapper, ServiceProviderMapper serviceProviderMapper) {
+			ModelTrackingDtoMapper modelTrackingDtoMapper, ServiceProviderMapper serviceProviderMapper, MessageModelMapper messageModelMapper) {
 		this.modelTrackingMapper = modelTrackingMapper;
 		this.modelTrackingDtoMapper = modelTrackingDtoMapper;
 		this.serviceProviderMapper = serviceProviderMapper;
+		this.messageModelMapper = messageModelMapper;
 	}
 
 	/**
@@ -88,9 +91,10 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	}
 	
 	@Override
-	public void checkRelaunch(List<MessageModel> allMessages, int contractId, int statusId) {
+	public void checkRelaunch(int contractId, int statusId) {
 		// Groupement des MessageModel par mmLink
-        Map<Integer, List<MessageModel>> groupedByLink = allMessages.stream()
+		List<MessageModel> allMessageModels = messageModelMapper.getAllMessageModels();
+        Map<Integer, List<MessageModel>> groupedByLink = allMessageModels.stream()
                 .collect(Collectors.groupingBy(MessageModel::getMmLink));
         
         // System.out.println(groupedByLink);

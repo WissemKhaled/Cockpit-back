@@ -13,5 +13,5 @@ public interface ModelTrackingService {
 	
 	public ModelTrackingDTO getModelTrackingInfoByContractIdAndMmId(int contractId, int mmId);
 	
-	public void checkRelaunch(List<MessageModel> allMessages, int contractId, int statusId);
+	public void checkRelaunch(int contractId, int statusId);
 }

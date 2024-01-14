@@ -20,14 +20,6 @@ public class MessageModelServiceImpl implements MessageModelService {
 	public MessageModelServiceImpl(MessageModelMapper mapper) {
 		this.messageModelMapper = mapper;
 	}
-
-
-	@Override
-	public List<MessageModel> getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(Integer subContractorStatusId,Integer serviceProviderStatusId, Integer subContractorId, Integer serviceProviderId) {
-		List<MessageModel> messageModels = messageModelMapper.getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorId,serviceProviderId,subContractorStatusId, serviceProviderStatusId);
-		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
-				.orElseThrow(() -> new MessageModelNotFoundException("No message model exists for this id!"));
-	}
 	
 	@Override
 	public List<MessageModel> getAllMessageModelBySubcontractorId(Integer subContractorId) {
