@@ -6,12 +6,10 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.StatusDtoMapper;
 import com.example.demo.dto.mapper.SubcontractorDtoMapper;
 import com.example.demo.entity.ServiceProvider;
-import com.example.demo.entity.Status;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
@@ -25,8 +23,6 @@ import com.example.demo.service.SubcontractorService;
 public class SubcontractorServiceImpl implements SubcontractorService {
 	private final SubcontractorDtoMapper subcontractorDtoMapper;
 	private final SubcontractorMapper subcontractorMapper;
-	private final StatusDtoMapper statusDtoMapper;
-	private final StatusMapper statusMapper;
 	private final ServiceProviderMapper serviceProviderMapper;
 
 
@@ -35,8 +31,6 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 			ServiceProviderMapper serviceProviderMapper) {
 		this.subcontractorDtoMapper = subcontractorDtoMapper;
 		this.subcontractorMapper = subcontractorMapper;
-		this.statusDtoMapper = statusDtoMapper;
-		this.statusMapper = statusMapper;
 		this.serviceProviderMapper = serviceProviderMapper;
 	}
 
@@ -53,9 +47,9 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	
 
 	@Override
-	public List<SubcontractorDto> getAllNonArchivedSubcontractors(String nameColonne, String sortingMethod, int page, int pageSize) {
-		int offset = (page - 1) * pageSize;
-		Optional<List<Subcontractor>> optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllNonArchivedSubcontractors(nameColonne, sortingMethod, offset, pageSize));
+	public List<SubcontractorDto> getAllNonArchivedSubcontractors(String sortingMethod, int pageNumber, int pageSize) {
+		int offset = (pageNumber - 1) * pageSize;
+		Optional<List<Subcontractor>> optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllNonArchivedSubcontractors(sortingMethod, offset, pageSize));
 				
 		if (optionalSubcontractorsList.isEmpty()) {
 			throw new EntityNotFoundException("Il n'y a pas de sous-traitans enregistré");
@@ -64,28 +58,24 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	}
 	
 	@Override
-	public List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sortingMethod, int pageSize, int page, int statusId) {
-		int offset = (page - 1) * pageSize;
-		
-		Optional<List<Subcontractor>> optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllSubcontractorsWithStatus(nameColonne, sortingMethod, offset, pageSize, statusId));
+	public List<SubcontractorDto> getAllSubcontractorWithStatus(String sortingMethod, int pageSize, int pageNumber, int statusId) {
+		int offset = (pageNumber - 1) * pageSize;
+		Optional<List<Subcontractor>> optionalSubcontractorsList;
+		if (statusId == 0) {
+			optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllNonArchivedSubcontractors(sortingMethod, offset, pageSize));
+		} else {
+			optionalSubcontractorsList = Optional.ofNullable(subcontractorMapper.findAllSubcontractorsWithStatus(sortingMethod, offset, pageSize, statusId));			
+		}
 		
 		if (optionalSubcontractorsList.isEmpty()) {
-			throw new EntityNotFoundException("Il n'y a pas de sous-traitans enregistré");
+			throw new EntityNotFoundException("Il n'y a pas de sous-traitans enregistrés");
 		}
 		
 		return optionalSubcontractorsList.get().stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 	}
 	
 	@Override
-	public List<StatusDto> getAllStatus() {
-		Optional<List<Status>> optionalStatusList = Optional.ofNullable(statusMapper.getAllStatus());
-		if (optionalStatusList.isEmpty()) {
-			throw new EntityNotFoundException("Il n'y a pas de statut enregistré");
-		}
-		return optionalStatusList.get().stream().map(statusDtoMapper::statusToDto).toList();
-	}
-	@Override
-	public Integer getNumberOfAllSubcontractors() {
+	public Integer getNumberOfAllNonSubcontractors() {
 		Integer numberOfFoundSubcontractors = subcontractorMapper.countAllNonArchivedSubcontractors();
 		if (numberOfFoundSubcontractors == 0) {
 			throw new EntityNotFoundException("il n'y a pas de sous-traiatant trouvé");
@@ -118,12 +108,13 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		subcontractorDtoForUpdated.setSLastUpdateDate(LocalDateTime.now());
 		return subcontractorMapper.updateSubcontractor(subcontractorDtoForUpdated);
 	}
+	
 	@Override
 	public int archiveSubcontractor(SubcontractorDto subcontractorDtoToArchive) {
 		Subcontractor subcontractorToArchive = subcontractorDtoMapper.dtoToSubcontractor(subcontractorDtoToArchive);
 		int isArchivedSubcontractor = subcontractorMapper.archiveSubcontractor(subcontractorToArchive);
 		List<ServiceProvider> foundedServiceProvidersBySubcontractorId = serviceProviderMapper.findServiceProvidersBySubcontractorId(subcontractorDtoToArchive.getSId());
-		if (!foundedServiceProvidersBySubcontractorId.isEmpty()) {
+		if (!foundedServiceProvidersBySubcontractorId.isEmpty() && isArchivedSubcontractor != 0) {
 			for (ServiceProvider serviceProvider : foundedServiceProvidersBySubcontractorId) {
 				serviceProviderMapper.archiveServiceProvider(serviceProvider);
 			}
@@ -134,10 +125,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	@Override
 	public boolean checkIfSubcontractorExist(int sId) {
 		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusById(sId);
-		if (subcontractor == null) {
-			return false;
-		}
-		return true;
+		return subcontractor != null;
 	}
 	
 	@Override
@@ -148,6 +136,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		}
 		return subcontractor.getSId();
 	}
+	
 	@Override
 	public int checkIfSubcontractorExistBySEmail(String sEmail) {
 		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusBySubcontractorEmail(sEmail);
@@ -197,12 +186,16 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 	    String criteriaColumn = getCriteriaColumn(columnName);
 	    List<SubcontractorDto> subcontractorDtoList;
 
+	    List<Subcontractor> subcontractorList;
 	    if (statusId == 0) {
-	        subcontractorDtoList = subcontractorMapper.findAllSubcontractorsByCriteria(criteriaColumn, searchTerms, offset, pageSize, sortingMethod)
-	                .stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	        subcontractorList = subcontractorMapper.findAllSubcontractorsByCriteria(criteriaColumn, searchTerms, offset, pageSize, sortingMethod);
 	    } else {
-	    	subcontractorDtoList = subcontractorMapper.findAllSubcontractorsByCriteriaAndFiltredByStatus(criteriaColumn, searchTerms, offset, pageSize, sortingMethod, statusId)
-	                .stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	        subcontractorList = subcontractorMapper.findAllSubcontractorsByCriteriaAndFiltredByStatus(criteriaColumn, searchTerms, offset, pageSize, sortingMethod, statusId);
+	    }
+	    if (subcontractorList != null && !subcontractorList.isEmpty()) {
+	        subcontractorDtoList = subcontractorList.stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+	    } else {
+	        throw new EntityNotFoundException("Aucun résultat trouvé");
 	    }
 
 	    return subcontractorDtoList;
@@ -236,7 +229,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
         int newPage = 1;
         int newIndex = -1;
 		int countAllNonArchivedServiceProviders = subcontractorMapper.countAllNonArchivedSubcontractors();
-        List<SubcontractorDto> sortedSubcontractors = subcontractorMapper.findAllNonArchivedSubcontractors("s_fk_status_id","asc", 0, countAllNonArchivedServiceProviders).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+        List<SubcontractorDto> sortedSubcontractors = subcontractorMapper.findAllNonArchivedSubcontractors("asc", 0, countAllNonArchivedServiceProviders).stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
         for (int i = 0; i < sortedSubcontractors.size(); i++) {
             if (sortedSubcontractors.get(i).getSId() == savedSubcontractorId) {
                 newIndex = i;

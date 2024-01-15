@@ -2,27 +2,13 @@ package com.example.demo.service;
 
 import java.util.List;
 
-import com.example.demo.dto.StatusDto;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.entity.Subcontractor;
+import com.example.demo.exception.EntityDuplicateDataException;
+import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
 
-public interface SubcontractorService {
-
-	/**
-	 * Récupère la liste paginée et triée des sous-traitants en fonction des paramètres spécifiés et du statut.
-	 *
-	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
-	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
-	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
-	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
-	 * @param statusId    L'ID du statut pour filtrer les sous-traitants.
-	 * @return Liste des DTO des sous-traitants paginée et triée avec le statut OK,
-	 *         ResponseEntity avec un message d'erreur si aucun sous-traitant n'est trouvé et le statut NOT_FOUND,
-	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
-	 */
-	List<StatusDto> getAllStatus();
-	
+public interface SubcontractorService {	
 	
 	/**
 	 * Récupère la liste paginée et triée des sous-traitants non archivés en fonction des paramètres spécifiés.
@@ -35,22 +21,22 @@ public interface SubcontractorService {
 	 *         ResponseEntity avec un message d'erreur si aucun sous-traitant n'est trouvé et le statut NOT_FOUND,
 	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
 	 */
-	List<SubcontractorDto> getAllNonArchivedSubcontractors(String nameColonne, String sorting, int pageSize, int page);
+	List<SubcontractorDto> getAllNonArchivedSubcontractors(String sorting, int pageSize, int page);
 
 	
 	/**
 	 * Récupère la liste paginée et triée des sous-traitants en fonction des paramètres spécifiés et du statut.
 	 *
 	 * @param nameColonne La colonne à utiliser pour le tri (par défaut : "s_fk_status_id").
-	 * @param sorting     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
+	 * @param sortingMethod     La méthode de tri, "asc" pour ascendant ou "desc" pour descendant (par défaut : "asc").
 	 * @param pageSize    Le nombre d'éléments par page (par défaut : 10).
-	 * @param page        Le numéro de la page à récupérer (par défaut : 1).
+	 * @param pageNumber        Le numéro de la page à récupérer (par défaut : 1).
 	 * @param statusId    L'ID du statut pour filtrer les sous-traitants.
 	 * @return Liste des DTO des sous-traitants paginée et triée avec le statut OK,
 	 *         ResponseEntity avec un message d'erreur si aucun sous-traitant n'est trouvé et le statut NOT_FOUND,
 	 *         ResponseEntity avec un message d'erreur en cas d'erreur interne et le statut INTERNAL_SERVER_ERROR.
 	 */
-	List<SubcontractorDto> getAllSubcontractorWithStatus(String nameColonne, String sorting, int pageSize, int page,
+	List<SubcontractorDto> getAllSubcontractorWithStatus(String sortingMethod, int pageSize, int pageNumber,
 			int statusId);
 
 	
@@ -60,7 +46,7 @@ public interface SubcontractorService {
 	 * @return Le nombre total de sous-traitants.
 	 * @throws EntityNotFoundException Si aucun sous-traitant n'est trouvé.
 	 */
-	Integer getNumberOfAllSubcontractors();
+	Integer getNumberOfAllNonSubcontractors();
 
 	
 	/**
