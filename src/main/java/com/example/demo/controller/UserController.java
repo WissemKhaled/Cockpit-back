@@ -49,6 +49,7 @@ import jakarta.validation.Valid;
 @CrossOrigin("http://localhost:4200")
 @RequestMapping("/auth")
 public class UserController {
+
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
 	private final JwtServiceImplementation jwtService;
 	private final AuthenticationManager authenticationManager;

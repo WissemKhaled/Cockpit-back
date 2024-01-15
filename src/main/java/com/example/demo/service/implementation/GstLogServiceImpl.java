@@ -9,7 +9,9 @@ import java.util.Optional;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -55,9 +57,12 @@ public class GstLogServiceImpl implements GstLogService{
 	private final JsonFileLoader jsonFileLoader;
 	
 	private final UUserMapper userMapper;
-	
-	@Value("${reset.password.claim.expiration.duration}")
-    private int ResetPasswordClaimExpirationDuration;
+
+	@Autowired
+	private Environment env;
+
+
+
 	
 	private static final Logger log = LoggerFactory.getLogger(GstLogServiceImpl.class);
 	
@@ -143,10 +148,11 @@ public class GstLogServiceImpl implements GstLogService{
 
 	@Override
 	public boolean checkResetPasswordExpiration(String logValue) throws NotFoundException {
+		String ResetPasswordClaimExpirationDuration = env.getProperty("reset.password.claim.expiration.duration");
 	    if (logValue != null && !logValue.isEmpty()) {
 	        GstLog gstLog = gstLogMapper.getLogByValue(logValue);
 	        if (gstLog != null) {
-	            LocalDateTime expirationMoment = gstLog.getLogCreationDate().plusMinutes(ResetPasswordClaimExpirationDuration);
+	            LocalDateTime expirationMoment = gstLog.getLogCreationDate().plusMinutes(Long.parseLong(ResetPasswordClaimExpirationDuration));
 	            LocalDateTime currentTime = LocalDateTime.now();
 
 	            if (currentTime.isBefore(expirationMoment)) {
