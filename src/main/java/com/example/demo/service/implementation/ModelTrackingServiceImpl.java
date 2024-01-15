@@ -124,9 +124,6 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 			    	// Maj status de la demande
 			    	modelTrackingDTODemand.setMtFkStatusId(statusId);
 			    	modelTrackingDTODemand.setMtSendDate(LocalDateTime.now());
-			    	
-			    	// Maj status de la relance ?
-			    	modelTrackingDTORelaunch.setMtFkStatusId(1);
 
 			        // 7 jours après date envoie, relance
 			    } else if (validationDateString != null) {
@@ -221,7 +218,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 				                    // log.error("Date d'envoi nulle ou < 7 jours");
 				                }
 				            }
-			        	// si le status est en validé, on passe le status des demandes de 3 à 1 et le status des relances de 3 à 5 pour les modèles kbis à 5 mois et demi de la date de validation
+			        	// si le status est en validé (3), on passe le status des demandes de 3 à 1 et le status des relances de 3 à 5 pour les modèles kbis à 5 mois et demi de la date de validation
 				        } else if(statusId == 3) {
 				        	if (modelTrackingDTODemand.getMtFkCategoryId() == 3) {
 				        		if (modelTrackingDTODemand.getMtValidationDate() != null && modelTrackingDTODemand.getMtValidationDate().plusMonths(5).plusDays(15).isBefore(currentDate)) {
