@@ -3,6 +3,7 @@ package com.example.demo.service;
 import java.util.List;
 
 import com.example.demo.dto.ModelTrackingDTO;
+import com.example.demo.entity.MessageModel;
 import com.example.demo.exception.DatabaseQueryFailureException;
 
 public interface ModelTrackingService {
@@ -12,5 +13,5 @@ public interface ModelTrackingService {
 	
 	public ModelTrackingDTO getModelTrackingInfoByContractIdAndMmId(int contractId, int mmId);
 	
-	public String checkRelaunch(int serviceProviderId);
+	public void checkRelaunch(List<MessageModel> allMessages, int contractId, int statusId);
 }

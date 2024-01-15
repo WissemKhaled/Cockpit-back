@@ -26,15 +26,30 @@ public class ContractController {
         this.contractService = contractService;
     }
 
-    @GetMapping("/getContractsById")
-    public ResponseEntity<Page<Contract>> getAllMessageModelsAndStatusForSubcontractorCategory(
+    @GetMapping("/getContractsByServiceProviderId")
+    public ResponseEntity<Page<Contract>> getContractsByServiceProviderId (
             @RequestParam(value = "serviceProviderId", required = false) Integer serviceProviderId,
-            @RequestParam(value = "subContractorId", required = false) Integer subContractorId,
-            @RequestParam(value = "messageModelId", required = false) Integer messageModelId,
             @PageableDefault(page = 0, size = 6) Pageable pageable) {
 
         try {
-            List<Contract> contractList = contractService.getContractsByMessageModelId(serviceProviderId,subContractorId,messageModelId);
+            List<Contract> contractList = contractService.getContractsByServiceProviderId(serviceProviderId);
+
+            Page<Contract> page = new PageImpl<>(contractList, pageable, contractList.size());
+
+            return ResponseEntity.ok(page);
+
+        } catch (EntityNotFoundException e) {
+            return (ResponseEntity<Page<Contract>>) ResponseEntity.notFound();
+        }
+    }
+
+    @GetMapping("/getContractsBySubcontractorId")
+    public ResponseEntity<Page<Contract>> getContractsBySubcontractorId (
+            @RequestParam(value = "subcontractorId", required = false) Integer subcontractorId,
+            @PageableDefault(page = 0, size = 6) Pageable pageable) {
+
+        try {
+            List<Contract> contractList = contractService.getContractsBySubcontractorId(subcontractorId);
 
             Page<Contract> page = new PageImpl<>(contractList, pageable, contractList.size());
 

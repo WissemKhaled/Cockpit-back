@@ -21,10 +21,17 @@ public class MessageModelServiceImpl implements MessageModelService {
 		this.messageModelMapper = mapper;
 	}
 
-
+	
 	@Override
-	public List<MessageModel> getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(Integer subContractorStatusId,Integer serviceProviderStatusId, Integer subContractorId, Integer serviceProviderId) {
-		List<MessageModel> messageModels = messageModelMapper.getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorId,serviceProviderId,subContractorStatusId, serviceProviderStatusId);
+	public List<MessageModel> getAllMessageModelBySubcontractorId(Integer subContractorId) {
+		List<MessageModel> messageModels = messageModelMapper.getAllMessageModelBySubcontractorId(subContractorId);
+		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
+				.orElseThrow(() -> new MessageModelNotFoundException("No message model exists for this id!"));
+	}
+	
+	@Override
+	public List<MessageModel> getAllMessageModelByServiceProviderId(Integer serviceProviderId) {
+		List<MessageModel> messageModels = messageModelMapper.getAllMessageModelByServiceProviderId(serviceProviderId);
 		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
 				.orElseThrow(() -> new MessageModelNotFoundException("No message model exists for this id!"));
 	}

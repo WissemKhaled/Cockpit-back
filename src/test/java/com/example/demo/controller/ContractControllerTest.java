@@ -49,27 +49,24 @@ class ContractControllerTest {
         jwtToken = "Bearer  eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huQHRlc3QuZnIiLCJpYXQiOjE3MDQ3ODk1NDQsImV4cCI6MTcwNTE5OTYxMH0.Ylrez3dFJw2l_npcquivixS5fSEmPh0AUjAMLzE6MKk";
     }
 
+
     @Test
-    void getAllMessageModelsAndStatusForSubcontractorCategory() throws Exception {
+    void getAllMessageModelsBySubcontractorId() throws Exception {
         // Define test parameters
         Integer subContractorId = 1;
-        Integer serviceProviderId = null;
-        Integer messageModelId = null;
         Pageable pageable = PageRequest.of(0, 6);
 
         // Create a list of mock Contract objects for the test
         List<Contract> mockContracts = Collections.singletonList(new Contract());
 
         // Define behavior of mocked service method
-        when(contractService.getContractsByMessageModelId(serviceProviderId, subContractorId, messageModelId))
+        when(contractService.getContractsBySubcontractorId(subContractorId))
                 .thenReturn(mockContracts);
 
         // Perform a GET request to the specified URL and set up the request
-       MvcResult result = mockMvc.perform(get("/contract/getContractsById")
+        MvcResult result = mockMvc.perform(get("/contract/getContractsBySubcontractorId")
                         .header("Authorization", jwtToken) // Add JWT token to the request header for authorization
-                        .param("subContractorId", subContractorId != null ? String.valueOf(subContractorId) : null) // Add 'subContractorId' as a request parameter if it's not null
-                        .param("serviceProviderId", serviceProviderId != null ? String.valueOf(serviceProviderId) : null) // Add 'serviceProviderId' as a request parameter if it's not null
-                        .param("messageModelId", messageModelId != null ? String.valueOf(messageModelId) : null) // Add 'messageModelId' as a request parameter if it's not null
+                        .param("subContractorId", String.valueOf(subContractorId)) // Add 'subContractorId' as a request parameter
                         .contentType(MediaType.APPLICATION_JSON)) // Set the content type of the request to JSON
                 .andExpect(status().isOk()) // Assert that the response status is 200 OK
                 .andExpect(jsonPath("$.content").exists()) // Assert that there is a 'content' field in the JSON response
@@ -83,7 +80,40 @@ class ContractControllerTest {
         System.out.println("Response Status: " + result.getResponse().getStatus());
 
         // Verify the service method was called with the correct parameters
-        verify(contractService).getContractsByMessageModelId(serviceProviderId, subContractorId, messageModelId);
+        verify(contractService).getContractsBySubcontractorId(subContractorId);
     }
+
+    @Test
+    void getAllMessageModelsByServiceProviderId() throws Exception {
+        // Define test parameters
+        Integer serviceProviderId = 1;
+        Pageable pageable = PageRequest.of(0, 6);
+
+        // Create a list of mock Contract objects for the test
+        List<Contract> mockContracts = Collections.singletonList(new Contract());
+
+        // Define behavior of mocked service method
+        when(contractService.getContractsByServiceProviderId(serviceProviderId))
+                .thenReturn(mockContracts);
+
+        // Perform a GET request to the specified URL and set up the request
+        MvcResult result = mockMvc.perform(get("/contract/getContractsBySubcontractorId")
+                        .header("Authorization", jwtToken) // Add JWT token to the request header for authorization
+                        .param("serviceProviderId", String.valueOf(serviceProviderId)) // Add 'serviceProviderId' as a request parameter
+                        .contentType(MediaType.APPLICATION_JSON)) // Set the content type of the request to JSON
+                .andExpect(status().isOk()) // Assert that the response status is 200 OK
+                .andExpect(jsonPath("$.content").exists()) // Assert that there is a 'content' field in the JSON response
+                .andReturn(); // Return the result of the MVC request for further analysis or assertions
+
+
+        // Display the response body
+        System.out.println("Response Body: " + result.getResponse().getContentAsString());
+
+        // If you also want to display the status code
+        System.out.println("Response Status: " + result.getResponse().getStatus());
+
+        // Verify the service method was called with the correct parameters
+        verify(contractService).getContractsBySubcontractorId(serviceProviderId);
     }
+}
 

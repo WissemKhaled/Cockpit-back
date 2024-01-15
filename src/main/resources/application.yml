@@ -1,45 +1,39 @@
 logging:
   level:
-    org.mybatis: DEBUG
+    # org.mybatis: DEBUG
     com:
       example:
         demo: info
   pattern:
-    console: '%clr(%d{dd-MM-yyyy HH:mm:ss.SSS}){yellow} %clr(${PID:-}){green} %magenta([%thread])
-      %highlight([%-5level]) %clr(%-40.40logger{39}){cyan} %msg%n'    
+    console: '%clr(%d{dd-MM-yyyy HH:mm:ss.SSS}){yellow} %clr(${PID:-}){green} %magenta([%thread]) %highlight([%-5level]) %clr(%-40.40logger{39}){cyan} %msg%n'
 
 spring:
-    
   datasource:
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: root
-#    url: jdbc:postgresql://localhost:5432/gst_db?currentSchema=schema_test
+    # url: jdbc:postgresql://localhost:5432/gst_db?currentSchema=schema_test
     url: jdbc:postgresql://localhost:5432/Cockpit-app?currentSchema=schema_dev
-    
+
   sql:
     init:
-      mode: never #pour activer l'initialisation de la bdd, changer le mode en always
+      mode: never # pour activer l'initialisation de la bdd, changer le mode en always
       schema-locations: classpath:schema-dev.sql
-#      schema-locations: classpath:schema-test.sql
+      # schema-locations: classpath:schema-test.sql
       data-locations: classpath:data-dev.sql
-#      data-locations: classpath:data-test.sql
-    
+      # data-locations: classpath:data-test.sql
+
   mail:
     host: smtp.gmail.com
+    username: hamza.h93290@gmail.com
     password: yuzo hnbp xvfl xxyt
     port: 587
     properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-        transport:
-          protocol: smtp
-    username: hamza.h93290@gmail.com
-    
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.transport.protocol: smtp
+
 token:
   expiration:
     duration: 9000000
@@ -57,8 +51,7 @@ reset:
     claim:
       expiration:
         duration: 15
-        
+
 mybatis:
-    config-location: classpath:mybatis-config.xml
-    mapper-locations: classpath:mybatis/xml/mappers/*.xml
-        
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:src/main/resources/xml/com/example/demo/mappers/*.xml

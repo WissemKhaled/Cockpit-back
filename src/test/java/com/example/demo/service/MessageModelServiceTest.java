@@ -17,6 +17,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Created by Elimane Fofana on 2024.
+ */
 class MessageModelServiceTest {
 
     @Mock
@@ -31,19 +34,17 @@ class MessageModelServiceTest {
     }
 
     @Test
-    void testGetAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId() {
+    void testGetAllMessageModelBySubContractorId() {
         // Given
-        Integer subContractorStatusId = null;
-        Integer serviceProviderStatusId = null;
+
         Integer subContractorId = null;
-        Integer serviceProviderId = null;
         List<MessageModel> mockResponse = Arrays.asList(new MessageModel(), new MessageModel()); // Mock response
 
-        when(messageModelMapper.getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorId, serviceProviderId, subContractorStatusId, serviceProviderStatusId))
+        when(messageModelMapper.getAllMessageModelBySubcontractorId(subContractorId))
                 .thenReturn(mockResponse);
 
         // When
-        List<MessageModel> result = messageModelService.getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorStatusId, serviceProviderStatusId, subContractorId, serviceProviderId);
+        List<MessageModel> result = messageModelService.getAllMessageModelBySubcontractorId(subContractorId);
 
         // Then
         assertNotNull(result);
@@ -51,27 +52,63 @@ class MessageModelServiceTest {
         assertEquals(mockResponse, result);
 
         // Verify the interaction with the mock
-        verify(messageModelMapper, times(1)).getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorId, serviceProviderId, subContractorStatusId, serviceProviderStatusId);
+        verify(messageModelMapper, times(1)).getAllMessageModelBySubcontractorId(subContractorId);
     }
 
     @Test
-    void testGetAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderIdThrowsException() {
+    void testGetAllMessageModelBySubContractorIdThrowsException() {
         // Given
-        Integer subContractorStatusId = 2;
-        Integer serviceProviderStatusId = 2;
         Integer subContractorId = 2;
-        Integer serviceProviderId = 2;
 
-        when(messageModelMapper.getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorId, serviceProviderId, subContractorStatusId, serviceProviderStatusId))
+        when(messageModelMapper.getAllMessageModelBySubcontractorId(subContractorId))
                 .thenReturn(Collections.emptyList());
 
         // When/Then
         assertThrows(MessageModelNotFoundException.class, () -> {
-            messageModelService.getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorStatusId, serviceProviderStatusId, subContractorId, serviceProviderId);
+            messageModelService.getAllMessageModelBySubcontractorId(subContractorId);
         });
 
         // Verify the interaction with the mock
-        verify(messageModelMapper, times(1)).getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorId, serviceProviderId, subContractorStatusId, serviceProviderStatusId);
+        verify(messageModelMapper, times(1)).getAllMessageModelBySubcontractorId(subContractorId);
+    }
+
+    @Test
+    void testGetAllMessageModelByServiceProviderId() {
+        // Given
+
+        Integer serviceProviderId = null;
+        List<MessageModel> mockResponse = Arrays.asList(new MessageModel(), new MessageModel()); // Mock response
+
+        when(messageModelMapper.getAllMessageModelByServiceProviderId(serviceProviderId))
+                .thenReturn(mockResponse);
+
+        // When
+        List<MessageModel> result = messageModelService.getAllMessageModelByServiceProviderId(serviceProviderId);
+
+        // Then
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(mockResponse, result);
+
+        // Verify the interaction with the mock
+        verify(messageModelMapper, times(1)).getAllMessageModelByServiceProviderId(serviceProviderId);
+    }
+
+    @Test
+    void testGetAllMessageModelByServiceProviderIdThrowsException() {
+        // Given
+        Integer serviceProviderId = 2;
+
+        when(messageModelMapper.getAllMessageModelByServiceProviderId(serviceProviderId))
+                .thenReturn(Collections.emptyList());
+
+        // When/Then
+        assertThrows(MessageModelNotFoundException.class, () -> {
+            messageModelService.getAllMessageModelByServiceProviderId(serviceProviderId);
+        });
+
+        // Verify the interaction with the mock
+        verify(messageModelMapper, times(1)).getAllMessageModelByServiceProviderId(serviceProviderId);
     }
 
 

@@ -4,16 +4,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.dto.mapper.ModelTrackingDtoMapper;
-import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.MessageModel;
+import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
@@ -90,15 +91,37 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	}
 	
 	@Override
-	public String checkRelaunch(int contractId) {
+	public void checkRelaunch(List<MessageModel> allMessages, int contractId, int statusId) {
+		// Groupement des MessageModel par mmLink
+        Map<Integer, List<MessageModel>> groupedByLink = allMessages.stream()
+                .collect(Collectors.groupingBy(MessageModel::getMmLink));
+        
+        // System.out.println(groupedByLink);
+
+        // Itérer sur chaque groupe de MessageModel ayant le même mmLink
+        for (List<MessageModel> group : groupedByLink.values()) {
+        	// Vérification que le groupe a au moins 2 éléments (2 messages ayant le même mmLink)
+            if (group.size() >= 2) {
+            	// Accès à la paire de modèles ayant le même mmLink
+                MessageModel model1 = group.get(0);
+                MessageModel model2 = group.get(1);
+
+                // Effectuer des opérations sur la paire (model1, model2)
+               performOperationsOnPair(model1, model2);
+            }
+        }
+		
 	    try {
 	        LocalDateTime currentDate = LocalDateTime.now();
 
 	        List<ModelTrackingDTO> modelTrackingDTOList = modelTrackingMapper.findModelTrackingInfo(contractId);
+	        
+	        System.out.println(modelTrackingDTOList);
 
 	        for (ModelTrackingDTO modelTrackingDTO : modelTrackingDTOList) {
+	        	// prendre en compte link
 	            if (modelTrackingDTO.getMtFkCategoryId() == 1 || modelTrackingDTO.getMtFkCategoryId() == 2) {
-	            	// Vérifie si la date d'envoi n'est pas nulle et n'a pas dépassée 7 jours
+	            	// Vérifie si la date d'envoi n'est pas nulle et n'a pas dépassée 7 jours et si le status = 2 (en validation) 
 	                if (modelTrackingDTO.getMtSendDate() != null && modelTrackingDTO.getMtSendDate().plusDays(7).isBefore(currentDate)) {
 	                	// Maj du statusId de la table gst_model_tracking
 	                    modelTrackingDTO.setMtFkContractId(contractId);
@@ -112,10 +135,8 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	                    modelTrackingMapper.updateModelTracking(modelTracking);
 
 	                    log.info("Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId());
-	                    return "Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId();
 	                } else {
 	                    log.error("Date d'envoi nulle ou < 7 jours");
-	                    return "Date d'envoi nulle ou < 7 jours";
 	                }
 	            } else if (modelTrackingDTO.getMtFkCategoryId() == 3) {
 	            	
@@ -123,21 +144,21 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	            	
 	            }
 	        }
-
-	        // If no suitable records were found
 	        log.warn("Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId);
-	        return "Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId;
+	        // return "Aucun enregistrement trouvé pour le contrat avec l'ID : " + contractId;
 
 	    } catch (Exception e) {
-	        // Log the exception and return an error message
 	        log.error("Une erreur est survenue lors de la vérification de relance : " + e.getMessage(), e);
-	        return "Une erreur est survenue lors de la vérification de relance : " + e.getMessage();
+	        // return "Une erreur est survenue lors de la vérification de relance : " + e.getMessage();
 	    }
 	}
 	
-	public void createAndinsertRelaunchMessageModels() {
-		// MessageModel relaunchAdminDocSp = new MessageModel(1, "Relance des documents administratifs du prestataire", "je suis le body du mail", true, LocalDateTime.now(), null, 1);
-	}
+	 private static void performOperationsOnPair(MessageModel model1, MessageModel model2) {
+		// Effectuer des opérations sur la paire (model1, model2)
+        System.out.println("Effectuer des opérations sur la paire models avec mmLink: " + model1.getMmLink());
+        System.out.println("Model 1: " + model1);
+        System.out.println("Model 2: " + model2);
+	 }
 
 	@Override
 	public List<ModelTrackingDTO> getModelTrackingInfoByContractId(int contractId) {

@@ -2,23 +2,31 @@ package com.example.demo.config;
 
 import java.util.Properties;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 @Configuration
 public class MailConfiguration {
 	
-	@Value("${spring.mail.username}")
-	private String username;
+//	@Value("${spring.mail.username}")
+//	private String username;
+//
+//	@Value("${spring.mail.password}")
+//	private String password;
 
-	@Value("${spring.mail.password}")
-	private String password;
+    @Autowired
+    private Environment env;
 	
     @Bean
     public JavaMailSender getJavaMailSender() {
+
+        String username = env.getProperty("spring.mail.username");
+        String password = env.getProperty("spring.mail.password");
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         // mailSender.setHost("smtp.office365.com");

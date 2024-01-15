@@ -17,6 +17,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Created by Elimane Fofana on 2024.
+ */
+
 class ContractServiceTest {
 
     @Mock
@@ -31,20 +35,19 @@ class ContractServiceTest {
     }
 
     @Test
-    void getContractsBySubContractorIdOrServiceProviderIdOrMessageModelId() {
+    void getContractsBySubContractorId() {
         // Given
         Integer subContractorId = 1;
-        Integer serviceProviderId = null;
-        Integer modelMessageId = null;
+
 
         List<Contract> mockResponse = Arrays.asList(new Contract(), new Contract()); // Mock response
 
-        when(contractMapper.getContractsByMessageModelId(serviceProviderId, subContractorId, modelMessageId))
+        when(contractMapper.getContractsBySubcontractorId(subContractorId))
                 .thenReturn(mockResponse);
 
 
         // When
-        List<Contract> result = contractService.getContractsByMessageModelId(serviceProviderId, subContractorId, modelMessageId);
+        List<Contract> result = contractService.getContractsBySubcontractorId(subContractorId);
 
         // Then
         assertNotNull(result);
@@ -52,26 +55,65 @@ class ContractServiceTest {
       //  assertEquals(mockResponse, result);
 
         // Verify the interaction with the mock
-        verify(contractMapper, times(1)).getContractsByMessageModelId(serviceProviderId, subContractorId, modelMessageId);
+        verify(contractMapper, times(1)).getContractsBySubcontractorId(subContractorId);
     }
 
     @Test
-    void getContractsBySubContractorIdOrServiceProviderIdOrMessageModelIdThrowsException() {
+    void getContractsBySubContractorIdThrowsException() {
         // Given
-        Integer messageModelId = 2;
         Integer subContractorId = 2;
-        Integer serviceProviderId = 2;
 
-        when(contractMapper.getContractsByMessageModelId(serviceProviderId, subContractorId, messageModelId))
+        when(contractMapper.getContractsBySubcontractorId(subContractorId))
                 .thenReturn(Collections.emptyList());
 
         // When/Then
         assertThrows(MessageModelNotFoundException.class, () -> {
-            contractService.getContractsByMessageModelId(serviceProviderId, subContractorId, messageModelId);
+            contractService.getContractsBySubcontractorId(subContractorId);
         });
 
         // Verify the interaction with the mock
-        verify(contractMapper, times(1)).getContractsByMessageModelId(serviceProviderId, subContractorId, messageModelId);
+        verify(contractMapper, times(1)).getContractsBySubcontractorId(subContractorId);
+    }
+
+    @Test
+    void getContractsByServiceProviderId() {
+        // Given
+        Integer serviceProviderId = 1;
+
+
+        List<Contract> mockResponse = Arrays.asList(new Contract(), new Contract()); // Mock response
+
+        when(contractMapper.getContractsByServiceProviderId(serviceProviderId))
+                .thenReturn(mockResponse);
+
+
+        // When
+        List<Contract> result = contractService.getContractsByServiceProviderId(serviceProviderId);
+
+        // Then
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        //  assertEquals(mockResponse, result);
+
+        // Verify the interaction with the mock
+        verify(contractMapper, times(1)).getContractsByServiceProviderId(serviceProviderId);
+    }
+
+    @Test
+    void getContractsByServiceProviderIdThrowsException() {
+        // Given
+        Integer serviceProviderId = 2;
+
+        when(contractMapper.getContractsByServiceProviderId(serviceProviderId))
+                .thenReturn(Collections.emptyList());
+
+        // When/Then
+        assertThrows(MessageModelNotFoundException.class, () -> {
+            contractService.getContractsByServiceProviderId(serviceProviderId);
+        });
+
+        // Verify the interaction with the mock
+        verify(contractMapper, times(1)).getContractsByServiceProviderId(serviceProviderId);
     }
 
 }
