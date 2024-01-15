@@ -1,45 +1,42 @@
 package com.example.demo.service.implementation;
 
+import static java.util.function.Predicate.not;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import com.example.demo.dto.ContractDTO;
 import com.example.demo.dto.mapper.ContractDtoMapper;
 import com.example.demo.entity.Contract;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.mappers.ContractMapper;
-import com.example.demo.mappers.MessageModelMapper;
 import com.example.demo.service.ContractService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static java.util.function.Predicate.not;
-
-/**
- * Created by Elimane Fofana on 2024.
- */
 @Service
 public class ContractServiceImpl implements ContractService {
 	private final ContractDtoMapper contractDtoMapper;
 	private final ContractMapper contractMapper;
-
+	
 	private static final Logger log = LoggerFactory.getLogger(ContractServiceImpl.class);
-
+	
 	public ContractServiceImpl(ContractDtoMapper contractDtoMapper, ContractMapper contractMapper) {
 		this.contractDtoMapper = contractDtoMapper;
 		this.contractMapper = contractMapper;
 	}
-
+	
 	@Override
-    public List<Contract> getContractsByMessageModelId(Integer serviceProviderId, Integer subContractorId,Integer messageModelId) {
-        List<Contract> contracts = contractMapper.getContractsByMessageModelId(subContractorId,serviceProviderId,messageModelId);
+    public List<Contract> getContractsByMessageModelId(Integer serviceProviderId, Integer subContractorId) {
+        List<Contract> contracts = contractMapper.getContractsByMessageModelId(subContractorId,serviceProviderId);
         return Optional.ofNullable(contracts).filter(not(List::isEmpty))
                 .orElseThrow(() -> new MessageModelNotFoundException("No contract exists for this id!"));
     }
-
+	
 	@Override
 	public int saveContract(ContractDTO contractDTO) throws DatabaseQueryFailureException {
 		try {
@@ -47,13 +44,13 @@ public class ContractServiceImpl implements ContractService {
 				log.error("Le paramètre contractDto ne peut être null");
 				throw new IllegalArgumentException("Le paramètre contractDto ne peut être null");
 			}
-
+			
 			contractDTO.setcContractNumber(generateRandomContractNumber());
-
+			
 			Contract contract = contractDtoMapper.toContract(contractDTO);
-
+			
 			int isContractInserted = this.contractMapper.insertContract(contract);
-
+			
 			if (isContractInserted == 0) {
 				log.error("Échec de l'insertion du contrat dans la base de données");
 	            throw new DatabaseQueryFailureException("Échec de l'insertion du contrat dans la base de données");
@@ -72,4 +69,18 @@ public class ContractServiceImpl implements ContractService {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         return uuid.substring(0, 13).toUpperCase();
     }
+
+	@Override
+	public List<Contract> getContractsByServiceProviderId(Integer serviceProviderId) {
+		List<Contract> contracts = contractMapper.getContractsByServiceProviderId(serviceProviderId);
+        return Optional.ofNullable(contracts).filter(not(List::isEmpty))
+                .orElseThrow(() -> new MessageModelNotFoundException("No contract exists for this id!"));
+	}
+
+	@Override
+	public List<Contract> getContractsBySubcontractorId(Integer subContractorId) {
+		List<Contract> contracts = contractMapper.getContractsBySubcontractorId(subContractorId);
+        return Optional.ofNullable(contracts).filter(not(List::isEmpty))
+                .orElseThrow(() -> new MessageModelNotFoundException("No contract exists for this id!"));
+	}
 }
