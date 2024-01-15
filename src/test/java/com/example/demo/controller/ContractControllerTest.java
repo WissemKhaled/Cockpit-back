@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.MessageModel;
-import com.example.demo.service.MessageModelService;
+import com.example.demo.entity.Contract;
+import com.example.demo.service.ContractService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,10 +13,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,17 +29,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Elimane Fofana on 2024.
  */
-
-@WebMvcTest(controllers= MessageModelController.class) // Use for MVC testing, focusing on MessageModelController
+@WebMvcTest(controllers= ContractController.class) // Use for MVC testing, focusing on MessageModelController
 @AutoConfigureMockMvc(addFilters = false) // Auto-configure MockMvc without adding any standard servlet filters
 @ExtendWith(MockitoExtension.class) // Integrate Mockito with JUnit 5 for mocking
-public class MessageModelControllerTest {
+class ContractControllerTest {
+
 
     @Autowired
     private MockMvc mockMvc; // Inject MockMvc for simulating HTTP requests
 
     @MockBean
-    private MessageModelService messageModelService; // Create a mock implementation of MessageModelService
+    private ContractService contractService; // Create a mock implementation of contractService
 
     private String jwtToken; // Variable to store a JWT token for testing
 
@@ -49,25 +49,24 @@ public class MessageModelControllerTest {
         jwtToken = "Bearer  eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huQHRlc3QuZnIiLCJpYXQiOjE3MDQ3ODk1NDQsImV4cCI6MTcwNTE5OTYxMH0.Ylrez3dFJw2l_npcquivixS5fSEmPh0AUjAMLzE6MKk";
     }
 
+
     @Test
-    @WithUserDetails // Use to set up a mock Spring Security user
-    void getAllMessageModelsBySubContractorId() throws Exception {
+    void getAllMessageModelsBySubcontractorId() throws Exception {
         // Define test parameters
         Integer subContractorId = 1;
-
         Pageable pageable = PageRequest.of(0, 6);
 
-        // Create a list of mock MessageModel objects for the test
-        List<MessageModel> mockMessageModels = Collections.singletonList(new MessageModel());
+        // Create a list of mock Contract objects for the test
+        List<Contract> mockContracts = Collections.singletonList(new Contract());
 
         // Define behavior of mocked service method
-        when(messageModelService.getAllMessageModelBySubcontractorId(subContractorId))
-                .thenReturn(mockMessageModels);
+        when(contractService.getContractsBySubcontractorId(subContractorId))
+                .thenReturn(mockContracts);
 
         // Perform a GET request to the specified URL and set up the request
-        MvcResult result = mockMvc.perform(get("/MessageModel/getAllMessagesBySubcontractorId")
+        MvcResult result = mockMvc.perform(get("/contract/getContractsBySubcontractorId")
                         .header("Authorization", jwtToken) // Add JWT token to the request header for authorization
-                        .param("subContractorId",String.valueOf(subContractorId)) // Add 'subContractorId' as a request parameter if it's not null
+                        .param("subContractorId", String.valueOf(subContractorId)) // Add 'subContractorId' as a request parameter
                         .contentType(MediaType.APPLICATION_JSON)) // Set the content type of the request to JSON
                 .andExpect(status().isOk()) // Assert that the response status is 200 OK
                 .andExpect(jsonPath("$.content").exists()) // Assert that there is a 'content' field in the JSON response
@@ -81,28 +80,26 @@ public class MessageModelControllerTest {
         System.out.println("Response Status: " + result.getResponse().getStatus());
 
         // Verify the service method was called with the correct parameters
-        verify(messageModelService).getAllMessageModelBySubcontractorId(subContractorId);
+        verify(contractService).getContractsBySubcontractorId(subContractorId);
     }
 
     @Test
-    @WithUserDetails // Use to set up a mock Spring Security user
     void getAllMessageModelsByServiceProviderId() throws Exception {
         // Define test parameters
         Integer serviceProviderId = 1;
-
         Pageable pageable = PageRequest.of(0, 6);
 
-        // Create a list of mock MessageModel objects for the test
-        List<MessageModel> mockMessageModels = Collections.singletonList(new MessageModel());
+        // Create a list of mock Contract objects for the test
+        List<Contract> mockContracts = Collections.singletonList(new Contract());
 
         // Define behavior of mocked service method
-        when(messageModelService.getAllMessageModelByServiceProviderId(serviceProviderId))
-                .thenReturn(mockMessageModels);
+        when(contractService.getContractsByServiceProviderId(serviceProviderId))
+                .thenReturn(mockContracts);
 
         // Perform a GET request to the specified URL and set up the request
-        MvcResult result = mockMvc.perform(get("/MessageModel/getAllMessagesBySubcontractorId")
+        MvcResult result = mockMvc.perform(get("/contract/getContractsBySubcontractorId")
                         .header("Authorization", jwtToken) // Add JWT token to the request header for authorization
-                        .param("subContractorId",String.valueOf(serviceProviderId)) // Add 'subContractorId' as a request parameter if it's not null
+                        .param("serviceProviderId", String.valueOf(serviceProviderId)) // Add 'serviceProviderId' as a request parameter
                         .contentType(MediaType.APPLICATION_JSON)) // Set the content type of the request to JSON
                 .andExpect(status().isOk()) // Assert that the response status is 200 OK
                 .andExpect(jsonPath("$.content").exists()) // Assert that there is a 'content' field in the JSON response
@@ -116,7 +113,7 @@ public class MessageModelControllerTest {
         System.out.println("Response Status: " + result.getResponse().getStatus());
 
         // Verify the service method was called with the correct parameters
-        verify(messageModelService).getAllMessageModelByServiceProviderId(serviceProviderId);
+        verify(contractService).getContractsBySubcontractorId(serviceProviderId);
     }
-
 }
+

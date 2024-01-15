@@ -26,8 +26,11 @@ import com.example.demo.service.UserInfoService;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-	@Autowired
-	private JwtAuthFilter authFilter; 
+	private final JwtAuthFilter authFilter;
+
+	public SecurityConfig(JwtAuthFilter authFilter) {
+		this.authFilter = authFilter;
+	}
 
 	// User Creation 
 	@Bean
@@ -78,9 +81,4 @@ public class SecurityConfig {
 		return config.getAuthenticationManager(); 
 	}
 
-
-//	@Bean
-//	public JwtService jwtService() {
-//		return new JwtServiceImplementation();
-//	}
 }

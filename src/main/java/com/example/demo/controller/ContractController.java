@@ -59,4 +59,5 @@ public class ContractController {
             return (ResponseEntity<Page<Contract>>) ResponseEntity.notFound();
         }
     }
+
 }

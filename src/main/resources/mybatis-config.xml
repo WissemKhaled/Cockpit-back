@@ -11,13 +11,14 @@
 		<package name="com.example.demo.entity" />
 	</typeAliases>
 	<mappers>
-		<mapper resource="xml/com/example/demo/mappers/SubcontractorMapper.xml" />
-		<mapper resource="xml/com/example/demo/mappers/ServiceProviderMapper.xml" />
-		<mapper resource="xml/com/example/demo/mappers/StatusMapper.xml" />
-		<mapper resource="xml/com/example/demo/mappers/UUserMapper.xml" />
-		<mapper resource="xml/com/example/demo/mappers/RefreshTokenMapper.xml" />
-		<mapper resource="xml/com/example/demo/mappers/GstLogMapper.xml" />
-		<mapper resource="xml/com/example/demo/mappers/SendMailMapper.xml" />
-		<mapper resource="xml/com/example/demo/mappers/MessageModelMapper.xml" />
+		<mapper resource="com/example/demo/mappers/SubcontractorMapper.xml" />
+		<mapper resource="com/example/demo/mappers/ServiceProviderMapper.xml" />
+		<mapper resource="com/example/demo/mappers/StatusMapper.xml" />
+		<mapper resource="com/example/demo/mappers/UUserMapper.xml" />
+		<mapper resource="com/example/demo/mappers/RefreshTokenMapper.xml" />
+		<mapper resource="com/example/demo/mappers/GstLogMapper.xml" />
+		<mapper resource="com/example/demo/mappers/SendMailMapper.xml" />
+		<mapper resource="com/example/demo/mappers/MessageModelMapper.xml" />
+		<mapper resource="com/example/demo/mappers/ContractMapper.xml" />
 	</mappers>
 </configuration>

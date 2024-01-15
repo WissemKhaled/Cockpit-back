@@ -16,7 +16,7 @@ spring:
     password: root
     url: jdbc:postgresql://localhost:5432/Cockpit-app?currentSchema=schema_test
 #    url: jdbc:postgresql://localhost:5432/Cockpit-app?currentSchema=schema_dev
-    
+
   sql:
     init:
       mode: never #pour activer l'initialisation de la bdd, changer le mode en always
