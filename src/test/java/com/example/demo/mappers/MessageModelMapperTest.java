@@ -15,13 +15,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// @SpringBootTest: Loads full application context for integration testing,
-// @Transactional: Ensures each test is transactional, rolling back DB changes after the test
-@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
-@ActiveProfiles("test") // Make sure to have a test profile that configures an in-memory database
-@Sql(scripts = {"/schema-test-h2.sql", "/data-test-h2.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD) // Adjust paths to your schema and data scripts
 class MessageModelMapperTest {
 
     @Autowired
@@ -50,6 +45,32 @@ class MessageModelMapperTest {
 
         // Then
         assertNotNull(results);
+        //assertFalse(results.isEmpty()); // Assuming you're expecting non-empty results
+    }
+
+    @Test
+    public void testGetAllMessageModelBySubContractor_Should_Return_Null_Value() {
+        // Given
+        Integer subContractorStatusId = null;
+
+        // When
+        List<MessageModel> results = messageModelMapper.getAllMessageModelBySubcontractorId(subContractorStatusId);
+
+        // Then
+        assertEquals(results.isEmpty(), true);
+        //assertFalse(results.isEmpty()); // Assuming you're expecting non-empty results
+    }
+
+    @Test
+    public void testGetAllMessageModelByServiceProvider_Should_Return_Null_Value() {
+        // Given
+        Integer serviceProviderId = null;
+
+        // When
+        List<MessageModel> results = messageModelMapper.getAllMessageModelByServiceProviderId(serviceProviderId);
+
+        // Then
+        assertEquals(results.isEmpty(), true);
         //assertFalse(results.isEmpty()); // Assuming you're expecting non-empty results
     }
 }

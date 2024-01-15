@@ -60,6 +60,18 @@ public class MessageModelController {
 //			return ResponseEntity.notFound().build();
 //		}
 //	}
+
+
+	/**
+	 * Récupère une liste paginée de MessageModels basée sur l'ID du sous-traitant donné.
+	 *
+	 * @param subcontractorId L'ID du sous-traitant pour lequel les messages doivent être récupérés.
+	 * @param contractId L'ID du contrat associé aux messages.
+	 * @param statusId L'ID de statut pour filtrer les messages.
+	 * @param pageable Objet Pageable pour définir les paramètres de pagination (numéro de page et taille).
+	 * @return ResponseEntity contenant une page d'objets MessageModel. Renvoie une réponse OK avec la page de messages si réussi, ou une réponse NOT FOUND si aucun message n'est trouvé.
+	 * @throws MessageModelNotFoundException si aucun MessageModel n'est trouvé pour le subcontractorId donné.
+	 */
 	
 	@GetMapping("/getAllMessagesBySubcontractorId")
 	public ResponseEntity<Page<MessageModel>> getAllMessageModelBySubcontractorId(
@@ -81,7 +93,17 @@ public class MessageModelController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
+
+	/**
+	 * Récupère une liste paginée de MessageModels basée sur l'ID du prestataire de services donné.
+	 *
+	 * @param serviceProviderId L'ID du prestataire de services pour lequel les messages doivent être récupérés.
+	 * @param contractId L'ID du contrat associé aux messages.
+	 * @param statusId L'ID de statut pour filtrer les messages.
+	 * @param pageable Objet Pageable pour définir les paramètres de pagination (numéro de page et taille).
+	 * @return ResponseEntity contenant une page d'objets MessageModel. Renvoie une réponse OK avec la page de messages si réussi, ou une réponse NOT FOUND si aucun message n'est trouvé.
+	 * @throws MessageModelNotFoundException si aucun MessageModel n'est trouvé pour le serviceProviderId donné.
+	 */
 	@GetMapping("/getAllMessagesByServiceProviderId")
 	public ResponseEntity<Page<MessageModel>> getAllMessageModelByServiceProviderId(
 			@RequestParam(value = "serviceProviderId") Integer serviceProviderId,
