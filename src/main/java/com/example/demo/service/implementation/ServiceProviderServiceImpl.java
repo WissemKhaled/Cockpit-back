@@ -89,7 +89,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    } else {
 	        throw new EntityNotFoundException(String.format("Le statut avec l'id: %d n'existe pas", statusId));
 	    }
-
 	    if (serviceProvidersList == null || serviceProvidersList.isEmpty()) {
 	        throw new EntityNotFoundException("Aucun résultat trouvé");
 	    }

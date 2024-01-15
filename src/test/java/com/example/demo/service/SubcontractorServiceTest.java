@@ -125,7 +125,7 @@ public class SubcontractorServiceTest {
 	    Subcontractor subcontractor2 = new Subcontractor();
 	    subcontractor2.setSId(2);
 	    subcontractor2.setSName("Subcontractor 2");
-	    subcontractor2.setSEmail("subcontractor2@example.com");
+	    subcontractor2.setSEmail("subcontractor2@example.com"); 
 	    
 	    SubcontractorDto subcontractorDto1 = new SubcontractorDtoBuilder()
 	    		.withSName("Test Subcontractor")
@@ -243,7 +243,7 @@ public class SubcontractorServiceTest {
         List<SubcontractorDto> subcontractorDtoList = subcontractorService.getAllSubcontractorWithStatus(sortingMethod, pageSize, pageNumber, statusId);
 
         // THEN
-	    assertThat(subcontractorDtoList).isNotNull().isNotEmpty().hasSize(expectedSubcontractorDtoList.size());
+	    assertThat(subcontractorDtoList).isNotNull().isNotEmpty().hasSize(expectedSubcontractorDtoList.size()); 
     }
     
     @Test
