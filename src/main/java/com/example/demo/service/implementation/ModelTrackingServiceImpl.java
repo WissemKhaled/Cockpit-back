@@ -109,13 +109,13 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 			    }
 			    
 			    // modelTrackingDTODemand
-			    modelTrackingDTODemand.setMtFkContractId(contractId);
-			    modelTrackingDTODemand.setMtFkMessageModelId(mmId);
+			    modelTrackingDTODemand.setMtFkContractId(modelTrackingDTODemand.getMtFkContractId());
+			    modelTrackingDTODemand.setMtFkMessageModelId(modelTrackingDTODemand.getMtFkMessageModelId());
 			    modelTrackingDTODemand.setMtFkCategoryId(modelTrackingDTODemand.getMtFkCategoryId());
 			    
 			    // modelTrackingDTORelaunch
-			    modelTrackingDTORelaunch.setMtFkContractId(contractId);
-			    modelTrackingDTORelaunch.setMtFkMessageModelId(mmId);
+			    modelTrackingDTORelaunch.setMtFkContractId(modelTrackingDTORelaunch.getMtFkContractId());
+			    modelTrackingDTORelaunch.setMtFkMessageModelId(modelTrackingDTORelaunch.getMtFkMessageModelId());
 			    modelTrackingDTORelaunch.setMtFkCategoryId(modelTrackingDTORelaunch.getMtFkCategoryId());
 
 			    // si l'ID du status reçu du front = 2, on l'update à 2 et on update le mmId à 2 également dans la table intermédiaire et on update la date d'envoi
@@ -125,7 +125,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 			    	modelTrackingDTODemand.setMtFkStatusId(statusId);
 			    	modelTrackingDTODemand.setMtSendDate(LocalDateTime.now());
 			    	
-			    	// Maj status de la relance
+			    	// Maj status de la relance ?
 			    	modelTrackingDTORelaunch.setMtFkStatusId(1);
 
 			        // 7 jours après date envoie, relance
@@ -140,11 +140,14 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 			        modelTrackingDTODemand.setMtValidationDate(validationDate);
 			    	
 			        // Maj status de la relance
-			    	modelTrackingDTORelaunch.setMtFkStatusId(5);
+			    	modelTrackingDTORelaunch.setMtFkStatusId(3);
 			    }
 			    
 			    ModelTracking modelTrackingDemand = modelTrackingDtoMapper.toModelTracking(modelTrackingDTODemand);
 			    ModelTracking modelTrackingRelaunch = modelTrackingDtoMapper.toModelTracking(modelTrackingDTORelaunch);
+			    
+			    System.out.println("modelTrackingDemand updated = " + modelTrackingDemand);
+			    System.out.println("modelTrackingRelaunch updated = " + modelTrackingRelaunch);
 
 			    int isDemandModelTrackingUpdated = modelTrackingMapper.updateModelTracking(modelTrackingDemand);
 			    int isRelaunchModelTrackingUpdated = modelTrackingMapper.updateModelTracking(modelTrackingRelaunch);
@@ -156,11 +159,11 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 			    	log.error("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingRelaunch.getMtFkMessageModelId());
 			        throw new DatabaseQueryFailureException("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingRelaunch.getMtFkMessageModelId());
 			    } else if (isDemandModelTrackingUpdated > 0) {
+			    	log.info("Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingDemand.getMtFkMessageModelId());
+				    return "Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model deman avec mmId = " + modelTrackingDemand.getMtFkMessageModelId();
+			    } else if (isRelaunchModelTrackingUpdated > 0) {
 			    	log.info("Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingRelaunch.getMtFkMessageModelId());
 				    return "Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingRelaunch.getMtFkMessageModelId();
-			    } else if (isDemandModelTrackingUpdated > 0) {
-			    	log.info("Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingDemand.getMtFkMessageModelId());
-				    return "Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingDemand.getMtFkMessageModelId();
 			    }
 	        }
 		}
@@ -207,13 +210,15 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 				                	modelTrackingDTORelaunch.setMtSendDate(modelTrackingDTORelaunch.getMtSendDate());
 				                	modelTrackingDTORelaunch.setMtValidationDate(modelTrackingDTORelaunch.getMtValidationDate());
 
-				                    ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTORelaunch);
+				                    ModelTracking modelTrackingRelaunch = modelTrackingDtoMapper.toModelTracking(modelTrackingDTORelaunch);
+				                    
+				                    System.out.println("modelTrackingRelaunch = " + modelTrackingRelaunch);
 
-				                    modelTrackingMapper.updateModelTracking(modelTracking);
+				                    modelTrackingMapper.updateModelTracking(modelTrackingRelaunch);
 
-				                    log.info("Relance : Table ModelTracking mise à jour pour l'id : " + modelTracking.getMtId());
+				                    log.info("Relance : Table ModelTracking mise à jour pour l'id : " + modelTrackingRelaunch.getMtId());
 				                } else {
-				                    log.error("Date d'envoi nulle ou < 7 jours");
+				                    // log.error("Date d'envoi nulle ou < 7 jours");
 				                }
 				            }
 			        	// si le status est en validé, on passe le status des demandes de 3 à 1 et le status des relances de 3 à 5 pour les modèles kbis à 5 mois et demi de la date de validation
@@ -246,7 +251,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 
 				                    log.info("Maj Relance : Table ModelTracking mise à jour pour l'id : " + modelTrackingRelaunch.getMtId());
 				                } else {
-				                    log.error("Date d'envoi nulle ou < 5 mois et demi");
+				                    // log.error("Date d'envoi nulle ou < 5 mois et demi");
 				                }
 				            }
 				        }
