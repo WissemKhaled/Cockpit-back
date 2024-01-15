@@ -215,7 +215,7 @@ SELECT
     c.c_id AS mt_fk_contract_id,
     mm.mm_id AS mt_fk_message_model_id,
     CASE WHEN LOWER(mm.mm_subject) LIKE 'relance%'
-         THEN 5  -- Assigning status 5 for models starting with "relance"
+         THEN 5  -- s'il s'agit d'une relance, on lui attribut le status 5 'En cours - relance'
          ELSE s.sp_fk_status_id
     END AS mt_fk_status_id,
     mm.mm_fk_category_id AS mt_fk_category_id
