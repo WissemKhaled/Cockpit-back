@@ -30,12 +30,7 @@ public class ContractServiceImpl implements ContractService {
 		this.contractMapper = contractMapper;
 	}
 	
-	@Override
-    public List<Contract> getContractsByMessageModelId(Integer serviceProviderId, Integer subContractorId) {
-        List<Contract> contracts = contractMapper.getContractsByMessageModelId(subContractorId,serviceProviderId);
-        return Optional.ofNullable(contracts).filter(not(List::isEmpty))
-                .orElseThrow(() -> new MessageModelNotFoundException("No contract exists for this id!"));
-    }
+
 	
 	@Override
 	public int saveContract(ContractDTO contractDTO) throws DatabaseQueryFailureException {
