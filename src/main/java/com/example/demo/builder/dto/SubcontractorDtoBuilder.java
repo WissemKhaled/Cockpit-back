@@ -1,13 +1,10 @@
 package com.example.demo.builder.dto;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import com.example.demo.dto.SubcontractorDto;
-import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Status;
-import com.example.demo.entity.Subcontractor;
 
 public class SubcontractorDtoBuilder {
 	private int sId;

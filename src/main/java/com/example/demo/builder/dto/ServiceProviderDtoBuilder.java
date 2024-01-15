@@ -45,7 +45,7 @@ public class ServiceProviderDtoBuilder {
 		return this;
 	}
 
-	public ServiceProviderDtoBuilder withSubcontractor(String subcontractorName) {
+	public ServiceProviderDtoBuilder withSubcontractorName(String subcontractorName) {
 		this.subcontractorName = subcontractorName;
 		return this;
 	}

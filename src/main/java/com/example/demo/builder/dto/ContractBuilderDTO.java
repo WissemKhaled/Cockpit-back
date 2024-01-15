@@ -6,7 +6,7 @@ public class ContractBuilderDTO {
 	private int cId;
 	private String cContractNumber;
 	private int cFkSubcontractorId;
-	private int cFKserviceProviderId;
+	private int cFKserviceProviderId; 
 
 	public ContractBuilderDTO withId(int cId) {
 		this.cId = cId;
