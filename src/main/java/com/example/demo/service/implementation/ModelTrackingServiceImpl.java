@@ -78,7 +78,6 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	        log.error("Aucune paire de message modèle de relance et demande trouvée");
 	        throw new EntityNotFoundException("Aucune paire de message modèle de relance et demande trouvée");
 	    }
-
 	    return pairs;
 	}
 	
@@ -90,51 +89,83 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 		List<Pair<MessageModel, MessageModel>> allPairs = getAllPairsDemandAndItsRelaunchMessageModel();
 	    
 	    for (Pair<MessageModel, MessageModel> pair : allPairs) {
-	        MessageModel demands = pair.getFirst();
-	        MessageModel relaunches = pair.getSecond();
+	        MessageModel demand = pair.getFirst();
+	        MessageModel relaunch = pair.getSecond();
 	        
-	        System.out.println("demand = " + demands);
-	        System.out.println("relaunch = " + relaunches);
+	        // On vérifie si demands a un mmId = à celui passé en paramètre
+	        // On vérifie également si la relance a un mmId = au mmId passé en param + 1
+	        if (demand.getMmId() == mmId || relaunch.getMmId() == mmId + 1 ) {
+	        	ModelTrackingDTO modelTrackingDTODemand = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, demand.getMmId());
+		        ModelTrackingDTO modelTrackingDTORelaunch = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, relaunch.getMmId());
+		        
+		        System.out.println("demand = " + modelTrackingDTODemand);
+		        System.out.println("relaunch = " + modelTrackingDTORelaunch);
+		        
+		        ModelTrackingDTO modelTrackingDTO = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, mmId);
+			    
+			    if (modelTrackingDTODemand == null || modelTrackingDTORelaunch == null) {
+			        log.error("Le suivi selon le contrat avec l'ID " + contractId + " n'a pas été trouvé");
+			        throw new EntityNotFoundException("Le suivi selon le contrat avec l'ID " + contractId + " n'a pas été trouvé");
+			    }
+			    
+			    // modelTrackingDTODemand
+			    modelTrackingDTODemand.setMtFkContractId(contractId);
+			    modelTrackingDTODemand.setMtFkMessageModelId(mmId);
+			    modelTrackingDTODemand.setMtFkCategoryId(modelTrackingDTODemand.getMtFkCategoryId());
+			    
+			    // modelTrackingDTORelaunch
+			    modelTrackingDTORelaunch.setMtFkContractId(contractId);
+			    modelTrackingDTORelaunch.setMtFkMessageModelId(mmId);
+			    modelTrackingDTORelaunch.setMtFkCategoryId(modelTrackingDTORelaunch.getMtFkCategoryId());
+
+			    // si l'ID du status reçu du front = 2, on l'update à 2 et on update le mmId à 2 également dans la table intermédiaire et on update la date d'envoi
+			    // si on reçoit une date de validation du front, on update l'ID du status à 3 et on update le mmId à 3 également dans la table intermédiaire et on update la date de validation
+			    if (statusId == 2) {
+			    	// Maj status de la demande
+			    	modelTrackingDTODemand.setMtFkStatusId(statusId);
+			    	modelTrackingDTODemand.setMtSendDate(LocalDateTime.now());
+			    	
+			    	// Maj status de la relance
+			    	modelTrackingDTORelaunch.setMtFkStatusId(1);
+
+			        // 7 jours après date envoie, relance
+			    } else if (validationDateString != null) {
+			    	// Maj status de la demande
+			    	modelTrackingDTODemand.setMtFkStatusId(3);
+			    	modelTrackingDTODemand.setMtSendDate(modelTrackingDTO.getMtSendDate());
+			    	
+			    	// Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
+			        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+			        LocalDateTime validationDate = convertStringToLocalDateTime(validationDateString, pattern);
+			        modelTrackingDTODemand.setMtValidationDate(validationDate);
+			    	
+			        // Maj status de la relance
+			    	modelTrackingDTORelaunch.setMtFkStatusId(5);
+			    }
+			    
+			    ModelTracking modelTrackingDemand = modelTrackingDtoMapper.toModelTracking(modelTrackingDTODemand);
+			    ModelTracking modelTrackingRelaunch = modelTrackingDtoMapper.toModelTracking(modelTrackingDTORelaunch);
+
+			    int isDemandModelTrackingUpdated = modelTrackingMapper.updateModelTracking(modelTrackingDemand);
+			    int isRelaunchModelTrackingUpdated = modelTrackingMapper.updateModelTracking(modelTrackingRelaunch);
+
+			    if (isDemandModelTrackingUpdated == 0) {
+			        log.error("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingDemand.getMtFkMessageModelId());
+			        throw new DatabaseQueryFailureException("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingDemand.getMtFkMessageModelId());
+			    } else if (isRelaunchModelTrackingUpdated == 0) {
+			    	log.error("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingRelaunch.getMtFkMessageModelId());
+			        throw new DatabaseQueryFailureException("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingRelaunch.getMtFkMessageModelId());
+			    } else if (isDemandModelTrackingUpdated > 0) {
+			    	log.info("Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingRelaunch.getMtFkMessageModelId());
+				    return "Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingRelaunch.getMtFkMessageModelId();
+			    } else if (isDemandModelTrackingUpdated > 0) {
+			    	log.info("Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingDemand.getMtFkMessageModelId());
+				    return "Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingDemand.getMtFkMessageModelId();
+			    }
+	        }
 		}
-		
-	    ModelTrackingDTO modelTrackingDTO = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, mmId);
-	    
-	    if (modelTrackingDTO == null) {
-	        log.error("Le suivi selon le contrat avec l'ID " + contractId + " n'a pas été trouvé");
-	        throw new EntityNotFoundException("Le suivi selon le contrat avec l'ID " + contractId + " n'a pas été trouvé");
-	    }
-
-	    modelTrackingDTO.setMtFkContractId(contractId);
-	    modelTrackingDTO.setMtFkMessageModelId(mmId);
-	    modelTrackingDTO.setMtFkCategoryId(modelTrackingDTO.getMtFkCategoryId());
-
-	    // si l'ID du status reçu du front = 2, on l'update à 2 et on update le mmId à 2 également dans la table intermédiaire et on update la date d'envoi
-	    // si on reçoit une date de validation du front, on update l'ID du status à 3 et on update le mmId à 3 également dans la table intermédiaire et on update la date de validation
-	    if (statusId == 2) {
-	        modelTrackingDTO.setMtFkStatusId(statusId);
-	        modelTrackingDTO.setMtSendDate(LocalDateTime.now());
-
-	        // 7 jours après date envoie, relance
-	    } else if (validationDateString != null) {
-	        modelTrackingDTO.setMtFkStatusId(3);
-	        modelTrackingDTO.setMtSendDate(modelTrackingDTO.getMtSendDate());
-
-	        // Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
-	        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
-	        LocalDateTime validationDate = convertStringToLocalDateTime(validationDateString, pattern);
-	        modelTrackingDTO.setMtValidationDate(validationDate);
-	    }
-
-	    ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
-
-	    int isModelTrackingUpdated = modelTrackingMapper.updateModelTracking(modelTracking);
-
-	    if (isModelTrackingUpdated == 0) {
-	        log.error("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId);
-	        throw new DatabaseQueryFailureException("Erreur de mise à jour de la table ModelTracking");
-	    }
-	    log.info("Table ModelTracking mise à jour avec succès pour le contractId " + contractId);
-	    return "Table ModelTracking mise à jour avec succès";
+	    log.error("Aucune paire de message modèle de relance et demande trouvée pour mmId " + mmId);
+	    throw new EntityNotFoundException("Aucune paire de message modèle de relance et demande trouvée pour mmId " + mmId);
 	}
 
 	@Override
@@ -160,7 +191,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 //		        System.out.println("Model relance: " + modelTrackingDTORelaunch);
 			        
 				 if (modelTrackingDTODemand != null && modelTrackingDTORelaunch != null) {
-					 log.info("modelTrackingDTODemand et modelTrackingDTORelaunch récupéré pour le contractId: " + contractId);
+					 // log.info("modelTrackingDTODemand et modelTrackingDTORelaunch récupéré pour le contractId: " + contractId);
 					 
 					    try {
 				        LocalDateTime currentDate = LocalDateTime.now();
