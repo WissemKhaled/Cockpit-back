@@ -50,6 +50,31 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	    return LocalDateTime.parse(dateString, formatter);
 	}
 	
+	public String saveModelTracking(ModelTrackingDTO modelTrackingDTO) throws DatabaseQueryFailureException {
+		try {
+			if (modelTrackingDTO == null) {
+				log.warn("Le paramètre modelTrackingDTO ne peux être null");
+				throw new EntityNotFoundException("Le paramètre modelTrackingDTO ne peux être null");
+			}
+			
+			ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
+			int isModelTrackingDTOInserted = modelTrackingMapper.insertGstModelTracking(modelTracking);
+			
+			if (isModelTrackingDTOInserted == 0) {
+				log.error("Echec de l'insertion de l'objet en bdd");
+				throw new DatabaseQueryFailureException("Echec de l'insertion de l'objet en bdd");
+			}
+			
+			log.info("modelTracking inséré avec succès en db");
+			return "modelTracking inséré avec succès en db";
+		} catch(EntityNotFoundException ex) {
+			throw new EntityNotFoundException(ex.getMessage());
+		} catch(DatabaseQueryFailureException ex) {
+			throw new DatabaseQueryFailureException(ex.getMessage());
+		}
+		
+	}
+	
 	/*
 	 * Méthode qui retourne chaque modèle de demande associé à son modèle de relance par mmLink similaire
 	**/

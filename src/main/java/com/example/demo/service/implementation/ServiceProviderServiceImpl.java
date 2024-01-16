@@ -15,7 +15,6 @@ import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.mapper.ModelTrackingDtoMapper;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
-import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.AlreadyArchivedEntity;
@@ -26,13 +25,14 @@ import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.ContractService;
+import com.example.demo.service.ModelTrackingService;
 import com.example.demo.service.ServiceProviderService;
 import com.example.demo.service.SubcontractorService;
 
 @Service
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final ServiceProviderMapper serviceProviderMapper;
-	private final ModelTrackingMapper modelTrackingMapper;
+	private final ModelTrackingService modelTrackingService;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
 	private final ModelTrackingDtoMapper modelTrackingDtoMapper;
 	private final ContractService contractService;
@@ -43,12 +43,12 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 			ServiceProviderMapper serviceProviderMapper,
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
 			ModelTrackingDtoMapper modelTrackingDtoMapper, 
-			ModelTrackingMapper modelTrackingMapper, 
+			ModelTrackingService modelTrackingService, 
 			ContractService contractService,
 			SubcontractorService subcontractorService
 	) {
 		this.serviceProviderMapper = serviceProviderMapper;
-		this.modelTrackingMapper = modelTrackingMapper;
+		this.modelTrackingService = modelTrackingService;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
 		this.modelTrackingDtoMapper = modelTrackingDtoMapper;
 		this.contractService = contractService;
@@ -179,15 +179,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		
 		try {
 	        for (ModelTrackingDTO modelTrackingDTO : modelTrackingDTOList) {
-	            int isModelTrackingInserted = modelTrackingMapper.insertGstModelTracking(modelTrackingDtoMapper.toModelTracking(modelTrackingDTO));
-
-	            if (isModelTrackingInserted == 0) {
-	                throw new GeneralException("Erreur lors de l'insertion des données dans la table modelTracking");
-	            }
+	        	modelTrackingService.saveModelTracking(modelTrackingDTO);
 	        }
-			
-			log.info("Données dans la table modelTracking insérées avec succès");
-			
 			return serviceProviderToSave.getSpId();
 		} catch(PersistenceException e) {
 			log.error("Erreur MyBatis lors de l'insertion des données dans la table modelTracking : ", e);

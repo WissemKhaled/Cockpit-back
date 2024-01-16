@@ -6,6 +6,8 @@ import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.exception.DatabaseQueryFailureException;
 
 public interface ModelTrackingService {
+	public String saveModelTracking(ModelTrackingDTO modelTrackingDTO) throws DatabaseQueryFailureException;
+	
 	public String updateModelTrackingDemand(int mmId, int statusId, int contractId, String validationDate) throws DatabaseQueryFailureException;
 	
 	public List<ModelTrackingDTO> getModelTrackingInfoByContractId(int contractId);
