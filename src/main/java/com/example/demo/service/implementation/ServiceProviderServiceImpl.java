@@ -1,6 +1,7 @@
 package com.example.demo.service.implementation;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -162,127 +163,26 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		// le numéro de contrat est généré dand la méthode saveContract suivante dans le ContractServiceImpl :
 		int contractId = contractService.saveContract(contractDTO);
 		
-		// Création/insertions dans la table tracking (1 insertion par message modelès existants
-		ModelTrackingDTO modelTrackingDTO_1 = new ModelTrackingDTO();
-		modelTrackingDTO_1.setMtFkContractId(contractId);
-		modelTrackingDTO_1.setMtFkCategoryId(1); // SP category
-		modelTrackingDTO_1.setMtFkMessageModelId(1);
-		modelTrackingDTO_1.setMtFkStatusId(1);
-		ModelTracking modelTracking_1 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_1);
-		
-		ModelTrackingDTO modelTrackingDTO_2 = new ModelTrackingDTO();
-		modelTrackingDTO_2.setMtFkContractId(contractId);
-		modelTrackingDTO_2.setMtFkCategoryId(1);
-		modelTrackingDTO_2.setMtFkMessageModelId(2);
-		modelTrackingDTO_2.setMtFkStatusId(1);
-		ModelTracking modelTracking_2 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_2);
-		
-		ModelTrackingDTO modelTrackingDTO_3 = new ModelTrackingDTO();
-		modelTrackingDTO_3.setMtFkContractId(contractId);
-		modelTrackingDTO_3.setMtFkCategoryId(1);
-		modelTrackingDTO_3.setMtFkMessageModelId(3);
-		modelTrackingDTO_3.setMtFkStatusId(1);
-		ModelTracking modelTracking_3 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_3);
-		
-		ModelTrackingDTO modelTrackingDTO_4 = new ModelTrackingDTO();
-		modelTrackingDTO_4.setMtFkContractId(contractId);
-		modelTrackingDTO_4.setMtFkCategoryId(1);
-		modelTrackingDTO_4.setMtFkMessageModelId(4);
-		modelTrackingDTO_4.setMtFkStatusId(1);
-		ModelTracking modelTracking_4 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_4);
-		
-		ModelTrackingDTO modelTrackingDTO_5 = new ModelTrackingDTO();
-		modelTrackingDTO_5.setMtFkContractId(contractId);
-		modelTrackingDTO_5.setMtFkCategoryId(1);
-		modelTrackingDTO_5.setMtFkMessageModelId(5);
-		modelTrackingDTO_5.setMtFkStatusId(1);
-		ModelTracking modelTracking_5 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_5);
-		
-		ModelTrackingDTO modelTrackingDTO_6 = new ModelTrackingDTO();
-		modelTrackingDTO_6.setMtFkContractId(contractId);
-		modelTrackingDTO_6.setMtFkCategoryId(1);
-		modelTrackingDTO_6.setMtFkMessageModelId(6);
-		modelTrackingDTO_6.setMtFkStatusId(1);
-		ModelTracking modelTracking_6 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_6);
-		
-		ModelTrackingDTO modelTrackingDTO_7 = new ModelTrackingDTO();
-		modelTrackingDTO_7.setMtFkContractId(contractId);
-		modelTrackingDTO_7.setMtFkCategoryId(1);
-		modelTrackingDTO_7.setMtFkMessageModelId(7);
-		modelTrackingDTO_7.setMtFkStatusId(1);
-		ModelTracking modelTracking_7 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_7);
-		
-		ModelTrackingDTO modelTrackingDTO_8 = new ModelTrackingDTO();
-		modelTrackingDTO_8.setMtFkContractId(contractId);
-		modelTrackingDTO_8.setMtFkCategoryId(1);
-		modelTrackingDTO_8.setMtFkMessageModelId(8);
-		modelTrackingDTO_8.setMtFkStatusId(1);
-		ModelTracking modelTracking_8 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_8);
-		
-		// ###############################################################
-		
-		ModelTrackingDTO modelTrackingDTO_9 = new ModelTrackingDTO();
-		modelTrackingDTO_9.setMtFkContractId(contractId);
-		modelTrackingDTO_9.setMtFkCategoryId(4);
-		modelTrackingDTO_9.setMtFkMessageModelId(9);
-		modelTrackingDTO_9.setMtFkStatusId(1);
-		ModelTracking modelTracking_9 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_9);
-		
-		ModelTrackingDTO modelTrackingDTO_10 = new ModelTrackingDTO();
-		modelTrackingDTO_10.setMtFkContractId(contractId);
-		modelTrackingDTO_10.setMtFkCategoryId(4);
-		modelTrackingDTO_10.setMtFkMessageModelId(10);
-		modelTrackingDTO_10.setMtFkStatusId(1);
-		ModelTracking modelTracking_10 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_10);
-		
-		ModelTrackingDTO modelTrackingDTO_11 = new ModelTrackingDTO();
-		modelTrackingDTO_11.setMtFkContractId(contractId);
-		modelTrackingDTO_11.setMtFkCategoryId(2);
-		modelTrackingDTO_11.setMtFkMessageModelId(11);
-		modelTrackingDTO_11.setMtFkStatusId(1);
-		ModelTracking modelTracking_11 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_11);
-		
-		ModelTrackingDTO modelTrackingDTO_12 = new ModelTrackingDTO();
-		modelTrackingDTO_12.setMtFkContractId(contractId);
-		modelTrackingDTO_12.setMtFkCategoryId(2);
-		modelTrackingDTO_12.setMtFkMessageModelId(12);
-		modelTrackingDTO_12.setMtFkStatusId(1);
-		ModelTracking modelTracking_12 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_12);
-		
-		ModelTrackingDTO modelTrackingDTO_13 = new ModelTrackingDTO();
-		modelTrackingDTO_13.setMtFkContractId(contractId);
-		modelTrackingDTO_13.setMtFkCategoryId(2);
-		modelTrackingDTO_13.setMtFkMessageModelId(13);
-		modelTrackingDTO_13.setMtFkStatusId(1);
-		ModelTracking modelTracking_13 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_13);
-		
-		ModelTrackingDTO modelTrackingDTO_14 = new ModelTrackingDTO();
-		modelTrackingDTO_14.setMtFkContractId(contractId);
-		modelTrackingDTO_14.setMtFkCategoryId(2);
-		modelTrackingDTO_14.setMtFkMessageModelId(6);
-		modelTrackingDTO_14.setMtFkStatusId(1);
-		ModelTracking modelTracking_14 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_14);
-		
-		ModelTrackingDTO modelTrackingDTO_15 = new ModelTrackingDTO();
-		modelTrackingDTO_15.setMtFkContractId(contractId);
-		modelTrackingDTO_15.setMtFkCategoryId(1);
-		modelTrackingDTO_15.setMtFkMessageModelId(7);
-		modelTrackingDTO_15.setMtFkStatusId(1);
-		ModelTracking modelTracking_15 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_15);
-		
-		ModelTrackingDTO modelTrackingDTO_16 = new ModelTrackingDTO();
-		modelTrackingDTO_16.setMtFkContractId(contractId);
-		modelTrackingDTO_16.setMtFkCategoryId(3);
-		modelTrackingDTO_16.setMtFkMessageModelId(8);
-		modelTrackingDTO_16.setMtFkStatusId(1);
-		ModelTracking modelTracking_16 = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO_16);
+		// Création/insertions dans la table tracking (1 insertion par message modelès existants)
+	    List<ModelTrackingDTO> modelTrackingDTOList = new ArrayList<>();
+
+	    for (int i = 1; i <= 16; i++) {
+	        ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();
+	        modelTrackingDTO.setMtFkContractId(contractId);
+	        modelTrackingDTO.setMtFkCategoryId(getMmCategoryIdForIndex(i));
+	        modelTrackingDTO.setMtFkMessageModelId(i);
+	        modelTrackingDTO.setMtFkStatusId(1);
+	        modelTrackingDTOList.add(modelTrackingDTO);
+	    }
 		
 		try {
-			int isModelTrackingInserted = modelTrackingMapper.insertGstModelTracking(modelTracking_1);
-			
-			if (isModelTrackingInserted == 0) {
-				throw new GeneralException("Erreur lors de l'insertion des données dans la table modelTracking");
-			}
+	        for (ModelTrackingDTO modelTrackingDTO : modelTrackingDTOList) {
+	            int isModelTrackingInserted = modelTrackingMapper.insertGstModelTracking(modelTrackingDtoMapper.toModelTracking(modelTrackingDTO));
+
+	            if (isModelTrackingInserted == 0) {
+	                throw new GeneralException("Erreur lors de l'insertion des données dans la table modelTracking");
+	            }
+	        }
 			
 			log.info("Données dans la table modelTracking insérées avec succès");
 			
@@ -294,6 +194,19 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 			log.error("Erreur lors du traitement de saveServiceprovider", e);
 	        throw new GeneralException("Erreur lors du traitement de saveServiceprovider : " + e);
 		}
+	}
+	
+	// Méthode pour déterminer la category ID des objets ModelTracking selon l'index
+	private int getMmCategoryIdForIndex(int index) {
+	    if (index <= 8) {
+	        return 1;
+	    } else if (index <= 10) {
+	        return 4;
+	    } else if (index <= 14) {
+	        return 2;
+	    } else {
+	        return 3;
+	    }
 	}
 	
 	@Override
