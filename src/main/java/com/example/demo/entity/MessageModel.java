@@ -20,6 +20,9 @@ public class MessageModel {
 
 	@JsonProperty("mmHasEmail")
 	private Boolean mmHasEmail;
+	
+	@JsonProperty("mmIsRelaunch")
+	private Boolean mmIsRelaunch;
 
 	@JsonProperty("mmCreationDate")
 	private LocalDateTime mmCreationDate;
@@ -33,13 +36,14 @@ public class MessageModel {
 	public MessageModel() {
 	}
 
-	public MessageModel(Integer mmId, Integer mmLink, String mmSubject, String mmBody, Boolean mmHasEmail,
+	public MessageModel(Integer mmId, Integer mmLink, String mmSubject, String mmBody, Boolean mmHasEmail, Boolean mmIsRelaunch,
 			LocalDateTime mmCreationDate, LocalDateTime mmLastUpdateDate, Category category) {
 		this.mmId = mmId;
 		this.mmLink = mmLink;
 		this.mmSubject = mmSubject;
 		this.mmBody = mmBody;
 		this.mmHasEmail = mmHasEmail;
+		this.mmIsRelaunch = mmIsRelaunch;
 		this.mmCreationDate = mmCreationDate;
 		this.mmLastUpdateDate = mmLastUpdateDate;
 		this.category = category;
@@ -84,6 +88,14 @@ public class MessageModel {
 	public void setMmHasEmail(Boolean mmHasEmail) {
 		this.mmHasEmail = mmHasEmail;
 	}
+	
+	public Boolean getMmIsRelaunch() {
+		return mmIsRelaunch;
+	}
+
+	public void setMmIsRelaunch(Boolean mmIsRelaunch) {
+		this.mmIsRelaunch = mmIsRelaunch;
+	}
 
 	public LocalDateTime getMmCreationDate() {
 		return mmCreationDate;
@@ -112,8 +124,8 @@ public class MessageModel {
 	@Override
 	public String toString() {
 		return "MessageModel [mmId=" + mmId + ", mmLink=" + mmLink + ", mmSubject=" + mmSubject + ", mmBody=" + mmBody
-				+ ", mm_has_email=" + mmHasEmail + ", mmCreationDate=" + mmCreationDate + ", mmLastUpdateDate="
-				+ mmLastUpdateDate + ", category=" + category + "]";
+				+ ", mmHasEmail=" + mmHasEmail + ", mmIsRelaunch=" + mmIsRelaunch + ", mmCreationDate=" + mmCreationDate
+				+ ", mmLastUpdateDate=" + mmLastUpdateDate + ", category=" + category + "]";
 	}
 
 }

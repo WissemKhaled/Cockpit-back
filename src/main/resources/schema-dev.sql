@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS schema_dev.gst_message_model (
     mm_subject VARCHAR(255) NOT NULL,
     mm_body TEXT NOT NULL,
     mm_has_email BOOLEAN,
+    mm_is_relaunch BOOLEAN,
     mm_creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     mm_last_update TIMESTAMP,
     mm_fk_category_id SMALLINT NOT NULL
