@@ -183,7 +183,13 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 			 
 			 for (int i = 0; i < size; i++) {
 				 ModelTrackingDTO modelTrackingDTODemand = modelTrackingDTODemandList.get(i);
-			     ModelTrackingDTO modelTrackingDTORelaunch = modelTrackingDTORelaunchList.get(i);
+			     // ModelTrackingDTO modelTrackingDTORelaunch = modelTrackingDTORelaunchList.get(i);
+				 
+				// On retrouve la relance correspondant à la demande dnas la table gst_tracking grâce au mtId de la demande + 1
+			    ModelTrackingDTO modelTrackingDTORelaunch = modelTrackingDTORelaunchList.stream()
+			            .filter(relaunchModel  -> relaunchModel .getMtId() == modelTrackingDTODemand.getMtId() + 1)
+			            .findFirst()
+			            .orElse(null);
 			     
 			     // Effectuer des opérations sur la paire (model1, model2)
 //			    System.out.println("Effectuer des opérations sur la paire models avec mmLink: " + relaunch.getMmLink());
@@ -210,6 +216,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 				                    ModelTracking modelTrackingRelaunch = modelTrackingDtoMapper.toModelTracking(modelTrackingDTORelaunch);
 				                    
 				                    System.out.println("modelTrackingRelaunch = " + modelTrackingRelaunch);
+				                    System.out.println("modelTrackingDemand = " + modelTrackingDTODemand);
 
 				                    modelTrackingMapper.updateModelTracking(modelTrackingRelaunch);
 
