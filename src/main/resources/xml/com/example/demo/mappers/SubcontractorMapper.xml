@@ -14,7 +14,6 @@
         </association>
 	</resultMap>
 	
-	    
     <sql id="countSubcontractors">
     	COUNT(*)
 		FROM gst_subcontractor s
@@ -41,6 +40,12 @@
     </sql>
 
     <!-- Select statements -->
+    
+    <select id="findSubcontractorWithStatusBySubcontractorName" resultMap="subcontractorResultMap">
+        SELECT<include refid="subcontractorAndStatusColumns"/> 
+        FROM <include refid="subcontractorStatusJoin"/>
+		WHERE s.s_name = #{sName}
+    </select>
 
     <select id="findAllNonArchivedSubcontractors" resultMap="subcontractorResultMap">
         SELECT <include refid="subcontractorAndStatusColumns"/> 
@@ -62,12 +67,6 @@
 		WHERE s.s_id = #{sId}
     </select>
     
-    <select id="findSubcontractorWithStatusBySubcontractorName" resultMap="subcontractorResultMap">
-        SELECT<include refid="subcontractorAndStatusColumns"/> 
-        FROM <include refid="subcontractorStatusJoin"/>
-		WHERE s.s_name = #{sName}
-    </select>
-
     <select id="findSubcontractorWithStatusBySubcontractorEmail" resultMap="subcontractorResultMap">
         SELECT <include refid="subcontractorAndStatusColumns"/> 
         FROM <include refid="subcontractorStatusJoin"/>
@@ -90,7 +89,7 @@
     
    	<select id="countAllNonArchivedSubcontractors" resultType="java.lang.Integer">
 		SELECT <include refid="countSubcontractors"/>
-		WHERE s_fk_status_id != 4
+		WHERE s.s_fk_status_id != 4
 	</select>
 	
 	<select id="countAllNonArchivedSubcontractorsWithStatus" resultType="java.lang.Integer">
