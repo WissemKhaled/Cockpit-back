@@ -167,11 +167,13 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    List<ModelTrackingDTO> modelTrackingDTOList = new ArrayList<>();
 
 	    for (int i = 1; i <= 16; i++) {
+	    	int categoryId = (i <= 8) ? 1 : (i <= 10) ? 4 : (i <= 14) ? 2 : 3;
+	    	int statusId = (i % 2 == 0) ? 5 : 1; // le messageModelId est impaire pour une demande et paire pour une relance
 	        ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();
 	        modelTrackingDTO.setMtFkContractId(contractId);
-	        modelTrackingDTO.setMtFkCategoryId(getMmCategoryIdForIndex(i));
+	        modelTrackingDTO.setMtFkCategoryId(categoryId);
 	        modelTrackingDTO.setMtFkMessageModelId(i);
-	        modelTrackingDTO.setMtFkStatusId(1);
+	        modelTrackingDTO.setMtFkStatusId(statusId);
 	        modelTrackingDTOList.add(modelTrackingDTO);
 	    }
 		
@@ -194,19 +196,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 			log.error("Erreur lors du traitement de saveServiceprovider", e);
 	        throw new GeneralException("Erreur lors du traitement de saveServiceprovider : " + e);
 		}
-	}
-	
-	// Méthode pour déterminer la category ID des objets ModelTracking selon l'index
-	private int getMmCategoryIdForIndex(int index) {
-	    if (index <= 8) {
-	        return 1;
-	    } else if (index <= 10) {
-	        return 4;
-	    } else if (index <= 14) {
-	        return 2;
-	    } else {
-	        return 3;
-	    }
 	}
 	
 	@Override
@@ -353,5 +342,4 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	            throw new GeneralException(String.format("Le champ %s n'existe pas", columnName));
 	    }
 	}
-	
 }
