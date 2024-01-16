@@ -223,16 +223,3 @@ FROM gst_service_provider s
 JOIN gst_contract c ON s.sp_id = c.c_fk_service_provider_id
 JOIN gst_message_model mm ON s.sp_fk_status_id IS NOT NULL
 ORDER BY s.sp_id, mm.mm_id;
-
--- INSERT INTO gst_model_tracking (mt_send_date, mt_validation_date, mt_fk_contract_id, mt_fk_message_model_id, mt_fk_status_id, mt_fk_category_id)
--- SELECT
---     NULL AS mt_send_date,
---     NULL AS mt_validation_date,
---     c.c_id AS mt_fk_contract_id,
---     mm.mm_id AS mt_fk_message_model_id,
---     s.sp_fk_status_id AS mt_fk_status_id,
---     mm.mm_fk_category_id AS mt_fk_category_id
--- FROM gst_service_provider s
--- JOIN gst_contract c ON s.sp_id = c.c_fk_service_provider_id
--- JOIN gst_message_model mm ON s.sp_fk_status_id IS NOT NULL
--- ORDER BY s.sp_id, mm.mm_id;
