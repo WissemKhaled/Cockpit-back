@@ -19,7 +19,6 @@ public interface ContractMapper {
 
     List<Contract> getContractsByServiceProviderId(@Param("serviceProviderId") Integer serviceProviderId);
 
-
 	int insertContract(Contract contract);
 
 

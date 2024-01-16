@@ -42,32 +42,32 @@ public class ContractServiceImpl implements ContractService {
 	 * Cette méthode génère un numéro de contrat aléatoire, mappe le DTO vers l'entité Contract et tente d'insérer le contrat dans la base de données. Si l'insertion échoue ou si le DTO est null, une exception appropriée est lancée.
 	 */
 	@Override
-	public int saveContract(ContractDTO contractDTO) throws DatabaseQueryFailureException {
-		try {
-			if (contractDTO == null) {
-				log.error("Le paramètre contractDto ne peut être null");
-				throw new IllegalArgumentException("Le paramètre contractDto ne peut être null");
+		public int saveContract(ContractDTO contractDTO) throws DatabaseQueryFailureException {
+			try {
+				if (contractDTO == null) {
+					log.error("Le paramètre contractDto ne peut être null");
+					throw new IllegalArgumentException("Le paramètre contractDto ne peut être null");
+				}
+				
+				contractDTO.setcContractNumber(generateRandomContractNumber());
+				
+				Contract contract = contractDtoMapper.toContract(contractDTO);
+				
+				int isContractInserted = this.contractMapper.insertContract(contract);
+				
+				if (isContractInserted == 0) {
+					log.error("Échec de l'insertion du contrat dans la base de données");
+		            throw new DatabaseQueryFailureException("Échec de l'insertion du contrat dans la base de données");
+				}
+				
+				log.info("Contrat créé avec succès avec l'id = " + contract.getcId());
+		        return contract.getcId();
+			} catch (IllegalArgumentException e) {
+				throw e;
+			} catch (DatabaseQueryFailureException e) {
+				throw e;
 			}
-			
-			contractDTO.setcContractNumber(generateRandomContractNumber());
-			
-			Contract contract = contractDtoMapper.toContract(contractDTO);
-			
-			int isContractInserted = this.contractMapper.insertContract(contract);
-			
-			if (isContractInserted == 0) {
-				log.error("Échec de l'insertion du contrat dans la base de données");
-	            throw new DatabaseQueryFailureException("Échec de l'insertion du contrat dans la base de données");
-			}
-
-			log.info("Contrat créé avec succès avec l'id = " + contract.getcId());
-	        return contract.getcId();
-		} catch (IllegalArgumentException e) {
-			throw e;
-		} catch (DatabaseQueryFailureException e) {
-			throw e;
 		}
-	}
 
 	public static String generateRandomContractNumber() {
         String uuid = UUID.randomUUID().toString().replace("-", "");

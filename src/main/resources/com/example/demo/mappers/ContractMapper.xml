@@ -4,7 +4,9 @@
 
     <resultMap id="contractMap" type="com.example.demo.entity.Contract">
         <result property="cId" column="c_id" />
-        <result property="cContractNumber" column="c_contract_number" />
+        <result property="cContractNumber" column="c_contract_number"/>
+        <result property="cFkSubcontractorId" column="c_fk_subcontractor_id"/>
+        <result property="cFkServiceProviderId" column="c_fk_service_provider_id"/>
     </resultMap>
 
     <select id="getContractsByServiceProviderId" resultMap="contractMap" parameterType="java.lang.Integer">
@@ -25,10 +27,10 @@
         WHERE (gsc.s_id IS NULL OR gsc.s_id = #{subContractorId})
     </select>
 
-    <insert id="insertContract" parameterType="com.example.demo.entity.Contract" useGeneratedKeys="true" keyProperty="cId" keyColumn="c_id">
-        INSERT INTO schema_dev.gst_contract (c_contract_number, c_fk_subcontractor_id, c_fk_service_provider_id)
-        VALUES (#{cContractNumber}, #{cFkSubcontractorId}, #{cFkServiceProviderId})
-    </insert>
+    <insert id="insertContract" parameterType="com.example.demo.entity.Contract" statementType="PREPARED" useGeneratedKeys="true" keyProperty="cId" keyColumn="c_id">
+		INSERT INTO gst_contract (c_contract_number, c_fk_subcontractor_id, c_fk_service_provider_id) 
+		VALUES (#{cContractNumber}, #{cFkSubcontractorId}, #{cFKserviceProviderId})    
+	</insert>
 
 
 </mapper>

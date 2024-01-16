@@ -137,57 +137,59 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	}
 
 	@Override
-	public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException, DatabaseQueryFailureException {
-		ServiceProvider serviceProviderToSave = serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToSave);
-		serviceProviderToSave.setSpCreationDate(LocalDateTime.now());
-		int isServiceProviderInserted = serviceProviderMapper.insertServiceProvider(serviceProviderToSave);
-		if (isServiceProviderInserted == 0) {
-			return 0;
-		}
-		// remarque: qu'on persiste le prestataire, on génere l'id automatiquement et
-		// comme ça on peut retourner le correct sans prendre en considération l'id
-		// saisi par l'utilisateur
-		
-		// Si l'insertion du nouveau sous-traitant en bdd se passe bien, on créé un nouveau contrat et on alimente la table gst_model_tracking qui va service pour les relances d'emails
-		
-		ContractDTO contractDTO = new ContractDTO();
-		
-		// récupération du sous-traitant associé au prestataire
-		Subcontractor associatedSubcontractor = subcontractorService.getSubcontractorBySName(serviceProviderToSave.getSubcontractor().getSName());
-		
-		contractDTO.setcFKserviceProviderId(serviceProviderToSave.getSpId());
-		contractDTO.setcFkSubcontractorId(associatedSubcontractor.getSId());
-		
-		// le numéro de contrat est généré dand la méthode saveContract suivante dans le ContractServiceImpl :
-		int contractId = contractService.saveContract(contractDTO);
-		
-		ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();
-		
-		modelTrackingDTO.setMtFkContractId(contractId);
-		modelTrackingDTO.setMtFkCategoryId(1); // SP category
-		modelTrackingDTO.setMtFkMessageModelId(1);
-		modelTrackingDTO.setMtFkStatusId(serviceProviderToSave.getSpStatus().getStId());
-		
-		ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
-		
-		try {
-			int isModelTrackingInserted = modelTrackingMapper.insertGstModelTracking(modelTracking);
-			
-			if (isModelTrackingInserted == 0) {
-				throw new GeneralException("Erreur lors de l'insertion des données dans la table modelTracking");
+		public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException, DatabaseQueryFailureException {
+			ServiceProvider serviceProviderToSave = serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToSave);
+			serviceProviderToSave.setSpCreationDate(LocalDateTime.now());
+			int isServiceProviderInserted = serviceProviderMapper.insertServiceProvider(serviceProviderToSave);
+			if (isServiceProviderInserted == 0) {
+				return 0;
 			}
+			// remarque: qu'on persiste le prestataire, on génere l'id automatiquement et
+			// comme ça on peut retourner le correct sans prendre en considération l'id
+			// saisi par l'utilisateur
 			
-			log.info("Données dans la table modelTracking insérées avec succès");
+			// Si l'insertion du nouveau sous-traitant en bdd se passe bien, on créé un nouveau contrat et on alimente la table gst_model_tracking qui va service pour les relances d'emails
 			
-			return serviceProviderToSave.getSpId();
-		} catch(PersistenceException e) {
-			log.error("Erreur MyBatis lors de l'insertion des données dans la table modelTracking : ", e);
-	        throw new GeneralException("Erreur MyBatis lors de l'insertion des données dans la table modelTracking : " + e);
-		} catch(Exception e) {
-			log.error("Erreur lors du traitement de saveServiceprovider", e);
-	        throw new GeneralException("Erreur lors du traitement de saveServiceprovider : " + e);
+			ContractDTO contractDTO = new ContractDTO();
+			
+			// récupération du sous-traitant associé au prestataire
+			Subcontractor associatedSubcontractor = subcontractorService.getSubcontractorBySName(serviceProviderToSave.getSubcontractor().getSName());
+			
+			contractDTO.setcFKserviceProviderId(serviceProviderToSave.getSpId());
+			contractDTO.setcFkSubcontractorId(associatedSubcontractor.getSId());
+			
+			// le numéro de contrat est généré dand la méthode saveContract suivante dans le ContractServiceImpl :
+			System.err.println("service 1");
+			int contractId = contractService.saveContract(contractDTO);
+			System.err.println("service 2");
+			
+			ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();
+			
+			modelTrackingDTO.setMtFkContractId(contractId);
+			modelTrackingDTO.setMtFkCategoryId(1); // SP category
+			modelTrackingDTO.setMtFkMessageModelId(1);
+			modelTrackingDTO.setMtFkStatusId(serviceProviderToSave.getSpStatus().getStId());
+			
+			ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
+			
+			try {
+				int isModelTrackingInserted = modelTrackingMapper.insertGstModelTracking(modelTracking);
+				
+				if (isModelTrackingInserted == 0) {
+					throw new GeneralException("Erreur lors de l'insertion des données dans la table modelTracking");
+				}
+				
+				log.info("Données dans la table modelTracking insérées avec succès");
+				
+				return serviceProviderToSave.getSpId();
+			} catch(PersistenceException e) {
+				log.error("Erreur MyBatis lors de l'insertion des données dans la table modelTracking : ", e);
+		        throw new GeneralException("Erreur MyBatis lors de l'insertion des données dans la table modelTracking : " + e);
+			} catch(Exception e) {
+				log.error("Erreur lors du traitement de saveServiceprovider", e);
+		        throw new GeneralException("Erreur lors du traitement de saveServiceprovider : " + e);
+			}
 		}
-	}
 	
 	@Override
 	public int updateServiceProvider(ServiceProviderDto serviceProviderDtoToUpdate) {

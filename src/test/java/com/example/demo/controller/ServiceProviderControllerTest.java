@@ -101,7 +101,7 @@ public class ServiceProviderControllerTest {
 				.andExpect(jsonPath("$.spFirstName").value("Fifthspfirstname"))
 				.andExpect(jsonPath("$.spName").value("FIRSTSPNAME"))
 				.andExpect(jsonPath("$.spEmail").value("Sp5@email.com"))
-				.andExpect(jsonPath("$.subcontractorSName").value("BPCE"))
+				.andExpect(jsonPath("$.subcontractorSName").value("Orange"))
 				.andExpect(jsonPath("$.spStatus.stId").value(1));
 	}
 
@@ -143,7 +143,7 @@ public class ServiceProviderControllerTest {
 	@Test
 	public void archiveTest_ArchiveExistingServiceProviderFailed_ShouldReturnAlreadyArchivedException()
 			throws Exception {
-		int existingArchivedServiceProviderId = 1;
+		int existingArchivedServiceProviderId = 50;
 
 		mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "archive/" + existingArchivedServiceProviderId)
 				.header("Authorization", "Bearer " + jwtToken).contentType(MediaType.APPLICATION_JSON))
