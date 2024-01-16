@@ -54,7 +54,6 @@ class ContractControllerTest {
     void getAllMessageModelsBySubcontractorId() throws Exception {
         // Define test parameters
         Integer subContractorId = 1;
-        Pageable pageable = PageRequest.of(0, 6);
 
         // Create a list of mock Contract objects for the test
         List<Contract> mockContracts = Collections.singletonList(new Contract());
@@ -72,7 +71,6 @@ class ContractControllerTest {
                 .andExpect(jsonPath("$.content").exists()) // Assert that there is a 'content' field in the JSON response
                 .andReturn(); // Return the result of the MVC request for further analysis or assertions
 
-
         // Display the response body
         System.out.println("Response Body: " + result.getResponse().getContentAsString());
 
@@ -87,7 +85,6 @@ class ContractControllerTest {
     void getAllMessageModelsByServiceProviderId() throws Exception {
         // Define test parameters
         Integer serviceProviderId = 1;
-        Pageable pageable = PageRequest.of(0, 6);
 
         // Create a list of mock Contract objects for the test
         List<Contract> mockContracts = Collections.singletonList(new Contract());
@@ -97,14 +94,13 @@ class ContractControllerTest {
                 .thenReturn(mockContracts);
 
         // Perform a GET request to the specified URL and set up the request
-        MvcResult result = mockMvc.perform(get("/contract/getContractsBySubcontractorId")
+        MvcResult result = mockMvc.perform(get("/contract/getContractsByServiceProviderId") // Corrected URL
                         .header("Authorization", jwtToken) // Add JWT token to the request header for authorization
                         .param("serviceProviderId", String.valueOf(serviceProviderId)) // Add 'serviceProviderId' as a request parameter
                         .contentType(MediaType.APPLICATION_JSON)) // Set the content type of the request to JSON
                 .andExpect(status().isOk()) // Assert that the response status is 200 OK
                 .andExpect(jsonPath("$.content").exists()) // Assert that there is a 'content' field in the JSON response
                 .andReturn(); // Return the result of the MVC request for further analysis or assertions
-
 
         // Display the response body
         System.out.println("Response Body: " + result.getResponse().getContentAsString());
@@ -113,7 +109,7 @@ class ContractControllerTest {
         System.out.println("Response Status: " + result.getResponse().getStatus());
 
         // Verify the service method was called with the correct parameters
-        verify(contractService).getContractsBySubcontractorId(serviceProviderId);
+        verify(contractService).getContractsByServiceProviderId(serviceProviderId); // Corrected method verification
     }
 }
 

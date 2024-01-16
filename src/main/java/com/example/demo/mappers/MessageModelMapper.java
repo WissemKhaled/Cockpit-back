@@ -12,8 +12,8 @@ public interface MessageModelMapper {
 
 
 	List<MessageModel> getAllMessageModelBySubcontractorId(
-	        @Param("subContractorId") Integer subContractorId);
+	        Integer subContractorId);
 
 	List<MessageModel> getAllMessageModelByServiceProviderId(
-	        @Param("serviceProviderId") Integer serviceProviderId);
+	        Integer serviceProviderId);
 }

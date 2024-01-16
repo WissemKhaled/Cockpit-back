@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ContractDTO;
@@ -20,11 +21,13 @@ import com.example.demo.service.ContractService;
 
 @Service
 public class ContractServiceImpl implements ContractService {
+
 	private final ContractDtoMapper contractDtoMapper;
+
 	private final ContractMapper contractMapper;
 	
 	private static final Logger log = LoggerFactory.getLogger(ContractServiceImpl.class);
-	
+
 	public ContractServiceImpl(ContractDtoMapper contractDtoMapper, ContractMapper contractMapper) {
 		this.contractDtoMapper = contractDtoMapper;
 		this.contractMapper = contractMapper;

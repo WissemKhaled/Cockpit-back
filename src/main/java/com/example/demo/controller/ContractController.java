@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.entity.Contract;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.service.ContractService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ public class ContractController {
         this.contractService = contractService;
     }
 
+
     @GetMapping("/getContractsByServiceProviderId")
     public ResponseEntity<Page<Contract>> getContractsByServiceProviderId (
             @RequestParam(value = "serviceProviderId", required = false) Integer serviceProviderId,
@@ -45,7 +47,7 @@ public class ContractController {
     
     @GetMapping("/getContractsBySubcontractorId")
     public ResponseEntity<Page<Contract>> getContractsBySubcontractorId (
-            @RequestParam(value = "subcontractorId", required = false) Integer subcontractorId,
+            @RequestParam(value = "subContractorId", required = false) Integer subcontractorId,
             @PageableDefault(page = 0, size = 6) Pageable pageable) {
 
         try {

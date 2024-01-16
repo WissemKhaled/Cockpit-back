@@ -42,7 +42,9 @@ import jakarta.mail.MessagingException;
 
 @Service
 public class GstLogServiceImpl implements GstLogService{
-	private final GstLogMapper gstLogMapper;
+
+	@Autowired(required = false)
+	private  GstLogMapper gstLogMapper;
 	
 	private final CreateGstLogDtoMapper createGstLogDtoMapper;
 	
@@ -67,7 +69,6 @@ public class GstLogServiceImpl implements GstLogService{
 	private static final Logger log = LoggerFactory.getLogger(GstLogServiceImpl.class);
 	
 	public GstLogServiceImpl (
-			GstLogMapper gstLogMapper,
 			CreateGstLogDtoMapper createGstLogDtoMapper,
 			GstLogDtoMapper gstLogDtoMapper,
 			MailSenderService mailService,
@@ -76,7 +77,6 @@ public class GstLogServiceImpl implements GstLogService{
 			JsonFileLoader jsonFileLoader,
 			UUserMapper userMapper
 	) {
-		this.gstLogMapper = gstLogMapper;
 		this.createGstLogDtoMapper = createGstLogDtoMapper;
 		this.gstLogDtoMapper = gstLogDtoMapper;
 		this.mailService = mailService;

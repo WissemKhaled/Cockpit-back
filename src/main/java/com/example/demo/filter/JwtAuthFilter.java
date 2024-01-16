@@ -25,15 +25,14 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-	private final JwtService jwtService;
+    @Autowired(required = false)
+	private  JwtService jwtService;
 
 	@Autowired
 	@Lazy
 	private UserInfoService userDetailsService;
 
-    public JwtAuthFilter(JwtService jwtService) {
-        this.jwtService = jwtService;
-    }
+
 
     @Override
 	    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

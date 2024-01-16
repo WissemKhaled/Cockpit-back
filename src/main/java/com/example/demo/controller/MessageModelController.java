@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -25,16 +26,12 @@ import com.example.demo.service.ModelTrackingService;
 @CrossOrigin(origins = "http://localhost:4200")
 public class MessageModelController {
 
-	private final MessageModelService messageModelService;
-	private final ModelTrackingService modelTrackingService;
+	@Autowired
+	private MessageModelService messageModelService;
 
-	public MessageModelController(
-		MessageModelService messageModelService,
-		ModelTrackingService modelTrackingService
-	) {
-		this.messageModelService = messageModelService;
-		this.modelTrackingService = modelTrackingService;
-	}
+	@Autowired
+	private ModelTrackingService modelTrackingService;
+
 
 
 //	@GetMapping("/getAllMessagesById")
@@ -75,7 +72,7 @@ public class MessageModelController {
 	
 	@GetMapping("/getAllMessagesBySubcontractorId")
 	public ResponseEntity<Page<MessageModel>> getAllMessageModelBySubcontractorId(
-			@RequestParam(value = "subcontractorId") Integer subcontractorId,
+			@RequestParam(value = "subContractorId") Integer subcontractorId,
 			@RequestParam(value = "contractId") Integer contractId,
 			@RequestParam(value = "statusId") Integer statusId,
 			@PageableDefault(page = 0, size = 6) Pageable pageable) {

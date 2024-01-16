@@ -17,11 +17,11 @@ import com.example.demo.entity.Contract;
 public interface ContractMapper {
 
 
-    List<Contract> getContractsByServiceProviderId(@Param("serviceProviderId") Integer serviceProviderId);
+    List<Contract> getContractsByServiceProviderId(Integer serviceProviderId);
 
 
 	int insertContract(Contract contract);
 
 
-    List<Contract> getContractsBySubcontractorId(@Param("subContractorId") Integer subContractorId);
+    List<Contract> getContractsBySubcontractorId(Integer subContractorId);
 }
