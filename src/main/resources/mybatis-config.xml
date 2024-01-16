@@ -19,5 +19,6 @@
 		<mapper resource="xml/com/example/demo/mappers/GstLogMapper.xml" />
 		<mapper resource="xml/com/example/demo/mappers/SendMailMapper.xml" />
 		<mapper resource="xml/com/example/demo/mappers/MessageModelMapper.xml" />
+		<mapper resource="xml/com/example/demo/mappers/ModelTrackingMapper.xml" />
 	</mappers>
 </configuration>

@@ -97,11 +97,6 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	        if (demand.getMmId() == mmId || relaunch.getMmId() == mmId + 1 ) {
 	        	ModelTrackingDTO modelTrackingDTODemand = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, demand.getMmId());
 		        ModelTrackingDTO modelTrackingDTORelaunch = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, relaunch.getMmId());
-		        
-		        System.out.println("demand = " + modelTrackingDTODemand);
-		        System.out.println("relaunch = " + modelTrackingDTORelaunch);
-		        
-		        ModelTrackingDTO modelTrackingDTO = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, mmId);
 			    
 			    if (modelTrackingDTODemand == null || modelTrackingDTORelaunch == null) {
 			        log.error("Le suivi selon le contrat avec l'ID " + contractId + " n'a pas été trouvé");
@@ -129,7 +124,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 			    } else if (validationDateString != null) {
 			    	// Maj status de la demande
 			    	modelTrackingDTODemand.setMtFkStatusId(3);
-			    	modelTrackingDTODemand.setMtSendDate(modelTrackingDTO.getMtSendDate());
+			    	modelTrackingDTODemand.setMtSendDate(modelTrackingDTODemand.getMtSendDate());
 			    	
 			    	// Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
 			        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
@@ -142,9 +137,6 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 			    
 			    ModelTracking modelTrackingDemand = modelTrackingDtoMapper.toModelTracking(modelTrackingDTODemand);
 			    ModelTracking modelTrackingRelaunch = modelTrackingDtoMapper.toModelTracking(modelTrackingDTORelaunch);
-			    
-			    System.out.println("modelTrackingDemand updated = " + modelTrackingDemand);
-			    System.out.println("modelTrackingRelaunch updated = " + modelTrackingRelaunch);
 
 			    int isDemandModelTrackingUpdated = modelTrackingMapper.updateModelTracking(modelTrackingDemand);
 			    int isRelaunchModelTrackingUpdated = modelTrackingMapper.updateModelTracking(modelTrackingRelaunch);
@@ -183,22 +175,15 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 			 
 			 for (int i = 0; i < size; i++) {
 				 ModelTrackingDTO modelTrackingDTODemand = modelTrackingDTODemandList.get(i);
-			     // ModelTrackingDTO modelTrackingDTORelaunch = modelTrackingDTORelaunchList.get(i);
 				 
-				// On retrouve la relance correspondant à la demande dnas la table gst_tracking grâce au mtId de la demande + 1
+				// On retrouve la relance correspondant à la demande dans la table gst_tracking grâce au mtId de la demande + 1
 			    ModelTrackingDTO modelTrackingDTORelaunch = modelTrackingDTORelaunchList.stream()
 			            .filter(relaunchModel  -> relaunchModel .getMtId() == modelTrackingDTODemand.getMtId() + 1)
 			            .findFirst()
 			            .orElse(null);
 			     
 			     // Effectuer des opérations sur la paire (model1, model2)
-//			    System.out.println("Effectuer des opérations sur la paire models avec mmLink: " + relaunch.getMmLink());
-//		        System.out.println("Model demande: " + modelTrackingDTODemand);
-//		        System.out.println("Model relance: " + modelTrackingDTORelaunch);
-			        
 				 if (modelTrackingDTODemand != null && modelTrackingDTORelaunch != null) {
-					 // log.info("modelTrackingDTODemand et modelTrackingDTORelaunch récupéré pour le contractId: " + contractId);
-					 
 					    try {
 				        LocalDateTime currentDate = LocalDateTime.now();
 				        
@@ -214,9 +199,6 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 				                	modelTrackingDTORelaunch.setMtValidationDate(modelTrackingDTORelaunch.getMtValidationDate());
 
 				                    ModelTracking modelTrackingRelaunch = modelTrackingDtoMapper.toModelTracking(modelTrackingDTORelaunch);
-				                    
-				                    System.out.println("modelTrackingRelaunch = " + modelTrackingRelaunch);
-				                    System.out.println("modelTrackingDemand = " + modelTrackingDTODemand);
 
 				                    modelTrackingMapper.updateModelTracking(modelTrackingRelaunch);
 
@@ -261,13 +243,9 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 				        }
 				    } catch (Exception e) {
 				        log.error("Une erreur est survenue lors de la vérification de relance : " + e.getMessage(), e);
-				        // return "Une erreur est survenue lors de la vérification de relance : " + e.getMessage();
 				    }
 					 
 				 } else {
-					 System.out.println("Effectuer des opérations sur la paire models avec mmLink: " + relaunch.getMmLink());
-				     System.out.println("Model demande: " + modelTrackingDTODemand);
-				     System.out.println("Model relance: " + modelTrackingDTORelaunch);
 				     log.warn("modelTrackingDTODemand et modelTrackingDTORelaunch null pour le contractId: " + contractId);
 				 }
 			 }
