@@ -11,6 +11,7 @@ public class MessageModelBuilder {
 	private String mmSubject;
 	private String mmBody;
 	private Boolean mmHasEmail;
+	private Boolean mmIsRelaunch;
 	private LocalDateTime mmCreationDate;
 	private LocalDateTime mmLastUpdateDate;
 	private Category category;
@@ -39,6 +40,11 @@ public class MessageModelBuilder {
 		this.mmHasEmail = mmHasEmail;
 		return this;
 	}
+	
+	public MessageModelBuilder withMmIsRelaunch(Boolean mmIsRelaunch) {
+		this.mmIsRelaunch = mmIsRelaunch;
+		return this;
+	}
 
 	public MessageModelBuilder withMmCreationDate(LocalDateTime mmCreationDate) {
 		this.mmCreationDate = mmCreationDate;
@@ -56,7 +62,7 @@ public class MessageModelBuilder {
 	}
 
 	public MessageModel build() {
-		return new MessageModel(mmId, mmLink, mmSubject, mmBody, mmHasEmail, mmCreationDate, mmLastUpdateDate,
+		return new MessageModel(mmId, mmLink, mmSubject, mmBody, mmHasEmail, mmIsRelaunch, mmCreationDate, mmLastUpdateDate,
 				category);
 	}
 

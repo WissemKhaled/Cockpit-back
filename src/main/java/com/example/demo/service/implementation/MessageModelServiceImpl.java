@@ -20,20 +20,22 @@ public class MessageModelServiceImpl implements MessageModelService {
 	public MessageModelServiceImpl(MessageModelMapper mapper) {
 		this.messageModelMapper = mapper;
 	}
-
-
+	
 	@Override
-	public List<MessageModel> getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(Integer subContractorStatusId,Integer serviceProviderStatusId, Integer subContractorId, Integer serviceProviderId) {
-		List<MessageModel> messageModels = messageModelMapper.getAllMessageModelByStatusIdOrSubContractorIdOrServiceProviderId(subContractorId,serviceProviderId,subContractorStatusId, serviceProviderStatusId);
-		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
-				.orElseThrow(() -> new MessageModelNotFoundException("No message model exists for this id!"));
+	public List<MessageModel> getAllMessageModels() {
+		List<MessageModel> messageModels = messageModelMapper.getAllMessageModels();
+		
+		if (messageModels.isEmpty()) {
+			throw new MessageModelNotFoundException("Aucun message model n'a été trouvé !");
+		}
+		return messageModels;
 	}
 	
 	@Override
 	public List<MessageModel> getAllMessageModelBySubcontractorId(Integer subContractorId) {
 		List<MessageModel> messageModels = messageModelMapper.getAllMessageModelBySubcontractorId(subContractorId);
 		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
-				.orElseThrow(() -> new MessageModelNotFoundException("No message model exists for this id!"));
+				.orElseThrow(() -> new MessageModelNotFoundException("Aucun message model n'existe pour ce subContractorId !"));
 	}
 	
 	@Override

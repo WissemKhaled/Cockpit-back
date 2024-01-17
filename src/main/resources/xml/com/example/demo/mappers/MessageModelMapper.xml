@@ -1,5 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.demo.mappers.MessageModelMapper">
-	
+
+    <resultMap id="messageModelMap" type="com.example.demo.entity.MessageModel">
+        <id property="mmId" column="mm_id" />
+        <result property="mmLink" column="mm_link" />
+        <result property="mmSubject" column="mm_subject" />
+        <result property="mmBody" column="mm_body" />
+        <result property="mmHasEmail" column="mm_has_email" />
+        <result property="mmIsRelaunch" column="mm_is_relaunch" />
+        <result property="mmCreationDate" column="mm_creation_date" />
+        <result property="mmLastUpdateDate" column="mm_last_update_date" />
+        <association property="category" javaType="com.example.demo.entity.Category">
+            <result property="catId" column="mm_fk_category_id" />
+            <result property="catName" column="cat_name" />
+        </association>
+    </resultMap>
+    
+    <select id="getAllMessageModels" resultMap="messageModelMap">
+        SELECT DISTINCT
+			gmm.*,
+	        category.cat_name AS cat_name
+	    FROM schema_dev.gst_message_model gmm
+	        INNER JOIN schema_dev.gst_category category ON category.cat_id = gmm.mm_fk_category_id
+	    ORDER BY gmm.mm_id ASC
+    </select>
+
+    <select id="getAllMessageModelBySubcontractorId" resultMap="messageModelMap" parameterType="java.lang.Integer">
+        SELECT DISTINCT
+            gmm.*,
+            category.cat_name AS cat_name
+        FROM gst_message_model gmm
+                 INNER JOIN gst_model_tracking gmt ON gmt.mt_fk_message_model_id = gmm.mm_id
+                 INNER JOIN gst_category category ON category.cat_id = gmm.mm_fk_category_id
+                 INNER JOIN gst_contract gc ON gmt.mt_fk_contract_id = gc.c_id
+        WHERE gc.c_fk_subcontractor_id = #{subContractorId}
+          AND gmm.mm_fk_category_id != 1
+        ORDER BY gmm.mm_id ASC
+    </select>
+
+    <select id="getAllMessageModelByServiceProviderId" resultMap="messageModelMap" parameterType="java.lang.Integer">
+        SELECT DISTINCT
+            gmm.*,
+            category.cat_name AS cat_name
+        FROM schema_dev.gst_message_model gmm
+                 INNER JOIN schema_dev.gst_model_tracking gmt ON gmt.mt_fk_message_model_id = gmm.mm_id
+                 INNER JOIN schema_dev.gst_category category ON category.cat_id = gmm.mm_fk_category_id
+                 INNER JOIN schema_dev.gst_contract gc ON gmt.mt_fk_contract_id = gc.c_id
+        WHERE gc.c_fk_service_provider_id = #{serviceProviderId}
+          AND gmm.mm_fk_category_id = 1
+        ORDER BY gmm.mm_id ASC
+    </select>
+
+
 </mapper>

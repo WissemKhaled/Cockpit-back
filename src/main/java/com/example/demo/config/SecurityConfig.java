@@ -41,15 +41,16 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/addNewUser", "/auth/generateToken", "/auth/refreshToken", "/messages/**", "/gstlogs/**", "/MessageModel/**", "/SendMail/**", "/status/**", "/contract/**").permitAll())
+				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/addNewUser", "/auth/generateToken", "/auth/refreshToken", "/gstlogs/**").permitAll())
 				.authorizeHttpRequests(ar ->ar.requestMatchers("/auth/user/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/auth/admin/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/status/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/subcontractor/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/service-providers/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/modelTracking/**").authenticated())
-				.authorizeHttpRequests(ar -> ar.requestMatchers("/status/**").authenticated())
+				.authorizeHttpRequests(ar -> ar.requestMatchers("/messages/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/MessageModel/**").authenticated())
+				.authorizeHttpRequests(ar -> ar.requestMatchers("/SendMail/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/contract/**").authenticated())
 				.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
