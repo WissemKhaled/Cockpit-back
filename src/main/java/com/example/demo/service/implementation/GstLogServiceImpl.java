@@ -43,8 +43,8 @@ import jakarta.mail.MessagingException;
 @Service
 public class GstLogServiceImpl implements GstLogService{
 
-	@Autowired(required = false)
-	private  GstLogMapper gstLogMapper;
+
+	private final GstLogMapper gstLogMapper;
 	
 	private final CreateGstLogDtoMapper createGstLogDtoMapper;
 	
@@ -67,16 +67,9 @@ public class GstLogServiceImpl implements GstLogService{
 
 	
 	private static final Logger log = LoggerFactory.getLogger(GstLogServiceImpl.class);
-	
-	public GstLogServiceImpl (
-			CreateGstLogDtoMapper createGstLogDtoMapper,
-			GstLogDtoMapper gstLogDtoMapper,
-			MailSenderService mailService,
-			UserInfoService userInfoService,
-			PasswordEncoder encoder,
-			JsonFileLoader jsonFileLoader,
-			UUserMapper userMapper
-	) {
+
+	public GstLogServiceImpl(GstLogMapper gstLogMapper, CreateGstLogDtoMapper createGstLogDtoMapper, GstLogDtoMapper gstLogDtoMapper, MailSenderService mailService, UserInfoService userInfoService, PasswordEncoder encoder, JsonFileLoader jsonFileLoader, UUserMapper userMapper) {
+		this.gstLogMapper = gstLogMapper;
 		this.createGstLogDtoMapper = createGstLogDtoMapper;
 		this.gstLogDtoMapper = gstLogDtoMapper;
 		this.mailService = mailService;
@@ -85,7 +78,7 @@ public class GstLogServiceImpl implements GstLogService{
 		this.jsonFileLoader = jsonFileLoader;
 		this.userMapper = userMapper;
 	}
-	
+
 	public String saveGstLog(CreateGstLogDTO createGstLogDTO) throws Exception {
 	    if (createGstLogDTO == null) {
 	        log.error("Le paramètre createGstLogDTO ne peut être null");
