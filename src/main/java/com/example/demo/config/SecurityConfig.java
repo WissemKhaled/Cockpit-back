@@ -49,7 +49,6 @@ public class SecurityConfig {
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/service-providers/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/modelTracking/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/messages/**").authenticated())
-				.authorizeHttpRequests(ar -> ar.requestMatchers("/status/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/MessageModel/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/SendMail/**").authenticated())
 				.authorizeHttpRequests(ar -> ar.requestMatchers("/contract/**").authenticated())
