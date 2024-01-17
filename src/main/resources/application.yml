@@ -42,7 +42,7 @@ spring:
     
 token:
   expiration:
-    duration: 9000000
+    duration: 900 # durée de 900 secondes (15 min)
 
 jwt:
   secret: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
@@ -50,13 +50,13 @@ jwt:
 refresh:
   token:
     expiration:
-      duration: 1800
+      duration: 1800 # durée de 1800 secondes (30 min)
 
 reset:
   password:
     claim:
       expiration:
-        duration: 15
+        duration: 15 # durée de 15 minutes
         
 mybatis:
     config-location: classpath:mybatis-config.xml
