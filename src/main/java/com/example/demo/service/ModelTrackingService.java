@@ -14,5 +14,5 @@ public interface ModelTrackingService {
 	
 	ModelTrackingDTO getModelTrackingInfoByContractIdAndMmId(int contractId, int mmId);
 	
-	void checkRelaunch(int contractId, int statusId);
+	void checkRelaunch(int statusId);
 }

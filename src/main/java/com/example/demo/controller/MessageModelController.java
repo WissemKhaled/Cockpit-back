@@ -37,7 +37,6 @@ public class MessageModelController {
 	@GetMapping("/getAllMessagesBySubcontractorId")
 	public ResponseEntity<Page<MessageModel>> getAllMessageModelBySubcontractorId(
 			@RequestParam(value = "subcontractorId") Integer subcontractorId,
-			@RequestParam(value = "contractId") Integer contractId,
 			@RequestParam(value = "statusId") Integer statusId,
 			@PageableDefault(page = 0, size = 6) Pageable pageable) {
 		try {
@@ -46,7 +45,7 @@ public class MessageModelController {
 			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
 
 			// appel de la méthode qui gère les relances
-			modelTrackingService.checkRelaunch(contractId, statusId);
+			modelTrackingService.checkRelaunch(statusId);
 
 			return ResponseEntity.ok(page);
 
@@ -58,7 +57,6 @@ public class MessageModelController {
 	@GetMapping("/getAllMessagesByServiceProviderId")
 	public ResponseEntity<Page<MessageModel>> getAllMessageModelByServiceProviderId(
 			@RequestParam(value = "serviceProviderId") Integer serviceProviderId,
-			@RequestParam(value = "contractId") Integer contractId,
 			@RequestParam(value = "statusId") Integer statusId,
 			@PageableDefault(page = 0, size = 6) Pageable pageable) {
 		try {
@@ -67,7 +65,7 @@ public class MessageModelController {
 			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
 
 			// appel de la méthode qui gère les relances
-			modelTrackingService.checkRelaunch(contractId, statusId);
+			modelTrackingService.checkRelaunch(statusId);
 
 			return ResponseEntity.ok(page);
 
