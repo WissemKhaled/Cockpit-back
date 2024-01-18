@@ -142,6 +142,14 @@
 		WHERE st.st_id = ${statusId}
 		ORDER BY s.s_name, st.st_id, sp.sp_name ${sorting} LIMIT #{offset} OFFSET #{pageSize}
     </select>
+    
+    <select id="countAllServiceProviderAlerts" resultType="java.lang.Integer">
+		SELECT COUNT(*)  
+		FROM gst_model_tracking mt 
+		INNER JOIN gst_contract c ON mt.mt_fk_contract_id = c.c_fk_service_provider_id
+		WHERE c.c_fk_service_provider_id =  ${serviceProviderId} AND mt.mt_fk_status_id IN (1, 2, 3)
+		GROUP BY mt.mt_fk_status_id
+    </select>
 
     <insert id="insertServiceProvider" flushCache="true" statementType="PREPARED" keyProperty="spId" keyColumn="sp_id" useGeneratedKeys="true" timeout="20" parameterType="com.example.demo.entity.ServiceProvider">
         INSERT INTO gst_service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date, sp_fk_subcontractor_id, sp_fk_status_id)

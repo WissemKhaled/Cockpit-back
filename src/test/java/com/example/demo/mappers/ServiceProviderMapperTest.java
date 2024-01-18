@@ -21,10 +21,16 @@ public class ServiceProviderMapperTest {
 	@Autowired
 	private ServiceProviderMapper serviceProviderMapper;
 	
+//	@Test
+//	void findSpTestBeEmail() {
+//		ServiceProvider findServiceProviderBySpEmail = serviceProviderMapper.findServiceProviderBySpEmail("Manonmoreau-1@email.com");
+//		System.err.println(findServiceProviderBySpEmail);
+//	}
+	
 	@Test
-	void findSpTestBeEmail() {
-		ServiceProvider findServiceProviderBySpEmail = serviceProviderMapper.findServiceProviderBySpEmail("Manonmoreau-1@email.com");
-		System.err.println(findServiceProviderBySpEmail);
+	void allAlerts() {
+		List<Integer> countAllServiceProviderAlerts = serviceProviderMapper.countAllServiceProviderAlerts(2);
+			System.err.println(countAllServiceProviderAlerts);
 	}
 
 //	@Test

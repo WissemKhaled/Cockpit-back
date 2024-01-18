@@ -203,5 +203,7 @@ public interface ServiceProviderMapper {
 	 * @return Liste des prestataires associés au sous-traitant.
 	 */
 	List<ServiceProvider> findServiceProvidersBySubcontractorId(int sId);
+	
+	List<Integer> countAllServiceProviderAlerts(int servicePorividerId);
 
 }
