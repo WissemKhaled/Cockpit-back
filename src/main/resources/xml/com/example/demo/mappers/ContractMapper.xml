@@ -12,7 +12,12 @@
         FROM gst_contract gc
                  INNER JOIN gst_service_provider gsp ON gc.c_fk_service_provider_id = gsp.sp_id
                  INNER JOIN gst_model_tracking gmt ON gmt.mt_fk_contract_id = gc.c_id
+<<<<<<< HEAD:src/main/resources/com/example/demo/mappers/ContractMapper.xml
         WHERE gc.c_fk_service_provider_id =  #{serviceProviderId}
+=======
+                 INNER JOIN gst_message_model gmm ON gmm.mm_id = gmt.mt_fk_message_model_id
+        WHERE gsp.sp_id IS NULL OR gsp.sp_id = #{serviceProviderId}
+>>>>>>> 8b02f02cd1cc753d46b1c40f3be824f246fa2588:src/main/resources/xml/com/example/demo/mappers/ContractMapper.xml
     </select>
 
     <select id="getContractsBySubcontractorId" resultMap="contractMap" parameterType="java.lang.Integer">

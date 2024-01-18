@@ -32,6 +32,7 @@ public class ContractController {
     public ResponseEntity<Page<Contract>> getContractsByServiceProviderId (
             @RequestParam(value = "serviceProviderId", required = false) Integer serviceProviderId,
             @PageableDefault(page = 0, size = 6) Pageable pageable) {
+    	
 
         try {
             List<Contract> contractList = contractService.getContractsByServiceProviderId(serviceProviderId);
