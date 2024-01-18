@@ -12,12 +12,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 @Configuration
 public class MailConfiguration {
-	
-//	@Value("${spring.mail.username}")
-//	private String username;
-//
-//	@Value("${spring.mail.password}")
-//	private String password;
+
 
     @Autowired
     private Environment env;
@@ -29,7 +24,6 @@ public class MailConfiguration {
         String password = env.getProperty("spring.mail.password");
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
-        // mailSender.setHost("smtp.office365.com");
         mailSender.setPort(587);
 
         mailSender.setUsername(username);
