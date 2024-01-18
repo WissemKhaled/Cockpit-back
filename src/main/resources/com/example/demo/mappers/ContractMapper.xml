@@ -11,10 +11,8 @@
         SELECT DISTINCT gc.c_contract_number
         FROM gst_contract gc
                  INNER JOIN gst_service_provider gsp ON gc.c_fk_service_provider_id = gsp.sp_id
-                 INNER JOIN gst_subcontractor gsc ON gc.c_fk_service_provider_id = gsc.s_id
                  INNER JOIN gst_model_tracking gmt ON gmt.mt_fk_contract_id = gc.c_id
-                 INNER JOIN gst_message_model gmm ON gmm.mm_id = gmt.mt_fk_message_model_id
-        WHERE (gsp.sp_id IS NULL OR gsp.sp_id = #{serviceProviderId})
+        WHERE gc.c_fk_service_provider_id =  #{serviceProviderId}
     </select>
 
     <select id="getContractsBySubcontractorId" resultMap="contractMap" parameterType="java.lang.Integer">
