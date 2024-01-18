@@ -9,9 +9,7 @@ import java.util.Optional;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,9 +40,7 @@ import jakarta.mail.MessagingException;
 
 @Service
 public class GstLogServiceImpl implements GstLogService{
-
-	@Autowired(required = false)
-	private  GstLogMapper gstLogMapper;
+	private final GstLogMapper gstLogMapper;
 	
 	private final CreateGstLogDtoMapper createGstLogDtoMapper;
 	
@@ -59,16 +55,14 @@ public class GstLogServiceImpl implements GstLogService{
 	private final JsonFileLoader jsonFileLoader;
 	
 	private final UUserMapper userMapper;
-
-	@Autowired
-	private Environment env;
-
-
-
+	
+	@Value("${reset.password.claim.expiration.duration}")
+    private int ResetPasswordClaimExpirationDuration;
 	
 	private static final Logger log = LoggerFactory.getLogger(GstLogServiceImpl.class);
 	
 	public GstLogServiceImpl (
+			GstLogMapper gstLogMapper,
 			CreateGstLogDtoMapper createGstLogDtoMapper,
 			GstLogDtoMapper gstLogDtoMapper,
 			MailSenderService mailService,
@@ -77,6 +71,7 @@ public class GstLogServiceImpl implements GstLogService{
 			JsonFileLoader jsonFileLoader,
 			UUserMapper userMapper
 	) {
+		this.gstLogMapper = gstLogMapper;
 		this.createGstLogDtoMapper = createGstLogDtoMapper;
 		this.gstLogDtoMapper = gstLogDtoMapper;
 		this.mailService = mailService;
@@ -148,11 +143,10 @@ public class GstLogServiceImpl implements GstLogService{
 
 	@Override
 	public boolean checkResetPasswordExpiration(String logValue) throws NotFoundException {
-		String ResetPasswordClaimExpirationDuration = env.getProperty("reset.password.claim.expiration.duration");
 	    if (logValue != null && !logValue.isEmpty()) {
 	        GstLog gstLog = gstLogMapper.getLogByValue(logValue);
 	        if (gstLog != null) {
-	            LocalDateTime expirationMoment = gstLog.getLogCreationDate().plusMinutes(Long.parseLong(ResetPasswordClaimExpirationDuration));
+	            LocalDateTime expirationMoment = gstLog.getLogCreationDate().plusMinutes(ResetPasswordClaimExpirationDuration);
 	            LocalDateTime currentTime = LocalDateTime.now();
 
 	            if (currentTime.isBefore(expirationMoment)) {

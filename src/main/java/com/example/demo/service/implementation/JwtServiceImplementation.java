@@ -6,9 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -19,17 +17,15 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Service;
 
-@Service
+@Component
 public class JwtServiceImplementation implements JwtService {
 
-
-	@Autowired
-	private Environment env;
-
-
-
+	@Value("${jwt.secret}")
+    private String jwtSecret;
+	
+	@Value("${token.expiration.duration}")
+	private int tokenExpirationDuration;
 	
 	public String generateToken(String userName) {
 		Map<String, Object> claims = new HashMap<>(); 
@@ -37,17 +33,15 @@ public class JwtServiceImplementation implements JwtService {
 	} 
 
 	private String createToken(Map<String, Object> claims, String userName) {
-		String tokenExpirationDuration = env.getProperty("token.expiration.duration");
 		return Jwts.builder() 
 				.setClaims(claims) 
 				.setSubject(userName) 
 				.setIssuedAt(new Date(System.currentTimeMillis())) 
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * Integer.parseInt(tokenExpirationDuration)))
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * tokenExpirationDuration))
 				.signWith(getSignKey(), SignatureAlgorithm.HS256).compact(); 
 	} 
 
-	private Key getSignKey() {
-		String jwtSecret = env.getProperty("jwt.secret");
+	private Key getSignKey() { 
 		byte[] keyBytes= Decoders.BASE64.decode(jwtSecret); 
 		return Keys.hmacShaKeyFor(keyBytes); 
 	} 

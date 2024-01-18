@@ -14,7 +14,7 @@
                  INNER JOIN gst_subcontractor gsc ON gc.c_fk_service_provider_id = gsc.s_id
                  INNER JOIN gst_model_tracking gmt ON gmt.mt_fk_contract_id = gc.c_id
                  INNER JOIN gst_message_model gmm ON gmm.mm_id = gmt.mt_fk_message_model_id
-        WHERE (gsp.sp_id IS NULL OR gsp.sp_id = #{serviceProviderId})
+        WHERE gsp.sp_id IS NULL OR gsp.sp_id = #{serviceProviderId}
     </select>
 
     <select id="getContractsBySubcontractorId" resultMap="contractMap" parameterType="java.lang.Integer">
