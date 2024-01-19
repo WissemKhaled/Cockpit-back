@@ -13,11 +13,11 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @Configuration
 public class MailConfiguration {
 	
-//	@Value("${spring.mail.username}")
-//	private String username;
-//
-//	@Value("${spring.mail.password}")
-//	private String password;
+	@Value("${spring.mail.username}")
+	private String username;
+
+	@Value("${spring.mail.password}")
+	private String password;
 
     @Autowired
     private Environment env;

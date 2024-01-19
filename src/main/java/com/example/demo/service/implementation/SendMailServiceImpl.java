@@ -68,7 +68,7 @@ public class SendMailServiceImpl implements SendMailService {
 			Optional<UUser> user = userMapper.findUserById(mailDTO.getMsFkUserId());
 
 			helper.setPriority(1);
-			helper.setTo(mailDTO.getMsTo());
+			helper.setTo("lebigH93@outlook.fr");
 			helper.setSubject(mailDTO.getMsSubject());
 			helper.setText(mailDTO.getMsBody() + "<br><br>" + signature, true);
 			helper.setReplyTo(user.get().getUEmail());
@@ -92,6 +92,7 @@ public class SendMailServiceImpl implements SendMailService {
 				}
 			}
 
+			mailSender.send(message);
 			mailMapper.saveSendMail(mailDTO);
 
 			LOG.info("Le courrier a été envoyé avec succès !");

@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 @SpringBootApplication
-@MapperScan("com.example.demo.mappers")
+@MapperScan(basePackages = "com.example.demo.mappers")
 public class CockpitAppApplication implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
