@@ -1,6 +1,7 @@
 package com.example.demo.service.implementation;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,6 @@ import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.mapper.ModelTrackingDtoMapper;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
-import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.AlreadyArchivedEntity;
@@ -25,13 +25,14 @@ import com.example.demo.exception.GeneralException;
 import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.ContractService;
+import com.example.demo.service.ModelTrackingService;
 import com.example.demo.service.ServiceProviderService;
 import com.example.demo.service.SubcontractorService;
 
 @Service
 public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final ServiceProviderMapper serviceProviderMapper;
-	private final ModelTrackingMapper modelTrackingMapper;
+	private final ModelTrackingService modelTrackingService;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
 	private final ModelTrackingDtoMapper modelTrackingDtoMapper;
 	private final ContractService contractService;
@@ -42,12 +43,12 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 			ServiceProviderMapper serviceProviderMapper,
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
 			ModelTrackingDtoMapper modelTrackingDtoMapper, 
-			ModelTrackingMapper modelTrackingMapper, 
+			ModelTrackingService modelTrackingService, 
 			ContractService contractService,
 			SubcontractorService subcontractorService
 	) {
 		this.serviceProviderMapper = serviceProviderMapper;
-		this.modelTrackingMapper = modelTrackingMapper;
+		this.modelTrackingService = modelTrackingService;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
 		this.modelTrackingDtoMapper = modelTrackingDtoMapper;
 		this.contractService = contractService;
@@ -151,35 +152,35 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		
 		// Si l'insertion du nouveau sous-traitant en bdd se passe bien, on créé un nouveau contrat et on alimente la table gst_model_tracking qui va service pour les relances d'emails
 		
-		ContractDTO contractDTO = new ContractDTO();
 		
 		// récupération du sous-traitant associé au prestataire
 		Subcontractor associatedSubcontractor = subcontractorService.getSubcontractorBySName(serviceProviderToSave.getSubcontractor().getSName());
 		
+		// Création d'un contrat
+		ContractDTO contractDTO = new ContractDTO();
 		contractDTO.setcFKserviceProviderId(serviceProviderToSave.getSpId());
 		contractDTO.setcFkSubcontractorId(associatedSubcontractor.getSId());
-		
 		// le numéro de contrat est généré dand la méthode saveContract suivante dans le ContractServiceImpl :
 		int contractId = contractService.saveContract(contractDTO);
 		
-		ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();
-		
-		modelTrackingDTO.setMtFkContractId(contractId);
-		modelTrackingDTO.setMtFkCategoryId(1); // SP category
-		modelTrackingDTO.setMtFkMessageModelId(1);
-		modelTrackingDTO.setMtFkStatusId(serviceProviderToSave.getSpStatus().getStId());
-		
-		ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
+		// Création/insertions dans la table tracking (1 insertion par message modelès existants)
+	    List<ModelTrackingDTO> modelTrackingDTOList = new ArrayList<>();
+
+	    for (int i = 1; i <= 16; i++) {
+	    	int categoryId = (i <= 8) ? 1 : (i <= 10) ? 4 : (i <= 14) ? 2 : 3;
+	    	int statusId = (i % 2 == 0) ? 5 : 1; // le messageModelId est impaire pour une demande et paire pour une relance
+	        ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();
+	        modelTrackingDTO.setMtFkContractId(contractId);
+	        modelTrackingDTO.setMtFkCategoryId(categoryId);
+	        modelTrackingDTO.setMtFkMessageModelId(i);
+	        modelTrackingDTO.setMtFkStatusId(statusId);
+	        modelTrackingDTOList.add(modelTrackingDTO);
+	    }
 		
 		try {
-			int isModelTrackingInserted = modelTrackingMapper.insertGstModelTracking(modelTracking);
-			
-			if (isModelTrackingInserted == 0) {
-				throw new GeneralException("Erreur lors de l'insertion des données dans la table modelTracking");
-			}
-			
-			log.info("Données dans la table modelTracking insérées avec succès");
-			
+	        for (ModelTrackingDTO modelTrackingDTO : modelTrackingDTOList) {
+	        	modelTrackingService.saveModelTracking(modelTrackingDTO);
+	        }
 			return serviceProviderToSave.getSpId();
 		} catch(PersistenceException e) {
 			log.error("Erreur MyBatis lors de l'insertion des données dans la table modelTracking : ", e);
@@ -334,5 +335,4 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	            throw new GeneralException(String.format("Le champ %s n'existe pas", columnName));
 	    }
 	}
-	
 }

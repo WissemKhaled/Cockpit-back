@@ -55,5 +55,4 @@
         ORDER BY gmm.mm_id ASC
     </select>
 
-
 </mapper>

@@ -30,12 +30,13 @@ public class MessageModelServiceImpl implements MessageModelService {
 	 *
 	 * Cette méthode interroge la base de données pour les modèles de messages liés à l'identifiant du sous-traitant spécifié. Si aucun modèle de message n'est trouvé, une MessageModelNotFoundException est levée.
 	 */
-
+	
+	
 	@Override
 	public List<MessageModel> getAllMessageModelBySubcontractorId(Integer subContractorId) {
 		List<MessageModel> messageModels = messageModelMapper.getAllMessageModelBySubcontractorId(subContractorId);
 		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
-				.orElseThrow(() -> new MessageModelNotFoundException("No message model exists for this id!"));
+				.orElseThrow(() -> new MessageModelNotFoundException("Aucun message model n'existe pour ce subContractorId !"));
 	}
 
 	/**

@@ -4,29 +4,30 @@ VALUES
     (1, 'En cours'),
     (2, 'En validation'),
     (3, 'Validé'),
-    (4, 'Archivé');
+    (4, 'Archivé'),
+    (5, 'En cours - relance');
  
 -- Message Category
 INSERT INTO gst_category (cat_id, cat_name)
 VALUES (1, 'SP'), (2, 'SC'), (3, 'KBIS'), (4, 'REG');
  
 --model de message modification
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (1, 'Demande des documents administratifs du prestataire', 'je suis le body du mail', 't', CURRENT_TIMESTAMP, NULL, 1);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (1, 'Relance des documents administratifs du prestataire', 'je suis le body du mail', 't', CURRENT_TIMESTAMP, NULL, 1);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (2, 'Demande création à la comptabilité du prestataire', 'je suis le body du mail', 'f', CURRENT_TIMESTAMP, NULL, 1);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (2, 'Relance création à la comptabilité du prestataire', 'je suis le body du mail', 'f', CURRENT_TIMESTAMP, NULL, 1);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (3, 'Demande de signatures d''annexes du prestataire', 'je suis le body du mail', 't', CURRENT_TIMESTAMP, NULL, 1);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (3, 'Relance des signatures d''annexe du prestataire', 'je suis le body du mail', 'f', CURRENT_TIMESTAMP, NULL, 1);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (4, 'Demande renouvellement des documents administratifs du prestataire', 'je suis le body du mail', 't', CURRENT_TIMESTAMP, NULL, 1);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (4, 'Relance renouvellement des documents administratif du prestataire', 'je suis le body du mail', 't', CURRENT_TIMESTAMP, NULL, 1);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (5, 'Demande des documents de régularisation du sous-traitant', 'je suis le body du mail', 't', CURRENT_TIMESTAMP, NULL, 4);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (5, 'Relance des documents de régularisation du sous-traitant', 'je suis le body du mail', 't', CURRENT_TIMESTAMP, NULL, 4);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (6, 'Demande création à la comptabilité du sous-traitant', 'je suis le body du mail', 'f', CURRENT_TIMESTAMP, NULL, 2);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (6, 'Relance de création à la comptabilité du sous-traitant', 'je suis le body du mail', 'f', CURRENT_TIMESTAMP, NULL, 2);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (7, 'Demande de signatures de contrat du sous-traitant', 'je suis le body du mail', 't', CURRENT_TIMESTAMP, NULL, 2);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (7, 'Relance des signatures de contrat du sous-traitant', 'je suis le body du mail', 't', CURRENT_TIMESTAMP, NULL, 2);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (8, 'Demande de renouvellment du KBIS du sous-traitant', 'je suis le body du mail', 't', CURRENT_TIMESTAMP, NULL, 3);
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (8, 'Relance de renouvellment du KBIS du sous-traitant', 'je suis le body du mail', 't', CURRENT_TIMESTAMP, NULL, 3);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (1, 'Demande des documents administratifs du prestataire', 'je suis le body du mail', 't', 'f', CURRENT_TIMESTAMP, NULL, 1);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (1, 'Relance des documents administratifs du prestataire', 'je suis le body du mail', 't', 't', CURRENT_TIMESTAMP, NULL, 1);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (2, 'Demande création à la comptabilité du prestataire', 'je suis le body du mail', 'f', 'f', CURRENT_TIMESTAMP, NULL, 1);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (2, 'Relance création à la comptabilité du prestataire', 'je suis le body du mail', 'f', 't', CURRENT_TIMESTAMP, NULL, 1);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (3, 'Demande de signatures d''annexes du prestataire', 'je suis le body du mail', 't', 'f', CURRENT_TIMESTAMP, NULL, 1);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (3, 'Relance des signatures d''annexe du prestataire', 'je suis le body du mail', 'f', 't', CURRENT_TIMESTAMP, NULL, 1);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (4, 'Demande renouvellement des documents administratifs du prestataire', 'je suis le body du mail', 't', 'f', CURRENT_TIMESTAMP, NULL, 1);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (4, 'Relance renouvellement des documents administratif du prestataire', 'je suis le body du mail', 't', 't', CURRENT_TIMESTAMP, NULL, 1);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (5, 'Demande des documents de régularisation du sous-traitant', 'je suis le body du mail', 't', 'f', CURRENT_TIMESTAMP, NULL, 4);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (5, 'Relance des documents de régularisation du sous-traitant', 'je suis le body du mail', 't', 't', CURRENT_TIMESTAMP, NULL, 4);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (6, 'Demande création à la comptabilité du sous-traitant', 'je suis le body du mail', 'f', 'f', CURRENT_TIMESTAMP, NULL, 2);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (6, 'Relance de création à la comptabilité du sous-traitant', 'je suis le body du mail', 'f', 't', CURRENT_TIMESTAMP, NULL, 2);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (7, 'Demande de signatures de contrat du sous-traitant', 'je suis le body du mail', 't', 'f', CURRENT_TIMESTAMP, NULL, 2);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (7, 'Relance des signatures de contrat du sous-traitant', 'je suis le body du mail', 't', 't', CURRENT_TIMESTAMP, NULL, 2);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (8, 'Demande de renouvellment du KBIS du sous-traitant', 'je suis le body du mail', 't', 'f', CURRENT_TIMESTAMP, NULL, 3);
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (8, 'Relance de renouvellment du KBIS du sous-traitant', 'je suis le body du mail', 't', 't', CURRENT_TIMESTAMP, NULL, 3);
  
 -- Subcontractor 1
 INSERT INTO gst_subcontractor (s_name, s_email, s_fk_status_id)
@@ -213,7 +214,10 @@ SELECT
     NULL AS mt_validation_date,
     c.c_id AS mt_fk_contract_id,
     mm.mm_id AS mt_fk_message_model_id,
-    s.sp_fk_status_id AS mt_fk_status_id,
+    CASE WHEN mm.mm_is_relaunch
+         THEN 5
+         ELSE s.sp_fk_status_id
+    END AS mt_fk_status_id,
     mm.mm_fk_category_id AS mt_fk_category_id
 FROM gst_service_provider s
 JOIN gst_contract c ON s.sp_id = c.c_fk_service_provider_id

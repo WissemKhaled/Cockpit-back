@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 
 public class Status {
 	@NotNull
-	@Max(value = 4, message = "L'id doit être inférieure ou égale à 4")
+	@Max(value = 5, message = "L'id doit être inférieure ou égale à 5")
 	@Min(value = 1, message = "L'id doit être supérieure ou égale à 1")
 	@JsonProperty("stId")
 	private int stId;
