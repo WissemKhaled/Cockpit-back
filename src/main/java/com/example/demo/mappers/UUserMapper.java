@@ -16,7 +16,7 @@ public interface UUserMapper {
 	 * @param uEmail l'émail de l'utilisateur à chercher.
 	 * @return optional user.
 	 */
-	Optional<UUser> findUserByEmail(@Param("uEmail") String uEmail);
+	Optional<UUser> findUserByEmail(String uEmail);
 
 	/**
 	 * renvoie un optional user à partir de son ID.
@@ -24,7 +24,7 @@ public interface UUserMapper {
 	 * @param userId l'ID de l'utilisateur à chercher.
 	 * @return optional user.
 	 */
-	Optional<UUser> findUserById(@Param("userId") int userId);
+	Optional<UUser> findUserById( int userId);
 
 	/**
 	 * enregistrer un nouveau user.
@@ -39,5 +39,5 @@ public interface UUserMapper {
 	 * @param user l'utilisateur à mettre à jour.
 	 * @return Un indicateur de succès (par exemple, 1 pour succès, 0 pour échec).
 	 */
-	int updatePassword(@Param("user") UUser user);
+	int updatePassword(UUser user);
 }
