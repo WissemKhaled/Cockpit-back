@@ -16,5 +16,5 @@ public interface GstLogMapper {
 	
 	List<GstLog> getThreeLatestLogs(String email);
 	
-	int updateGstLogPwd(GstLog gstLog);
+	int updateGstLogPwd(@Param("gstLog") GstLog gstLog);
 }

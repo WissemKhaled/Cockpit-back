@@ -39,5 +39,5 @@ public interface UUserMapper {
 	 * @param user l'utilisateur à mettre à jour.
 	 * @return Un indicateur de succès (par exemple, 1 pour succès, 0 pour échec).
 	 */
-	int updatePassword(UUser user);
+	int updatePassword(@Param("user")UUser user);
 }
