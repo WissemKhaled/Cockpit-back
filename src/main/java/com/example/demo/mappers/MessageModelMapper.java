@@ -16,4 +16,7 @@ public interface MessageModelMapper {
 
 	List<MessageModel> getAllMessageModelByServiceProviderId(
 	        Integer serviceProviderId);
+
+	List<MessageModel> getAllMessageModelByContractId(
+			Integer contractId);
 }

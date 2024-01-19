@@ -6,7 +6,9 @@ import com.example.demo.entity.MessageModel;
 
 public interface MessageModelService {
 
-	public List<MessageModel> getAllMessageModelBySubcontractorId(Integer subContractorId);
+	List<MessageModel> getAllMessageModelBySubcontractorId(Integer subContractorId);
 	
 	List<MessageModel> getAllMessageModelByServiceProviderId(Integer serviceProviderId);
+
+	List<MessageModel> getAllMessageModelByContractId(Integer contractId);
 }

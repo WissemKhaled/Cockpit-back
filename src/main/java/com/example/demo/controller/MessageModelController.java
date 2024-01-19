@@ -121,4 +121,22 @@ public class MessageModelController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+
+
+	@GetMapping("/getAllMessagesByContractId")
+	public ResponseEntity<Page<MessageModel>> getAllMessageModelByContractId(
+			@RequestParam(value = "contractId") Integer contractId,
+			@PageableDefault(page = 0, size = 6) Pageable pageable) {
+		try {
+			List<MessageModel> allMessages = messageModelService.getAllMessageModelByContractId(contractId);
+
+			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
+
+			return ResponseEntity.ok(page);
+
+		} catch (MessageModelNotFoundException e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
+
 }
