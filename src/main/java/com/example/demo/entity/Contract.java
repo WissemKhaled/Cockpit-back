@@ -12,7 +12,7 @@ public class Contract {
 	@JsonProperty("cFkSubcontractorId")
 	private int cFkSubcontractorId;
 	
-	@JsonProperty("cFKserviceProviderId")
+	@JsonProperty("cFkServiceProviderId")
 	private int cFKserviceProviderId;
 
 	public Contract() {
