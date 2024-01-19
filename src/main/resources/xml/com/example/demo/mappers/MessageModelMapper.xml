@@ -16,6 +16,15 @@
         </association>
     </resultMap>
 
+	<select id="getAllMessageModels" resultMap="messageModelMap">
+        SELECT DISTINCT
+			gmm.*,
+	        category.cat_name AS cat_name
+	    FROM schema_dev.gst_message_model gmm
+	        INNER JOIN schema_dev.gst_category category ON category.cat_id = gmm.mm_fk_category_id
+	    ORDER BY gmm.mm_id ASC
+    </select>
+
     <select id="getAllMessageModelBySubcontractorId" resultMap="messageModelMap" parameterType="java.lang.Integer">
         SELECT DISTINCT gmm.*,
                         category.cat_name AS cat_name

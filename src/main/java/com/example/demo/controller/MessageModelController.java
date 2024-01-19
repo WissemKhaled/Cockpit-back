@@ -36,6 +36,7 @@ public class MessageModelController {
 	) {
 		this.messageModelService = messageModelService;
 		this.modelTrackingService = modelTrackingService;
+	}
 
 	
 	@GetMapping("/getAllMessagesBySubcontractorId")

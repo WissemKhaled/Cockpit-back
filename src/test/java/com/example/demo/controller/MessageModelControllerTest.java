@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.MessageModel;
 import com.example.demo.service.MessageModelService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

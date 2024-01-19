@@ -9,6 +9,7 @@ import com.example.demo.entity.MessageModel;
 @Mapper
 public interface MessageModelMapper {
 
+	List<MessageModel> getAllMessageModels();
 
 	List<MessageModel> getAllMessageModelBySubcontractorId(
 	        Integer subContractorId);
