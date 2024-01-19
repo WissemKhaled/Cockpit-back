@@ -36,8 +36,8 @@
 	</select>
 	
 	<insert id="insertRefreshToken" flushCache="true" statementType="PREPARED" keyProperty="rtId" keyColumn="rt_id" useGeneratedKeys="true" parameterType="com.example.demo.entity.RefreshToken">
-        INSERT INTO refresh_token(rt_id, rt_token, rt_expiry_date, rt_fk_user_id)
-        VALUES (#{rtId}, #{rtToken}, TO_TIMESTAMP(#{rtExpiryDate}, 'YYYY-MM-DD HH24:MI:SS'), #{uUser.uId})
+        INSERT INTO refresh_token(rt_token, rt_expiry_date, rt_fk_user_id)
+        VALUES (#{rtToken}, TO_TIMESTAMP(#{rtExpiryDate}, 'YYYY-MM-DD HH24:MI:SS'), #{uUser.uId})
     </insert>
 	
 	<delete id="deleteRefreshTokenByToken" parameterType="java.lang.String">
