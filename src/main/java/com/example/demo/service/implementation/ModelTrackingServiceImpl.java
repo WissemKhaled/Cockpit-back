@@ -186,7 +186,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	}
 
 	@Override
-	public void checkRelaunch(int contractId, int statusId) {
+	public void checkRelaunch(int statusId) {
 	    List<Pair<MessageModel, MessageModel>> allPairs = getAllPairsDemandAndItsRelaunchMessageModel();
 	    
 	    for (Pair<MessageModel, MessageModel> pair : allPairs) {
@@ -271,7 +271,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 				    }
 					 
 				 } else {
-				     log.warn("modelTrackingDTODemand et modelTrackingDTORelaunch null pour le contractId: " + contractId);
+				     log.warn("modelTrackingDTODemand et modelTrackingDTORelaunch null");
 				 }
 			 }
 		}
