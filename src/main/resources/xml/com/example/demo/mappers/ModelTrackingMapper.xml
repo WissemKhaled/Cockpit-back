@@ -2,20 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- ModelTrackingMapper.xml -->
 <mapper namespace="com.example.demo.mappers.ModelTrackingMapper">
-	
-	<resultMap type="com.example.demo.entity.Subcontractor" id="modelTrackingResultMap">
-		<result property="mtId" column="mt_id" />
-		<result property="mtFkContractId" column="mt_fk_contract_id" />
-		<result property="mtFkMessageModelId" column="mt_fk_message_model_id" />
-		<result property="mtFkStatusId" column="mt_fk_status_id" />
-		<result property="mtFkCategoryId" column="mt_fk_category_id" />
-		<result property="mtSendDate" column="mt_send_date" />
-		<result property="mtValidationDate" column="mt_validation_date" />
-        <association property="status" javaType="com.example.demo.entity.Status">
-            <id property="mtId" column="mt_id"/>
-<!--            <result property="stName" column="st_name"/>-->
-        </association>
-	</resultMap>
 
     <insert id="insertGstModelTracking" statementType="PREPARED" useGeneratedKeys="true" keyProperty="mtId" keyColumn="mt_id" parameterType="com.example.demo.entity.ModelTracking">
         INSERT INTO schema_dev.gst_model_tracking (

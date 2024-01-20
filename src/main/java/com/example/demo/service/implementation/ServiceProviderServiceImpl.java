@@ -2,6 +2,7 @@ package com.example.demo.service.implementation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +23,6 @@ import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
-import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.ContractService;
 import com.example.demo.service.ModelTrackingService;
@@ -94,8 +94,16 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    if (serviceProvidersList == null || serviceProvidersList.isEmpty()) {
 	        throw new EntityNotFoundException("Aucun résultat trouvé");
 	    }
-
-	    return serviceProvidersList.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    List<ServiceProviderDto> foundServiceProviderList = serviceProvidersList.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    for (ServiceProviderDto serviceProviderDto : foundServiceProviderList) {
+			List<Integer> countAllServiceProviderAlerts = serviceProviderMapper.countAllServiceProviderAlerts(serviceProviderDto.getSpId());
+		    List<Integer> numberOfAlertsByStatus = Arrays.asList(0,0,0);
+			for (int i=0; i<countAllServiceProviderAlerts.size(); i++) {
+				numberOfAlertsByStatus.set(i, countAllServiceProviderAlerts.get(i));
+			}
+			serviceProviderDto.setAlertsList(numberOfAlertsByStatus);
+		}
+	    return foundServiceProviderList;
 	}
 	
 	@Override
@@ -334,5 +342,22 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	        default:
 	            throw new GeneralException(String.format("Le champ %s n'existe pas", columnName));
 	    }
+	}
+
+	@Override
+	public List<Integer> countNumberOfAlertsByStatusAndServiceProviderId(int serviceProviderId) throws AlreadyArchivedEntity {
+		Optional<ServiceProvider> optionalServiceProviderById = Optional.ofNullable(serviceProviderMapper.findServiceProviderWithSubcontractorBySpId(serviceProviderId));
+		if (optionalServiceProviderById.isEmpty()) {
+			throw new EntityNotFoundException("le prestataire avec l'id: " + serviceProviderId + " n'existe pas!!");
+		}
+		if (optionalServiceProviderById.get().getSpStatus().getStId() == 4) {
+			throw new AlreadyArchivedEntity(String.format("Erreur: le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
+		}
+		List<Integer> countAllServiceProviderAlertsByStatus = serviceProviderMapper.countAllServiceProviderAlerts(serviceProviderId);
+		List<Integer> numberOfAlertsByStatus = Arrays.asList(0,0,0);
+		for (int i=0; i<countAllServiceProviderAlertsByStatus.size(); i++) {
+			numberOfAlertsByStatus.set(i, countAllServiceProviderAlertsByStatus.get(i));
+		}
+		return numberOfAlertsByStatus;
 	}
 }

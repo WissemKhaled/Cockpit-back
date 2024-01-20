@@ -3,11 +3,10 @@ package com.example.demo.service;
 import java.util.List;
 
 import com.example.demo.dto.ServiceProviderDto;
-import com.example.demo.dto.StatusDto;
 import com.example.demo.exception.AlreadyArchivedEntity;
+import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.GeneralException;
 
 public interface ServiceProviderService {
@@ -177,5 +176,19 @@ public interface ServiceProviderService {
 	 * @throws GeneralException Si l'une des données à formatter est nul ou vide.
 	 */
 	void formattingServiceProviderData(ServiceProviderDto serviceProviderDto) throws GeneralException;
+	
+	/**
+	 * Compter le nombre d'alerts par status pour un prestataire.
+	 *
+	 * @param serviceProviderId l'id du prestataire.
+	 * @return une liste d'entiers dans cette forme [n1,n2,n3] avec:
+	 * 					 <ul>
+	 *                      <li>n1: nombre d'alerts par le status "En cours".</li>
+	 *                      <li>n2: nombre d'alerts par le status "En validation".</li>
+	 *                      <li>n3: nombre d'alerts par le status "Validé".</li>
+	 *                   </ul>
+	 * @throws AlreadyArchivedEntity 
+	 */
+	List<Integer> countNumberOfAlertsByStatusAndServiceProviderId(int serviceProviderId) throws AlreadyArchivedEntity;
 
 }

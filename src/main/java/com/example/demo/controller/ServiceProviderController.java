@@ -273,4 +273,28 @@ public class ServiceProviderController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	/**
+	 * Compter le nombre d'alerts par status pour un prestataire.
+	 *
+	 * @param serviceProviderId l'id du prestataire.
+	 * @return une liste d'entiers dans cette forme [n1,n2,n3] avec:
+	 * 					 <ul>
+	 *                      <li>n1: nombre d'alerts par le status "En cours".</li>
+	 *                      <li>n2: nombre d'alerts par le status "En validation".</li>
+	 *                      <li>n3: nombre d'alerts par le status "Validé".</li>
+	 *                   </ul>
+	 */
+	@GetMapping("/alerts/{serviceProviderId}")
+	public ResponseEntity<List<Integer>> getServiceProviderAlerts(@PathVariable int serviceProviderId) {
+	    try {
+	        return new ResponseEntity<>(serviceProviderService.countNumberOfAlertsByStatusAndServiceProviderId(serviceProviderId), HttpStatus.OK);
+	    }  catch (EntityNotFoundException e) {
+	        return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		} catch (AlreadyArchivedEntity e) {
+	        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+	    } catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
