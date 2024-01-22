@@ -15,4 +15,13 @@ public interface ModelTrackingService {
 	ModelTrackingDTO getModelTrackingInfoByContractIdAndMmId(int contractId, int mmId);
 	
 	void checkRelaunch(int statusId);
+	
+	/**
+	 * Récupère depuis la table gst_tracking la liste de tout les statusId des demandes liées au sous-traitant
+	 *
+	 * @param subcontractorId      l'id du sous-traitant dont on veut les status.
+	 * @return La liste des statusId du sous-traitant dont on a passé l'ID.
+	 * @throws DatabaseQueryFailureException 
+	 */
+	void updateSubcontractorStatusIdBySId(int subcontractorId) throws DatabaseQueryFailureException;
 }

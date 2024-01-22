@@ -65,4 +65,14 @@ public class ModelTrackingController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+	
+	@PutMapping("/updateSubcontractorStatusId/{subcontractorId}")
+    public ResponseEntity<String> updateSubcontractorStatusIdBySId(@PathVariable int subcontractorId) throws DatabaseQueryFailureException {
+        try {
+            modelTrackingService.updateSubcontractorStatusIdBySId(subcontractorId);
+            return new ResponseEntity<>(String.format("Le statut du sous-traitant avec l'id: %d a été mis à jour avec succès", subcontractorId), HttpStatus.OK);
+        } catch (DatabaseQueryFailureException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

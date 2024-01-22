@@ -302,4 +302,16 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 		
 		return modelTrackingDTO;
 	}
+	
+	@Override
+	public void updateSubcontractorStatusIdBySId(int subcontractorId) throws DatabaseQueryFailureException {
+		int isSubcontractorStatusUpdated = modelTrackingMapper.updateSubcontractorStatus(subcontractorId);
+		
+		if (isSubcontractorStatusUpdated == 0) {
+			log.error("Echec de l'insertion de l'objet en bdd");
+			throw new DatabaseQueryFailureException("Echec de la mise à jour du status du sous-traitant en bdd");
+		}
+		
+		log.info("mise à jour du status du sous-traitant en bdd effectuée avec succès");
+	}
 }

@@ -16,6 +16,16 @@
 <!--            <result property="stName" column="st_name"/>-->
         </association>
 	</resultMap>
+	
+	<sql id="modelTrackingColumns">
+		mt.mt_id AS mtId,
+        mt.mt_send_date AS mtSendDate,
+        mt.mt_validation_date AS mtValidationDate,
+        mt.mt_fk_contract_id AS mtFkContractId,
+        mt.mt_fk_message_model_id AS mtFkMessageModelId,
+        mt.mt_fk_status_id AS mtFkStatusId,
+        mt.mt_fk_category_id AS mtFkCategoryId
+    </sql>
 
     <insert id="insertGstModelTracking" statementType="PREPARED" useGeneratedKeys="true" keyProperty="mtId" keyColumn="mt_id" parameterType="com.example.demo.entity.ModelTracking">
         INSERT INTO schema_dev.gst_model_tracking (
@@ -39,55 +49,66 @@
     </update>
 
     <select id="findAllModelTrackingInfo" resultType="com.example.demo.dto.ModelTrackingDTO">
-        SELECT
-            mt.mt_id AS mtId,
-            mt.mt_send_date AS mtSendDate,
-            mt.mt_validation_date AS mtValidationDate,
-            mt.mt_fk_contract_id AS mtFkContractId,
-            mt.mt_fk_message_model_id AS mtFkMessageModelId,
-            mt.mt_fk_status_id AS mtFkStatusId,
-            mt.mt_fk_category_id AS mtFkCategoryId
-        FROM schema_dev.gst_model_tracking mt
+        SELECT *
+        FROM schema_dev.gst_model_tracking
     </select>
 
     <select id="getModelTrackingInfoByContractId" resultType="com.example.demo.dto.ModelTrackingDTO" parameterType="int">
-        SELECT
-            mt.mt_id AS mtId,
-            mt.mt_send_date AS mtSendDate,
-            mt.mt_validation_date AS mtValidationDate,
-            mt.mt_fk_contract_id AS mtFkContractId,
-            mt.mt_fk_message_model_id AS mtFkMessageModelId,
-            mt.mt_fk_status_id AS mtFkStatusId,
-            mt.mt_fk_category_id AS mtFkCategoryId
-        FROM schema_dev.gst_model_tracking mt
-        WHERE mt.mt_fk_contract_id = #{contractId}
+        SELECT *
+        FROM schema_dev.gst_model_tracking
+        WHERE mt_fk_contract_id = #{contractId}
     </select>
 
     <select id="findModelTrackingInfoByMmId" resultType="com.example.demo.dto.ModelTrackingDTO" parameterType="int">
-        SELECT
-            mt.mt_id AS mtId,
-            mt.mt_send_date AS mtSendDate,
-            mt.mt_validation_date AS mtValidationDate,
-            mt.mt_fk_contract_id AS mtFkContractId,
-            mt.mt_fk_message_model_id AS mtFkMessageModelId,
-            mt.mt_fk_status_id AS mtFkStatusId,
-            mt.mt_fk_category_id AS mtFkCategoryId
-        FROM schema_dev.gst_model_tracking mt
-        WHERE mt.mt_fk_message_model_id = #{mmId}
+        SELECT *
+        FROM schema_dev.gst_model_tracking
+        WHERE mt_fk_message_model_id = #{mmId}
     </select>
 
     <select id="findModelTrackingInfoByContractIdAndMmId" resultType="com.example.demo.dto.ModelTrackingDTO" parameterType="int">
-        SELECT
-            mt.mt_id AS mtId,
-            mt.mt_send_date AS mtSendDate,
-            mt.mt_validation_date AS mtValidationDate,
-            mt.mt_fk_contract_id AS mtFkContractId,
-            mt.mt_fk_message_model_id AS mtFkMessageModelId,
-            mt.mt_fk_status_id AS mtFkStatusId,
-            mt.mt_fk_category_id AS mtFkCategoryId
-        FROM schema_dev.gst_model_tracking mt
-        WHERE mt.mt_fk_contract_id = #{contractId}
-          AND mt.mt_fk_message_model_id = #{mmId}
+        SELECT *
+        FROM schema_dev.gst_model_tracking
+        WHERE mt_fk_contract_id = #{contractId}
+          AND mt_fk_message_model_id = #{mmId}
     </select>
+	
+	<update id="updateSubcontractorStatus" parameterType="map">
+	  <![CDATA[
+	  UPDATE schema_dev.gst_subcontractor
+	  SET s_fk_status_id = 
+	    CASE
+	      WHEN EXISTS (
+	        SELECT 1
+	        FROM schema_dev.gst_model_tracking mt
+	        INNER JOIN schema_dev.gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_subcontractor_id = #{subcontractorId}
+	          AND mt.mt_fk_status_id = 1
+	      ) THEN 1
+	      WHEN EXISTS (
+	        SELECT 1
+	        FROM schema_dev.gst_model_tracking mt
+	        INNER JOIN schema_dev.gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_subcontractor_id = #{subcontractorId}
+	          AND mt.mt_fk_status_id = 2
+	      ) AND NOT EXISTS (
+	        SELECT 1
+	        FROM schema_dev.gst_model_tracking mt
+	        INNER JOIN schema_dev.gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_subcontractor_id = #{subcontractorId}
+	          AND mt.mt_fk_status_id = 1
+	      ) THEN 2
+	      WHEN NOT EXISTS (
+	        SELECT 1
+	        FROM schema_dev.gst_model_tracking mt
+	        INNER JOIN schema_dev.gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_subcontractor_id = #{subcontractorId}
+	          AND mt.mt_fk_status_id <> 3
+	      ) THEN 3
+	      ELSE s_fk_status_id
+	    END
+	  WHERE s_id = #{subcontractorId}
+	  ]]>
+	</update>
 
+    
 </mapper>
