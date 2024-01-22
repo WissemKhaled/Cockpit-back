@@ -187,7 +187,6 @@ public interface ServiceProviderService {
 	 *                      <li>n2: nombre d'alerts par le status "En validation".</li>
 	 *                      <li>n3: nombre d'alerts par le status "Validé".</li>
 	 *                   </ul>
-	 * @throws AlreadyArchivedEntity 
 	 */
 	List<Integer> countNumberOfAlertsByStatusAndServiceProviderId(int serviceProviderId) throws AlreadyArchivedEntity;
 

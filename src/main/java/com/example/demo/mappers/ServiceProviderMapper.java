@@ -204,6 +204,18 @@ public interface ServiceProviderMapper {
 	 */
 	List<ServiceProvider> findServiceProvidersBySubcontractorId(int sId);
 	
+	
+	/**
+	 * Compter le nombre d'alerts par status pour un prestataire.
+	 *
+	 * @param serviceProviderId l'id du prestataire.
+	 * @return une liste d'entiers dans cette forme [n1,n2,n3] avec:
+	 * 					 <ul>
+	 *                      <li>n1: nombre d'alerts par le status "En cours".</li>
+	 *                      <li>n2: nombre d'alerts par le status "En validation".</li>
+	 *                      <li>n3: nombre d'alerts par le status "Validé".</li>
+	 *                   </ul>
+	 */
 	List<Integer> countAllServiceProviderAlerts(int servicePorividerId);
 
 }
