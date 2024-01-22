@@ -143,12 +143,20 @@
 		ORDER BY s.s_name, st.st_id, sp.sp_name ${sorting} LIMIT #{offset} OFFSET #{pageSize}
     </select>
     
-    <select id="countAllServiceProviderAlerts" resultType="java.lang.Integer">
+    <select id="countAllServiceProviderAlerts">
 		SELECT COUNT(*)  
 		FROM gst_model_tracking mt 
 		INNER JOIN gst_contract c ON mt.mt_fk_contract_id = c.c_fk_service_provider_id
 		WHERE c.c_fk_service_provider_id =  ${serviceProviderId} AND mt.mt_fk_status_id IN (1, 2, 3)
 		GROUP BY mt.mt_fk_status_id
+		ORDER BY mt.mt_fk_status_id
+    </select>
+    
+    <select id="countAllServiceProviderAlerts2" resultType="java.lang.Integer">
+		SELECT COUNT(*)  
+		FROM gst_model_tracking mt 
+		INNER JOIN gst_contract c ON mt.mt_fk_contract_id = c.c_fk_service_provider_id
+		WHERE c.c_fk_service_provider_id = ${serviceProviderId} AND mt.mt_fk_status_id = ${statusId} 
     </select>
 
     <insert id="insertServiceProvider" flushCache="true" statementType="PREPARED" keyProperty="spId" keyColumn="sp_id" useGeneratedKeys="true" timeout="20" parameterType="com.example.demo.entity.ServiceProvider">

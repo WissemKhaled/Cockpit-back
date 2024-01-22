@@ -216,6 +216,9 @@ public interface ServiceProviderMapper {
 	 *                      <li>n3: nombre d'alerts par le status "Validé".</li>
 	 *                   </ul>
 	 */
-	List<Integer> countAllServiceProviderAlerts(int servicePorividerId);
+	List<Integer> countAllServiceProviderAlerts(int serviceProviderId);
+	
+	int countAllServiceProviderAlerts2(int serviceProviderId, int statusId);
+
 
 }

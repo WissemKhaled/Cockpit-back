@@ -3,6 +3,7 @@ package com.example.demo.service.implementation;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.ContractDTO;
 import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.dto.ServiceProviderDto;
-import com.example.demo.dto.mapper.ModelTrackingDtoMapper;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Subcontractor;
@@ -34,7 +34,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final ServiceProviderMapper serviceProviderMapper;
 	private final ModelTrackingService modelTrackingService;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
-	private final ModelTrackingDtoMapper modelTrackingDtoMapper;
 	private final ContractService contractService;
 	private final SubcontractorService subcontractorService;
 	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
@@ -42,7 +41,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	public ServiceProviderServiceImpl(
 			ServiceProviderMapper serviceProviderMapper,
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
-			ModelTrackingDtoMapper modelTrackingDtoMapper, 
 			ModelTrackingService modelTrackingService, 
 			ContractService contractService,
 			SubcontractorService subcontractorService
@@ -50,7 +48,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		this.serviceProviderMapper = serviceProviderMapper;
 		this.modelTrackingService = modelTrackingService;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
-		this.modelTrackingDtoMapper = modelTrackingDtoMapper;
 		this.contractService = contractService;
 		this.subcontractorService = subcontractorService;
 	}
@@ -95,14 +92,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	        throw new EntityNotFoundException("Aucun résultat trouvé");
 	    }
 	    List<ServiceProviderDto> foundServiceProviderList = serviceProvidersList.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	    for (ServiceProviderDto serviceProviderDto : foundServiceProviderList) {
-			List<Integer> countAllServiceProviderAlerts = serviceProviderMapper.countAllServiceProviderAlerts(serviceProviderDto.getSpId());
-		    List<Integer> numberOfAlertsByStatus = Arrays.asList(0,0,0);
-			for (int i=0; i<countAllServiceProviderAlerts.size(); i++) {
-				numberOfAlertsByStatus.set(i, countAllServiceProviderAlerts.get(i));
-			}
-			serviceProviderDto.setAlertsList(numberOfAlertsByStatus);
-		}
+	    setAlertsForServiceProvidersDtos(foundServiceProviderList);
 	    return foundServiceProviderList;
 	}
 	
@@ -359,5 +349,20 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 			numberOfAlertsByStatus.set(i, countAllServiceProviderAlertsByStatus.get(i));
 		}
 		return numberOfAlertsByStatus;
+	}
+	
+	
+	private void setAlertsForServiceProvidersDtos(List<ServiceProviderDto> serviceProviderList) {
+		List<Integer> numberOfAlertsByStatus = Arrays.asList(0,0,0);
+		for (ServiceProviderDto serviceProviderDto : serviceProviderList) {
+			for (int i=1; i<=3; i++) {
+				Optional<Integer> countAllServiceProviderAlerts2 = Optional.ofNullable(serviceProviderMapper.countAllServiceProviderAlerts2(serviceProviderDto.getSpId(), i));
+				if (countAllServiceProviderAlerts2.isPresent()) {
+					numberOfAlertsByStatus.set(i-1, countAllServiceProviderAlerts2.get());					
+				}
+			}
+			serviceProviderDto.setAlertsList(numberOfAlertsByStatus);
+			System.err.println(numberOfAlertsByStatus);
+		}
 	}
 }
