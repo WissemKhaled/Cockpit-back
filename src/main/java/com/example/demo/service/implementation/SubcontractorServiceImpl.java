@@ -1,11 +1,13 @@
 package com.example.demo.service.implementation;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dto.ServiceProviderDto;
 import com.example.demo.dto.SubcontractorDto;
 import com.example.demo.dto.mapper.StatusDtoMapper;
 import com.example.demo.dto.mapper.SubcontractorDtoMapper;
@@ -54,7 +56,9 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		if (optionalSubcontractorsList.isEmpty()) {
 			throw new EntityNotFoundException("Il n'y a pas de sous-traitans enregistré");
 		}
-		return optionalSubcontractorsList.get().stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+		List<SubcontractorDto> foundSubcontractorList = optionalSubcontractorsList.get().stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+		setAlertsForSubcontractorDtosList(foundSubcontractorList);
+		return foundSubcontractorList;
 	}
 	
 	@Override
@@ -241,5 +245,19 @@ public class SubcontractorServiceImpl implements SubcontractorService {
             newPage = (int) Math.ceil((double) (newIndex + 1) / pageSize);
         }
         return newPage;
+	}
+	
+	private void setAlertsForSubcontractorDtosList(List<SubcontractorDto> subcontractorDtos) {
+		for (SubcontractorDto subcontractorDto : subcontractorDtos) {
+			Optional<List<Integer>> countAllSubcontractorAlerts = Optional.ofNullable(subcontractorMapper.countAllSubcontractorsAlerts(subcontractorDto.getSId()));
+			if (countAllSubcontractorAlerts.isPresent()) {
+				List<Integer> numberOfAlertsByStatus = Arrays.asList(0,0,0);
+				List<Integer> allSubcontractorAlerts = countAllSubcontractorAlerts.get();
+				for (int i=0; i<allSubcontractorAlerts.size(); i++) {
+					numberOfAlertsByStatus.set(i, allSubcontractorAlerts.get(i));
+				}
+				subcontractorDto.setAlertsList(numberOfAlertsByStatus);										
+			}
+		}
 	}
 }
