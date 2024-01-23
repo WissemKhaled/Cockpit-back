@@ -2,6 +2,7 @@ package com.example.demo.service.implementation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.ContractDTO;
 import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.dto.ServiceProviderDto;
-import com.example.demo.dto.mapper.ModelTrackingDtoMapper;
 import com.example.demo.dto.mapper.ServiceProviderDtoMapper;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.entity.Subcontractor;
@@ -22,7 +22,6 @@ import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
-import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.ContractService;
 import com.example.demo.service.ModelTrackingService;
@@ -34,7 +33,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	private final ServiceProviderMapper serviceProviderMapper;
 	private final ModelTrackingService modelTrackingService;
 	private final ServiceProviderDtoMapper serviceProviderDtoMapper;
-	private final ModelTrackingDtoMapper modelTrackingDtoMapper;
 	private final ContractService contractService;
 	private final SubcontractorService subcontractorService;
 	private static final Logger log = LoggerFactory.getLogger(ServiceProviderServiceImpl.class);
@@ -42,7 +40,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	public ServiceProviderServiceImpl(
 			ServiceProviderMapper serviceProviderMapper,
 			ServiceProviderDtoMapper serviceProviderDtoMapper,
-			ModelTrackingDtoMapper modelTrackingDtoMapper, 
 			ModelTrackingService modelTrackingService, 
 			ContractService contractService,
 			SubcontractorService subcontractorService
@@ -50,7 +47,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		this.serviceProviderMapper = serviceProviderMapper;
 		this.modelTrackingService = modelTrackingService;
 		this.serviceProviderDtoMapper = serviceProviderDtoMapper;
-		this.modelTrackingDtoMapper = modelTrackingDtoMapper;
 		this.contractService = contractService;
 		this.subcontractorService = subcontractorService;
 	}
@@ -94,8 +90,9 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    if (serviceProvidersList == null || serviceProvidersList.isEmpty()) {
 	        throw new EntityNotFoundException("Aucun résultat trouvé");
 	    }
-
-	    return serviceProvidersList.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    List<ServiceProviderDto> foundServiceProviderList = serviceProvidersList.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    setAlertsForServiceProvidersDtosList(foundServiceProviderList);
+	    return foundServiceProviderList;
 	}
 	
 	@Override
@@ -334,5 +331,33 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	        default:
 	            throw new GeneralException(String.format("Le champ %s n'existe pas", columnName));
 	    }
+	}
+	
+	/**
+	 * Compter le nombre d'alerts par status pour un prestataire.
+	 *
+	 * @param serviceProviderId l'id du prestataire.
+	 * @return 
+	 * @return une liste d'entiers dans cette forme [n1,n2,n3] avec:
+	 * 					 <ul>
+	 *                      <li>n1: nombre d'alerts par le status "En cours".</li>
+	 *                      <li>n2: nombre d'alerts par le status "En validation".</li>
+	 *                      <li>n3: nombre d'alerts par le status "Validé".</li>
+	 *                   </ul>
+	 */
+	private void setAlertsForServiceProvidersDtosList(List<ServiceProviderDto> serviceProviderList) {
+		for (ServiceProviderDto serviceProviderDto : serviceProviderList) {
+			if (serviceProviderDto.getSpStatus().getStId() != 4) {
+				Optional<List<Integer>> countAllServiceProviderAlerts = Optional.ofNullable(serviceProviderMapper.countAllServiceProviderAlerts(serviceProviderDto.getSpId()));
+				if (countAllServiceProviderAlerts.isPresent()) {
+					List<Integer> numberOfAlertsByStatus = Arrays.asList(0,0,0);
+					List<Integer> allServiceProviderAlerts = countAllServiceProviderAlerts.get();
+					for (int i=0; i<allServiceProviderAlerts.size(); i++) {
+						numberOfAlertsByStatus.set(i, allServiceProviderAlerts.get(i));
+					}
+					serviceProviderDto.setAlertsList(numberOfAlertsByStatus);										
+				}
+			}
+		}
 	}
 }
