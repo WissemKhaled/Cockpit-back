@@ -70,15 +70,15 @@
     
     <select id="getAllMessageModelByServiceProviderId" resultMap="modelTrackingResultMap">
         SELECT
-			mt.mt_id AS mtId,
-			mt.mt_fk_contract_id AS mtFkContractId,
-			ct.c_fk_service_provider_id AS ctFkServiceProviderId,
-			mt.mt_fk_message_model_id AS mtFkMessageModelId,
-			mm.mm_subject AS mmSubject,
-			mt.mt_fk_status_id AS mtFkStatusId,
-			mt.mt_fk_category_id AS mtFkCategoryId,
-			mt.mt_send_date AS mtSendDate,
-			mt.mt_validation_date AS mtValidationDate
+			mt.mt_id,
+			mt.mt_fk_contract_id,
+			ct.c_fk_service_provider_id,
+			mt.mt_fk_message_model_id,
+			mm.mm_subject,
+			mt.mt_fk_status_id,
+			mt.mt_fk_category_id,
+			mt.mt_send_date,
+			mt.mt_validation_date
 		FROM gst_model_tracking mt
 			LEFT JOIN gst_contract ct ON mt.mt_fk_contract_id = ct.c_id
 			LEFT JOIN gst_message_model mm ON mt.mt_fk_message_model_id = mm.mm_id
