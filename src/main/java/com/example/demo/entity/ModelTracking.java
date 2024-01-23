@@ -46,6 +46,17 @@ public class ModelTracking {
 		this.messageModel = messageModel;
 		this.contract = contract;
 	}
+	
+	public ModelTracking(int mtId, int mtFkContractId, int mtFkMessageModelId, int mtFkStatusId, int mtFkCategoryId,
+			LocalDateTime mtSendDate, LocalDateTime mtValidationDate) {
+		this.mtId = mtId;
+		this.mtFkContractId = mtFkContractId;
+		this.mtFkMessageModelId = mtFkMessageModelId;
+		this.mtFkStatusId = mtFkStatusId;
+		this.mtFkCategoryId = mtFkCategoryId;
+		this.mtSendDate = mtSendDate;
+		this.mtValidationDate = mtValidationDate;
+	}
 
 	public int getMtId() {
 		return mtId;

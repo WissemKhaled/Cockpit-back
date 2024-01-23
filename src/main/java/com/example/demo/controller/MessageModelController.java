@@ -3,10 +3,6 @@ package com.example.demo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,19 +36,18 @@ public class MessageModelController {
 
 	
 	@GetMapping("/getAllMessagesBySubcontractorId")
-	public ResponseEntity<Page<MessageModel>> getAllMessageModelBySubcontractorId(
+	public ResponseEntity<?> getAllMessageModelBySubcontractorId(
 			@RequestParam(value = "subcontractorId") Integer subcontractorId,
-			@RequestParam(value = "statusId") Integer statusId,
-			@PageableDefault(page = 0, size = 6) Pageable pageable) {
+			@RequestParam(value = "statusId") Integer statusId) {
 		try {
 			List<MessageModel> allMessages = messageModelService.getAllMessageModelBySubcontractorId(subcontractorId);
 
-			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
+//			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
 
 			// appel de la méthode qui gère les relances
-			modelTrackingService.checkRelaunch(statusId);
+//			modelTrackingService.checkRelaunch(statusId);
 
-			return ResponseEntity.ok(page);
+			return ResponseEntity.ok(allMessages);
 
 		} catch (MessageModelNotFoundException e) {
 			return ResponseEntity.notFound().build();
@@ -70,19 +65,18 @@ public class MessageModelController {
 	 * @throws MessageModelNotFoundException si aucun MessageModel n'est trouvé pour le serviceProviderId donné.
 	 */
 	@GetMapping("/getAllMessagesByServiceProviderId")
-	public ResponseEntity<Page<MessageModel>> getAllMessageModelByServiceProviderId(
+	public ResponseEntity<?> getAllMessageModelByServiceProviderId(
 			@RequestParam(value = "serviceProviderId") Integer serviceProviderId,
-			@RequestParam(value = "statusId") Integer statusId,
-			@PageableDefault(page = 0, size = 6) Pageable pageable) {
+			@RequestParam(value = "statusId") Integer statusId) {
 		try {
 			List<MessageModel> allMessages = messageModelService.getAllMessageModelByServiceProviderId(serviceProviderId);
 
-			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
+//			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
 
 			// appel de la méthode qui gère les relances
-			modelTrackingService.checkRelaunch(statusId);
+//			modelTrackingService.checkRelaunch(statusId);
 
-			return ResponseEntity.ok(page);
+			return ResponseEntity.ok(allMessages);
 
 		} catch (MessageModelNotFoundException e) {
 			return ResponseEntity.notFound().build();
@@ -91,15 +85,14 @@ public class MessageModelController {
 
 
 	@GetMapping("/getAllMessagesByContractId")
-	public ResponseEntity<Page<MessageModel>> getAllMessageModelByContractId(
-			@RequestParam(value = "contractId") Integer contractId,
-			@PageableDefault(page = 0, size = 6) Pageable pageable) {
+	public ResponseEntity<?> getAllMessageModelByContractId(
+			@RequestParam(value = "contractId") Integer contractId) {
 		try {
 			List<MessageModel> allMessages = messageModelService.getAllMessageModelByContractId(contractId);
 
-			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
+//			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
 
-			return ResponseEntity.ok(page);
+			return ResponseEntity.ok(allMessages);
 
 		} catch (MessageModelNotFoundException e) {
 			return ResponseEntity.notFound().build();

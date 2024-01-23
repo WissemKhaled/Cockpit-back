@@ -1,7 +1,6 @@
 package com.example.demo.service.implementation;
 
 import static java.util.function.Predicate.not;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.MessageModelService;
@@ -313,4 +311,5 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
 				.orElseThrow(() -> new EntityNotFoundException("Aucun prestataire trouvé avec l'id " + serviceProviderId));
 	}
+
 }

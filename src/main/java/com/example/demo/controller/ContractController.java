@@ -1,17 +1,17 @@
 package com.example.demo.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.demo.entity.Contract;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.service.ContractService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Created by Elimane Fofana on 2024.
@@ -29,37 +29,35 @@ public class ContractController {
 
 
     @GetMapping("/getContractsByServiceProviderId")
-    public ResponseEntity<Page<Contract>> getContractsByServiceProviderId (
-            @RequestParam(value = "serviceProviderId", required = false) Integer serviceProviderId,
-            @PageableDefault(page = 0, size = 6) Pageable pageable) {
+    public ResponseEntity<?> getContractsByServiceProviderId (
+            @RequestParam(value = "serviceProviderId", required = false) Integer serviceProviderId) {
     	
 
         try {
             List<Contract> contractList = contractService.getContractsByServiceProviderId(serviceProviderId);
 
-            Page<Contract> page = new PageImpl<>(contractList, pageable, contractList.size());
+//            Page<Contract> page = new PageImpl<>(contractList, pageable, contractList.size());
 
-            return ResponseEntity.ok(page);
+            return ResponseEntity.ok(contractList);
 
         } catch (EntityNotFoundException e) {
-            return (ResponseEntity<Page<Contract>>) ResponseEntity.notFound();
+            return (ResponseEntity) ResponseEntity.notFound();
         }
     }
     
     @GetMapping("/getContractsBySubcontractorId")
-    public ResponseEntity<Page<Contract>> getContractsBySubcontractorId (
-            @RequestParam(value = "subContractorId", required = false) Integer subcontractorId,
-            @PageableDefault(page = 0, size = 6) Pageable pageable) {
+    public ResponseEntity<?> getContractsBySubcontractorId (
+            @RequestParam(value = "subContractorId", required = false) Integer subcontractorId) {
 
         try {
             List<Contract> contractList = contractService.getContractsBySubcontractorId(subcontractorId);
 
-            Page<Contract> page = new PageImpl<>(contractList, pageable, contractList.size());
+//            Page<Contract> page = new PageImpl<>(contractList, pageable, contractList.size());
 
-            return ResponseEntity.ok(page);
+            return ResponseEntity.ok(contractList);
 
         } catch (EntityNotFoundException e) {
-            return (ResponseEntity<Page<Contract>>) ResponseEntity.notFound();
+            return (ResponseEntity) ResponseEntity.notFound();
         }
     }
 

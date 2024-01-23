@@ -179,7 +179,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		
 		try {
 	        for (ModelTrackingDTO modelTrackingDTO : modelTrackingDTOList) {
-	        	modelTrackingService.saveModelTracking(modelTrackingDTO);
+//	        	modelTrackingService.saveModelTracking(modelTrackingDTO);
 	        }
 			return serviceProviderToSave.getSpId();
 		} catch(PersistenceException e) {
