@@ -16,7 +16,7 @@
 <!--            <result property="stName" column="st_name"/>-->
         </association>
 	</resultMap>
-
+ 
     <insert id="insertGstModelTracking" statementType="PREPARED" useGeneratedKeys="true" keyProperty="mtId" keyColumn="mt_id" parameterType="com.example.demo.entity.ModelTracking">
         INSERT INTO schema_dev.gst_model_tracking (
             mt_send_date, mt_validation_date, mt_fk_contract_id, mt_fk_message_model_id, mt_fk_status_id, mt_fk_category_id
@@ -25,7 +25,7 @@
             #{mtSendDate}, #{mtValidationDate}, #{mtFkContractId}, #{mtFkMessageModelId}, #{mtFkStatusId}, #{mtFkCategoryId}
         )
     </insert>
-
+ 
     <update id="updateModelTracking" >
         UPDATE schema_dev.gst_model_tracking
         SET mt_send_date = #{mtSendDate},
@@ -37,7 +37,7 @@
         WHERE mt_fk_contract_id = #{mtFkContractId}
           AND mt_fk_message_model_id = #{mtFkMessageModelId}
     </update>
-
+ 
     <select id="findAllModelTrackingInfo" resultType="com.example.demo.dto.ModelTrackingDTO">
         SELECT
             mt.mt_id AS mtId,
@@ -49,7 +49,7 @@
             mt.mt_fk_category_id AS mtFkCategoryId
         FROM schema_dev.gst_model_tracking mt
     </select>
-
+ 
     <select id="getModelTrackingInfoByContractId" resultType="com.example.demo.dto.ModelTrackingDTO" parameterType="int">
         SELECT
             mt.mt_id AS mtId,
@@ -62,7 +62,7 @@
         FROM schema_dev.gst_model_tracking mt
         WHERE mt.mt_fk_contract_id = #{contractId}
     </select>
-
+ 
     <select id="findModelTrackingInfoByMmId" resultType="com.example.demo.dto.ModelTrackingDTO" parameterType="int">
         SELECT
             mt.mt_id AS mtId,
@@ -75,7 +75,7 @@
         FROM schema_dev.gst_model_tracking mt
         WHERE mt.mt_fk_message_model_id = #{mmId}
     </select>
-
+ 
     <select id="findModelTrackingInfoByContractIdAndMmId" resultType="com.example.demo.dto.ModelTrackingDTO" parameterType="int">
         SELECT
             mt.mt_id AS mtId,
@@ -89,5 +89,5 @@
         WHERE mt.mt_fk_contract_id = #{contractId}
           AND mt.mt_fk_message_model_id = #{mmId}
     </select>
-
+ 
 </mapper>
