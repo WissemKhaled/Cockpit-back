@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ModelTrackingDTO;
@@ -247,7 +246,6 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 					        
 					        // si le status est en cours, on passe le status de 5 à 1 pour tout types de modèles de relance à 7 jours de la date d'envoi
 					        if (statusId == 1) {
-					        	System.out.println("Hellooooooo");
 					        	if (modelTrackingDTODemand.getMtFkCategoryId() == 1 || modelTrackingDTODemand.getMtFkCategoryId() == 2 || modelTrackingDTODemand.getMtFkCategoryId() == 3 || modelTrackingDTODemand.getMtFkCategoryId() == 4) {
 					                if (modelTrackingDTODemand.getMtSendDate() != null && modelTrackingDTODemand.getMtSendDate().plusDays(7).isBefore(currentDate)) {
 					                	// Maj du statusId de la table gst_model_tracking pour les relances
@@ -311,58 +309,58 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 			}
 		}
 	 }
-//
-//	@Override
-//	public List<ModelTrackingDTO> getModelTrackingInfoByContractId(int contractId) {
-//		ServiceProvider isFoundContract = serviceProviderMapper.findServiceProviderById(contractId);
-//		
-//		if (isFoundContract == null) {
-//			log.error("Aucun contrat trouvé avec l'id " + contractId);
-//			throw new EntityNotFoundException("Aucun contrat trouvé avec l'id " + contractId);
-//		}
-//		
-//		List<ModelTrackingDTO> modelTrackingDTO = modelTrackingMapper.getModelTrackingInfoByContractId(contractId);
-//		
-//		return modelTrackingDTO;
-//	}
-//	
-//	@Override
-//	public ModelTrackingDTO getModelTrackingInfoByContractIdAndMmId(int contractId, int mmId) {
-//		ModelTrackingDTO modelTrackingDTO = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, mmId);
-//		
-//		if (modelTrackingDTO == null) {
-//			log.error("Aucune info trouvé avec le contractId " + contractId + " et le message model ID " + mmId);
-//			throw new EntityNotFoundException("Aucune info trouvé avec le contractId " + contractId + " et le message model ID " + mmId);
-//		}
-//		
-//		return modelTrackingDTO;
-//	}
-//	
-//	@Override
-//	public String updateSubcontractorOrSpStatusId(Integer subcontractorId, Integer serviceProviderId) throws DatabaseQueryFailureException {
-//		if (subcontractorId != null) {
-//			int isSubcontractorStatusUpdated = modelTrackingMapper.updateSubcontractorStatus(subcontractorId);
-//			
-//			if (isSubcontractorStatusUpdated == 0) {
-//				log.error(String.format("Echec de la mise à jour du status du sous-traitant dont l'ID = %d en bdd", subcontractorId));
-//				throw new DatabaseQueryFailureException(String.format("Echec de la mise à jour du status du sous-traitant dont l'ID = %d en bdd", subcontractorId));
-//			}
-//			log.info(String.format("mise à jour dans la bdd du status du sous-traitant dont l'ID = %d effectuée avec succès", subcontractorId));
-//			return String.format("mise à jour dans la bdd du status du sous-traitant dont l'ID = %d effectuée avec succès", subcontractorId);
-//		}
-//		
-//		if (serviceProviderId != null) {
-//			int isServiceProviderStatusUpdated = modelTrackingMapper.updateServiceProvider(serviceProviderId);
-//			
-//			if (isServiceProviderStatusUpdated == 0) {
-//				log.error(String.format("Echec de la mise à jour du status du prestataire dont l'ID = %d en bdd", serviceProviderId));
-//				throw new DatabaseQueryFailureException(String.format("Echec de la mise à jour du status du prestataire dont l'ID = %d en bdd", serviceProviderId));
-//			}
-//			log.info(String.format("mise à jour dans la bdd du status du prestataire dont l'ID = %d effectuée avec succès", serviceProviderId));
-//			return String.format("mise à jour dans la bdd du status du prestataire dont l'ID = %d effectuée avec succès", serviceProviderId);
-//		}
-//		
-//		log.error("Les IDs du sous-traitant et du prestataire sont tous les deux null");
-//	    throw new IllegalArgumentException("Les IDs du sous-traitant et du prestataire sont tous les deux null");
-//	}
+
+	@Override
+	public List<ModelTrackingDTO> getModelTrackingInfoByContractId(int contractId) {
+		ServiceProvider isFoundContract = serviceProviderMapper.findServiceProviderById(contractId);
+		
+		if (isFoundContract == null) {
+			log.error("Aucun contrat trouvé avec l'id " + contractId);
+			throw new EntityNotFoundException("Aucun contrat trouvé avec l'id " + contractId);
+		}
+		
+		List<ModelTrackingDTO> modelTrackingDTO = modelTrackingMapper.getModelTrackingInfoByContractId(contractId);
+		
+		return modelTrackingDTO;
+	}
+	
+	@Override
+	public ModelTrackingDTO getModelTrackingInfoByContractIdAndMmId(int contractId, int mmId) {
+		ModelTrackingDTO modelTrackingDTO = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, mmId);
+		
+		if (modelTrackingDTO == null) {
+			log.error("Aucune info trouvé avec le contractId " + contractId + " et le message model ID " + mmId);
+			throw new EntityNotFoundException("Aucune info trouvé avec le contractId " + contractId + " et le message model ID " + mmId);
+		}
+		
+		return modelTrackingDTO;
+	}
+	
+	@Override
+	public String updateSubcontractorOrSpStatusId(Integer subcontractorId, Integer serviceProviderId) throws DatabaseQueryFailureException {
+		if (subcontractorId != null) {
+			int isSubcontractorStatusUpdated = modelTrackingMapper.updateSubcontractorStatus(subcontractorId);
+			
+			if (isSubcontractorStatusUpdated == 0) {
+				log.error(String.format("Echec de la mise à jour du status du sous-traitant dont l'ID = %d en bdd", subcontractorId));
+				throw new DatabaseQueryFailureException(String.format("Echec de la mise à jour du status du sous-traitant dont l'ID = %d en bdd", subcontractorId));
+			}
+			log.info(String.format("mise à jour dans la bdd du status du sous-traitant dont l'ID = %d effectuée avec succès", subcontractorId));
+			return String.format("mise à jour dans la bdd du status du sous-traitant dont l'ID = %d effectuée avec succès", subcontractorId);
+		}
+		
+		if (serviceProviderId != null) {
+			int isServiceProviderStatusUpdated = modelTrackingMapper.updateServiceProvider(serviceProviderId);
+			
+			if (isServiceProviderStatusUpdated == 0) {
+				log.error(String.format("Echec de la mise à jour du status du prestataire dont l'ID = %d en bdd", serviceProviderId));
+				throw new DatabaseQueryFailureException(String.format("Echec de la mise à jour du status du prestataire dont l'ID = %d en bdd", serviceProviderId));
+			}
+			log.info(String.format("mise à jour dans la bdd du status du prestataire dont l'ID = %d effectuée avec succès", serviceProviderId));
+			return String.format("mise à jour dans la bdd du status du prestataire dont l'ID = %d effectuée avec succès", serviceProviderId);
+		}
+		
+		log.error("Les IDs du sous-traitant et du prestataire sont tous les deux null");
+	    throw new IllegalArgumentException("Les IDs du sous-traitant et du prestataire sont tous les deux null");
+	}
 }
