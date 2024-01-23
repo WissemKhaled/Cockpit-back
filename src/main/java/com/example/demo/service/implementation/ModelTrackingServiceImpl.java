@@ -304,14 +304,30 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	}
 	
 	@Override
-	public void updateSubcontractorStatusIdBySId(int subcontractorId) throws DatabaseQueryFailureException {
-		int isSubcontractorStatusUpdated = modelTrackingMapper.updateSubcontractorStatus(subcontractorId);
-		
-		if (isSubcontractorStatusUpdated == 0) {
-			log.error("Echec de l'insertion de l'objet en bdd");
-			throw new DatabaseQueryFailureException("Echec de la mise à jour du status du sous-traitant en bdd");
+	public String updateSubcontractorOrSpStatusId(Integer subcontractorId, Integer serviceProviderId) throws DatabaseQueryFailureException {
+		if (subcontractorId != null) {
+			int isSubcontractorStatusUpdated = modelTrackingMapper.updateSubcontractorStatus(subcontractorId);
+			
+			if (isSubcontractorStatusUpdated == 0) {
+				log.error(String.format("Echec de la mise à jour du status du sous-traitant dont l'ID = %d en bdd", subcontractorId));
+				throw new DatabaseQueryFailureException(String.format("Echec de la mise à jour du status du sous-traitant dont l'ID = %d en bdd", subcontractorId));
+			}
+			log.info(String.format("mise à jour dans la bdd du status du sous-traitant dont l'ID = %d effectuée avec succès", subcontractorId));
+			return String.format("mise à jour dans la bdd du status du sous-traitant dont l'ID = %d effectuée avec succès", subcontractorId);
 		}
 		
-		log.info("mise à jour du status du sous-traitant en bdd effectuée avec succès");
+		if (serviceProviderId != null) {
+			int isServiceProviderStatusUpdated = modelTrackingMapper.updateServiceProvider(serviceProviderId);
+			
+			if (isServiceProviderStatusUpdated == 0) {
+				log.error(String.format("Echec de la mise à jour du status du prestataire dont l'ID = %d en bdd", serviceProviderId));
+				throw new DatabaseQueryFailureException(String.format("Echec de la mise à jour du status du prestataire dont l'ID = %d en bdd", serviceProviderId));
+			}
+			log.info(String.format("mise à jour dans la bdd du status du prestataire dont l'ID = %d effectuée avec succès", serviceProviderId));
+			return String.format("mise à jour dans la bdd du status du prestataire dont l'ID = %d effectuée avec succès", serviceProviderId);
+		}
+		
+		log.error("Les IDs du sous-traitant et du prestataire sont tous les deux null");
+	    throw new IllegalArgumentException("Les IDs du sous-traitant et du prestataire sont tous les deux null");
 	}
 }

@@ -28,4 +28,12 @@ public interface ModelTrackingMapper {
 	 * @return La liste d'ID des status des modèles de message liés au sous-traitant.
 	 */
 	int updateSubcontractorStatus(@Param("subcontractorId") int subcontractorId);
+	
+	/**
+	 * Récupère la liste des status des modèles de message liés au prestataire.
+	 *
+	 * @param serviceProviderId      Id du prestataire.
+	 * @return La liste d'ID des status des modèles de message liés au prestataire.
+	 */
+	int updateServiceProvider(@Param("serviceProviderId") int serviceProviderId);
 }

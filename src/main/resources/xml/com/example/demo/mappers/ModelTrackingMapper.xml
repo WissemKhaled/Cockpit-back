@@ -11,10 +11,6 @@
 		<result property="mtFkCategoryId" column="mt_fk_category_id" />
 		<result property="mtSendDate" column="mt_send_date" />
 		<result property="mtValidationDate" column="mt_validation_date" />
-        <association property="status" javaType="com.example.demo.entity.Status">
-            <id property="mtId" column="mt_id"/>
-<!--            <result property="stName" column="st_name"/>-->
-        </association>
 	</resultMap>
 	
 	<sql id="modelTrackingColumns">
@@ -74,39 +70,77 @@
 	
 	<update id="updateSubcontractorStatus" parameterType="map">
 	  <![CDATA[
-	  UPDATE schema_dev.gst_subcontractor
+	  UPDATE gst_subcontractor
 	  SET s_fk_status_id = 
 	    CASE
 	      WHEN EXISTS (
 	        SELECT 1
-	        FROM schema_dev.gst_model_tracking mt
-	        INNER JOIN schema_dev.gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
 	        WHERE contract.c_fk_subcontractor_id = #{subcontractorId}
 	          AND mt.mt_fk_status_id = 1
 	      ) THEN 1
 	      WHEN EXISTS (
 	        SELECT 1
-	        FROM schema_dev.gst_model_tracking mt
-	        INNER JOIN schema_dev.gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
 	        WHERE contract.c_fk_subcontractor_id = #{subcontractorId}
 	          AND mt.mt_fk_status_id = 2
 	      ) AND NOT EXISTS (
 	        SELECT 1
-	        FROM schema_dev.gst_model_tracking mt
-	        INNER JOIN schema_dev.gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
 	        WHERE contract.c_fk_subcontractor_id = #{subcontractorId}
 	          AND mt.mt_fk_status_id = 1
 	      ) THEN 2
 	      WHEN NOT EXISTS (
 	        SELECT 1
-	        FROM schema_dev.gst_model_tracking mt
-	        INNER JOIN schema_dev.gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
 	        WHERE contract.c_fk_subcontractor_id = #{subcontractorId}
 	          AND mt.mt_fk_status_id <> 3
 	      ) THEN 3
 	      ELSE s_fk_status_id
 	    END
 	  WHERE s_id = #{subcontractorId}
+	  ]]>
+	</update>
+	
+	<update id="updateServiceProvider" parameterType="map">
+	  <![CDATA[
+	  UPDATE gst_service_provider
+	  SET sp_fk_status_id = 
+	    CASE
+	      WHEN EXISTS (
+	        SELECT 1
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_service_provider_id = #{serviceProviderId}
+	          AND mt.mt_fk_status_id = 1
+	      ) THEN 1
+	      WHEN EXISTS (
+	        SELECT 1
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_service_provider_id = #{serviceProviderId}
+	          AND mt.mt_fk_status_id = 2
+	      ) AND NOT EXISTS (
+	        SELECT 1
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_service_provider_id = #{serviceProviderId}
+	          AND mt.mt_fk_status_id = 1
+	      ) THEN 2
+	      WHEN NOT EXISTS (
+	        SELECT 1
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_service_provider_id = #{serviceProviderId}
+	          AND mt.mt_fk_status_id <> 3
+	      ) THEN 3
+	      ELSE sp_fk_status_id
+	    END
+	  WHERE sp_id = #{serviceProviderId}
 	  ]]>
 	</update>
 
