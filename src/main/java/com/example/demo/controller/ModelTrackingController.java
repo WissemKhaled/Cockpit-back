@@ -45,39 +45,39 @@ public class ModelTrackingController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Échec de la mise à jour du modelTracking status : " + e.getMessage());
 	    }
 	}
-	
-	@GetMapping("/getAlertInfo/{contractId}")
-    public ResponseEntity<?> getServiceProviderReminderInfo(@PathVariable int contractId) {
-        try {
-            List<ModelTrackingDTO> result = modelTrackingService.getModelTrackingInfoByContractId(contractId);
-            return ResponseEntity.ok(result);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-	
-	@GetMapping("/getAlertInfo/{contractId}/{mmId}")
-    public ResponseEntity<?> getAlerInfoBySpIdAndMmId(@PathVariable int contractId, @PathVariable int mmId) {
-        try {
-            ModelTrackingDTO result = modelTrackingService.getModelTrackingInfoByContractIdAndMmId(contractId, mmId);
-            return ResponseEntity.ok(result);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-	
-	@PutMapping("/updateSubcontractorOrSpStatusId")
-    public ResponseEntity<String> updateSubcontractororSpStatusId(
-    		@RequestParam(required = false) Integer subcontractorId,
-    		@RequestParam(required = false) Integer serviceProviderId
-    ) throws DatabaseQueryFailureException {
-        try {
-            String result = modelTrackingService.updateSubcontractorOrSpStatusId(subcontractorId, serviceProviderId);
-            return new ResponseEntity<>(String.format(result, subcontractorId), HttpStatus.OK);
-        } catch (DatabaseQueryFailureException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (NullPointerException e) {
-        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
+//	
+//	@GetMapping("/getAlertInfo/{contractId}")
+//    public ResponseEntity<?> getServiceProviderReminderInfo(@PathVariable int contractId) {
+//        try {
+//            List<ModelTrackingDTO> result = modelTrackingService.getModelTrackingInfoByContractId(contractId);
+//            return ResponseEntity.ok(result);
+//        } catch (EntityNotFoundException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        }
+//    }
+//	
+//	@GetMapping("/getAlertInfo/{contractId}/{mmId}")
+//    public ResponseEntity<?> getAlerInfoBySpIdAndMmId(@PathVariable int contractId, @PathVariable int mmId) {
+//        try {
+//            ModelTrackingDTO result = modelTrackingService.getModelTrackingInfoByContractIdAndMmId(contractId, mmId);
+//            return ResponseEntity.ok(result);
+//        } catch (EntityNotFoundException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        }
+//    }
+//	
+//	@PutMapping("/updateSubcontractorOrSpStatusId")
+//    public ResponseEntity<String> updateSubcontractororSpStatusId(
+//    		@RequestParam(required = false) Integer subcontractorId,
+//    		@RequestParam(required = false) Integer serviceProviderId
+//    ) throws DatabaseQueryFailureException {
+//        try {
+//            String result = modelTrackingService.updateSubcontractorOrSpStatusId(subcontractorId, serviceProviderId);
+//            return new ResponseEntity<>(String.format(result, subcontractorId), HttpStatus.OK);
+//        } catch (DatabaseQueryFailureException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+//        } catch (NullPointerException e) {
+//        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+//        }
+//    }
 }

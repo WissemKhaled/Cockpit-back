@@ -8,11 +8,11 @@ import com.example.demo.exception.DatabaseQueryFailureException;
 public interface ModelTrackingService {
 	String saveModelTracking(ModelTrackingDTO modelTrackingDTO) throws DatabaseQueryFailureException;
 	
-	String updateModelTrackingDemand(int mmId, int statusId, int contractId, String validationDate) throws DatabaseQueryFailureException;
-	
-	List<ModelTrackingDTO> getModelTrackingInfoByContractId(int contractId);
-	
-	ModelTrackingDTO getModelTrackingInfoByContractIdAndMmId(int contractId, int mmId);
+String updateModelTrackingDemand(int mmId, int statusId, int contractId, String validationDate) throws DatabaseQueryFailureException;
+//	
+//	List<ModelTrackingDTO> getModelTrackingInfoByContractId(int contractId);
+//	
+//	ModelTrackingDTO getModelTrackingInfoByContractIdAndMmId(int contractId, int mmId);
 	
 	/**
 	 * Vérifie si une relance doit être faite et met à jour les status en se basant sur la table gst_model_tracking
@@ -37,5 +37,5 @@ public interface ModelTrackingService {
 	 * @return La liste des statusId du sous-traitant dont on a passé l'ID.
 	 * @throws DatabaseQueryFailureException 
 	 */
-	String updateSubcontractorOrSpStatusId(Integer subcontractorId, Integer serviceProviderId) throws DatabaseQueryFailureException;
+//	String updateSubcontractorOrSpStatusId(Integer subcontractorId, Integer serviceProviderId) throws DatabaseQueryFailureException;
 }
