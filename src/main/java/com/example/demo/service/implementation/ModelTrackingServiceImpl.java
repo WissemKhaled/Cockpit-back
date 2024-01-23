@@ -78,34 +78,6 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	/*
 	 * Méthode qui retourne chaque modèle de demande associé à son modèle de relance par mmLink similaire
 	**/
-//	public List<Pair<MessageModel, MessageModel>> getAllPairsDemandAndItsRelaunchMessageModel() {
-//	    // Groupement des MessageModel par mmLink
-//	    List<MessageModel> allMessageModels = messageModelService.getAllMessageModels();
-//	    Map<Integer, List<MessageModel>> groupedByLink = allMessageModels.stream()
-//	            .collect(Collectors.groupingBy(MessageModel::getMmLink));
-//
-//	    List<Pair<MessageModel, MessageModel>> pairs = new ArrayList<>();
-//
-//	    // Itérer sur chaque groupe de MessageModel ayant le même mmLink
-//	    for (List<MessageModel> group : groupedByLink.values()) {
-//	        // Vérification que le groupe a au moins 2 éléments (2 messages ayant le même mmLink)
-//	        if (group.size() >= 2) {
-//	            // Accès à la paire de modèles ayant le même mmLink
-//	            MessageModel demands = group.get(0);
-//	            MessageModel relaunches = group.get(1);
-//
-//	            pairs.add(Pair.of(demands, relaunches));
-//	        }
-//	    }
-//
-//	    // Si aucune paire demande/relance n'est trouvée on retourne une liste vide
-//	    if (pairs.isEmpty()) {
-//	        log.error("Aucune paire de message modèle de relance et demande trouvée");
-//	        throw new EntityNotFoundException("Aucune paire de message modèle de relance et demande trouvée");
-//	    }
-//	    return pairs;
-//	}
-	
 	public List<List<MessageModel>> getAllPairsDemandAndItsRelaunchMessageModel() {
 	    // Groupement des MessageModel par mmLink
 	    List<MessageModel> allMessageModels = messageModelService.getAllMessageModels();
