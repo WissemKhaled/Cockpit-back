@@ -144,12 +144,20 @@
     </select>
     
     <select id="countAllServiceProviderAlerts">
-		SELECT COUNT(*)  
-		FROM gst_model_tracking mt 
-		INNER JOIN gst_contract c ON mt.mt_fk_contract_id = c.c_fk_service_provider_id
-		WHERE c.c_fk_service_provider_id =  ${serviceProviderId} AND mt.mt_fk_status_id IN (1, 2, 3)
-		GROUP BY mt.mt_fk_status_id
-		ORDER BY mt.mt_fk_status_id
+		SELECT COUNT(*)
+		FROM schema_dev.gst_model_tracking mt
+		INNER JOIN schema_dev.gst_contract c ON mt.mt_fk_contract_id = c.c_id 
+		WHERE mt.mt_fk_status_id = 1 AND c.c_fk_service_provider_id = ${serviceProviderId}
+		UNION ALL
+		SELECT COUNT(*)
+		FROM schema_dev.gst_model_tracking mt
+		INNER JOIN schema_dev.gst_contract c ON mt.mt_fk_contract_id = c.c_id 
+		WHERE mt.mt_fk_status_id = 2 AND c.c_fk_service_provider_id = ${serviceProviderId}
+		UNION ALL
+		SELECT COUNT(*)
+		FROM schema_dev.gst_model_tracking mt
+		INNER JOIN schema_dev.gst_contract c ON mt.mt_fk_contract_id = c.c_id 
+		WHERE mt.mt_fk_status_id = 3 AND c.c_fk_service_provider_id = ${serviceProviderId};
     </select>
     
     <select id="countAllServiceProviderAlerts2" resultType="java.lang.Integer">

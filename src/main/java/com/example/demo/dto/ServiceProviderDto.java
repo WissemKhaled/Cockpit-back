@@ -51,7 +51,7 @@ public class ServiceProviderDto {
 
 	public ServiceProviderDto() {
 	}
-	
+
 	public ServiceProviderDto(int spId, String spFirstName, String spName, String spEmail, LocalDateTime spCreationDate,
 			LocalDateTime spLastUpdateDate, Status spStatus, String subcontractorSName) {
 		this.spId = spId;
@@ -148,7 +148,8 @@ public class ServiceProviderDto {
 	public String toString() {
 		return "ServiceProviderDto [spId=" + spId + ", spFirstName=" + spFirstName + ", spName=" + spName + ", spEmail="
 				+ spEmail + ", spCreationDate=" + spCreationDate + ", spLastUpdateDate=" + spLastUpdateDate
-				+ ", spStatus=" + spStatus + ", subcontractorSName=" + subcontractorSName + "]";
+				+ ", spStatus=" + spStatus + ", subcontractorSName=" + subcontractorSName + ", newPage=" + newPage
+				+ ", alertsList=" + alertsList + "]";
 	}
 
 }

@@ -3,7 +3,6 @@ package com.example.demo.service.implementation;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,7 +91,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	        throw new EntityNotFoundException("Aucun résultat trouvé");
 	    }
 	    List<ServiceProviderDto> foundServiceProviderList = serviceProvidersList.stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
-	    setAlertsForServiceProvidersDtos(foundServiceProviderList);
+	    setAlertsForServiceProvidersDtosList(foundServiceProviderList);
 	    return foundServiceProviderList;
 	}
 	
@@ -333,36 +332,30 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	            throw new GeneralException(String.format("Le champ %s n'existe pas", columnName));
 	    }
 	}
-
-	@Override
-	public List<Integer> countNumberOfAlertsByStatusAndServiceProviderId(int serviceProviderId) throws AlreadyArchivedEntity {
-		Optional<ServiceProvider> optionalServiceProviderById = Optional.ofNullable(serviceProviderMapper.findServiceProviderWithSubcontractorBySpId(serviceProviderId));
-		if (optionalServiceProviderById.isEmpty()) {
-			throw new EntityNotFoundException("le prestataire avec l'id: " + serviceProviderId + " n'existe pas!!");
-		}
-		if (optionalServiceProviderById.get().getSpStatus().getStId() == 4) {
-			throw new AlreadyArchivedEntity(String.format("Erreur: le prestataire avec l'id %d est déjà archivé.", serviceProviderId));
-		}
-		List<Integer> countAllServiceProviderAlertsByStatus = serviceProviderMapper.countAllServiceProviderAlerts(serviceProviderId);
-		List<Integer> numberOfAlertsByStatus = Arrays.asList(0,0,0);
-		for (int i=0; i<countAllServiceProviderAlertsByStatus.size(); i++) {
-			numberOfAlertsByStatus.set(i, countAllServiceProviderAlertsByStatus.get(i));
-		}
-		return numberOfAlertsByStatus;
-	}
 	
-	
-	private void setAlertsForServiceProvidersDtos(List<ServiceProviderDto> serviceProviderList) {
-		List<Integer> numberOfAlertsByStatus = Arrays.asList(0,0,0);
+	/**
+	 * Compter le nombre d'alerts par status pour un prestataire.
+	 *
+	 * @param serviceProviderId l'id du prestataire.
+	 * @return 
+	 * @return une liste d'entiers dans cette forme [n1,n2,n3] avec:
+	 * 					 <ul>
+	 *                      <li>n1: nombre d'alerts par le status "En cours".</li>
+	 *                      <li>n2: nombre d'alerts par le status "En validation".</li>
+	 *                      <li>n3: nombre d'alerts par le status "Validé".</li>
+	 *                   </ul>
+	 */
+	private void setAlertsForServiceProvidersDtosList(List<ServiceProviderDto> serviceProviderList) {
 		for (ServiceProviderDto serviceProviderDto : serviceProviderList) {
-			for (int i=1; i<=3; i++) {
-				Optional<Integer> countAllServiceProviderAlerts2 = Optional.ofNullable(serviceProviderMapper.countAllServiceProviderAlerts2(serviceProviderDto.getSpId(), i));
-				if (countAllServiceProviderAlerts2.isPresent()) {
-					numberOfAlertsByStatus.set(i-1, countAllServiceProviderAlerts2.get());					
+			Optional<List<Integer>> countAllServiceProviderAlerts = Optional.ofNullable(serviceProviderMapper.countAllServiceProviderAlerts(serviceProviderDto.getSpId()));
+			if (countAllServiceProviderAlerts.isPresent()) {
+				List<Integer> numberOfAlertsByStatus = Arrays.asList(0,0,0);
+				List<Integer> allServiceProviderAlerts = countAllServiceProviderAlerts.get();
+				for (int i=0; i<allServiceProviderAlerts.size(); i++) {
+					numberOfAlertsByStatus.set(i, allServiceProviderAlerts.get(i));
 				}
+				serviceProviderDto.setAlertsList(numberOfAlertsByStatus);										
 			}
-			serviceProviderDto.setAlertsList(numberOfAlertsByStatus);
-			System.err.println(numberOfAlertsByStatus);
 		}
 	}
 }
