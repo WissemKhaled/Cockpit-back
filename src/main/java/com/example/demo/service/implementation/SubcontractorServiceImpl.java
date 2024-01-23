@@ -56,6 +56,8 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 		if (optionalSubcontractorsList.isEmpty()) {
 			throw new EntityNotFoundException("Il n'y a pas de sous-traitans enregistré");
 		}
+		//return optionalSubcontractorsList.get().stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
+		
 		List<SubcontractorDto> foundSubcontractorList = optionalSubcontractorsList.get().stream().map(subcontractorDtoMapper::subcontractorToDto).toList();
 		setAlertsForSubcontractorDtosList(foundSubcontractorList);
 		return foundSubcontractorList;
