@@ -1,11 +1,14 @@
 package com.example.demo.service.implementation;
 
+import static java.util.function.Predicate.not;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -20,6 +23,7 @@ import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.MessageModelService;
@@ -301,5 +305,12 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 		}
 		
 		return modelTrackingDTO;
+	}
+	
+	@Override
+	public List<ModelTrackingDTO> getAllMessageModelByServiceProviderId(int serviceProviderId, int statusId) {
+		List<ModelTrackingDTO> messageModels = modelTrackingMapper.getAllMessageModelByServiceProviderId(serviceProviderId, statusId);
+		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
+				.orElseThrow(() -> new EntityNotFoundException("Aucun prestataire trouvé avec l'id " + serviceProviderId));
 	}
 }
