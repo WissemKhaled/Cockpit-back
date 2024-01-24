@@ -217,8 +217,5 @@ public interface ServiceProviderMapper {
 	 *                   </ul>
 	 */
 	List<Integer> countAllServiceProviderAlerts(int serviceProviderId);
-	
-	int countAllServiceProviderAlerts2(int serviceProviderId, int statusId);
-
 
 }

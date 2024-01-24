@@ -115,11 +115,14 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    String criteriaColumn = getCriteriaColumn(columnName);
 
 	    if (statusId == 0) {
-	        return serviceProviderMapper.findServiceProvidersByCriteria(criteriaColumn, searchTerms, offset, pageSize)
-	                .stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    	List<ServiceProviderDto> serviceProvidersListByCriteria = serviceProviderMapper.findServiceProvidersByCriteria(criteriaColumn, searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    	setAlertsForServiceProvidersDtosList(serviceProvidersListByCriteria);
+	    	return serviceProvidersListByCriteria;
 	    } else {
-	        return serviceProviderMapper.findServiceProvidersByCriteriaAndFiltredByStatus(criteriaColumn, searchTerms, offset, pageSize, statusId)
-	                .stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    	List<ServiceProviderDto> serviceProvidersListByCriteriaAndStatus = serviceProviderMapper.findServiceProvidersByCriteriaAndFiltredByStatus(criteriaColumn, searchTerms, offset, pageSize, statusId)
+            .stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    	setAlertsForServiceProvidersDtosList(serviceProvidersListByCriteriaAndStatus);
+	        return serviceProvidersListByCriteriaAndStatus;
 	    }
 	}
 	
@@ -350,12 +353,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 			if (serviceProviderDto.getSpStatus().getStId() != 4) {
 				Optional<List<Integer>> countAllServiceProviderAlerts = Optional.ofNullable(serviceProviderMapper.countAllServiceProviderAlerts(serviceProviderDto.getSpId()));
 				if (countAllServiceProviderAlerts.isPresent()) {
-					List<Integer> numberOfAlertsByStatus = Arrays.asList(0,0,0);
 					List<Integer> allServiceProviderAlerts = countAllServiceProviderAlerts.get();
-					for (int i=0; i<allServiceProviderAlerts.size(); i++) {
-						numberOfAlertsByStatus.set(i, allServiceProviderAlerts.get(i));
-					}
-					serviceProviderDto.setAlertsList(numberOfAlertsByStatus);										
+					serviceProviderDto.setAlertsList(allServiceProviderAlerts);										
 				}
 			}
 		}
