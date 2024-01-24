@@ -115,11 +115,14 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    String criteriaColumn = getCriteriaColumn(columnName);
 
 	    if (statusId == 0) {
-	        return serviceProviderMapper.findServiceProvidersByCriteria(criteriaColumn, searchTerms, offset, pageSize)
-	                .stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    	List<ServiceProviderDto> serviceProvidersListByCriteria = serviceProviderMapper.findServiceProvidersByCriteria(criteriaColumn, searchTerms, offset, pageSize).stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    	setAlertsForServiceProvidersDtosList(serviceProvidersListByCriteria);
+	    	return serviceProvidersListByCriteria;
 	    } else {
-	        return serviceProviderMapper.findServiceProvidersByCriteriaAndFiltredByStatus(criteriaColumn, searchTerms, offset, pageSize, statusId)
-	                .stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    	List<ServiceProviderDto> serviceProvidersListByCriteriaAndStatus = serviceProviderMapper.findServiceProvidersByCriteriaAndFiltredByStatus(criteriaColumn, searchTerms, offset, pageSize, statusId)
+            .stream().map(serviceProviderDtoMapper::serviceProviderToDto).toList();
+	    	setAlertsForServiceProvidersDtosList(serviceProvidersListByCriteriaAndStatus);
+	        return serviceProvidersListByCriteriaAndStatus;
 	    }
 	}
 	
