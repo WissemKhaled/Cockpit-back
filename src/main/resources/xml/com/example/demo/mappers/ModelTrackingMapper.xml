@@ -19,11 +19,7 @@
             <id property="cId" column="c_id"/>
             <result property="cFKserviceProviderId" column="c_fk_service_provider_id"/>
             <result property="cFkSubcontractorId" column="c_fk_subcontractor_id"/>
-        </association>
-<!--        <association property="category" javaType="com.example.demo.entity.Category">-->
-<!--            <id property="catId" column="cat_id"/>-->
-<!--        </association>-->
-        
+        </association>     
 	</resultMap>
 	
 	<sql id="messageModelBySubcontractorAndServiceProviderTables">
@@ -44,7 +40,7 @@
 			mt.mt_fk_category_id,
 			mt.mt_send_date,
 			mt.mt_validation_date
-	</sql>
+	</sql> 
 
     <insert id="insertGstModelTracking" statementType="PREPARED" useGeneratedKeys="true" keyProperty="mtId" keyColumn="mt_id" parameterType="com.example.demo.entity.ModelTracking">
         INSERT INTO schema_dev.gst_model_tracking (
@@ -54,7 +50,7 @@
             #{mtSendDate}, #{mtValidationDate}, #{mtFkContractId}, #{mtFkMessageModelId}, #{mtFkStatusId}, #{mtFkCategoryId}
         )
     </insert>
-
+ 
     <update id="updateModelTracking" >
         UPDATE schema_dev.gst_model_tracking
         SET mt_send_date = #{mtSendDate},
@@ -66,32 +62,7 @@
         WHERE mt_fk_contract_id = #{mtFkContractId}
           AND mt_fk_message_model_id = #{mtFkMessageModelId}
     </update>
-
-    <select id="findAllModelTrackingInfo" resultType="com.example.demo.dto.ModelTrackingDTO">
-        SELECT
-            mt.mt_id,
-            mt.mt_send_date,
-            mt.mt_validation_date,
-            mt.mt_fk_contract_id,
-            mt.mt_fk_message_model_id,
-            mt.mt_fk_status_id,
-            mt.mt_fk_category_id
-        FROM schema_dev.gst_model_tracking mt
-    </select>
-
-    <select id="getModelTrackingInfoByContractId" resultType="com.example.demo.dto.ModelTrackingDTO">
-        SELECT
-            mt.mt_id,
-            mt.mt_send_date,
-            mt.mt_validation_date,
-            mt.mt_fk_contract_id,
-            mt.mt_fk_message_model_id,
-            mt.mt_fk_status_id,
-            mt.mt_fk_category_id
-        FROM schema_dev.gst_model_tracking mt
-        WHERE mt.mt_fk_contract_id = #{contractId}
-    </select>
-    
+ 
     <select id="getAllMessageModelByServiceProviderId" resultMap="modelTrackingResultMap">
         SELECT
         	ct.c_fk_service_provider_id,
@@ -111,32 +82,105 @@
 		AND mt.mt_fk_category_id != '1'
 		ORDER BY mt.mt_id ASC;
     </select>
-
-    <select id="findModelTrackingInfoByMmId" resultType="com.example.demo.dto.ModelTrackingDTO">
-        SELECT
-            mt.mt_id,
-            mt.mt_send_date,
-            mt.mt_validation_date,
-            mt.mt_fk_contract_id,
-            mt.mt_fk_message_model_id,
-            mt.mt_fk_status_id,
-            mt.mt_fk_category_id
-        FROM schema_dev.gst_model_tracking mt
-        WHERE mt.mt_fk_message_model_id = #{mmId}
+      
+    <select id="findAllModelTrackingInfo" resultType="com.example.demo.dto.ModelTrackingDTO">
+        SELECT *
+        FROM schema_dev.gst_model_tracking
     </select>
-
-    <select id="findModelTrackingInfoByContractIdAndMmId" resultType="com.example.demo.dto.ModelTrackingDTO">
-        SELECT
-            mt.mt_id,
-            mt.mt_send_date,
-            mt.mt_validation_date,
-            mt.mt_fk_contract_id,
-            mt.mt_fk_message_model_id,
-            mt.mt_fk_status_id,
-            mt.mt_fk_category_id
-        FROM schema_dev.gst_model_tracking mt
-        WHERE mt.mt_fk_contract_id = #{contractId}
-          AND mt.mt_fk_message_model_id = #{mmId}
+ 
+    <select id="getModelTrackingInfoByContractId" resultType="com.example.demo.dto.ModelTrackingDTO" parameterType="int">
+        SELECT *
+        FROM schema_dev.gst_model_tracking
+        WHERE mt_fk_contract_id = #{contractId}
     </select>
+ 
+    <select id="findModelTrackingInfoByMmId" resultType="com.example.demo.dto.ModelTrackingDTO" parameterType="int">
+        SELECT *
+        FROM schema_dev.gst_model_tracking
+        WHERE mt_fk_message_model_id = #{mmId}
+    </select>
+ 
+    <select id="findModelTrackingInfoByContractIdAndMmId" resultType="com.example.demo.dto.ModelTrackingDTO" parameterType="int">
+        SELECT *
+        FROM schema_dev.gst_model_tracking
+        WHERE mt_fk_contract_id = #{contractId}
+          AND mt_fk_message_model_id = #{mmId}
+    </select>
+	
+	<update id="updateSubcontractorStatus" parameterType="map">
+	  <![CDATA[
+	  UPDATE gst_subcontractor
+	  SET s_fk_status_id = 
+	    CASE
+	      WHEN EXISTS (
+	        SELECT 1
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_subcontractor_id = #{subcontractorId}
+	          AND mt.mt_fk_status_id = 1
+	      ) THEN 1
+	      WHEN EXISTS (
+	        SELECT 1
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_subcontractor_id = #{subcontractorId}
+	          AND mt.mt_fk_status_id = 2
+	      ) AND NOT EXISTS (
+	        SELECT 1
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_subcontractor_id = #{subcontractorId}
+	          AND mt.mt_fk_status_id = 1
+	      ) THEN 2
+	      WHEN NOT EXISTS (
+	        SELECT 1
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_subcontractor_id = #{subcontractorId}
+	          AND mt.mt_fk_status_id <> 3
+	      ) THEN 3
+	      ELSE s_fk_status_id
+	    END
+	  WHERE s_id = #{subcontractorId}
+	  ]]>
+	</update>
+	
+	<update id="updateServiceProvider" parameterType="map">
+	  <![CDATA[
+	  UPDATE gst_service_provider
+	  SET sp_fk_status_id = 
+	    CASE
+	      WHEN EXISTS (
+	        SELECT 1
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_service_provider_id = #{serviceProviderId}
+	          AND mt.mt_fk_status_id = 1
+	      ) THEN 1
+	      WHEN EXISTS (
+	        SELECT 1
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_service_provider_id = #{serviceProviderId}
+	          AND mt.mt_fk_status_id = 2
+	      ) AND NOT EXISTS (
+	        SELECT 1
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_service_provider_id = #{serviceProviderId}
+	          AND mt.mt_fk_status_id = 1
+	      ) THEN 2
+	      WHEN NOT EXISTS (
+	        SELECT 1
+	        FROM gst_model_tracking mt
+	        INNER JOIN gst_contract contract ON mt.mt_fk_contract_id = contract.c_id
+	        WHERE contract.c_fk_service_provider_id = #{serviceProviderId}
+	          AND mt.mt_fk_status_id <> 3
+	      ) THEN 3
+	      ELSE sp_fk_status_id
+	    END
+	  WHERE sp_id = #{serviceProviderId}
+	  ]]>
+	</update>
 
 </mapper>

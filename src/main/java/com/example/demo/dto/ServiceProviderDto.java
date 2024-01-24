@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.example.demo.entity.Status;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -44,6 +45,9 @@ public class ServiceProviderDto {
 
 	@JsonProperty("newPage")
 	private int newPage;
+
+	@JsonProperty("alertsList")
+	private List<Integer> alertsList;
 
 	public ServiceProviderDto() {
 	}
@@ -132,11 +136,20 @@ public class ServiceProviderDto {
 		this.newPage = newPage;
 	}
 
+	public List<Integer> getAlertsList() {
+		return alertsList;
+	}
+
+	public void setAlertsList(List<Integer> alertsList) {
+		this.alertsList = alertsList;
+	}
+
 	@Override
 	public String toString() {
 		return "ServiceProviderDto [spId=" + spId + ", spFirstName=" + spFirstName + ", spName=" + spName + ", spEmail="
 				+ spEmail + ", spCreationDate=" + spCreationDate + ", spLastUpdateDate=" + spLastUpdateDate
-				+ ", spStatus=" + spStatus + ", subcontractorSName=" + subcontractorSName + "]";
+				+ ", spStatus=" + spStatus + ", subcontractorSName=" + subcontractorSName + ", newPage=" + newPage
+				+ ", alertsList=" + alertsList + "]";
 	}
 
 }

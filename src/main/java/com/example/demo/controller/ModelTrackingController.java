@@ -71,6 +71,7 @@ public class ModelTrackingController {
         }
     }
 	
+
 	@GetMapping("/getAllMessagesByServiceProviderId")
 	public ResponseEntity<Page<ModelTrackingDTO>> getAllMessageModelByServiceProviderId(
 			@RequestParam(value = "serviceProviderId") Integer serviceProviderId,
@@ -110,4 +111,20 @@ public class ModelTrackingController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+
+	@PutMapping("/updateSubcontractorOrSpStatusId")
+    public ResponseEntity<String> updateSubcontractororSpStatusId(
+    		@RequestParam(required = false) Integer subcontractorId,
+    		@RequestParam(required = false) Integer serviceProviderId
+    ) throws DatabaseQueryFailureException {
+        try {
+            String result = modelTrackingService.updateSubcontractorOrSpStatusId(subcontractorId, serviceProviderId);
+            return new ResponseEntity<>(String.format(result, subcontractorId), HttpStatus.OK);
+        } catch (DatabaseQueryFailureException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (NullPointerException e) {
+        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 }

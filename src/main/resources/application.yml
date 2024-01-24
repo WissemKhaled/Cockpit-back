@@ -23,7 +23,7 @@ spring:
       schema-locations: classpath:schema-dev.sql
     #  schema-locations: classpath:schema-test.sql
       data-locations: classpath:data-dev.sql
-    # data-locations: classpath:data-test.sql
+     # data-locations: classpath:data-test.sql
     
   mail:
     host: smtp.gmail.com
@@ -42,7 +42,7 @@ spring:
     
 token:
   expiration:
-    duration: 900000 # durée de 900 secondes (15 min)
+    duration: 50000 # durée de 900 secondes (15 min)
 
 jwt:
   secret: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
