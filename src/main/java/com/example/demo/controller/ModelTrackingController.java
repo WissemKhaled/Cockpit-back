@@ -65,4 +65,19 @@ public class ModelTrackingController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+	
+	@PutMapping("/updateSubcontractorOrSpStatusId")
+    public ResponseEntity<String> updateSubcontractororSpStatusId(
+    		@RequestParam(required = false) Integer subcontractorId,
+    		@RequestParam(required = false) Integer serviceProviderId
+    ) throws DatabaseQueryFailureException {
+        try {
+            String result = modelTrackingService.updateSubcontractorOrSpStatusId(subcontractorId, serviceProviderId);
+            return new ResponseEntity<>(String.format(result, subcontractorId), HttpStatus.OK);
+        } catch (DatabaseQueryFailureException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (NullPointerException e) {
+        	 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }
