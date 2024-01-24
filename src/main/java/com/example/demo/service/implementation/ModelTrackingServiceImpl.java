@@ -323,6 +323,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 		List<ModelTrackingDTO> messageModels = modelTrackingMapper.getAllMessageModelBySubcontractorId(subcontractorId, statusId);
 		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
 				.orElseThrow(() -> new EntityNotFoundException("Aucun sous-traitant trouvé avec l'id " + subcontractorId));
+	}
 
 	public String updateSubcontractorOrSpStatusId(Integer subcontractorId, Integer serviceProviderId) throws DatabaseQueryFailureException {
 		if (subcontractorId != null) {
