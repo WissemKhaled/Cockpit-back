@@ -23,7 +23,6 @@ import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.exception.MessageModelNotFoundException;
 import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.MessageModelService;
@@ -312,5 +311,12 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 		List<ModelTrackingDTO> messageModels = modelTrackingMapper.getAllMessageModelByServiceProviderId(serviceProviderId, statusId);
 		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
 				.orElseThrow(() -> new EntityNotFoundException("Aucun prestataire trouvé avec l'id " + serviceProviderId));
+	}
+	
+	@Override
+	public List<ModelTrackingDTO> getAllMessageModelBySubcontractorId(int subcontractorId, int statusId) {
+		List<ModelTrackingDTO> messageModels = modelTrackingMapper.getAllMessageModelBySubcontractorId(subcontractorId, statusId);
+		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
+				.orElseThrow(() -> new EntityNotFoundException("Aucun sous-traitant trouvé avec l'id " + subcontractorId));
 	}
 }

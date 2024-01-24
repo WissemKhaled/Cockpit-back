@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ModelTrackingDTO;
-import com.example.demo.entity.MessageModel;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.MessageModelNotFoundException;
@@ -79,6 +78,26 @@ public class ModelTrackingController {
 			@PageableDefault(page = 0, size = 6) Pageable pageable) {
 		try {
 			List<ModelTrackingDTO> allMessages = modelTrackingService.getAllMessageModelByServiceProviderId(serviceProviderId, statusId);
+
+			Page<ModelTrackingDTO> page = new PageImpl<>(allMessages, pageable, allMessages.size());
+
+			// appel de la méthode qui gère les relances
+			modelTrackingService.checkRelaunch(statusId);
+
+			return ResponseEntity.ok(page);
+
+		} catch (MessageModelNotFoundException e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
+	
+	@GetMapping("/getAllMessagesBySubcontractorId")
+	public ResponseEntity<Page<ModelTrackingDTO>> getAllMessageModelBySubcontractorId(
+			@RequestParam(value = "subcontractorId") Integer subcontractorId,
+			@RequestParam(value = "statusId") Integer statusId,
+			@PageableDefault(page = 0, size = 6) Pageable pageable) {
+		try {
+			List<ModelTrackingDTO> allMessages = modelTrackingService.getAllMessageModelBySubcontractorId(subcontractorId, statusId);
 
 			Page<ModelTrackingDTO> page = new PageImpl<>(allMessages, pageable, allMessages.size());
 

@@ -4,7 +4,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import com.example.demo.dto.ModelTrackingDTO;
-import com.example.demo.entity.MessageModel;
 import com.example.demo.entity.ModelTracking;
 
 @Mapper
@@ -23,4 +22,6 @@ public interface ModelTrackingMapper {
     ModelTrackingDTO findModelTrackingInfoByContractIdAndMmId(@Param("contractId") int contractId, @Param("mmId") int mmId);
     
     List<ModelTrackingDTO> getAllMessageModelByServiceProviderId(Integer serviceProviderId, int statusId);
+    
+    List<ModelTrackingDTO> getAllMessageModelBySubcontractorId(Integer subcontractorId, int statusId);
 }
