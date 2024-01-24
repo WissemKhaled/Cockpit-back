@@ -1,3 +1,7 @@
 ### Get message models by id
 GET {{host}}/MessageModel/getAllMessagesById?serviceProviderId=1
 Authorization: Bearer {{token}}
+
+### Get message models by contract id
+GET {{host}}/MessageModel/getAllMessagesByContractId?contractId=1
+Authorization: Bearer {{token}}

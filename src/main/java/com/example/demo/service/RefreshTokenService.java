@@ -7,7 +7,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +25,12 @@ public class RefreshTokenService {
 	private static final Logger LOG = getLogger(RefreshTokenService.class);
 	private RefreshTokenMapper refreshTokenMapper;
 	private UUserMapper uUserMapper;
+	@Autowired
+	private Environment env;
 	
-	@Value("${refresh.token.expiration.duration}")
-	private int refreshTokenExpirationDuration;
+
+
+
 
 	public RefreshTokenService(RefreshTokenMapper refreshTokenMapper, UUserMapper uUserMapper) {
 		this.refreshTokenMapper = refreshTokenMapper;
@@ -33,10 +38,11 @@ public class RefreshTokenService {
 	}
 	
 	public RefreshToken createRefreshToken(String email) {
+		String refreshTokenExpirationDuration = env.getProperty("refresh.token.expiration.duration");
 		RefreshToken refreshToken = new RefreshTokenBuilder()
 				.withUUser(uUserMapper.findUserByEmail(email).get())
 				.withRtToken(UUID.randomUUID().toString())
-				.withRtExpiryDate(Instant.now().plusSeconds(refreshTokenExpirationDuration))
+				.withRtExpiryDate(Instant.now().plusSeconds(Long.parseLong(refreshTokenExpirationDuration)))
 				.build();
 
 		LOG.info("refreshToken suivant créé : " + refreshToken);
