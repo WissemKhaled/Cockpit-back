@@ -23,7 +23,7 @@ spring:
       schema-locations: classpath:schema-dev.sql
     #  schema-locations: classpath:schema-test.sql
       data-locations: classpath:data-dev.sql
-    # data-locations: classpath:data-test.sql
+     # data-locations: classpath:data-test.sql
     
   mail:
     host: smtp.gmail.com

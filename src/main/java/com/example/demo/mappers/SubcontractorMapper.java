@@ -185,4 +185,7 @@ public interface SubcontractorMapper {
 			@Param("columnName") String columnName,
 			@Param("searchTerms") String searchTerms, 
 			@Param("statusId") int statusId);
+	
+	List<Integer> countAllSubcontractorsAlerts(int subcontractorId);
+
 }
