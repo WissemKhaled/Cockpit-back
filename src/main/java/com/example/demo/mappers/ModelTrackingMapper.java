@@ -21,6 +21,10 @@ public interface ModelTrackingMapper {
 
     ModelTrackingDTO findModelTrackingInfoByContractIdAndMmId(@Param("contractId") int contractId, @Param("mmId") int mmId);
     
+    List<ModelTrackingDTO> getAllMessageModelByServiceProviderId(Integer serviceProviderId, int statusId);
+    
+    List<ModelTrackingDTO> getAllMessageModelBySubcontractorId(Integer subcontractorId, int statusId);
+
     /**
 	 * Récupère la liste des status des modèles de message liés au sous-traitant.
 	 *
@@ -36,4 +40,5 @@ public interface ModelTrackingMapper {
 	 * @return La liste d'ID des status des modèles de message liés au prestataire.
 	 */
 	int updateServiceProvider(@Param("serviceProviderId") int serviceProviderId);
+
 }

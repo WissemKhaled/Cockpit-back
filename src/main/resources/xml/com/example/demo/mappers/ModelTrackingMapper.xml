@@ -3,7 +3,7 @@
 <!-- ModelTrackingMapper.xml -->
 <mapper namespace="com.example.demo.mappers.ModelTrackingMapper">
 	
-	<resultMap type="com.example.demo.entity.Subcontractor" id="modelTrackingResultMap">
+	<resultMap type="com.example.demo.entity.ModelTracking" id="modelTrackingResultMap">
 		<result property="mtId" column="mt_id" />
 		<result property="mtFkContractId" column="mt_fk_contract_id" />
 		<result property="mtFkMessageModelId" column="mt_fk_message_model_id" />
@@ -11,8 +11,36 @@
 		<result property="mtFkCategoryId" column="mt_fk_category_id" />
 		<result property="mtSendDate" column="mt_send_date" />
 		<result property="mtValidationDate" column="mt_validation_date" />
+        <association property="messageModel" javaType="com.example.demo.entity.MessageModel">
+            <id property="mmId" column="mm_id"/>
+            <result property="mmSubject" column="mm_subject"/>
+        </association>
+        <association property="contract" javaType="com.example.demo.entity.Contract">
+            <id property="cId" column="c_id"/>
+            <result property="cFKserviceProviderId" column="c_fk_service_provider_id"/>
+            <result property="cFkSubcontractorId" column="c_fk_subcontractor_id"/>
+        </association>     
 	</resultMap>
- 
+	
+	<sql id="messageModelBySubcontractorAndServiceProviderTables">
+		 schema_dev.gst_model_tracking mt
+			LEFT JOIN gst_contract ct ON mt.mt_fk_contract_id = ct.c_id
+			LEFT JOIN gst_message_model mm ON mt.mt_fk_message_model_id = mm.mm_id
+			LEFT JOIN gst_service_provider sp ON ct.c_fk_service_provider_id = sp.sp_id
+			LEFT JOIN gst_subcontractor sc ON ct.c_fk_subcontractor_id = sc.s_id
+			LEFT JOIN gst_category cy ON mt.mt_fk_category_id = cy.cat_id
+	</sql>
+	
+	<sql id="messageModelTrackingColumns">
+			mt.mt_id,
+			mt.mt_fk_contract_id,
+			mt.mt_fk_message_model_id,
+			mm.mm_subject,
+			mt.mt_fk_status_id,
+			mt.mt_fk_category_id,
+			mt.mt_send_date,
+			mt.mt_validation_date
+	</sql> 
 
     <insert id="insertGstModelTracking" statementType="PREPARED" useGeneratedKeys="true" keyProperty="mtId" keyColumn="mt_id" parameterType="com.example.demo.entity.ModelTracking">
         INSERT INTO schema_dev.gst_model_tracking (
@@ -35,6 +63,26 @@
           AND mt_fk_message_model_id = #{mtFkMessageModelId}
     </update>
  
+    <select id="getAllMessageModelByServiceProviderId" resultMap="modelTrackingResultMap">
+        SELECT
+        	ct.c_fk_service_provider_id,
+        	<include refid="messageModelTrackingColumns"/>
+		FROM <include refid="messageModelBySubcontractorAndServiceProviderTables"/>
+		WHERE ct.c_fk_service_provider_id = #{serviceProviderId}
+		AND mt.mt_fk_category_id = '1'
+		ORDER BY mt.mt_id ASC;
+    </select>
+    
+    <select id="getAllMessageModelBySubcontractorId" resultMap="modelTrackingResultMap">
+		SELECT
+			ct.c_fk_subcontractor_id,
+			<include refid="messageModelTrackingColumns"/>
+		FROM <include refid="messageModelBySubcontractorAndServiceProviderTables"/>
+		WHERE ct.c_fk_subcontractor_id = #{subcontractorId}
+		AND mt.mt_fk_category_id != '1'
+		ORDER BY mt.mt_id ASC;
+    </select>
+      
     <select id="findAllModelTrackingInfo" resultType="com.example.demo.dto.ModelTrackingDTO">
         SELECT *
         FROM schema_dev.gst_model_tracking
