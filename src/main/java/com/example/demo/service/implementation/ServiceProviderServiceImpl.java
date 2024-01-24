@@ -350,12 +350,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 			if (serviceProviderDto.getSpStatus().getStId() != 4) {
 				Optional<List<Integer>> countAllServiceProviderAlerts = Optional.ofNullable(serviceProviderMapper.countAllServiceProviderAlerts(serviceProviderDto.getSpId()));
 				if (countAllServiceProviderAlerts.isPresent()) {
-					List<Integer> numberOfAlertsByStatus = Arrays.asList(0,0,0);
 					List<Integer> allServiceProviderAlerts = countAllServiceProviderAlerts.get();
-					for (int i=0; i<allServiceProviderAlerts.size(); i++) {
-						numberOfAlertsByStatus.set(i, allServiceProviderAlerts.get(i));
-					}
-					serviceProviderDto.setAlertsList(numberOfAlertsByStatus);										
+					serviceProviderDto.setAlertsList(allServiceProviderAlerts);										
 				}
 			}
 		}
