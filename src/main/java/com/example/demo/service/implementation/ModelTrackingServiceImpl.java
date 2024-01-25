@@ -112,6 +112,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	
 //	/*
 //	 * Méthode qui met à jour le status d'un message model dans la table gst_model_tracking selon l'Id du message model et l'Id du contract
+//   * La maj pour les message model de demande d'ID 5 doivent être mis à jour avec ceux de ID 13
 //	**/
 	@Override
 	public String updateModelTrackingDemand(int mmId, int statusId, int contractId, String validationDateString) throws DatabaseQueryFailureException {
