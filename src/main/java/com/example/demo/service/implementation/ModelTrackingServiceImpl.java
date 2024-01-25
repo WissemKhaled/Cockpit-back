@@ -124,7 +124,11 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 		        
 		        // On vérifie si demands a un mmId = à celui passé en paramètre
 		        // On vérifie également si la relance a un mmId = au mmId passé en param + 1
-		        if (demand.getMmId() == mmId || relaunch.getMmId() == mmId + 1 ) {
+		        // On verifié également si la demande à modifier ne concerne pas la signature d'un doc car c'est un cas particulier
+		        if (
+		        		demand.getMmId() == mmId && relaunch.getMmId() == mmId + 1 &&
+		        		mmId != 5 && mmId != 13
+		        ) {
 		        	ModelTrackingDTO modelTrackingDTODemand = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, demand.getMmId());
 			        ModelTrackingDTO modelTrackingDTORelaunch = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, relaunch.getMmId());
 				    
@@ -183,6 +187,117 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 				    } else if (isRelaunchModelTrackingUpdated > 0) {
 				    	log.info("Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingRelaunch.getMtFkMessageModelId());
 					    return "Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingRelaunch.getMtFkMessageModelId();
+				    }
+		        } else if (
+			        	demand.getMmId() == mmId && relaunch.getMmId() == mmId + 1 &&
+			        	mmId == 5 || mmId == 13
+		        ) {
+		        	ModelTrackingDTO modelTrackingDTODemandSpSignature = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, 5);
+			        ModelTrackingDTO modelTrackingDTORelaunchSpSignature = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, 6);
+			        ModelTrackingDTO modelTrackingDTODemandSubSignature = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, 13);
+			        ModelTrackingDTO modelTrackingDTORelaunchSubSignature = modelTrackingMapper.findModelTrackingInfoByContractIdAndMmId(contractId, 14);
+				    
+				    if (
+				    		modelTrackingDTODemandSpSignature == null && modelTrackingDTORelaunchSpSignature == null && 
+				    				modelTrackingDTODemandSubSignature == null && modelTrackingDTORelaunchSubSignature == null
+				    ) {
+				        log.error("Le suivi selon le contrat avec l'ID " + contractId + " n'a pas été trouvé");
+				        throw new EntityNotFoundException("Le suivi selon le contrat avec l'ID " + contractId + " n'a pas été trouvé");
+				    }
+				    
+				    // modelTrackingDTODemandSpSignature
+				    modelTrackingDTODemandSpSignature.setMtFkContractId(modelTrackingDTODemandSpSignature.getMtFkContractId());
+				    modelTrackingDTODemandSpSignature.setMtFkMessageModelId(modelTrackingDTODemandSpSignature.getMtFkMessageModelId());
+				    modelTrackingDTODemandSpSignature.setMtFkCategoryId(modelTrackingDTODemandSpSignature.getMtFkCategoryId());
+				    
+				    // modelTrackingDTORelaunchSpSignature
+				    modelTrackingDTORelaunchSpSignature.setMtFkContractId(modelTrackingDTORelaunchSpSignature.getMtFkContractId());
+				    modelTrackingDTORelaunchSpSignature.setMtFkMessageModelId(modelTrackingDTORelaunchSpSignature.getMtFkMessageModelId());
+				    modelTrackingDTORelaunchSpSignature.setMtFkCategoryId(modelTrackingDTORelaunchSpSignature.getMtFkCategoryId());
+				    
+				    // modelTrackingDTODemandSubSignature
+				    modelTrackingDTODemandSubSignature.setMtFkContractId(modelTrackingDTODemandSubSignature.getMtFkContractId());
+				    modelTrackingDTODemandSubSignature.setMtFkMessageModelId(modelTrackingDTODemandSubSignature.getMtFkMessageModelId());
+				    modelTrackingDTODemandSubSignature.setMtFkCategoryId(modelTrackingDTODemandSubSignature.getMtFkCategoryId());
+				    
+				    // modelTrackingDTORelaunchSubSignature
+				    modelTrackingDTORelaunchSubSignature.setMtFkContractId(modelTrackingDTORelaunchSubSignature.getMtFkContractId());
+				    modelTrackingDTORelaunchSubSignature.setMtFkMessageModelId(modelTrackingDTORelaunchSubSignature.getMtFkMessageModelId());
+				    modelTrackingDTORelaunchSubSignature.setMtFkCategoryId(modelTrackingDTORelaunchSubSignature.getMtFkCategoryId());
+	
+				    // si l'ID du status reçu du front = 2, on l'update à 2 et on update le mmId à 2 également dans la table intermédiaire et on update la date d'envoi
+				    // si on reçoit une date de validation du front, on update l'ID du status à 3 et on update le mmId à 3 également dans la table intermédiaire et on update la date de validation
+				    if (statusId == 2) {
+				    	// Maj status de la demande sp
+				    	modelTrackingDTODemandSpSignature.setMtFkStatusId(statusId);
+				    	modelTrackingDTODemandSpSignature.setMtSendDate(LocalDateTime.now());
+				    	
+				    	// Maj status de la demande sub
+				    	modelTrackingDTODemandSubSignature.setMtFkStatusId(statusId);
+				    	modelTrackingDTODemandSubSignature.setMtSendDate(LocalDateTime.now());
+				        // 7 jours après date envoie, relance
+				    } else if (validationDateString != null) {
+				    	// Maj status de la demande sp
+				    	modelTrackingDTODemandSpSignature.setMtFkStatusId(3);
+				    	modelTrackingDTODemandSpSignature.setMtSendDate(modelTrackingDTODemandSpSignature.getMtSendDate());
+				    	
+				    	// Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
+				        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+				        LocalDateTime validationDate = convertStringToLocalDateTime(validationDateString, pattern);
+				        modelTrackingDTODemandSpSignature.setMtValidationDate(validationDate);
+				    	
+				        // Maj status de la relance
+				        modelTrackingDTORelaunchSpSignature.setMtFkStatusId(3);
+				        
+				        
+				        // ####################################### maj sub ##############################################
+				        // Maj status de la demande sub
+				        modelTrackingDTODemandSubSignature.setMtFkStatusId(3);
+				        modelTrackingDTODemandSubSignature.setMtSendDate(modelTrackingDTODemandSubSignature.getMtSendDate());
+				        modelTrackingDTODemandSubSignature.setMtValidationDate(validationDate);
+				    	
+				        // Maj status de la relance sub
+				        modelTrackingDTORelaunchSubSignature.setMtFkStatusId(3);
+				    }
+				    
+				    // sp
+				    ModelTracking modelTrackingSignatureDemandSp = modelTrackingDtoMapper.toModelTracking(modelTrackingDTODemandSpSignature);
+				    ModelTracking modelTrackingSignatureRelaunchSp = modelTrackingDtoMapper.toModelTracking(modelTrackingDTORelaunchSpSignature);
+
+				    int isDemandModelTrackingSignatureSpUpdated = modelTrackingMapper.updateModelTracking(modelTrackingSignatureDemandSp);
+				    int isRelaunchModelTrackingSignatureSpUpdated = modelTrackingMapper.updateModelTracking(modelTrackingSignatureRelaunchSp);
+				    
+				    // sub
+				    ModelTracking modelTrackingSignatureDemandSub = modelTrackingDtoMapper.toModelTracking(modelTrackingDTODemandSubSignature);
+				    ModelTracking modelTrackingSignatureRelaunchSub = modelTrackingDtoMapper.toModelTracking(modelTrackingDTORelaunchSubSignature);
+
+				    int isDemandModelTrackingSignatureSubUpdated = modelTrackingMapper.updateModelTracking(modelTrackingSignatureDemandSub);
+				    int isRelaunchModelTrackingSignatureSubUpdated = modelTrackingMapper.updateModelTracking(modelTrackingSignatureRelaunchSub);
+				    
+				    if (isDemandModelTrackingSignatureSpUpdated == 0) {
+				        log.error("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingSignatureDemandSp.getMtFkMessageModelId());
+				        throw new DatabaseQueryFailureException("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingSignatureDemandSp.getMtFkMessageModelId());
+				    } else if (isRelaunchModelTrackingSignatureSpUpdated == 0) {
+				    	log.error("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingSignatureRelaunchSp.getMtFkMessageModelId());
+				        throw new DatabaseQueryFailureException("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingSignatureRelaunchSp.getMtFkMessageModelId());
+				    } else if (isDemandModelTrackingSignatureSpUpdated > 0) {
+				    	log.info("Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingSignatureDemandSp.getMtFkMessageModelId());
+					    return "Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model deman avec mmId = " + modelTrackingSignatureDemandSp.getMtFkMessageModelId();
+				    } else if (isRelaunchModelTrackingSignatureSpUpdated > 0) {
+				    	log.info("Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingSignatureRelaunchSp.getMtFkMessageModelId());
+					    return "Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingSignatureRelaunchSp.getMtFkMessageModelId();
+				    } else if (isDemandModelTrackingSignatureSubUpdated == 0) {
+				    	log.error("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingSignatureDemandSub.getMtFkMessageModelId());
+				        throw new DatabaseQueryFailureException("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingSignatureDemandSub.getMtFkMessageModelId());
+				    } else if (isRelaunchModelTrackingSignatureSubUpdated == 0) {
+				    	log.error("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingSignatureRelaunchSub.getMtFkMessageModelId());
+				        throw new DatabaseQueryFailureException("Erreur de mise à jour de la table ModelTracking pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingSignatureRelaunchSub.getMtFkMessageModelId());
+				    } else if (isDemandModelTrackingSignatureSubUpdated > 0) {
+				    	log.info("Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model demand avec mmId = " + modelTrackingSignatureDemandSub.getMtFkMessageModelId());
+					    return "Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model deman avec mmId = " + modelTrackingSignatureDemandSub.getMtFkMessageModelId();
+				    } else if (isRelaunchModelTrackingSignatureSubUpdated > 0) {
+				    	log.info("Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingSignatureRelaunchSub.getMtFkMessageModelId());
+					    return "Table ModelTracking mise à jour avec succès pour le contractId " + contractId + " et le message model relaunch avec mmId = " + modelTrackingSignatureRelaunchSub.getMtFkMessageModelId();
 				    }
 		        }
 		    }
