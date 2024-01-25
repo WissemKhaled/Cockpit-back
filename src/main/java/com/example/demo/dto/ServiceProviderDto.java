@@ -43,6 +43,9 @@ public class ServiceProviderDto {
 	@JsonProperty("subcontractorSName")
 	private String subcontractorSName;
 
+	@JsonProperty("subcontractorSEmail")
+	private String subcontractorSEmail;
+
 	@JsonProperty("newPage")
 	private int newPage;
 
@@ -53,7 +56,7 @@ public class ServiceProviderDto {
 	}
 
 	public ServiceProviderDto(int spId, String spFirstName, String spName, String spEmail, LocalDateTime spCreationDate,
-			LocalDateTime spLastUpdateDate, Status spStatus, String subcontractorSName) {
+			LocalDateTime spLastUpdateDate, Status spStatus, String subcontractorSName, String subcontractorSEmail) {
 		this.spId = spId;
 		this.spFirstName = spFirstName;
 		this.spName = spName;
@@ -62,6 +65,7 @@ public class ServiceProviderDto {
 		this.spLastUpdateDate = spLastUpdateDate;
 		this.spStatus = spStatus;
 		this.subcontractorSName = subcontractorSName;
+		this.subcontractorSEmail = subcontractorSEmail;
 	}
 
 	public int getSpId() {
@@ -144,12 +148,20 @@ public class ServiceProviderDto {
 		this.alertsList = alertsList;
 	}
 
+	public String getSubcontractorSEmail() {
+		return subcontractorSEmail;
+	}
+
+	public void setSubcontractorSEmail(String subcontractorSEmail) {
+		this.subcontractorSEmail = subcontractorSEmail;
+	}
+
 	@Override
 	public String toString() {
 		return "ServiceProviderDto [spId=" + spId + ", spFirstName=" + spFirstName + ", spName=" + spName + ", spEmail="
 				+ spEmail + ", spCreationDate=" + spCreationDate + ", spLastUpdateDate=" + spLastUpdateDate
-				+ ", spStatus=" + spStatus + ", subcontractorSName=" + subcontractorSName + ", newPage=" + newPage
-				+ ", alertsList=" + alertsList + "]";
+				+ ", spStatus=" + spStatus + ", subcontractorSName=" + subcontractorSName + ", subcontractorSEmail="
+				+ subcontractorSEmail + ", newPage=" + newPage + ", alertsList=" + alertsList + "]";
 	}
 
 }
