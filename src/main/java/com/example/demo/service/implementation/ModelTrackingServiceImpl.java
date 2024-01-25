@@ -1,5 +1,7 @@
 package com.example.demo.service.implementation;
 
+import static java.util.function.Predicate.not;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -7,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -339,6 +342,19 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	}
 	
 	@Override
+	public List<ModelTrackingDTO> getAllMessageModelByServiceProviderId(int serviceProviderId, int statusId) {
+		List<ModelTrackingDTO> messageModels = modelTrackingMapper.getAllMessageModelByServiceProviderId(serviceProviderId, statusId);
+		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
+				.orElseThrow(() -> new EntityNotFoundException("Aucun prestataire trouvé avec l'id " + serviceProviderId));
+	}
+	
+	@Override
+	public List<ModelTrackingDTO> getAllMessageModelBySubcontractorId(int subcontractorId, int statusId) {
+		List<ModelTrackingDTO> messageModels = modelTrackingMapper.getAllMessageModelBySubcontractorId(subcontractorId, statusId);
+		return Optional.ofNullable(messageModels).filter(not(List::isEmpty))
+				.orElseThrow(() -> new EntityNotFoundException("Aucun sous-traitant trouvé avec l'id " + subcontractorId));
+	}
+
 	public String updateSubcontractorOrSpStatusId(Integer subcontractorId, Integer serviceProviderId) throws DatabaseQueryFailureException {
 		if (subcontractorId != null) {
 			int isSubcontractorStatusUpdated = modelTrackingMapper.updateSubcontractorStatus(subcontractorId);
@@ -364,5 +380,6 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 		
 		log.error("Les IDs du sous-traitant et du prestataire sont tous les deux null");
 	    throw new IllegalArgumentException("Les IDs du sous-traitant et du prestataire sont tous les deux null");
+
 	}
 }

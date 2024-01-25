@@ -13,7 +13,11 @@ String updateModelTrackingDemand(int mmId, int statusId, int contractId, String 
 	List<ModelTrackingDTO> getModelTrackingInfoByContractId(int contractId);
 	
 	ModelTrackingDTO getModelTrackingInfoByContractIdAndMmId(int contractId, int mmId);
+
+	List<ModelTrackingDTO> getAllMessageModelByServiceProviderId(int serviceProviderId, int statusId);
 	
+	List<ModelTrackingDTO> getAllMessageModelBySubcontractorId(int subcontractorId, int statusId);
+
 	/**
 	 * Vérifie si une relance doit être faite et met à jour les status en se basant sur la table gst_model_tracking
 	 *
@@ -21,6 +25,7 @@ String updateModelTrackingDemand(int mmId, int statusId, int contractId, String 
 	 * @return void
 	 * @throws DatabaseQueryFailureException 
 	 */
+
 	void checkRelaunch(int statusId);
 	
 	/**

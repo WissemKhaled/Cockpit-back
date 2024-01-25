@@ -2,6 +2,8 @@ package com.example.demo.dto;
 
 import java.time.LocalDateTime;
 
+import com.example.demo.entity.Contract;
+import com.example.demo.entity.MessageModel;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ModelTrackingDTO {
@@ -26,21 +28,32 @@ public class ModelTrackingDTO {
 
     @JsonProperty("mtValidationDate")
     private LocalDateTime mtValidationDate;
+    
+    @JsonProperty("messageModel")
+	private MessageModel messageModel;
+	
+    @JsonProperty("contract")
+	private Contract contract;
 
     public ModelTrackingDTO() {}
 
-    public ModelTrackingDTO(int mtId, int mtFkContractId, int mtFkMessageModelId, int mtFkStatusId, int mtFkCategoryId,
-            LocalDateTime mtSendDate, LocalDateTime mtValidationDate) {
-        this.mtId = mtId;
-        this.mtFkContractId = mtFkContractId;
-        this.mtFkMessageModelId = mtFkMessageModelId;
-        this.mtFkStatusId = mtFkStatusId;
-        this.mtFkCategoryId = mtFkCategoryId;
-        this.mtSendDate = mtSendDate;
-        this.mtValidationDate = mtValidationDate;
-    }
 
-    public int getMtId() {
+    public ModelTrackingDTO(int mtId, int mtFkContractId, int mtFkMessageModelId, int mtFkStatusId, int mtFkCategoryId,
+			LocalDateTime mtSendDate, LocalDateTime mtValidationDate, MessageModel messageModel, Contract contract) {
+		this.mtId = mtId;
+		this.mtFkContractId = mtFkContractId;
+		this.mtFkMessageModelId = mtFkMessageModelId;
+		this.mtFkStatusId = mtFkStatusId;
+		this.mtFkCategoryId = mtFkCategoryId;
+		this.mtSendDate = mtSendDate;
+		this.mtValidationDate = mtValidationDate;
+		this.messageModel = messageModel;
+		this.contract = contract;
+	}
+
+
+
+	public int getMtId() {
         return mtId;
     }
 
@@ -95,11 +108,28 @@ public class ModelTrackingDTO {
     public void setMtValidationDate(LocalDateTime mtValidationDate) {
         this.mtValidationDate = mtValidationDate;
     }
+    
+    public MessageModel getMessageModel() {
+		return messageModel;
+	}
+
+	public void setMessageModel(MessageModel messageModel) {
+		this.messageModel = messageModel;
+	}
+    
+    public Contract getContract() {
+		return contract;
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
 
     @Override
     public String toString() {
         return "ModelTrackingDTO [mtId=" + mtId + ", mtFkContractId=" + mtFkContractId + ", mtFkMessageModelId="
                 + mtFkMessageModelId + ", mtFkStatusId=" + mtFkStatusId + ", mtFkCategoryId=" + mtFkCategoryId
-                + ", mtSendDate=" + mtSendDate + ", mtValidationDate=" + mtValidationDate + "]";
+                + ", mtSendDate=" + mtSendDate + ", mtValidationDate=" + mtValidationDate + ", messageModel=" 
+        		+ messageModel + ", contract=" + contract + "]";
     }
 }
