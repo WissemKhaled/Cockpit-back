@@ -14,6 +14,12 @@
         <association property="messageModel" javaType="com.example.demo.entity.MessageModel">
             <id property="mmId" column="mm_id"/>
             <result property="mmSubject" column="mm_subject"/>
+            <result property="mmLink" column="mm_link" />
+			<result property="mmBody" column="mm_body" />
+			<result property="mmHasEmail" column="mm_has_email" />
+			<result property="mmIsRelaunch" column="mm_is_relaunch" />
+			<result property="mmCreationDate" column="mm_creation_date" />
+			<result property="mmLastUpdateDate" column="mm_last_update_date" />
         </association>
         <association property="contract" javaType="com.example.demo.entity.Contract">
             <id property="cId" column="c_id"/>
@@ -23,7 +29,7 @@
 	</resultMap>
 	
 	<sql id="messageModelBySubcontractorAndServiceProviderTables">
-		 schema_dev.gst_model_tracking mt
+		    gst_model_tracking mt
 			LEFT JOIN gst_contract ct ON mt.mt_fk_contract_id = ct.c_id
 			LEFT JOIN gst_message_model mm ON mt.mt_fk_message_model_id = mm.mm_id
 			LEFT JOIN gst_service_provider sp ON ct.c_fk_service_provider_id = sp.sp_id
@@ -41,6 +47,8 @@
 			mt.mt_send_date,
 			mt.mt_validation_date
 	</sql> 
+	
+	
 
     <insert id="insertGstModelTracking" statementType="PREPARED" useGeneratedKeys="true" keyProperty="mtId" keyColumn="mt_id" parameterType="com.example.demo.entity.ModelTracking">
         INSERT INTO schema_dev.gst_model_tracking (
@@ -64,9 +72,7 @@
     </update>
  
     <select id="getAllMessageModelByServiceProviderId" resultMap="modelTrackingResultMap">
-        SELECT
-        	ct.c_fk_service_provider_id,
-        	<include refid="messageModelTrackingColumns"/>
+        SELECT	*
 		FROM <include refid="messageModelBySubcontractorAndServiceProviderTables"/>
 		WHERE ct.c_fk_service_provider_id = #{serviceProviderId}
 		AND mt.mt_fk_category_id = '1'
