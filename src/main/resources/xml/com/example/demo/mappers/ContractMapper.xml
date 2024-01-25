@@ -26,8 +26,8 @@
     </select>
 
     <insert id="insertContract" parameterType="com.example.demo.entity.Contract" useGeneratedKeys="true" keyProperty="cId" keyColumn="c_id">
-        INSERT INTO schema_dev.gst_contract (c_contract_number, c_fk_subcontractor_id, c_fk_service_provider_id)
-        VALUES (#{cContractNumber}, #{cFkSubcontractorId}, #{cFkServiceProviderId})
+        INSERT INTO gst_contract (c_contract_number, c_fk_subcontractor_id, c_fk_service_provider_id)
+        VALUES (#{cContractNumber}, #{cFkSubcontractorId}, #{cFKserviceProviderId})
     </insert>
 
 

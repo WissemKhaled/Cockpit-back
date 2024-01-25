@@ -386,7 +386,37 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 					                } else {
 					                    // log.error("Date d'envoi nulle ou < 5 mois et demi");
 					                }
-					            }
+					            } else if (modelTrackingDTODemand.getMtFkCategoryId() == 4) {
+					        		if (modelTrackingDTODemand.getMtValidationDate() != null && modelTrackingDTODemand.getMtValidationDate().minusDays(15).isAfter(currentDate)) {
+					                	// Maj du statusId de la table gst_model_tracking pour les demandes
+					                	modelTrackingDTODemand.setMtFkContractId(modelTrackingDTODemand.getMtFkContractId());
+					                	modelTrackingDTODemand.setMtFkMessageModelId(modelTrackingDTODemand.getMtFkMessageModelId());
+					                	modelTrackingDTODemand.setMtFkStatusId(1);
+					                	modelTrackingDTODemand.setMtSendDate(modelTrackingDTODemand.getMtSendDate());
+					                	modelTrackingDTODemand.setMtValidationDate(modelTrackingDTODemand.getMtValidationDate());
+					                	
+					                	ModelTracking modelTrackingDemand = modelTrackingDtoMapper.toModelTracking(modelTrackingDTODemand);
+					                	
+					                	modelTrackingMapper.updateModelTracking(modelTrackingDemand);
+					                	
+					                	log.info("Maj Demande : Table ModelTracking mise à jour pour l'id : " + modelTrackingDemand.getMtId());
+					                	
+					                	// Maj du statusId de la table gst_model_tracking pour les relances
+					                	modelTrackingDTORelaunch.setMtFkContractId(modelTrackingDTORelaunch.getMtFkContractId());
+					                	modelTrackingDTORelaunch.setMtFkMessageModelId(modelTrackingDTORelaunch.getMtFkMessageModelId());
+					                	modelTrackingDTORelaunch.setMtFkStatusId(5);
+					                	modelTrackingDTORelaunch.setMtSendDate(modelTrackingDTORelaunch.getMtSendDate());
+					                	modelTrackingDTORelaunch.setMtValidationDate(modelTrackingDTORelaunch.getMtValidationDate());
+
+					                    ModelTracking modelTrackingRelaunch = modelTrackingDtoMapper.toModelTracking(modelTrackingDTORelaunch);
+
+					                    modelTrackingMapper.updateModelTracking(modelTrackingRelaunch);
+
+					                    log.info("Maj Relance : Table ModelTracking mise à jour pour l'id : " + modelTrackingRelaunch.getMtId());
+					                } else {
+					                    // log.error("Date d'envoi nulle ou < 5 mois et demi");
+					                }
+								}
 					        }
 					    } catch (Exception e) {
 					        log.error("Une erreur est survenue lors de la vérification de relance : " + e.getMessage(), e);
