@@ -18,7 +18,7 @@ public interface ContractMapper {
 
     List<Contract> getContractsByServiceProviderId(Integer serviceProviderId);
 
-	  int insertContract(Contract contract);
+	int insertContract(Contract contract);
 
     List<Contract> getContractsBySubcontractorId(Integer subContractorId);
 
