@@ -2,7 +2,6 @@ package com.example.demo.service.implementation;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -140,6 +139,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	@Override
 	public int saveServiceProvider(ServiceProviderDto serviceProviderDtoToSave) throws GeneralException, DatabaseQueryFailureException {
+		Boolean isForeign = serviceProviderDtoToSave.getIsForeign();
 		ServiceProvider serviceProviderToSave = serviceProviderDtoMapper.dtoToserviceProvider(serviceProviderDtoToSave);
 		serviceProviderToSave.setSpCreationDate(LocalDateTime.now());
 		int isServiceProviderInserted = serviceProviderMapper.insertServiceProvider(serviceProviderToSave);
@@ -151,7 +151,6 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		// saisi par l'utilisateur
 		
 		// Si l'insertion du nouveau sous-traitant en bdd se passe bien, on créé un nouveau contrat et on alimente la table gst_model_tracking qui va service pour les relances d'emails
-		
 		
 		// récupération du sous-traitant associé au prestataire
 		Subcontractor associatedSubcontractor = subcontractorService.getSubcontractorBySName(serviceProviderToSave.getSubcontractor().getSName());
@@ -166,8 +165,15 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		// Création/insertions dans la table tracking (1 insertion par message modelès existants)
 	    List<ModelTrackingDTO> modelTrackingDTOList = new ArrayList<>();
 
+	    int categoryId;
 	    for (int i = 1; i <= 16; i++) {
-	    	int categoryId = (i <= 8) ? 1 : (i <= 10) ? 4 : (i <= 14) ? 2 : 3;
+	    	if (Boolean.TRUE.equals(isForeign)) {
+		    	categoryId = (i <= 8) ? 1 : (i <= 10) ? 4 : (i <= 14) ? 2 : 3;
+	    	} else {
+	    		categoryId = (i <= 8) ? 1 : (i <= 10) ? 0 : (i <= 14) ? 2 : 3;
+			}
+	    	if (categoryId == 0) continue;
+
 	    	int statusId = (i % 2 == 0) ? 5 : 1; // le messageModelId est impaire pour une demande et paire pour une relance
 	        ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();
 	        modelTrackingDTO.setMtFkContractId(contractId);

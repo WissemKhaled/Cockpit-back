@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ContractDTO;
@@ -53,10 +52,8 @@ public class ContractServiceImpl implements ContractService {
 			}
 			
 			contractDTO.setcContractNumber(generateRandomContractNumber());
-			
 			Contract contract = contractDtoMapper.toContract(contractDTO);
-			
-			int isContractInserted = this.contractMapper.insertContract(contract);
+			int isContractInserted = contractMapper.insertContract(contract);
 			
 			if (isContractInserted == 0) {
 				log.error("Échec de l'insertion du contrat dans la base de données");

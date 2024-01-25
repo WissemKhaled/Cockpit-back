@@ -49,6 +49,9 @@ public class ServiceProviderDto {
 	@JsonProperty("alertsList")
 	private List<Integer> alertsList;
 
+	@JsonProperty("isForeign")
+	private Boolean isForeign;
+
 	public ServiceProviderDto() {
 	}
 
@@ -144,12 +147,20 @@ public class ServiceProviderDto {
 		this.alertsList = alertsList;
 	}
 
+	public Boolean getIsForeign() {
+		return isForeign;
+	}
+
+	public void setIsForeign(Boolean isForeign) {
+		this.isForeign = isForeign;
+	}
+
 	@Override
 	public String toString() {
 		return "ServiceProviderDto [spId=" + spId + ", spFirstName=" + spFirstName + ", spName=" + spName + ", spEmail="
 				+ spEmail + ", spCreationDate=" + spCreationDate + ", spLastUpdateDate=" + spLastUpdateDate
 				+ ", spStatus=" + spStatus + ", subcontractorSName=" + subcontractorSName + ", newPage=" + newPage
-				+ ", alertsList=" + alertsList + "]";
+				+ ", alertsList=" + alertsList + ", isForeign=" + isForeign + "]";
 	}
 
 }
