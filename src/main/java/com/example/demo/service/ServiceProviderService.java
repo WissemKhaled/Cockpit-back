@@ -3,11 +3,10 @@ package com.example.demo.service;
 import java.util.List;
 
 import com.example.demo.dto.ServiceProviderDto;
-import com.example.demo.dto.StatusDto;
 import com.example.demo.exception.AlreadyArchivedEntity;
+import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.GeneralException;
 
 public interface ServiceProviderService {
@@ -177,5 +176,5 @@ public interface ServiceProviderService {
 	 * @throws GeneralException Si l'une des données à formatter est nul ou vide.
 	 */
 	void formattingServiceProviderData(ServiceProviderDto serviceProviderDto) throws GeneralException;
-
+	
 }

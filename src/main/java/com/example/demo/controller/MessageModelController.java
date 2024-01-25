@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,8 +24,11 @@ import com.example.demo.service.ModelTrackingService;
 @CrossOrigin(origins = "http://localhost:4200")
 public class MessageModelController {
 
-	private final MessageModelService messageModelService;
-	private final ModelTrackingService modelTrackingService;
+	@Autowired
+	private MessageModelService messageModelService;
+
+	@Autowired
+	private ModelTrackingService modelTrackingService;
 
 	public MessageModelController(
 		MessageModelService messageModelService,
@@ -33,6 +37,7 @@ public class MessageModelController {
 		this.messageModelService = messageModelService;
 		this.modelTrackingService = modelTrackingService;
 	}
+
 	
 	@GetMapping("/getAllMessagesBySubcontractorId")
 	public ResponseEntity<Page<MessageModel>> getAllMessageModelBySubcontractorId(
@@ -53,7 +58,17 @@ public class MessageModelController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
+
+	/**
+	 * Récupère une liste paginée de MessageModels basée sur l'ID du prestataire de services donné.
+	 *
+	 * @param serviceProviderId L'ID du prestataire de services pour lequel les messages doivent être récupérés.
+	 * @param contractId L'ID du contrat associé aux messages.
+	 * @param statusId L'ID de statut pour filtrer les messages.
+	 * @param pageable Objet Pageable pour définir les paramètres de pagination (numéro de page et taille).
+	 * @return ResponseEntity contenant une page d'objets MessageModel. Renvoie une réponse OK avec la page de messages si réussi, ou une réponse NOT FOUND si aucun message n'est trouvé.
+	 * @throws MessageModelNotFoundException si aucun MessageModel n'est trouvé pour le serviceProviderId donné.
+	 */
 	@GetMapping("/getAllMessagesByServiceProviderId")
 	public ResponseEntity<Page<MessageModel>> getAllMessageModelByServiceProviderId(
 			@RequestParam(value = "serviceProviderId") Integer serviceProviderId,
@@ -73,4 +88,22 @@ public class MessageModelController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+
+
+	@GetMapping("/getAllMessagesByContractId")
+	public ResponseEntity<Page<MessageModel>> getAllMessageModelByContractId(
+			@RequestParam(value = "contractId") Integer contractId,
+			@PageableDefault(page = 0, size = 6) Pageable pageable) {
+		try {
+			List<MessageModel> allMessages = messageModelService.getAllMessageModelByContractId(contractId);
+
+			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
+
+			return ResponseEntity.ok(page);
+
+		} catch (MessageModelNotFoundException e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
+
 }

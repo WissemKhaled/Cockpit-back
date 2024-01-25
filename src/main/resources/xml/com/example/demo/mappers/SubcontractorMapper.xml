@@ -107,6 +107,23 @@
 		WHERE ${columnName} ILIKE #{searchTerms} || '%' AND s_fk_status_id = #{statusId}
     </select>
     
+     <select id="countAllSubcontractorsAlerts">
+		SELECT COUNT(*)
+		FROM gst_model_tracking mt
+		INNER JOIN gst_contract c ON mt.mt_fk_contract_id = c.c_id 
+		WHERE mt.mt_fk_status_id = 1 AND c.c_fk_subcontractor_id = ${subcontractorId}
+		UNION ALL
+		SELECT COUNT(*)
+		FROM gst_model_tracking mt
+		INNER JOIN gst_contract c ON mt.mt_fk_contract_id = c.c_id 
+		WHERE mt.mt_fk_status_id = 2 AND c.c_fk_subcontractor_id = ${subcontractorId}
+		UNION ALL
+		SELECT COUNT(*)
+		FROM gst_model_tracking mt
+		INNER JOIN gst_contract c ON mt.mt_fk_contract_id = c.c_id 
+		WHERE mt.mt_fk_status_id = 3 AND c.c_fk_subcontractor_id = ${subcontractorId};
+    </select>
+    
         <!-- Insert statements -->
     
     <insert id="insertSubcontractor" flushCache="true" statementType="PREPARED" keyProperty="sId" keyColumn="s_id" useGeneratedKeys="true" timeout="20" parameterType="com.example.demo.entity.Subcontractor">

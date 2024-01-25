@@ -12,13 +12,13 @@ public class ModelTrackingDtoMapper {
         return new ModelTrackingDTO(modelTracking.getMtId(), modelTracking.getMtFkContractId(),
                 modelTracking.getMtFkMessageModelId(), modelTracking.getMtFkStatusId(),
                 modelTracking.getMtFkCategoryId(), modelTracking.getMtSendDate(),
-                modelTracking.getMtValidationDate());
+                modelTracking.getMtValidationDate(), modelTracking.getMessageModel(), modelTracking.getContract());
     }
 
     public ModelTracking toModelTracking(ModelTrackingDTO modelTrackingDTO) {
         return new ModelTracking(modelTrackingDTO.getMtId(), modelTrackingDTO.getMtFkContractId(),
                 modelTrackingDTO.getMtFkMessageModelId(), modelTrackingDTO.getMtFkStatusId(),
                 modelTrackingDTO.getMtFkCategoryId(), modelTrackingDTO.getMtSendDate(),
-                modelTrackingDTO.getMtValidationDate());
+                modelTrackingDTO.getMtValidationDate(), modelTrackingDTO.getMessageModel(), modelTrackingDTO.getContract());
     }
 }

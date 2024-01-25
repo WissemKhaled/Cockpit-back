@@ -26,10 +26,16 @@ public class ModelTracking {
 	@JsonProperty("mtValidationDate")
 	private LocalDateTime mtValidationDate;
 	
+	@JsonProperty("messageModel")
+	private MessageModel messageModel;
+	
+	@JsonProperty("contract")
+	private Contract contract;
+
 	public ModelTracking() {}
 
 	public ModelTracking(int mtId, int mtFkContractId, int mtFkMessageModelId, int mtFkStatusId, int mtFkCategoryId,
-			LocalDateTime mtSendDate, LocalDateTime mtValidationDate) {
+			LocalDateTime mtSendDate, LocalDateTime mtValidationDate, MessageModel messageModel, Contract contract) {
 		this.mtId = mtId;
 		this.mtFkContractId = mtFkContractId;
 		this.mtFkMessageModelId = mtFkMessageModelId;
@@ -37,6 +43,8 @@ public class ModelTracking {
 		this.mtFkCategoryId = mtFkCategoryId;
 		this.mtSendDate = mtSendDate;
 		this.mtValidationDate = mtValidationDate;
+		this.messageModel = messageModel;
+		this.contract = contract;
 	}
 
 	public int getMtId() {
@@ -94,11 +102,28 @@ public class ModelTracking {
 	public void setMtValidationDate(LocalDateTime mtValidationDate) {
 		this.mtValidationDate = mtValidationDate;
 	}
+	
+	public MessageModel getMessageModel() {
+		return messageModel;
+	}
+
+	public void setMessageModel(MessageModel messageModel) {
+		this.messageModel = messageModel;
+	}
+	
+	public Contract getContract() {
+		return contract;
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
 
 	@Override
 	public String toString() {
 		return "ModelTracking [mtId=" + mtId + ", mtFkContractId=" + mtFkContractId + ", mtFkMessageModelId="
 				+ mtFkMessageModelId + ", mtFkStatusId=" + mtFkStatusId + ", mtFkCategoryId=" + mtFkCategoryId
-				+ ", mtSendDate=" + mtSendDate + ", mtValidationDate=" + mtValidationDate + "]";
+				+ ", mtSendDate=" + mtSendDate + ", mtValidationDate=" + mtValidationDate + ", messageModel=" 
+				+ messageModel + ", contract=" + contract +"]";
 	}
 }

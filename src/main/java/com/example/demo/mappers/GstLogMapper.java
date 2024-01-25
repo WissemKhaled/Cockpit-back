@@ -14,7 +14,7 @@ public interface GstLogMapper {
 	
 	GstLog getLogByValue(String logValue);
 	
-	List<GstLog> getThreeLatestLogs(@Param("email") String email);
+	List<GstLog> getThreeLatestLogs(String email);
 	
 	int updateGstLogPwd(@Param("gstLog") GstLog gstLog);
 }
