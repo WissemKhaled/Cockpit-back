@@ -6,6 +6,20 @@
         <result property="cId" column="c_id" />
         <result property="cContractNumber" column="c_contract_number" />
     </resultMap>
+    
+    <select id="getContractByContractId" resultMap="contractMap" parameterType="java.lang.Integer">
+        SELECT *
+        FROM gst_contract
+        WHERE c_id =  #{contractId}
+    </select>
+    
+    <update id="updateContractByContractId" statementType="PREPARED" parameterType="com.example.demo.entity.Contract">
+        UPDATE gst_contract
+        SET c_contract_number = #{cContractNumber},
+        	c_fk_subcontractor_id = #{cFkSubcontractorId},
+        	c_fk_service_provider_id = #{cFKserviceProviderId}
+        WHERE c_id =  #{cId}
+    </update>
 
     <select id="getContractsByServiceProviderId" resultMap="contractMap" parameterType="java.lang.Integer">
         SELECT DISTINCT gc.c_id, gc.c_contract_number, gc.c_fk_subcontractor_id, gc.c_fk_service_provider_id

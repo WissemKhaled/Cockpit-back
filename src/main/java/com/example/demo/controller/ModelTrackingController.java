@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,6 +32,16 @@ public class ModelTrackingController {
 
 	public ModelTrackingController(ModelTrackingService modelTrackingService) {
 		this.modelTrackingService = modelTrackingService;
+	}
+	
+	@PostMapping("/createSignatureModelTracking")
+	public ResponseEntity<String> createSignatureModelTracking(@RequestParam int contractId, @RequestParam String contractNumber) {
+		try {
+			String result = modelTrackingService.createSignatureModelTracking(contractId, contractNumber);
+			return ResponseEntity.ok(result); 
+		} catch(DatabaseQueryFailureException e){
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
 	}
 	
 	@PutMapping("/updateAlert")

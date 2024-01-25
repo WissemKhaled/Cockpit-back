@@ -151,6 +151,8 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 		// saisi par l'utilisateur
 		
 		// Si l'insertion du nouveau sous-traitant en bdd se passe bien, on créé un nouveau contrat et on alimente la table gst_model_tracking qui va service pour les relances d'emails
+		// On ne créer pas de contrat pour les messages models de catégories 5, 6, 13, 14 (signature docs)
+		// On créer des contrats pour les modèles de catégories 9 et 10 uniquement si le sous-traitant est étrangé
 		
 		// récupération du sous-traitant associé au prestataire
 		Subcontractor associatedSubcontractor = subcontractorService.getSubcontractorBySName(serviceProviderToSave.getSubcontractor().getSName());
@@ -167,6 +169,11 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 
 	    int categoryId;
 	    for (int i = 1; i <= 16; i++) {
+	    	
+	    	if (i == 5 || i == 6 || i == 13 || i == 14) {
+	            continue; // ne pas créer de contract pour les messages models de catégories 5, 6, 13, 14 (signature docs)
+	        }
+	    	
 	    	if (Boolean.TRUE.equals(isForeign)) {
 		    	categoryId = (i <= 8) ? 1 : (i <= 10) ? 4 : (i <= 14) ? 2 : 3;
 	    	} else {

@@ -12,17 +12,21 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.ModelTrackingDTO;
 import com.example.demo.dto.mapper.ModelTrackingDtoMapper;
+import com.example.demo.entity.Contract;
 import com.example.demo.entity.MessageModel;
 import com.example.demo.entity.ModelTracking;
 import com.example.demo.entity.ServiceProvider;
 import com.example.demo.exception.DatabaseQueryFailureException;
 import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.GeneralException;
+import com.example.demo.mappers.ContractMapper;
 import com.example.demo.mappers.ModelTrackingMapper;
 import com.example.demo.mappers.ServiceProviderMapper;
 import com.example.demo.service.MessageModelService;
@@ -35,14 +39,17 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	private final ModelTrackingDtoMapper modelTrackingDtoMapper;
 	private final ServiceProviderMapper serviceProviderMapper;
 	private final MessageModelService messageModelService;
+	private final ContractMapper contractMapper;
 	private static final Logger log = LoggerFactory.getLogger(ModelTrackingServiceImpl.class);
 	
 	public ModelTrackingServiceImpl(ModelTrackingMapper modelTrackingMapper,
-			ModelTrackingDtoMapper modelTrackingDtoMapper, ServiceProviderMapper serviceProviderMapper, MessageModelService messageModelService) {
+			ModelTrackingDtoMapper modelTrackingDtoMapper, ServiceProviderMapper serviceProviderMapper, 
+			MessageModelService messageModelService, ContractMapper contractMapper) {
 		this.modelTrackingMapper = modelTrackingMapper;
 		this.modelTrackingDtoMapper = modelTrackingDtoMapper;
 		this.serviceProviderMapper = serviceProviderMapper;
 		this.messageModelService = messageModelService;
+		this.contractMapper = contractMapper;
 	}
 
 	/**
@@ -76,6 +83,73 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 			throw new DatabaseQueryFailureException(ex.getMessage());
 		}
 		
+	}
+	
+	/*
+	 * Méthode qui créer un modelTracking pour les message models de demande et relance prestataires et sous-traitants liés à la signature des docs
+	 * Et qui met à jour le numéro du contrat en question avec le numéro définit en front
+	**/
+	@Override
+	public String createSignatureModelTracking(int contractId, String contractNumber) throws DatabaseQueryFailureException {
+		List<ModelTrackingDTO> modelTrackingDTOList = new ArrayList<>();
+		
+		ModelTrackingDTO modelTrackingDTODemandSp = new ModelTrackingDTO();
+		modelTrackingDTODemandSp.setMtFkContractId(contractId);
+		modelTrackingDTODemandSp.setMtFkMessageModelId(5);
+		modelTrackingDTODemandSp.setMtFkStatusId(1);
+		modelTrackingDTODemandSp.setMtFkCategoryId(1);
+	    
+	    ModelTrackingDTO modelTrackingDTORelaunchSp = new ModelTrackingDTO();
+	    modelTrackingDTORelaunchSp.setMtFkContractId(contractId);
+	    modelTrackingDTORelaunchSp.setMtFkMessageModelId(6);
+	    modelTrackingDTORelaunchSp.setMtFkStatusId(5);
+	    modelTrackingDTORelaunchSp.setMtFkCategoryId(1);
+	    
+	    ModelTrackingDTO modelTrackingDTODemandSubcontractor = new ModelTrackingDTO();
+	    modelTrackingDTODemandSubcontractor.setMtFkContractId(contractId);
+	    modelTrackingDTODemandSubcontractor.setMtFkMessageModelId(13);
+	    modelTrackingDTODemandSubcontractor.setMtFkStatusId(1);
+	    modelTrackingDTODemandSubcontractor.setMtFkCategoryId(1);
+	    
+	    ModelTrackingDTO modelTrackingDTORelaunchSubcontractor = new ModelTrackingDTO();
+	    modelTrackingDTORelaunchSubcontractor.setMtFkContractId(contractId);
+	    modelTrackingDTORelaunchSubcontractor.setMtFkMessageModelId(14);
+	    modelTrackingDTORelaunchSubcontractor.setMtFkStatusId(5);
+	    modelTrackingDTORelaunchSubcontractor.setMtFkCategoryId(1);
+	    
+	    modelTrackingDTOList.add(modelTrackingDTODemandSp);
+	    modelTrackingDTOList.add(modelTrackingDTORelaunchSp);
+	    modelTrackingDTOList.add(modelTrackingDTODemandSubcontractor);
+	    modelTrackingDTOList.add(modelTrackingDTORelaunchSubcontractor);
+	    
+	    try {
+	    	// insertion des données dans la table gst_model_tracking
+	        for (ModelTrackingDTO modelTrackingDTO : modelTrackingDTOList) {
+	        	ModelTracking modelTracking = modelTrackingDtoMapper.toModelTracking(modelTrackingDTO);
+	        	int isModeltrackingInserted = modelTrackingMapper.insertGstModelTracking(modelTracking);
+	        	
+	        	if (isModeltrackingInserted == 0) {
+	        		throw new DatabaseQueryFailureException("Erreur MyBatis lors de l'insertion des données dans la table modelTracking");
+	        	}
+	        }
+	        
+	        // maj du numéro de contrat dans la table gst_contract
+	        Contract contractToUpdate = contractMapper.getContractByContractId(contractId);
+	        
+	        contractToUpdate.setcContractNumber(contractNumber);
+	        contractToUpdate.setcFKserviceProviderId(contractToUpdate.getcFKserviceProviderId());
+	        contractToUpdate.setcFkSubcontractorId(contractToUpdate.getcFkSubcontractorId());
+	        int isContractUpdated = contractMapper.updateContractByContractId(contractToUpdate);
+	        
+	        if(isContractUpdated == 0) {
+	        	throw new DatabaseQueryFailureException("Erreur MyBatis lors de la maj des données dans la table gst_contract");
+	        }
+		} catch(DatabaseQueryFailureException e) {
+			log.error(e.getMessage());
+	        throw new DatabaseQueryFailureException(e.getMessage());
+		}
+	    log.info("Insertion des données avec succès dans la table tracking");
+		return "Insertion des données avec succès dans la table tracking";
 	}
 	
 	/*
