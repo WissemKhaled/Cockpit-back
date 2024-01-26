@@ -49,11 +49,12 @@ public class ModelTrackingController {
 	    @RequestParam int mmId,
 	    @RequestParam(required = false) Integer statusId,
 	    @RequestParam int contractId,
+	    @RequestParam(required = false) String sendDate,
 	    @RequestParam(required = false) String validationDate
 	) {
 	    try {
 	        int actualStatusId = (statusId != null) ? statusId.intValue() : 0;
-	        String result = modelTrackingService.updateModelTrackingDemand(mmId, actualStatusId, contractId, validationDate);
+	        String result = modelTrackingService.updateModelTrackingDemand(mmId, actualStatusId, contractId, sendDate, validationDate);
 	        return ResponseEntity.ok(result);
 	    } catch (EntityNotFoundException e) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

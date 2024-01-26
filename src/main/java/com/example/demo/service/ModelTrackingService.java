@@ -10,7 +10,7 @@ public interface ModelTrackingService {
 	
 	String createSignatureModelTracking(int contractId, String contractNumber) throws DatabaseQueryFailureException;
 	
-	String updateModelTrackingDemand(int mmId, int statusId, int contractId, String validationDate) throws DatabaseQueryFailureException;
+	String updateModelTrackingDemand(int mmId, int statusId, int contractId, String sendDate, String validationDate) throws DatabaseQueryFailureException;
 	
 	List<ModelTrackingDTO> getModelTrackingInfoByContractId(int contractId);
 	
