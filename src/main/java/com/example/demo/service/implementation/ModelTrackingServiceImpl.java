@@ -109,13 +109,13 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	    modelTrackingDTODemandSubcontractor.setMtFkContractId(contractId);
 	    modelTrackingDTODemandSubcontractor.setMtFkMessageModelId(13);
 	    modelTrackingDTODemandSubcontractor.setMtFkStatusId(1);
-	    modelTrackingDTODemandSubcontractor.setMtFkCategoryId(1);
+	    modelTrackingDTODemandSubcontractor.setMtFkCategoryId(2);
 	    
 	    ModelTrackingDTO modelTrackingDTORelaunchSubcontractor = new ModelTrackingDTO();
 	    modelTrackingDTORelaunchSubcontractor.setMtFkContractId(contractId);
 	    modelTrackingDTORelaunchSubcontractor.setMtFkMessageModelId(14);
 	    modelTrackingDTORelaunchSubcontractor.setMtFkStatusId(5);
-	    modelTrackingDTORelaunchSubcontractor.setMtFkCategoryId(1);
+	    modelTrackingDTORelaunchSubcontractor.setMtFkCategoryId(2);
 	    
 	    modelTrackingDTOList.add(modelTrackingDTODemandSp);
 	    modelTrackingDTOList.add(modelTrackingDTORelaunchSp);
