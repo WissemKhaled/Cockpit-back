@@ -189,7 +189,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 //   * La maj pour les message model de demande d'ID 5 doivent être mis à jour avec ceux de ID 13
 //	**/
 	@Override
-	public String updateModelTrackingDemand(int mmId, int statusId, int contractId, String validationDateString) throws DatabaseQueryFailureException {
+	public String updateModelTrackingDemand(int mmId, int statusId, int contractId, String sendDateString, String validationDateString) throws DatabaseQueryFailureException {
 		List<List<MessageModel>> pairs = getAllPairsDemandAndItsRelaunchMessageModel();
 
 		for (List<MessageModel> pair : pairs) {
@@ -226,8 +226,15 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 				    // si on reçoit une date de validation du front, on update l'ID du status à 3 et on update le mmId à 3 également dans la table intermédiaire et on update la date de validation
 				    if (statusId == 2) {
 				    	// Maj status de la demande
+				    	if(sendDateString != null) {
+				    		// Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
+					        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+					        LocalDateTime sendDate = convertStringToLocalDateTime(sendDateString, pattern);
+					        modelTrackingDTODemand.setMtSendDate(sendDate);
+				    	} else {
+				    		modelTrackingDTODemand.setMtSendDate(LocalDateTime.now());
+				    	}
 				    	modelTrackingDTODemand.setMtFkStatusId(statusId);
-				    	modelTrackingDTODemand.setMtSendDate(LocalDateTime.now());
 	
 				        // 7 jours après date envoie, relance
 				    } else if (validationDateString != null) {
