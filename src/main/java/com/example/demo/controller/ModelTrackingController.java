@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,16 +34,27 @@ public class ModelTrackingController {
 		this.modelTrackingService = modelTrackingService;
 	}
 	
+	@PostMapping("/createSignatureModelTracking")
+	public ResponseEntity<String> createSignatureModelTracking(@RequestParam int contractId, @RequestParam String contractNumber) {
+		try {
+			String result = modelTrackingService.createSignatureModelTracking(contractId, contractNumber);
+			return ResponseEntity.ok(result); 
+		} catch(DatabaseQueryFailureException e){
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
+	}
+	
 	@PutMapping("/updateAlert")
 	public ResponseEntity<String> updateAlertServiceProvider(
-	    @RequestParam(value = "mmId") int mmId,
-	    @RequestParam(value = "statusId", required = false) Integer statusId,
-	    @RequestParam(value = "contractId") int contractId,
-	    @RequestParam(value = "validationDate", required = false) String validationDate
+	    @RequestParam int mmId,
+	    @RequestParam(required = false) Integer statusId,
+	    @RequestParam int contractId,
+	    @RequestParam(required = false) String sendDate,
+	    @RequestParam(required = false) String validationDate
 	) {
 	    try {
 	        int actualStatusId = (statusId != null) ? statusId.intValue() : 0;
-	        String result = modelTrackingService.updateModelTrackingDemand(mmId, actualStatusId, contractId, validationDate);
+	        String result = modelTrackingService.updateModelTrackingDemand(mmId, actualStatusId, contractId, sendDate, validationDate);
 	        return ResponseEntity.ok(result);
 	    } catch (EntityNotFoundException e) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

@@ -13,11 +13,16 @@
 		<result property="mtValidationDate" column="mt_validation_date" />
         <association property="messageModel" javaType="com.example.demo.entity.MessageModel">
             <id property="mmId" column="mm_id"/>
+            <result property="mmLink" column="mm_link"/>
             <result property="mmSubject" column="mm_subject"/>
+            <result property="mmBody" column="mm_body"/>
+	        <result property="mmHasEmail" column="mm_has_email"/>
+	        <result property="mmCreationDate" column="mm_creation_date"/>
+	        <result property="mmLastUpdateDate" column="mm_last_update_date"/>
         </association>
         <association property="contract" javaType="com.example.demo.entity.Contract">
             <id property="cId" column="c_id"/>
-            <result property="cContractNumber" column="c_contract_number"/>
+            <result property="cContractNumber" column="c_contract_number" />
             <result property="cFKserviceProviderId" column="c_fk_service_provider_id"/>
             <result property="cFkSubcontractorId" column="c_fk_subcontractor_id"/>
         </association>     
@@ -67,7 +72,6 @@
  
     <select id="getAllMessageModelByServiceProviderId" resultMap="modelTrackingResultMap">
         SELECT
-        	ct.c_fk_service_provider_id,
         	<include refid="messageModelTrackingColumns"/>
 		FROM <include refid="messageModelBySubcontractorAndServiceProviderTables"/>
 		WHERE ct.c_fk_service_provider_id = #{serviceProviderId}
@@ -77,7 +81,6 @@
     
     <select id="getAllMessageModelBySubcontractorId" resultMap="modelTrackingResultMap">
 		SELECT
-			ct.c_fk_subcontractor_id,
 			<include refid="messageModelTrackingColumns"/>
 		FROM <include refid="messageModelBySubcontractorAndServiceProviderTables"/>
 		WHERE ct.c_fk_subcontractor_id = #{subcontractorId}
