@@ -2,7 +2,9 @@ package com.example.demo.service.implementation;
 
 import static java.util.function.Predicate.not;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,8 +51,9 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	 * Méthode pour convertir une date de type String vers le type LocalDateTime
 	 */
 	public static LocalDateTime convertStringToLocalDateTime(String dateString, String pattern) {
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH);
-	    return LocalDateTime.parse(dateString, formatter);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern, Locale.FRANCE);
+		LocalDate date = LocalDate.parse(dateString, formatter);
+		return LocalDateTime.of(date, LocalTime.MIN);
 	}
 	
 	public String saveModelTracking(ModelTrackingDTO modelTrackingDTO) throws DatabaseQueryFailureException {
@@ -159,7 +162,8 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 				    	modelTrackingDTODemand.setMtSendDate(modelTrackingDTODemand.getMtSendDate());
 				    	
 				    	// Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
-				        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+//				        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+				        String pattern = "dd-MM-yyyy";
 				        LocalDateTime validationDate = convertStringToLocalDateTime(validationDateString, pattern);
 				        modelTrackingDTODemand.setMtValidationDate(validationDate);
 				    	
