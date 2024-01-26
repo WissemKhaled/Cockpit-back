@@ -35,10 +35,10 @@ public class ModelTrackingController {
 	
 	@PutMapping("/updateAlert")
 	public ResponseEntity<String> updateAlertServiceProvider(
-	    @RequestParam int mmId,
-	    @RequestParam(required = false) Integer statusId,
-	    @RequestParam int contractId,
-	    @RequestParam(required = false) String validationDate
+	    @RequestParam(value = "mmId") int mmId,
+	    @RequestParam(value = "statusId", required = false) Integer statusId,
+	    @RequestParam(value = "contractId") int contractId,
+	    @RequestParam(value = "validationDate", required = false) String validationDate
 	) {
 	    try {
 	        int actualStatusId = (statusId != null) ? statusId.intValue() : 0;

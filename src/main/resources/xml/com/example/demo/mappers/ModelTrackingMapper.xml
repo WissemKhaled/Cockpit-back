@@ -17,6 +17,7 @@
         </association>
         <association property="contract" javaType="com.example.demo.entity.Contract">
             <id property="cId" column="c_id"/>
+            <result property="cContractNumber" column="c_contract_number"/>
             <result property="cFKserviceProviderId" column="c_fk_service_provider_id"/>
             <result property="cFkSubcontractorId" column="c_fk_subcontractor_id"/>
         </association>     
@@ -34,6 +35,7 @@
 	<sql id="messageModelTrackingColumns">
 			mt.mt_id,
 			mt.mt_fk_contract_id,
+			ct.c_contract_number,
 			mt.mt_fk_message_model_id,
 			mm.mm_subject,
 			mt.mt_fk_status_id,

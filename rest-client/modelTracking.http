@@ -1,0 +1,16 @@
+### Get message models by id
+GET {{host}}/modelTracking/getAllMessagesByServiceProviderId?serviceProviderId=1&statusId=1
+Authorization: Bearer {{token}}
+
+### Get message models by contract id
+GET {{host}}/modelTracking/getAllMessagesBySubcontractorId?subcontractorId=1&statusId=1
+Authorization: Bearer {{token}}
+
+
+### Get message models by contract id
+PUT {{host}}/modelTracking/updateSubcontractorStatusId?subcontractorId=2
+Authorization: Bearer {{token}}
+
+### Update Status of a messageModel
+PUT {{host}}/updateAlert?mmId=1&contractId=2&statusId=1&validationDate=1
+Authorization: Bearer {{token}}

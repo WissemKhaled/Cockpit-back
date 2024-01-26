@@ -3,7 +3,7 @@ POST {{host}}/auth/addNewUser
 Content-Type: application/json
 
 {
-  "uEmail": "john@test.fr",
+  "uEmail": "elf@test.fr",
   "uPassword": "123-Az",
   "uFirstName": "John",
   "uLastName": "Doe",

@@ -87,6 +87,8 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	    Map<Integer, List<MessageModel>> groupedByLink = allMessageModels.stream()
 	            .collect(Collectors.groupingBy(MessageModel::getMmLink));
 
+		System.out.println("RESULTSSS => "+groupedByLink);
+
 	    List<List<MessageModel>> pairs = new ArrayList<>();
 
 	    // Itérer sur chaque groupe de MessageModel ayant le même mmLink
