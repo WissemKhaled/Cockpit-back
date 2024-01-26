@@ -1,12 +1,7 @@
 package com.example.demo.mappers;
 import java.util.List;
 
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Select;
 
 import com.example.demo.entity.Contract;
 
@@ -15,11 +10,13 @@ import com.example.demo.entity.Contract;
  */
 @Mapper
 public interface ContractMapper {
-
+	Contract getContractByContractId(Integer contractId);
+	
     List<Contract> getContractsByServiceProviderId(Integer serviceProviderId);
 
-	  int insertContract(Contract contract);
+	int insertContract(Contract contract);
 
     List<Contract> getContractsBySubcontractorId(Integer subContractorId);
-
+    
+    int updateContractByContractId(Contract contract);
 }

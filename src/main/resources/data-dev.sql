@@ -222,4 +222,5 @@ SELECT
 FROM gst_service_provider s
 JOIN gst_contract c ON s.sp_id = c.c_fk_service_provider_id
 JOIN gst_message_model mm ON s.sp_fk_status_id IS NOT NULL
+WHERE mm.mm_fk_category_id IN (1,2,3)
 ORDER BY s.sp_id, mm.mm_id;

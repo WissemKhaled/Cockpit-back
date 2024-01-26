@@ -51,5 +51,4 @@
 		FROM refresh_token 
 		WHERE rt_fk_user_id = #{userId}
 	</delete>
-	
 </mapper>
