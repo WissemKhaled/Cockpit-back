@@ -80,9 +80,7 @@
     </select>
     
     <select id="getAllMessageModelBySubcontractorId" resultMap="modelTrackingResultMap">
-		SELECT
-			ct.c_fk_subcontractor_id,
-			<include refid="messageModelTrackingColumns"/>
+		SELECT *
 		FROM <include refid="messageModelBySubcontractorAndServiceProviderTables"/>
 		WHERE ct.c_fk_subcontractor_id = #{subcontractorId}
 		AND mt.mt_fk_category_id != '1'

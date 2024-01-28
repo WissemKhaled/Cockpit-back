@@ -31,15 +31,16 @@ public class SendMailController {
 
 	@PostMapping("/saveAndSendMail")
 	public ResponseEntity<?> saveAndSendMail(@RequestPart("sendMail") SendMailDTO mailDTO,
-			@RequestPart("files") List<MultipartFile> files) throws MessagingException {
+			@RequestPart(name =  "files", required = false) List<MultipartFile> files) throws MessagingException {
 		try {
-			return new ResponseEntity<>(mailService.saveAndSendMail(mailDTO, files), HttpStatus.OK);
+			String response = mailService.saveAndSendMail(mailDTO,files);
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (MessageModelNotFoundException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+			return new ResponseEntity("Une erreur inattendue s'est produite, échec de l'envoi.", HttpStatus.NOT_FOUND);
 		} catch (GeneralException e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity("Une erreur inattendue s'est produite, échec de l'envoi.", HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
-			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity("Une erreur inattendue s'est produite, échec de l'envoi.", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

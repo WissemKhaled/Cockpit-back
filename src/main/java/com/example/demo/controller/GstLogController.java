@@ -53,7 +53,7 @@ public class GstLogController {
 	@PostMapping("/createGstLog")
 	public ResponseEntity<String> createGstLog(@Valid @RequestBody CreateGstLogDTO createGstLogDTO) {
 	    try {
-	        String response = gstLogServiceImpl.saveGstLog(createGstLogDTO);
+	    	String response = gstLogServiceImpl.saveGstLog(createGstLogDTO);
 	        return new ResponseEntity<>(response, HttpStatus.CREATED);
 	    } catch (NullPointerException | EntityNotFoundException | InactiveUserException | DatabaseQueryFailureException e) {
 	        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
