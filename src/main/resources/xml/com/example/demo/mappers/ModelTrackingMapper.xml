@@ -13,8 +13,8 @@
 		<result property="mtValidationDate" column="mt_validation_date" />
         <association property="messageModel" javaType="com.example.demo.entity.MessageModel">
             <id property="mmId" column="mm_id"/>
+            <result property="mmLink" column="mm_link"/>
             <result property="mmSubject" column="mm_subject"/>
-            <result property="mmLink" column="mm_link" />
 			<result property="mmBody" column="mm_body" />
 			<result property="mmHasEmail" column="mm_has_email" />
 			<result property="mmIsRelaunch" column="mm_is_relaunch" />
@@ -23,6 +23,7 @@
         </association>
         <association property="contract" javaType="com.example.demo.entity.Contract">
             <id property="cId" column="c_id"/>
+            <result property="cContractNumber" column="c_contract_number" />
             <result property="cFKserviceProviderId" column="c_fk_service_provider_id"/>
             <result property="cFkSubcontractorId" column="c_fk_subcontractor_id"/>
         </association>     
@@ -38,14 +39,9 @@
 	</sql>
 	
 	<sql id="messageModelTrackingColumns">
-			mt.mt_id,
-			mt.mt_fk_contract_id,
-			mt.mt_fk_message_model_id,
-			mm.mm_subject,
-			mt.mt_fk_status_id,
-			mt.mt_fk_category_id,
-			mt.mt_send_date,
-			mt.mt_validation_date
+			mt.*,
+			mm.*,
+			ct.*
 	</sql> 
 	
 	
