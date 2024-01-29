@@ -38,15 +38,10 @@
 	</sql>
 	
 	<sql id="messageModelTrackingColumns">
-			mt.mt_id,
-			mt.mt_fk_contract_id,
-			ct.c_contract_number,
-			mt.mt_fk_message_model_id,
-			mm.mm_subject,
-			mt.mt_fk_status_id,
-			mt.mt_fk_category_id,
-			mt.mt_send_date,
-			mt.mt_validation_date
+			mt.*,
+			mm.*,
+			ct.*
+
 	</sql> 
 
     <insert id="insertGstModelTracking" statementType="PREPARED" useGeneratedKeys="true" keyProperty="mtId" keyColumn="mt_id" parameterType="com.example.demo.entity.ModelTracking">
