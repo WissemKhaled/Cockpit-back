@@ -13,6 +13,7 @@ public class ServiceProviderDtoBuilder {
 	private LocalDateTime spCreationDate;
 	private LocalDateTime spLastUpdateDate;
 	private String subcontractorName;
+	private String subcontractorEmail;
 	private Status spStatus;
 
 	public ServiceProviderDtoBuilder withSpId(int spId) {
@@ -55,8 +56,13 @@ public class ServiceProviderDtoBuilder {
 		return this;
 	}
 
+	public ServiceProviderDtoBuilder withSpSubcontractorEmail(String subcontractorEmail) {
+		this.subcontractorEmail = subcontractorEmail;
+		return this;
+	}
+	
 	public ServiceProviderDto build() {
 		return new ServiceProviderDto(spId, spFirstName, spName, spEmail, spCreationDate, spLastUpdateDate, spStatus,
-				subcontractorName);
+				subcontractorName,subcontractorEmail);
 	}
 }

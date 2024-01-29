@@ -28,6 +28,7 @@ public class ServiceProviderDtoMapper {
 		serviceProviderDto.setSpLastUpdateDate(serviceProvider.getSpLastUpdateDate());
 		serviceProviderDto.setSpStatus(serviceProvider.getSpStatus());
 		serviceProviderDto.setSubcontractorSName(serviceProvider.getSubcontractor().getSName());
+		serviceProviderDto.setSubcontractorSEmail(serviceProvider.getSubcontractor().getSEmail());
 		return serviceProviderDto;
 	}
 
