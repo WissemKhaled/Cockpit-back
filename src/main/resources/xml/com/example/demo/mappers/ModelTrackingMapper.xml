@@ -41,6 +41,7 @@
 			mt.*,
 			mm.*,
 			ct.*
+
 	</sql> 
 
     <insert id="insertGstModelTracking" statementType="PREPARED" useGeneratedKeys="true" keyProperty="mtId" keyColumn="mt_id" parameterType="com.example.demo.entity.ModelTracking">

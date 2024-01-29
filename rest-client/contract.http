@@ -1,6 +1,0 @@
-### Get contracts by sp id
-GET {{host}}/contract/getContractsByServiceProviderId?serviceProviderId=50
-Authorization: Bearer {{token}}
-### Get contracts by sc id
-GET {{host}}/contract/getContractsBySubcontractorId?subContractorId=4
-Authorization: Bearer {{token}}
