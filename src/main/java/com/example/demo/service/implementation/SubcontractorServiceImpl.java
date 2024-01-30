@@ -145,8 +145,7 @@ public class SubcontractorServiceImpl implements SubcontractorService {
 
 	@Override
 	public int checkIfSubcontractorExistBySName(String sName) {
-		Subcontractor subcontractor = subcontractorMapper
-				.findSubcontractorWithStatusBySubcontractorName(sName.toUpperCase());
+		Subcontractor subcontractor = subcontractorMapper.findSubcontractorWithStatusBySubcontractorName(sName);
 		if (subcontractor == null) {
 			return 0;
 		}

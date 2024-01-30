@@ -108,7 +108,7 @@ public class ModelTrackingController {
 	public ResponseEntity<Page<ModelTrackingDTO>> getAllMessageModelBySubcontractorId(
 			@RequestParam(value = "subcontractorId") Integer subcontractorId,
 			@RequestParam(value = "statusId") Integer statusId,
-			@PageableDefault(page = 0, size = 6) Pageable pageable) {
+			@PageableDefault(page = 0, size = 8) Pageable pageable) {
 		try {
 			List<ModelTrackingDTO> allMessages = modelTrackingService.getAllMessageModelBySubcontractorId(subcontractorId, statusId);
 
