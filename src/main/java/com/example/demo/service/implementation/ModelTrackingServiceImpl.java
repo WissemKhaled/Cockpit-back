@@ -233,7 +233,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 				    	// Maj status de la demande
 				    	if(sendDateString != null) {
 				    		// Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
-					        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+					        String pattern = "dd-MM-yyyy";
 					        LocalDateTime sendDate = convertStringToLocalDateTime(sendDateString, pattern);
 					        modelTrackingDTODemand.setMtSendDate(sendDate);
 				    	} else {
@@ -248,7 +248,6 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 				    	modelTrackingDTODemand.setMtSendDate(modelTrackingDTODemand.getMtSendDate());
 				    	
 				    	// Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
-//				        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
 				        String pattern = "dd-MM-yyyy";
 				        LocalDateTime validationDate = convertStringToLocalDateTime(validationDateString, pattern);
 				        modelTrackingDTODemand.setMtValidationDate(validationDate);
@@ -330,7 +329,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 				    	modelTrackingDTODemandSpSignature.setMtSendDate(modelTrackingDTODemandSpSignature.getMtSendDate());
 				    	
 				    	// Conversion de la date de type string vers le type LocalDateTime avant insertion en BDD
-				        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
+				        String pattern = "dd-MM-yyyy";
 				        LocalDateTime validationDate = convertStringToLocalDateTime(validationDateString, pattern);
 				        modelTrackingDTODemandSpSignature.setMtValidationDate(validationDate);
 				    	
