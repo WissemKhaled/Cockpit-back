@@ -174,7 +174,7 @@ public class SubcontractorController {
 				boolean isSubcontractorExist = subcontractorService.checkIfSubcontractorExist(subcontractorDto.getSId());
 				if (isSubcontractorExist) {
 					// si le sous-traitant existe, update
-					this.subcontractorService.handleSubcontractorUpdate(subcontractorDto);
+					subcontractorService.handleSubcontractorUpdate(subcontractorDto);
 					subcontractorService.updateSubcontractor(subcontractorDto);
 	                int newPageNumberOfUpdatedSubcontractor = subcontractorService.getPageNumberOfNewlyAddedOrUpdatedSubcontractor(subcontractorDto.getSId(),pageSize);
 					SubcontractorDto updatedSubcontractorDto = subcontractorService.getSubcontractorWithStatus(subcontractorDto.getSId());
@@ -183,12 +183,12 @@ public class SubcontractorController {
 				} else {
 					try {
 					 // si le sous-traitant n'existe pas, save
-					 this.subcontractorService.handleSubcontractorSave(subcontractorDto);
-					 int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorDto);
-		             int pageNumberOfNewlyAddedSubcontractor = subcontractorService.getPageNumberOfNewlyAddedOrUpdatedSubcontractor(savedSubcontractorId,pageSize);
-					 SubcontractorDto savedSubcontractorDto = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
-					 savedSubcontractorDto.setNewPage(pageNumberOfNewlyAddedSubcontractor);
-					 return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
+						 subcontractorService.handleSubcontractorSave(subcontractorDto);
+						 int savedSubcontractorId = subcontractorService.saveSubcontractor(subcontractorDto);
+			             int pageNumberOfNewlyAddedSubcontractor = subcontractorService.getPageNumberOfNewlyAddedOrUpdatedSubcontractor(savedSubcontractorId,pageSize);
+						 SubcontractorDto savedSubcontractorDto = subcontractorService.getSubcontractorWithStatus(savedSubcontractorId);
+						 savedSubcontractorDto.setNewPage(pageNumberOfNewlyAddedSubcontractor);
+						 return new ResponseEntity<>(savedSubcontractorDto, HttpStatus.CREATED);
 	                } catch (GeneralException e) {
 	                    return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 	                }
