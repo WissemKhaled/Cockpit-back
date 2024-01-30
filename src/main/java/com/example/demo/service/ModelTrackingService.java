@@ -28,7 +28,7 @@ public interface ModelTrackingService {
 	 * @throws DatabaseQueryFailureException 
 	 */
 
-	void checkRelaunch(int statusId);
+	void checkRelaunch();
 	
 	/**
 	 * Met à jour le statut du sous-traitant ou prestataire en se basant sur la table gst_model_tracking

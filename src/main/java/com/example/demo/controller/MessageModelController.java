@@ -50,7 +50,7 @@ public class MessageModelController {
 			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
 
 			// appel de la méthode qui gère les relances
-			modelTrackingService.checkRelaunch(statusId);
+			modelTrackingService.checkRelaunch();
 
 			return ResponseEntity.ok(page);
 
@@ -80,7 +80,7 @@ public class MessageModelController {
 			Page<MessageModel> page = new PageImpl<>(allMessages, pageable, allMessages.size());
 
 			// appel de la méthode qui gère les relances
-			modelTrackingService.checkRelaunch(statusId);
+			modelTrackingService.checkRelaunch();
 
 			return ResponseEntity.ok(page);
 

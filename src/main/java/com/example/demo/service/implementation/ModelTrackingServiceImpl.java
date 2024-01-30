@@ -394,7 +394,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 	}
 
 	@Override
-	public void checkRelaunch(int statusId) {
+	public void checkRelaunch() {
 		List<List<MessageModel>> pairs = getAllPairsDemandAndItsRelaunchMessageModel();
 
 		for (List<MessageModel> pair : pairs) {
@@ -422,7 +422,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 					        LocalDateTime currentDate = LocalDateTime.now();
 					        
 					        // si le status est en cours, on passe le status de 5 à 1 pour tout types de modèles de relance à 7 jours de la date d'envoi
-					        if (statusId == 1) {
+					        if (modelTrackingDTODemand.getMtFkStatusId() == 1) {
 					        	if (modelTrackingDTODemand.getMtFkCategoryId() == 1 || modelTrackingDTODemand.getMtFkCategoryId() == 2 || modelTrackingDTODemand.getMtFkCategoryId() == 3 || modelTrackingDTODemand.getMtFkCategoryId() == 4) {
 					                if (modelTrackingDTODemand.getMtSendDate() != null && modelTrackingDTODemand.getMtSendDate().plusDays(7).isBefore(currentDate)) {
 					                	// Maj du statusId de la table gst_model_tracking pour les relances
@@ -442,7 +442,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 					                }
 					            }
 				        	// si le status est en validé (3), on passe le status des demandes de 3 à 1 et le status des relances de 3 à 5 pour les modèles kbis à 5 mois et demi de la date de validation
-					        } else if(statusId == 3) {
+					        } else if(modelTrackingDTODemand.getMtFkStatusId() == 3) {
 					        	if (modelTrackingDTODemand.getMtFkCategoryId() == 3) {
 					        		if (modelTrackingDTODemand.getMtValidationDate() != null && modelTrackingDTODemand.getMtValidationDate().plusMonths(5).plusDays(15).isBefore(currentDate)) {
 					                	// Maj du statusId de la table gst_model_tracking pour les demandes
