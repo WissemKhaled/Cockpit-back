@@ -179,7 +179,7 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    	} else {
 	    		categoryId = (i <= 8) ? 1 : (i <= 10) ? 0 : (i <= 14) ? 2 : 3;
 			}
-	    	//if (categoryId == 0) continue;
+	    	if (categoryId == 0) continue;
 
 	    	int statusId = (i % 2 == 0) ? 5 : 1; // le messageModelId est impaire pour une demande et paire pour une relance
 	        ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();

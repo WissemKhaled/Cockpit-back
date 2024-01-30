@@ -80,7 +80,7 @@
 		SELECT *
 		FROM <include refid="messageModelBySubcontractorAndServiceProviderTables"/>
 		WHERE ct.c_fk_subcontractor_id = #{subcontractorId}
-		AND mt.mt_fk_category_id != 1
+		AND mt.mt_fk_category_id != '1'
 		ORDER BY mt.mt_id ASC;
     </select>
       
