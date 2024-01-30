@@ -422,7 +422,7 @@ public class ModelTrackingServiceImpl implements ModelTrackingService {
 					        LocalDateTime currentDate = LocalDateTime.now();
 					        
 					        // si le status est en cours, on passe le status de 5 à 1 pour tout types de modèles de relance à 7 jours de la date d'envoi
-					        if (modelTrackingDTODemand.getMtFkStatusId() == 1) {
+					        if (modelTrackingDTODemand.getMtFkStatusId() == 2) {
 					        	if (modelTrackingDTODemand.getMtFkCategoryId() == 1 || modelTrackingDTODemand.getMtFkCategoryId() == 2 || modelTrackingDTODemand.getMtFkCategoryId() == 3 || modelTrackingDTODemand.getMtFkCategoryId() == 4) {
 					                if (modelTrackingDTODemand.getMtSendDate() != null && modelTrackingDTODemand.getMtSendDate().plusDays(7).isBefore(currentDate)) {
 					                	// Maj du statusId de la table gst_model_tracking pour les relances
