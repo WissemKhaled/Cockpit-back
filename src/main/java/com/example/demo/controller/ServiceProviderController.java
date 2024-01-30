@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.ServiceProviderDto;
+import com.example.demo.entity.Subcontractor;
 import com.example.demo.exception.AlreadyArchivedEntity;
 import com.example.demo.exception.EntityDuplicateDataException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.GeneralException;
 import com.example.demo.service.ServiceProviderService;
+import com.example.demo.service.SubcontractorService;
 
 import jakarta.validation.Valid;
 
@@ -29,11 +31,14 @@ import jakarta.validation.Valid;
 public class ServiceProviderController {
 
 	private final ServiceProviderService serviceProviderService;
+	private final SubcontractorService subcontractorService;
 	
-	public ServiceProviderController(ServiceProviderService serviceProviderService) {
+	public ServiceProviderController(ServiceProviderService serviceProviderService,
+			SubcontractorService subcontractorService) {
 		this.serviceProviderService = serviceProviderService;
+		this.subcontractorService = subcontractorService;
 	}
-	
+
 	/**
 	 * Récupère prestataire en fonction de son ID.
 	 *
@@ -87,7 +92,7 @@ public class ServiceProviderController {
 	public ResponseEntity<List<ServiceProviderDto>> getAllServiceProvidersWithOrWithoutStatus(
 	        @RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 	        @RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
-	        @RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
+	        @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
 	        @RequestParam(name = "statusId") int statusId
 	) {
 	    try {
@@ -146,7 +151,7 @@ public class ServiceProviderController {
 			@RequestParam(name = "searchTerms") String searchTerms,
 			@RequestParam(name = "sortingMethod", defaultValue = "asc", required = false) String sortingMethod,
 			@RequestParam(name = "pageNumber", defaultValue = "1", required = false) int pageNumber,
-			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize,
+			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize,
 			@RequestParam(name = "statusId") int statusId,
 			@RequestParam(name = "columnName") String columnName) {
 		try {
@@ -211,11 +216,15 @@ public class ServiceProviderController {
 	@PostMapping("/save")
 	public ResponseEntity<ServiceProviderDto> saveServiceProvider(
 			@Valid @RequestBody ServiceProviderDto serviceProviderDto, 
-			@RequestParam(name = "pageSize", defaultValue = "20", required = false) int pageSize) {
+			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
 	    try {
 	        // Formattage des données du prestataire
 	    	serviceProviderService.formattingServiceProviderData(serviceProviderDto);
-
+	    	
+	        Subcontractor subcontractorBySName = subcontractorService.getSubcontractorBySName(serviceProviderDto.getSubcontractorSName());
+	        if (subcontractorBySName.getStatus().getStId() == 4) {
+	        	throw new AlreadyArchivedEntity("le sous-traiant est déjà archivé");
+	        }
 	        // Vérification de l'existence du prestataire par ID
 	        boolean isServiceProviderExist = serviceProviderService.checkIfServiceProviderExistById(serviceProviderDto.getSpId());
 
@@ -242,7 +251,10 @@ public class ServiceProviderController {
 	        }
 	    } catch (EntityNotFoundException e) {
 	        return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
-	    } catch (EntityDuplicateDataException e) {
+	    }  catch (AlreadyArchivedEntity e) {
+	        return new ResponseEntity(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
+	    }
+	    catch (EntityDuplicateDataException e) {
 	        return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
 	    } catch (GeneralException e) {
 	        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
