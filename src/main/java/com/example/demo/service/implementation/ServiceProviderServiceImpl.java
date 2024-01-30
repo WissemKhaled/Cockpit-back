@@ -170,21 +170,21 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
 	    int categoryId;
 	    for (int i = 1; i <= 16; i++) {
 	    	
-//	    	if (i == 5 || i == 6 || i == 13 || i == 14) {
-//	            continue; // ne pas créer de contract pour les messages models de catégories 5, 6, 13, 14 (signature docs)
-//	        }
-//	    	
-//	    	if (Boolean.TRUE.equals(isForeign)) {
-//		    	categoryId = (i <= 8) ? 1 : (i <= 10) ? 4 : (i <= 14) ? 2 : 3;
-//	    	} else {
-//	    		categoryId = (i <= 8) ? 1 : (i <= 10) ? 0 : (i <= 14) ? 2 : 3;
-//			}
+	    	if (i == 5 || i == 6 || i == 13 || i == 14) {
+	            continue; // ne pas créer de contract pour les messages models de catégories 5, 6, 13, 14 (signature docs)
+	        }
+	    	
+	    	if (Boolean.TRUE.equals(isForeign)) {
+		    	categoryId = (i <= 8) ? 1 : (i <= 10) ? 4 : (i <= 14) ? 2 : 3;
+	    	} else {
+	    		categoryId = (i <= 8) ? 1 : (i <= 10) ? 0 : (i <= 14) ? 2 : 3;
+			}
 	    	//if (categoryId == 0) continue;
 
 	    	int statusId = (i % 2 == 0) ? 5 : 1; // le messageModelId est impaire pour une demande et paire pour une relance
 	        ModelTrackingDTO modelTrackingDTO = new ModelTrackingDTO();
 	        modelTrackingDTO.setMtFkContractId(contractId);
-	        modelTrackingDTO.setMtFkCategoryId(i);
+	        modelTrackingDTO.setMtFkCategoryId(categoryId);
 	        modelTrackingDTO.setMtFkMessageModelId(i);
 	        modelTrackingDTO.setMtFkStatusId(statusId);
 	        modelTrackingDTOList.add(modelTrackingDTO);
