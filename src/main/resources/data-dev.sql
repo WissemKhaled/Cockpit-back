@@ -98,19 +98,44 @@ VALUES ('Orange', 'Orange@email.fr', 1);
  
 -- Subcontractor 2
 INSERT INTO gst_subcontractor (s_name, s_email, s_fk_status_id)
-VALUES ('BPCE', 'BPCE@email.com', 1);
+VALUES ('Bpce', 'Bpce@email.com', 1);
  
 -- Subcontractor 3
 INSERT INTO gst_subcontractor (s_name, s_email, s_creation_date, s_fk_status_id)
-VALUES ('EDF', 'EDF@email.fr', '2023-01-01 12:00:00', 1);
+VALUES ('Edf', 'Edf@email.fr', '2023-01-01 12:00:00', 1);
  
 -- Subcontractor 4
 INSERT INTO gst_subcontractor (s_name, s_email, s_creation_date, s_lastUpdate_date, s_fk_status_id)
-VALUES ('ENEDIS', 'ENDIS@email.fr', '2023-01-01 12:00:00', NULL, 1);
+VALUES ('Enedis', 'Enedis@email.fr', '2023-01-01 12:00:00', NULL, 1);
  
 -- Subcontractor 5
 INSERT INTO gst_subcontractor (s_name, s_email, s_fk_status_id)
-VALUES ('LYON', 'LYON@email.fr', 1);
+VALUES ('Lyon', 'Lyon@email.fr', 1);
+
+-- Subcontractor 6
+INSERT INTO gst_subcontractor (s_name, s_email, s_fk_status_id) VALUES ('TotalEnergies', 'TotalEnergies@email.fr', 1); 
+
+-- Subcontractor 7
+INSERT INTO gst_subcontractor (s_name, s_email, s_fk_status_id) VALUES ('Sanofi', 'Sanofi@email.fr', 1); 
+
+-- Subcontractor 8
+INSERT INTO gst_subcontractor (s_name, s_email, s_fk_status_id) VALUES ('Engie', 'Engie@email.fr', 1); 
+
+-- Subcontractor 9
+INSERT INTO gst_subcontractor (s_name, s_email, s_fk_status_id) VALUES ('Vinci', 'Vinci@email.fr', 1); 
+
+-- Subcontractor 10
+INSERT INTO gst_subcontractor (s_name, s_email, s_fk_status_id) VALUES ('Alstom', 'Alstom@email.fr', 1); 
+
+-- Subcontractor 11
+INSERT INTO gst_subcontractor (s_name, s_email, s_fk_status_id) VALUES ('Sncf', 'Sncf@email.fr', 1); 
+
+-- Subcontractor 12
+INSERT INTO gst_subcontractor (s_name, s_email, s_fk_status_id) VALUES ('Carrefour', 'Carrefour@email.fr', 1); 
+
+-- Subcontractor 13
+INSERT INTO gst_subcontractor (s_name, s_email, s_fk_status_id) VALUES ('Valeo', 'Valeo@email.fr', 1); 
+
  
 -- Prestataire 01
 INSERT INTO gst_service_provider (sp_first_name, sp_name, sp_email, sp_creation_date, sp_lastUpdate_date,sp_fk_subcontractor_id, sp_fk_status_id) VALUES ('Lea', 'DUBOIS' ,'LeaDubois-1@email.com', '2023-01-01 12:00:00', NULL, 1, 1);
