@@ -23,7 +23,7 @@ INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is
 INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (4, 'Demande renouvellement des documents administratifs du prestataire', 'je suis le body du mail', 't', 'f', CURRENT_TIMESTAMP, NULL, 1);
 INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (4, 'Relance renouvellement des documents administratif du prestataire', 'je suis le body du mail', 't', 't', CURRENT_TIMESTAMP, NULL, 1);
 
-INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (5, 'Demande des documents de régularisation du sous-traitant', '<p class="h6">Bonjour <span class="text-danger">{{nom}},</span>  <br/>
+INSERT INTO gst_message_model (mm_link, mm_subject, mm_body, mm_has_email, mm_is_relaunch, mm_creation_date, mm_last_update, mm_fk_category_id) VALUES (5, 'Demande des documents de régularisation du sous-traitant', '<p class="h6">Bonjour   <br/>
 
 <br/>
 
@@ -45,7 +45,7 @@ Nous avons besoin des éléments listés ci-dessous et des pièces jointes :<br/
 
 <br/>
 
-{{PJ}}<br/>
+{{création de fournisseur}}<br/>
 
 <br/>
 
